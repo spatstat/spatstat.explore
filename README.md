@@ -1,6 +1,6 @@
 # spatstat.explore
 
-## Statistical analysis and modelling of spatial data for the spatstat family
+## Exploratory and nonparametric statistical analysis of spatial data for the spatstat family
 
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/spatstat.explore)](http://cran.r-project.org/web/packages/spatstat.explore) 
 [![GitHub R package version](https://img.shields.io/github/r-package/v/baddstats/spatstat.explore)](https://github.com/baddstats/spatstat.explore)
