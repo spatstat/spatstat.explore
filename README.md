@@ -3,7 +3,7 @@
 ## Statistical analysis and modelling of spatial data for the spatstat family
 
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/spatstat.explore)](http://cran.r-project.org/web/packages/spatstat.explore) 
-[![GitHub R package version](https://img.shields.io/github/r-package/v/spatstat/spatstat.explore)](https://github.com/spatstat/spatstat.explore)
+[![GitHub R package version](https://img.shields.io/github/r-package/v/baddstats/spatstat.explore)](https://github.com/baddstats/spatstat.explore)
 
 The original `spatstat` package has been split into
 several sub-packages (See [spatstat/spatstat](https://github.com/spatstat/spatstat))
