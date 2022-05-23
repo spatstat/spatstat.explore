@@ -58,20 +58,13 @@ in any of several formats, into an object of class \code{"tess"}.
   \code{\link{tess}}
 }
 \examples{
- # pixel image
- v <- as.im(function(x,y){factor(round(5 * (x^2 + y^2)))}, W=owin())
- levels(v) <- letters[seq(length(levels(v)))]
- as.tess(v)
- # quadrat counts
- data(nztrees)
- qNZ <- quadratcount(nztrees, nx=4, ny=3)
- as.tess(qNZ)
+
+ h <- quadrat.test(nztrees, nx=4, ny=3)
+ as.tess(h)
 }
-\author{\adrian
-  
-  
+\author{
+  \adrian
   and \rolf
-  
 }
 \keyword{spatial}
 \keyword{manip}

@@ -16,7 +16,6 @@ cdf.test(...)
 
 \method{cdf.test}{ppp}(X, covariate, test=c("ks", "cvm", "ad"), \dots,
                        interpolate=TRUE, jitter=TRUE)
-%#%^endif
 
 
 

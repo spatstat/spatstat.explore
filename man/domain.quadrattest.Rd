@@ -48,6 +48,7 @@
 }
 \seealso{
   \code{\link[spatstat.geom]{domain}},
+  \code{\link[spatstat.geom]{domain.quadratcount}},
   \code{\link[spatstat.model]{domain.ppm}},
   \code{\link[spatstat.random]{domain.rmhmodel}},
   \code{\link[spatstat.linnet]{domain.lpp}}.

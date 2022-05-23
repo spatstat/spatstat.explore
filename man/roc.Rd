@@ -28,13 +28,13 @@
     one of the strings \code{"x"} or \code{"y"} indicating the
     Cartesian coordinates.    
   }
-  \item{\dots}{
-    Arguments passed to \code{\link{as.mask}} controlling the
-    pixel resolution for calculations.
-  }
   \item{high}{
     Logical value indicating whether the threshold operation
     should favour high or low values of the covariate.
+  }
+  \item{\dots}{
+    Arguments passed to \code{\link{as.mask}} controlling the
+    pixel resolution for calculations.
   }
 }
 \details{

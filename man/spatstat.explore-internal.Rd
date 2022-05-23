@@ -153,6 +153,7 @@
 \alias{sewpcf}
 \alias{sewsmod}
 \alias{shift.quadrattest}              
+\alias{simulrecipe}              
 \alias{Smooth.solist}
 \alias{smoothcrossEngine}              
 \alias{smoothpointsEngine}
@@ -402,6 +403,7 @@ second.moment.engine(x, sigma, edge, what, \dots,
 sewpcf(d, w, denargs, lambda2area, divisor)
 sewsmod(d, ff, wt, Ef, rvals, method="smrep", \dots, nwtsteps=500)
 \method{shift}{quadrattest}(X, \dots)
+simulrecipe(type, expr, envir, csr, pois, constraints)
 \method{Smooth}{solist}(X, \dots)
 smoothcrossEngine(Xdata, Xquery, values, sigma, \dots,
                     weights, varcov,
