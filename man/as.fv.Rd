@@ -47,20 +47,20 @@
     \item
     an object of class \code{"minconfit"}, giving the results
     of a minimum contrast fit by
-    the command \code{\link[spatstat.core]{mincontrast}}.
+    the command \code{\link[spatstat.model]{mincontrast}}.
     The 
     \item
     an object of class \code{"kppm"}, representing a fitted
     Cox or cluster point process model, obtained from the
-    model-fitting command \code{\link[spatstat.core]{kppm}};
+    model-fitting command \code{\link[spatstat.model]{kppm}};
     \item
     an object of class \code{"dppm"}, representing a fitted
     determinantal point process model, obtained from the
-    model-fitting command \code{\link[spatstat.core]{dppm}};
+    model-fitting command \code{\link[spatstat.model]{dppm}};
     \item
     an object of class \code{"bw.optim"}, representing an optimal
     choice of smoothing bandwidth by a cross-validation method, obtained
-    from commands like \code{\link[spatstat.core]{bw.diggle}}.
+    from commands like \code{\link[spatstat.explore]{bw.diggle}}.
   }
   The function \code{as.fv} is generic, with methods for each of the
   classes listed above. The behaviour is as follows:

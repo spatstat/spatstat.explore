@@ -32,7 +32,7 @@
   several different estimates of the same function.
   Objects of this class are returned 
   by many commands in \pkg{spatstat},
-  such as \code{\link[spatstat.core]{Kest}},
+  such as \code{\link[spatstat.explore]{Kest}},
   which returns an estimate of Ripley's \eqn{K}-function
   for a point pattern dataset.
 
@@ -93,12 +93,12 @@
   and \rolf
 }
 \seealso{
-   \code{\link[spatstat.core]{as.function.rhohat}}, 
+   \code{\link[spatstat.explore]{as.function.rhohat}}, 
    \code{\link{fv}}, 
    \code{\link{fv.object}}, 
    \code{\link{fvnames}}, 
    \code{\link{plot.fv}}, 
-   \code{\link[spatstat.core]{Kest}}
+   \code{\link[spatstat.explore]{Kest}}
 }
 \examples{
   K <- Kest(cells)

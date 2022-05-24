@@ -58,7 +58,7 @@ rat(ratio, numerator, denominator, check = TRUE)
 }
 \seealso{
   \code{\link{compatible}}, 
-  \code{\link[spatstat.core]{pool}}
+  \code{\link[spatstat.explore]{pool}}
 }
 \keyword{spatial}
 \keyword{manip}

@@ -26,7 +26,7 @@
 
   A function array (object of class \code{"fasp"}) can be regarded as a matrix
   whose entries are functions. Objects of this kind
-  are returned by the command \code{\link[spatstat.core]{alltypes}}.
+  are returned by the command \code{\link[spatstat.explore]{alltypes}}.
 
   Suppose \code{X} is an object of class \code{"fasp"}.
   Then \code{eval.fasp(X+3)} effectively adds 3 to the value of
@@ -65,7 +65,7 @@
 }
 \seealso{
   \code{\link{fasp.object}},
-  \code{\link[spatstat.core]{Kest}}
+  \code{\link[spatstat.explore]{Kest}}
 }
 \examples{
   K <- alltypes(amacrine, "K")

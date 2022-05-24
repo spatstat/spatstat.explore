@@ -16,13 +16,13 @@
   this class.
   
   Objects of class \code{"fv"} are returned by
-  \code{\link[spatstat.core]{Fest}}, \code{\link[spatstat.core]{Gest}},\code{\link[spatstat.core]{Jest}},
-  and \code{\link[spatstat.core]{Kest}} along with many other functions.
+  \code{\link[spatstat.explore]{Fest}}, \code{\link[spatstat.explore]{Gest}},\code{\link[spatstat.explore]{Jest}},
+  and \code{\link[spatstat.explore]{Kest}} along with many other functions.
 }
 \seealso{
   Objects of class \code{"fv"} are returned by
-  \code{\link[spatstat.core]{Fest}}, \code{\link[spatstat.core]{Gest}},\code{\link[spatstat.core]{Jest}},
-  and \code{\link[spatstat.core]{Kest}} along with many other functions.
+  \code{\link[spatstat.explore]{Fest}}, \code{\link[spatstat.explore]{Gest}},\code{\link[spatstat.explore]{Jest}},
+  and \code{\link[spatstat.explore]{Kest}} along with many other functions.
   
   See \code{\link{plot.fv}} for plotting an \code{"fv"} object.
 
