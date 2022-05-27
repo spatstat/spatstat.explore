@@ -9,7 +9,7 @@
 #'    validate.weights
 #'    updateData
 #'
-#' $Revision: 1.12 $ $Date: 2022/05/23 00:04:46 $
+#' $Revision: 1.13 $ $Date: 2022/05/27 05:57:20 $
 
 resolve.lambda <- function(X, lambda=NULL, ...,
                            sigma=NULL, varcov=NULL,
@@ -332,6 +332,12 @@ updateData <- function(model, X, warn=TRUE) {
   if(!requireNamespace("spatstat.model")) 
     stop("To update a fitted model, the package spatstat.model is required",
          call.=FALSE)
+  if(is.marked(X) && !is.multitype(X)) {
+    if(warn) warning("Marks were ignored when re-fitting the model,",
+                     "because they were not a factor",
+                     call.=FALSE)
+    X <- unmark(X)
+  }
   if(inherits(model, "ppm")) {
     result <- update(model, Q=X)
   } else if(inherits(model, "kppm")) {

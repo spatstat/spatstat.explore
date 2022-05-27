@@ -17,7 +17,7 @@ SIGNIFICANT USER-VISIBLE CHANGES
     and 'spatstat.model' (for modelling and formal inference).
 
     o spatstat.explore
-    This package 'spatstat.explore' contains the code for
+    The new package 'spatstat.explore' contains the code for
     exploratory data analysis and nonparametric analysis
     of spatial data. Examples include 'density.ppp', 'Kest',
     'envelope', 'rhohat', 'clarkevans.test'.
