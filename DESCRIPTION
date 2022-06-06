@@ -1,6 +1,6 @@
 Package: spatstat.explore
 Version: 3.0-0
-Date: 2022-05-27
+Date: 2022-06-06
 Title: Exploratory Data Analysis for the 'spatstat' Family
 Authors@R: c(person("Adrian", "Baddeley", 
                     role = c("aut", "cre"),
@@ -65,4 +65,4 @@ License: GPL (>= 2)
 URL: http://spatstat.org/
 NeedsCompilation: yes
 ByteCompile: true
-BugReports: https://github.com/spatstat/spatstat.core/issues
+BugReports: https://github.com/spatstat/spatstat.explore/issues

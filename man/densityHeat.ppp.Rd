@@ -157,8 +157,8 @@
   with one entry for each point of \code{x}.
 }
 \seealso{
-  \code{\link[spatstat.core]{density.ppp}} for the usual kernel estimator,
-  and \code{\link[spatstat.core]{adaptive.density}} for the
+  \code{\link[spatstat.explore]{density.ppp}} for the usual kernel estimator,
+  and \code{\link[spatstat.explore]{adaptive.density}} for the
   tessellation-based estimator.
 }
 \references{

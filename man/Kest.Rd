@@ -33,7 +33,7 @@ from a point pattern in a window of arbitrary shape.
     options \code{"none"}, \code{"border"}, \code{"bord.modif"},
     \code{"isotropic"}, \code{"Ripley"}, \code{"translate"},
     \code{"translation"}, \code{"rigid"},
-    \code{"none"}, \code{"good"} or \code{"best"}.
+    \code{"none"}, \code{"periodic"}, \code{"good"} or \code{"best"}.
     It specifies the edge correction(s) to be applied.
     Alternatively \code{correction="all"} selects all options.
   }
@@ -146,6 +146,10 @@ from a point pattern in a window of arbitrary shape.
       This estimate is \bold{biased} and should
       not be used for data analysis, \emph{unless} you have
       an extremely large point pattern (more than 100,000 points).
+    }
+    \item{periodic}{
+      Periodic (toroidal) edge correction.
+      Defined only for rectangular windows.
     }
     \item{best}{
       Selects the best edge correction

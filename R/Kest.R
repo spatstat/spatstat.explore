@@ -1,7 +1,7 @@
 #
 #	Kest.R		Estimation of K function
 #
-#	$Revision: 5.134 $	$Date: 2022/05/21 08:53:38 $
+#	$Revision: 5.135 $	$Date: 2022/06/06 04:23:01 $
 #
 #
 # -------- functions ----------------------------------------
@@ -108,6 +108,7 @@ function(X, ..., r=NULL, rmax=NULL, breaks=NULL,
                              translate="translate",
                              translation="translate",
                              rigid="rigid",
+                             periodic="periodic",
                              good="good",
                              best="best"),
                            multi=TRUE)
@@ -169,9 +170,12 @@ function(X, ..., r=NULL, rmax=NULL, breaks=NULL,
     if(none) return(Kn) 
   }
 
+  unsupported.Krect <- c("rigid", "periodic")
   do.fast.rectangle <-
-    can.do.fast && is.rectangle(W) &&
-      spatstat.options("use.Krect") && !any(correction == "rigid")
+    can.do.fast &&
+    is.rectangle(W) &&
+    spatstat.options("use.Krect") &&
+    !any(correction %in% unsupported.Krect)
   
   if(do.fast.rectangle) {
     ###########################################
@@ -193,13 +197,21 @@ function(X, ..., r=NULL, rmax=NULL, breaks=NULL,
                "theo", NULL, alim, c("r","%s[pois](r)"), desc, fname="K",
                ratio=ratio)
   
-    ## identify all close pairs
+    ## Identify all close pairs up to distance 'rmax'
     rmax <- max(r)
-    what <- 
-	if(any(correction %in% c("translate", "isotropic"))) "all" else "ijd"
-    close <- closepairs(X, rmax, what=what)
-    DIJ <- close$d
-
+    if(all(correction == "periodic")) {
+      ## not needed in periodic case
+      ## Assign null value to placate package checker
+      close <- DIJ <- NULL
+    } else {
+      ## usual case
+      ## Identify all close pairs
+      needxy <- correction %in% c("translate", "isotropic")
+      what <- if(any(needxy)) "all" else "ijd"
+      close <- closepairs(X, rmax, what=what)
+      DIJ <- close$d
+    }
+    
     ## precompute set covariance of window
     gW <- NULL
     if(any(correction %in% c("translate", "rigid", "isotropic")))
@@ -216,6 +228,24 @@ function(X, ..., r=NULL, rmax=NULL, breaks=NULL,
                       "hat(%s)[un](r)",
                       "uncorrected estimate of %s",
                       "un",
+                      ratio=ratio)
+    }
+  
+    if(any(correction == "periodic")) {
+      ## periodic correction
+      ## Find close pairs of points in periodic distance
+      closeP <- closepairs(X, rmax, what="ijd", periodic=TRUE)
+      DIJP <- closeP$d
+      ## Compute unweighted histogram
+      wh <- whist(DIJP, breaks$val)  
+      numKper <- cumsum(wh)
+      denKper <- lambda2 * areaW
+      ## periodic correction estimate of K
+      K <- bind.ratfv(K,
+                      data.frame(per=numKper), denKper,
+                      "hat(%s)[per](r)",
+                      "periodic-corrected estimate of %s",
+                      "per",
                       ratio=ratio)
     }
   
@@ -768,21 +798,28 @@ rmax.rule <- function(fun="K", W, lambda) {
            
     
 implemented.for.K <- function(correction, windowtype, explicit) {
-  pixels <- (windowtype == "mask")
-  if(any(correction == "best")) {
-    # select best available correction
-    correction[correction == "best"] <- if(!pixels) "isotropic" else "translate"
-  } else {
-    # available selection of edge corrections depends on window
-    if(pixels) {
-      iso <- (correction == "isotropic") 
-      if(any(iso)) {
-        whinge <- "Isotropic correction not implemented for binary masks"
-        if(explicit) {
-        if(all(iso)) stop(whinge, call.=FALSE) else warning(whinge, call.=FALSE)
-        }
-        correction <- correction[!iso]
-      }
+  if(any(b <- (correction == "best"))) {
+    ## replace 'best' by the best available correction
+    correction[b] <- switch(windowtype, mask="translate", "isotropic")
+  }
+  whinge <- NULL
+  if(windowtype != "rectangle" && any(pe <- (correction == "periodic"))) {
+    whinge <- "Periodic correction is not defined for non-rectangular windows"
+    correction <- correction[!pe]
+  }
+  if(windowtype == "mask" && any(iso <- (correction == "iso"))) {
+    whinge <- pasteN(whinge,
+      "Isotropic correction is not implemented for binary mask windows",
+      collapse=" and ")
+    correction <- correction[!iso]
+  }
+  if(explicit && !is.null(whinge)) {
+    if(length(correction)) {
+      ## some desired corrections remain; warn about the deleted ones
+      warning(whinge, call.=FALSE)
+    } else {
+      ## none of the desired corrections are supported
+      stop(whinge, call.=FALSE)
     }
   }
   return(correction)

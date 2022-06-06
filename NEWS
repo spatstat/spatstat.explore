@@ -6,8 +6,10 @@ OVERVIEW
     o New package
 
     o Fixing cross-references in help files
-    
+
     o Package initialised at version 3.0-0.
+
+    o Periodic edge correction for K function.
 
 SIGNIFICANT USER-VISIBLE CHANGES
 
@@ -27,7 +29,9 @@ SIGNIFICANT USER-VISIBLE CHANGES
     contains older news items from the defunct package 'spatstat.core'
     (for functions which are now in 'spatstat.explore').
 
-    
+    o Kest
+    Now supports the option 'correction="periodic"' to compute the
+    periodic (torus) edge correction estimate.
         CHANGES IN spatstat.core VERSION 2.4-4.010
 
 OVERVIEW
