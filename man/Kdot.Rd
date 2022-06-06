@@ -39,7 +39,7 @@ Kdot(X, i, r=NULL, breaks=NULL, correction, ..., ratio=FALSE, from)
     A character vector containing any selection of the
     options \code{"border"}, \code{"bord.modif"},
     \code{"isotropic"}, \code{"Ripley"}, \code{"translate"},
-    \code{"translation"},
+    \code{"translation"}, \code{"periodic"},
     \code{"none"} or \code{"best"}.
     It specifies the edge correction(s) to be applied.
     Alternatively \code{correction="all"} selects all options.

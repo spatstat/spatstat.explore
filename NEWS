@@ -29,9 +29,11 @@ SIGNIFICANT USER-VISIBLE CHANGES
     contains older news items from the defunct package 'spatstat.core'
     (for functions which are now in 'spatstat.explore').
 
-    o Kest
-    Now supports the option 'correction="periodic"' to compute the
-    periodic (torus) edge correction estimate.
+    o Kest, Kdot, Kcross, Ldot, Lcross, Kmulti
+    These functions now accept the option 'correction="periodic"'
+    to compute the periodic (torus) edge correction estimate.
+
+
         CHANGES IN spatstat.core VERSION 2.4-4.010
 
 OVERVIEW

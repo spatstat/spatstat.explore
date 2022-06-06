@@ -4,7 +4,7 @@
 #	Compute estimates of cross-type K functions
 #	for multitype point patterns
 #
-#	$Revision: 5.57 $	$Date: 2022/04/24 09:05:36 $
+#	$Revision: 5.59 $	$Date: 2022/06/06 09:49:33 $
 #
 #
 # -------- functions ----------------------------------------
@@ -179,6 +179,7 @@ function(X, I, J, r=NULL, breaks=NULL,
                              trans="translate",
                              translate="translate",
                              translation="translate",
+                             periodic="periodic",
                              best="best"),
                            multi=TRUE)
 
@@ -225,33 +226,54 @@ function(X, I, J, r=NULL, breaks=NULL,
     attr(denK, "desc")[2] <- "denominator for theoretical Poisson %s"
   }
 
-  # find close pairs of points
+  ## Extract relevant points
   XI <- X[I]
   XJ <- X[J]
-  close <- crosspairs(XI, XJ, max(r), what="ijd")
-# close$i and close$j are serial numbers in XI and XJ respectively;        
-# map them to original serial numbers in X
+  ## Map XI and XJ to original serial numbers in X
   orig <- seq_len(npts)
   imap <- orig[I]
   jmap <- orig[J]
-  iX <- imap[close$i]
-  jX <- jmap[close$j]
-# eliminate any identical pairs
-  if(any(I & J)) {
-    ok <- (iX != jX)
-    if(!all(ok)) {
-      close$i  <- close$i[ok]
-      close$j  <- close$j[ok]
-      close$d  <- close$d[ok]
+
+  ## Find close pairs of points
+  if(any(correction != "periodic")) {
+    ## Find close pairs of points in Euclidean distance
+    close <- crosspairs(XI, XJ, max(r), what="ijd",
+                        iX=imap, iY=jmap)
+    ## extract information for these pairs (relative to orderings of XI, XJ)
+    dcloseIJ <- close$d
+    icloseI  <- close$i
+    jcloseJ  <- close$j
+  }
+
+  ## ...........................................................
+  ## Compute estimates by each of the selected edge corrections.
+  ## ...........................................................
+
+  if(any(correction == "periodic")) {
+    ## Periodic (toroidal) correction
+    ## Compute periodic distances
+    closeP <- crosspairs(XI, XJ, max(r), what="ijd",
+                         periodic=TRUE,
+                         iX=imap, iY=jmap)
+    ## evaluate estimate
+    wh <- whist(closeP$d, breaks$val)  # no weights
+    numKper <- cumsum(wh)
+    denKper <- lambdaI * lambdaJ * areaI
+    Kper <- numKper/denKper
+    K <- bind.fv(K, data.frame(per=Kper), "{hat(%s)[%s]^{per}}(r)",
+                 "periodic-corrected estimate of %s",
+                 "per")
+    if(ratio) {
+      # save numerator and denominator
+      numK <- bind.fv(numK, data.frame(per=numKper), "{hat(%s)[%s]^{per}}(r)",
+                 "numerator of periodic-corrected estimate of %s",
+                 "per")
+      denK <- bind.fv(denK, data.frame(per=denKper), "{hat(%s)[%s]^{per}}(r)",
+                 "denominator of periodic-corrected estimate of %s",
+                 "per")
     }
   }
-# extract information for these pairs (relative to orderings of XI, XJ)
-  dcloseIJ <- close$d
-  icloseI  <- close$i
-  jcloseJ  <- close$j
-        
-# Compute estimates by each of the selected edge corrections.
-        
+  
   if(any(correction == "none")) {
     # uncorrected! 
     wh <- whist(dcloseIJ, breaks$val)  # no weights
@@ -270,8 +292,8 @@ function(X, I, J, r=NULL, breaks=NULL,
                  "denominator of uncorrected estimate of %s",
                  "un")
     }
-
   }
+  
   if(any(correction == "border" | correction == "bord.modif")) {
     # border method
     # distance to boundary from each point of type I
@@ -376,4 +398,5 @@ function(X, I, J, r=NULL, breaks=NULL,
   }
   return(K)
 }
+
 
