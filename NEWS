@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.0-0
+        CHANGES IN spatstat.explore VERSION 2.999-999.001
 
 OVERVIEW
 
@@ -7,10 +7,13 @@ OVERVIEW
 
     o Fixing cross-references in help files
 
-    o Package initialised at version 3.0-0.
+    o Package will be initialised at version 3.0-0.
+      Versions less than 3 are developmental.
 
     o Periodic edge correction for K function.
 
+    o Minor improvements.
+    
 SIGNIFICANT USER-VISIBLE CHANGES
 
     o Package structure
@@ -33,7 +36,11 @@ SIGNIFICANT USER-VISIBLE CHANGES
     These functions now accept the option 'correction="periodic"'
     to compute the periodic (torus) edge correction estimate.
 
-
+    o markcorr, markcrosscorr
+    These functions now allow negative mark values when normalise=FALSE.
+    
+    
+   
         CHANGES IN spatstat.core VERSION 2.4-4.010
 
 OVERVIEW

@@ -249,6 +249,7 @@ markcorr(X, f = function(m1, m2) { m1 * m2}, r=NULL,
     c[f](r) = E[0u] f(M(0),M(u))
   }
   of the expression for the mark correlation function.
+  In this case, negative values of \code{f} are permitted.
 }
 \references{
   Stoyan, D. and Stoyan, H. (1994)

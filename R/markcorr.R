@@ -2,7 +2,7 @@
 ##
 ##     markcorr.R
 ##
-##     $Revision: 1.87 $ $Date: 2022/03/24 01:16:53 $
+##     $Revision: 1.88 $ $Date: 2022/06/08 03:07:56 $
 ##
 ##    Estimate the mark correlation function
 ##    and related functions 
@@ -479,12 +479,12 @@ markcorr <-
            product=,
            general=stop("function f returned some NA values"))
     
-  if(any(ff < 0))
+  if(normalise && any(ff < 0))
     switch(ftype,
            mul=,
-           equ=stop("negative marks are not permitted"),
+           equ=stop("negative marks are not permitted when normalise=TRUE"),
            product=,
-           general=stop("negative values of function f are not permitted"))
+           general=stop("negative values of function f are not permitted when normalise=TRUE"))
 
   ## weights
   if(!unweighted)
@@ -656,8 +656,8 @@ markcrosscorr <-
       if(anyNA(ff)) 
         stop("some marks were NA", call.=FALSE)
 
-      if(any(ff < 0))
-        stop("negative marks are not permitted")
+      if(normalise && any(ff < 0))
+        stop("negative marks are not permitted when normalise=TRUE")
     
       ## Compute estimates ##############
       
