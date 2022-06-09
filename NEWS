@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 2.999-999.001
+        CHANGES IN spatstat.explore VERSION 2.999-999.002
 
 OVERVIEW
 
@@ -11,6 +11,8 @@ OVERVIEW
       Versions less than 3 are developmental.
 
     o Periodic edge correction for K function.
+
+    o Extension to 'marktable', 'markstat', 'applynbd'
 
     o Minor improvements.
     
@@ -34,11 +36,14 @@ SIGNIFICANT USER-VISIBLE CHANGES
 
     o Kest, Kdot, Kcross, Ldot, Lcross, Kmulti
     These functions now accept the option 'correction="periodic"'
-    to compute the periodic (torus) edge correction estimate.
+    to compute the periodic (toroidal) edge correction estimate.
 
     o markcorr, markcrosscorr
     These functions now allow negative mark values when normalise=FALSE.
     
+    o marktable, markstat, applynbd
+    These functions now work for point patterns in three dimensions (class 'pp3')
+    and point patterns on a network (class 'lpp').
     
    
         CHANGES IN spatstat.core VERSION 2.4-4.010

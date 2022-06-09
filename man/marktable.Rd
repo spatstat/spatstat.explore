@@ -2,7 +2,7 @@
 \alias{marktable}
 \title{Tabulate Marks in Neighbourhood of Every Point in a Point Pattern}
 \description{
-  Visit each point in a point pattern, find the neighbouring points,
+  Visit each point in a multitype point pattern, find the neighbouring points,
   and compile a frequency table of the marks of these neighbour points.
 }
 \usage{
@@ -10,8 +10,9 @@
 }
 \arguments{
   \item{X}{
-    A marked point pattern. 
-    An object of class \code{"ppp"}.
+    A multitype point pattern. 
+    An object of class \code{"ppp"}, \code{"lpp"},
+    \code{"pp3"} or \code{"ppx"}, with marks which are a factor.
   }
   \item{R}{
     Neighbourhood radius. Incompatible with \code{N}.
@@ -75,11 +76,9 @@
   head(marktable(amacrine, 0.1, exclude=FALSE))
   marktable(amacrine, N=1, collapse=TRUE)
 }
-\author{\adrian
-  
-  
+\author{
+  \adrian
   and \rolf
-  
 }
 \keyword{spatial}
 \keyword{programming}
