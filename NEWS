@@ -1,18 +1,14 @@
 
-        CHANGES IN spatstat.explore VERSION 2.999-999.002
+        CHANGES IN spatstat.explore VERSION 2.999-999.003
 
 OVERVIEW
 
     o New package
 
-    o Fixing cross-references in help files
-
     o Package will be initialised at version 3.0-0.
       Versions less than 3 are developmental.
 
     o Periodic edge correction for K function.
-
-    o Extension to 'marktable', 'markstat', 'applynbd'
 
     o Minor improvements.
     
@@ -41,8 +37,8 @@ SIGNIFICANT USER-VISIBLE CHANGES
     o markcorr, markcrosscorr
     These functions now allow negative mark values when normalise=FALSE.
     
-    o marktable, markstat, applynbd
-    These functions now work for point patterns in three dimensions (class 'pp3')
+    o marktable
+    This function now works for point patterns in three dimensions (class 'pp3')
     and point patterns on a network (class 'lpp').
     
    
