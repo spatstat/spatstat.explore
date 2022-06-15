@@ -170,16 +170,12 @@
   \code{\link{Kcross}}
 }
 \examples{
- data(amacrine)
  p <- pcfcross(amacrine, "off", "on")
  p <- pcfcross(amacrine, "off", "on", stoyan=0.1)
  plot(p)
 }
 \author{\adrian
-  
-  
   and \rolf
-  
 }
 \keyword{spatial}
 \keyword{nonparametric}

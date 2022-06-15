@@ -111,7 +111,6 @@ Jfox(X, Y, r=NULL, breaks=NULL, correction=c("km", "rs", "han"), W, \dots,
   \code{\link{Fest}}
 }
 \examples{
-  data(copper)
   X <- copper$SouthPoints
   Y <- copper$SouthLines
   G <- Gfox(X,Y)
@@ -122,8 +121,6 @@ Jfox(X, Y, r=NULL, breaks=NULL, correction=c("km", "rs", "han"), W, \dots,
 }
 \author{Rob Foxall and
   \adrian
-  
-  
 }
 \keyword{spatial}
 \keyword{nonparametric}

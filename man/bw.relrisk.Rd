@@ -84,7 +84,6 @@
   \code{\link{bw.stoyan}}
 }
 \examples{
-  data(urkiola)
   \testonly{op <- spatstat.options(n.bandwidth=8)}
   b <- bw.relrisk(urkiola)
   b
@@ -94,9 +93,7 @@
   \testonly{spatstat.options(op)}
 }
 \references{
-  Baddeley, A., Rubak, E. and Turner, R. (2015)
-  \emph{Spatial Point Patterns: Methodology and Applications with R}.
-  Chapman and Hall/CRC Press.
+  \baddrubaturnbook
   
   Diggle, P.J. (2003)
   \emph{Statistical analysis of spatial point patterns},

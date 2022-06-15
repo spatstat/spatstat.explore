@@ -105,8 +105,6 @@ John Rudge
 \email{rudge@esc.cam.ac.uk}
 with modifications by
   \adrian
-  
-  
 }
 \seealso{
   \code{\link{clarkevans.test}},

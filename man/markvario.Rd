@@ -102,7 +102,6 @@ r = NULL, method = "density", ..., normalise=FALSE)
 \examples{
     # Longleaf Pine data
     # marks represent tree diameter
-    data(longleaf)
     # Subset of this large pattern
     swcorner <- owin(c(0,100),c(0,100))
     sub <- longleaf[ , swcorner]
@@ -111,10 +110,7 @@ r = NULL, method = "density", ..., normalise=FALSE)
     plot(mv)
 }
 \author{\adrian
-  
-  
   and \rolf
-  
 }
 \keyword{spatial}
 \keyword{nonparametric}

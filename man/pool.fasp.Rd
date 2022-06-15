@@ -48,16 +48,12 @@
   \code{\link{pool}}
 }
 \examples{
-   data(amacrine)
    A1 <- alltypes(amacrine,"K",nsim=9,envelope=TRUE,savefuns=TRUE)
    A2 <- alltypes(amacrine,"K",nsim=10,envelope=TRUE,savefuns=TRUE)
    pool(A1, A2)
 }
 \author{\adrian
-  
-  
   and \rolf
-  
 }
 \keyword{spatial}
 \keyword{htest}

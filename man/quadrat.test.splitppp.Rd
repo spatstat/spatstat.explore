@@ -51,16 +51,12 @@
   plotted.
 }
 \examples{
- data(humberside)
  qH <- quadrat.test(split(humberside), 2, 3)
  plot(qH)
  qH
 }
 \author{\adrian
-  
-  
   and \rolf
-  
 }
 \keyword{spatial}
 \keyword{htest}

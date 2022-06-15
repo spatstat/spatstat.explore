@@ -81,7 +81,6 @@
   \code{\link{Smooth.ppp}}
 }
 \examples{
-  data(longleaf)
   \testonly{op <- spatstat.options(n.bandwidth=8)}
   b <- bw.smoothppp(longleaf)
   b
@@ -89,10 +88,7 @@
   \testonly{spatstat.options(op)}
 }
 \author{\adrian
-  
-  
   and \rolf
-  
 }
 \keyword{spatial}
 \keyword{methods}

@@ -171,9 +171,7 @@
   An alternative to \code{lohboot} is \code{\link{varblock}}.
 }
 \references{
-  Baddeley, A., Rubak, E. and Turner, R. (2015)
-  \emph{Spatial Point Patterns: Methodology and Applications with R}.
-  Chapman and Hall/CRC Press.
+  \baddrubaturnbook
 
   Loh, J.M. (2008)
   A valid and fast spatial bootstrap for correlation functions.

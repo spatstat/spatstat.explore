@@ -130,7 +130,6 @@
   \code{\link{localL}}.
 }
 \examples{
-  data(ponderosa)
   X <- ponderosa
 
   # compute all the local L functions
@@ -148,10 +147,7 @@
 \author{
   Mike Kuhn,
   \adrian
-  
-  
   and \rolf
-  
 }
 \keyword{spatial}
 \keyword{nonparametric}

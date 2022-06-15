@@ -135,9 +135,7 @@ mctest.sigtrace(X, fun=Lest, \dots,
   Pushing the envelope: extensions of graphical
   Monte Carlo tests. Unpublished manuscript.
 
-  Baddeley, A., Rubak, E. and Turner, R. (2015)
-  \emph{Spatial Point Patterns: Methodology and Applications with R}.
-  Chapman and Hall/CRC Press, Boca Raton, FL.
+  \baddrubaturnbook
   
   Bowman, A.W. and Azzalini, A. (1997) 
   \emph{Applied smoothing techniques for data analysis: 

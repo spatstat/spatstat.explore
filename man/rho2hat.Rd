@@ -96,7 +96,6 @@ rho2hat(object, cov1, cov2, ..., method=c("ratio", "reweight"))
   \code{\link{methods.rho2hat}}
 }
 \examples{
-  data(bei)
   attach(bei.extra)
   plot(rho2hat(bei, elev, grad))
   if(require("spatstat.model")) {

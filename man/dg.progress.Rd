@@ -152,9 +152,7 @@ dg.progress(X, fun = Lest, \dots,
   Pushing the envelope: extensions of graphical
   Monte Carlo tests. Unpublished manuscript.
 
-  Baddeley, A., Rubak, E. and Turner, R. (2015)
-  \emph{Spatial Point Patterns: Methodology and Applications with R}.
-  Chapman and Hall/CRC Press, Boca Raton, FL.
+  \baddrubaturnbook
 
   Dao, N.A. and Genton, M. (2014)
   A Monte Carlo adjusted goodness-of-fit test for

@@ -198,7 +198,6 @@ pcfinhom(X, lambda = NULL, ..., r = NULL,
   \code{\link{Kinhom}}
 }
 \examples{
-  data(residualspaper)
   X <- residualspaper$Fig4b
   plot(pcfinhom(X, stoyan=0.2, sigma=0.1))
   if(require("spatstat.model")) {

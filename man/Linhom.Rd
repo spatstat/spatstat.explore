@@ -79,16 +79,12 @@
   \code{\link{pcf}}
 }
 \examples{
- data(japanesepines)
  X <- japanesepines
  L <- Linhom(X, sigma=0.1)
  plot(L, main="Inhomogeneous L function for Japanese Pines")
 }
 \author{\adrian
-  
-  
   and \rolf
-  
 }
 \keyword{spatial}
 \keyword{nonparametric}

@@ -86,7 +86,6 @@
   \code{\link{bw.frac}}.
 }
 \examples{
-  data(lansing)
   attach(split(lansing))
   b <- bw.diggle(hickory)
   plot(b, ylim=c(-2, 0), main="Cross validation for hickories")

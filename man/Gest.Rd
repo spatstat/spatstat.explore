@@ -214,7 +214,6 @@ Gest(X, r=NULL, breaks=NULL, \dots,
   \code{\link{kaplan.meier}}
 }
 \examples{
-  data(cells)
   G <- Gest(cells)
   plot(G)
 
@@ -231,10 +230,7 @@ Gest(X, r=NULL, breaks=NULL, \dots,
   }
 }
 \author{\adrian
-  
-  
   and \rolf
-  
 }
 \keyword{spatial}
 \keyword{nonparametric}

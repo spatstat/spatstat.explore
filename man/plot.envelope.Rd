@@ -39,7 +39,6 @@
   control the plot.
 }
 \examples{
-   data(cells)
    E <- envelope(cells, Kest, nsim=19)
    plot(E)
    plot(E, sqrt(./pi) ~ r)
@@ -49,10 +48,7 @@
   \code{\link{plot.fv}}
 }
 \author{\adrian
-  
-  
   and \rolf
-  
 }
 \keyword{spatial}
 \keyword{hplot}

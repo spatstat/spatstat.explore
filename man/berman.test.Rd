@@ -160,7 +160,6 @@ berman.test(...)
 }
 \examples{
    # Berman's data
-   data(copper)
    X <- copper$SouthPoints
    L <- copper$SouthLines
    D <- distmap(L, eps=1)

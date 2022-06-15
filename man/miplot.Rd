@@ -50,12 +50,8 @@ miplot(X, ...)
   \code{\link{quadratcount}}
 }
 \examples{
- data(longleaf)
  miplot(longleaf)
  opa <- par(mfrow=c(2,3))
- data(cells)
- data(japanesepines)
- data(redwood)
  plot(cells)
  plot(japanesepines)
  plot(redwood)
@@ -65,10 +61,7 @@ miplot(X, ...)
  par(opa)
 }
 \author{\adrian
-  
-  
   and \rolf
-  
 }
 \keyword{spatial}
 \keyword{nonparametric}

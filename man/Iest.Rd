@@ -128,17 +128,13 @@
   \code{\link{Jest}}
 }
 \examples{
-   data(amacrine)
    Ic <- Iest(amacrine)
    plot(Ic, main="Amacrine Cells data")
    # values are below I= 0, suggesting negative association
    # between 'on' and 'off' cells.
 }
 \author{\adrian
-  
-  
   and \rolf
-  
 }
 \keyword{spatial}
 \keyword{nonparametric}

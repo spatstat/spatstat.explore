@@ -399,9 +399,7 @@
   plot(density(larynx, sigma=2, weights=1/D))
 }
 \references{
-  Baddeley, A., Rubak, E. and Turner, R. (2015)
-  \emph{Spatial Point Patterns: Methodology and Applications with R}.
-  Chapman and Hall/CRC Press.
+  \baddrubaturnbook
   
   Diggle, P.J. (1985)
   A kernel method for smoothing point process data.

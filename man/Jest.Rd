@@ -229,7 +229,6 @@
   \code{\link{kaplan.meier}}
 }
 \examples{
-   data(cells)
    J <- Jest(cells, 0.01)
    plot(J, main="cells data")
    # values are far above J = 1, indicating regular pattern
@@ -240,10 +239,7 @@
    # values are below J = 1, indicating clustered pattern
 }
 \author{\adrian
-  
-  
   and \rolf
-  
 }
 \keyword{spatial}
 \keyword{nonparametric}

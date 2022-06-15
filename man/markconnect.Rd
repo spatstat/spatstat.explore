@@ -172,7 +172,6 @@ markconnect(X, i, j, r=NULL,
 \examples{
     # Hughes' amacrine data
     # Cells marked as 'on'/'off'
-    data(amacrine)
     M <- markconnect(amacrine, "on", "off")
     plot(M)
 
@@ -180,10 +179,7 @@ markconnect(X, i, j, r=NULL,
     plot(alltypes(amacrine, markconnect))
 }
 \author{\adrian
-  
-  
   and \rolf
-  
 }
 \keyword{spatial}
 \keyword{nonparametric}

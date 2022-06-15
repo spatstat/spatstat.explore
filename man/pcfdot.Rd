@@ -163,16 +163,12 @@
   \code{\link{Kdot}}
 }
 \examples{
- data(amacrine)
  p <- pcfdot(amacrine, "on")
  p <- pcfdot(amacrine, "on", stoyan=0.1)
  plot(p)
 }
 \author{\adrian
-  
-  
   and \rolf
-  
 }
 \keyword{spatial}
 \keyword{nonparametric}

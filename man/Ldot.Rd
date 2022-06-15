@@ -72,15 +72,11 @@
   \code{\link{Lest}}
 }
 \examples{
- data(amacrine)
  L <- Ldot(amacrine, "off")
  plot(L)
 }
 \author{\adrian
-  
-  
   and \rolf
-  
 }
 \keyword{spatial}
 \keyword{nonparametric}

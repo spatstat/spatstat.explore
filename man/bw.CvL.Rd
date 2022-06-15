@@ -90,11 +90,11 @@
  bandwidth selection for kernel estimators of spatial intensity functions,
  \emph{Biometrika}, \bold{105}, 455-462.
 }
-\author{Ottmar Cronie
-  \email{ottmar.cronie@umu.se}
-  and Marie-Colette van Lieshout
-  \email{Marie-Colette.van.Lieshout@cwi.nl}
-  adapted for \pkg{spatstat} by
+\author{
+  \ottmar
+  and
+  \colette.
+  Adapted for \pkg{spatstat} by
   \spatstatAuthors.
 }
 \keyword{spatial}

@@ -135,14 +135,10 @@ pcfdot.inhom(X, i, lambdaI = NULL, lambdadot = NULL, ...,
   \code{\link{pcfcross.inhom}}
 }
 \examples{
-  data(amacrine)
   plot(pcfdot.inhom(amacrine, "on", stoyan=0.1), legendpos="bottom")
 }
 \author{\adrian
-  
-  
   and \rolf
-  
 }
 \keyword{spatial}
 \keyword{nonparametric}

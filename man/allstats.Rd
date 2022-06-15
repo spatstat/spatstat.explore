@@ -68,10 +68,7 @@
   \code{cbind(trans,theo) ~ r} for K.
 }
 \author{\adrian
-  
-  
   and \rolf
-  
 }
 \seealso{
          \code{\link{plot.solist}},
@@ -84,7 +81,6 @@
 }
 
 \examples{
-	data(swedishpines)
         a <- allstats(swedishpines,dataname="Swedish Pines")
         if(interactive()) {
         plot(a)

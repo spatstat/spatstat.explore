@@ -72,7 +72,6 @@ sharpen(X, \dots)
   \code{\link{Smooth.ppp}}.
 }
 \examples{
-   data(shapley)
    X <- unmark(shapley)
    \dontshow{
    if(!(interactive())) X <- rthin(X, 0.05)

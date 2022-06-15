@@ -225,7 +225,6 @@
   \code{\link{pcf}}
 }
 \examples{
-  data(bronzefilter)
   X <- unmark(bronzefilter)
   K <- Kscaled(X)
   if(require("spatstat.model")) {

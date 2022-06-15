@@ -81,15 +81,11 @@
   \code{\link{pcf}}
 }
 \examples{
- data(cells)
  L <- Lest(cells)
  plot(L, main="L function for cells")
 }
 \author{\adrian
-  
-  
   and \rolf
-  
 }
 \keyword{spatial}
 \keyword{nonparametric}

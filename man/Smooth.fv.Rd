@@ -75,10 +75,7 @@
   of the same format.
 }
 \author{\adrian
-  
-  
   and \rolf
-  
 }
 \seealso{
   \code{\link{Smooth}},
@@ -88,7 +85,6 @@
   \code{\link[stats]{smooth.spline}}
 }
 \examples{
-   data(cells)
    G <- Gest(cells)
    plot(G)
    plot(Smooth(G, df=9), add=TRUE)

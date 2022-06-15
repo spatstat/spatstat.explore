@@ -52,7 +52,6 @@ bw.stoyan(X, co=0.15)
   \code{\link{bw.relrisk}}
 }
 \examples{
-  data(shapley)
   bw.stoyan(shapley)
 }
 \references{
@@ -62,10 +61,7 @@ bw.stoyan(X, co=0.15)
   John Wiley and Sons.
 }
 \author{\adrian
-  
-  
   and \rolf
-  
 }
 \keyword{spatial}
 \keyword{methods}

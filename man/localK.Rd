@@ -100,7 +100,6 @@
   \code{\link{localLinhom}}.
 }
 \examples{
-  data(ponderosa)
   X <- ponderosa
 
   # compute all the local L functions
@@ -125,10 +124,7 @@
   points(X, pch=16, cex=0.5)
 }
 \author{\adrian
-  
-  
   and \rolf
-  
 }
 \keyword{spatial}
 \keyword{nonparametric}

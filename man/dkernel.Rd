@@ -85,8 +85,6 @@ rkernel(n, kernel = "gaussian", mean = 0, sd = 1)
   \code{\link{kernel.factor}}
 }
 \author{\adrian
-  \email{adrian@maths.uwa.edu.au}
-  
   and Martin Hazelton
 }
 \keyword{methods}
