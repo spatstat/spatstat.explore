@@ -4,7 +4,7 @@
 #  Class of optimised bandwidths
 #  Plotting the object displays the optimisation criterion
 #
-#  $Revision: 1.33 $  $Date: 2022/01/04 05:30:06 $
+#  $Revision: 1.34 $  $Date: 2022/06/17 03:18:56 $
 #
 
 bw.optim <- function(cv, h,
@@ -14,6 +14,7 @@ bw.optim <- function(cv, h,
                      criterion="cross-validation",
                      optimum = c("min", "max"), 
                      warnextreme=TRUE, hargnames=NULL,
+                     yexp=NULL,
                      unitname=NULL) {
   if(missing(cvname) || is.null(cvname)) cvname <- deparse(substitute(cv))
   if(missing(hname) || is.null(hname)) hname <- deparse(substitute(h))
@@ -46,6 +47,7 @@ bw.optim <- function(cv, h,
   attr(result, "info") <- list(...)
   attr(result, "criterion") <- criterion
   attr(result, "units") <- unitname
+  attr(result, "yexp") <- yexp
   class(result) <- "bw.optim"
   return(result)
 }
@@ -84,7 +86,9 @@ as.fv.bw.optim <- function(x) {
   if(ncol(df) > 2)
     descrip <- c(descrip, paste("Additional variable", sQuote(dfnames[-(1:2)])))
   labl <- c(hname, paste0(dfnames[-1L], paren(hname)))
-  yexp <- substitute(CV(h), list(CV=as.name(cvname), h=as.name(hname)))
+  yexp <- attr(x, "yexp") %orifnull% substitute(CV(h),
+                                                list(CV=as.name(cvname),
+                                                     h=as.name(hname)))
   xfv <- fv(df,
             argu=hname,
             ylab=yexp,

@@ -204,7 +204,7 @@ bermantestEngine(model, covariate, which, alternative, \dots,
 bind.ratfv(x, numerator, denominator, labl, desc, preferred,
            ratio, quotient)
 bw.optim(cv, h, iopt, \dots, cvname, hname, criterion,
-         optimum, warnextreme, hargnames, unitname)
+         optimum, warnextreme, hargnames, yexp, unitname)
 calc.DR(COV, z, Dim)
 calc.NNIR(COV, z, pos, Dim)
 calc.SAVE(COV, z, Dim)
