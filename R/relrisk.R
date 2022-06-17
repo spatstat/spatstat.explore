@@ -3,7 +3,7 @@
 #
 #   Estimation of relative risk
 #
-#  $Revision: 1.53 $  $Date: 2022/03/28 07:05:55 $
+#  $Revision: 1.54 $  $Date: 2022/06/17 02:42:16 $
 #
 
 relrisk <- function(X, ...) UseMethod("relrisk")
@@ -408,9 +408,13 @@ bw.stoyan <- function(X, co=0.15) {
 }
 
 
-bw.relrisk <- function(X, method="likelihood",
-                       nh=spatstat.options("n.bandwidth"),
-                       hmin=NULL, hmax=NULL, warn=TRUE) {
+bw.relrisk <- function(X, ...) {
+  UseMethod("bw.relrisk")
+}
+
+bw.relrisk.ppp <- function(X, method="likelihood", ...,
+                           nh=spatstat.options("n.bandwidth"),
+                           hmin=NULL, hmax=NULL, warn=TRUE) {
   stopifnot(is.ppp(X))
   stopifnot(is.multitype(X))
   ## rearrange in ascending order of x-coordinate (for C code)
@@ -471,7 +475,7 @@ bw.relrisk <- function(X, method="likelihood",
   ## compute cross-validation criterion
   switch(method,
          likelihood={
-           methodname <- "Likelihood"
+           methodname <- "Negative Likelihood"
            ## for efficiency, only compute the estimate of p_j(x_i)
            ## when j = m_i = mark of x_i.
            Dthis <- numeric(n)

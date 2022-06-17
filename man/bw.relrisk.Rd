@@ -1,5 +1,6 @@
 \name{bw.relrisk}
 \alias{bw.relrisk}
+\alias{bw.relrisk.ppp}
 \title{
   Cross Validated Bandwidth Selection for Relative Risk Estimation
 }
@@ -8,8 +9,11 @@
   for the estimation of relative risk.
 }
 \usage{
-   bw.relrisk(X, method = "likelihood", nh = spatstat.options("n.bandwidth"),
-   hmin=NULL, hmax=NULL, warn=TRUE)
+   bw.relrisk(X, ...)
+
+   \method{bw.relrisk}{ppp}(X, method = "likelihood", \dots,
+           nh = spatstat.options("n.bandwidth"),
+           hmin=NULL, hmax=NULL, warn=TRUE)
 }
 
 \arguments{
@@ -37,6 +41,7 @@
     the cross-validation criterion occurs at one of the ends of the
     search interval.
   }
+  \item{\dots}{Ignored.}
 }
 \details{
   This function selects an appropriate bandwidth for the nonparametric

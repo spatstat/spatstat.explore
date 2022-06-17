@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 2.999-999.005
+        CHANGES IN spatstat.explore VERSION 2.999-999.006
 
 OVERVIEW
 
@@ -41,7 +41,9 @@ SIGNIFICANT USER-VISIBLE CHANGES
     This function now works for point patterns in three dimensions (class 'pp3')
     and point patterns on a network (class 'lpp').
     
-   
+    o bw.relrisk
+    This function is now generic, with a method for class 'ppp'
+    
         CHANGES IN spatstat.core VERSION 2.4-4.010
 
 OVERVIEW
