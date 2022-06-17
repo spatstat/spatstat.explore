@@ -17,7 +17,7 @@ cat(paste("--------- Executing",
 #'
 #'   Various K and L functions and pcf
 #'
-#'   $Revision: 1.42 $  $Date: 2022/05/23 03:42:49 $
+#'   $Revision: 1.43 $  $Date: 2022/06/17 01:47:08 $
 #'
 #'   Assumes 'EveryStart.R' was run
 
@@ -198,21 +198,21 @@ local({
     a <- localLcross.inhom(Amacrine, from="off", to="on", lambdaX=Zed,
                            correction="translate")
     #'
-    #' cases of resolve.lambda.cross
+    #' cases of resolve.lambdacross
     #'
-    h <- resolve.lambda.cross(Amacrine, moff, !moff)
-    h <- resolve.lambda.cross(Amacrine, moff, !moff, lambdaX=Zed)
-    h <- resolve.lambda.cross(Amacrine, moff, !moff, lambdaX=Lum)
-    h <- resolve.lambda.cross(Amacrine, moff, !moff,
+    h <- resolve.lambdacross(Amacrine, moff, !moff)
+    h <- resolve.lambdacross(Amacrine, moff, !moff, lambdaX=Zed)
+    h <- resolve.lambdacross(Amacrine, moff, !moff, lambdaX=Lum)
+    h <- resolve.lambdacross(Amacrine, moff, !moff,
                               lambdaI=Zed[["off"]], lambdaJ=Zed[["on"]])
-    h <- resolve.lambda.cross(Amacrine, moff, !moff,
+    h <- resolve.lambdacross(Amacrine, moff, !moff,
                               lambdaI=Lum[moff], lambdaJ=Lum[!moff])
     d <- densityfun(unmark(Amacrine), sigma=0.1)
     dm <- lapply(split(Amacrine), densityfun, sigma=0.1)
-    h <- resolve.lambda.cross(Amacrine, moff, !moff, lambdaX=d)
-    h <- resolve.lambda.cross(Amacrine, moff, !moff,
+    h <- resolve.lambdacross(Amacrine, moff, !moff, lambdaX=d)
+    h <- resolve.lambdacross(Amacrine, moff, !moff,
                               lambdaI=dm[["off"]], lambdaJ=dm[["on"]])
-    h <- resolve.lambda.cross(Amacrine, moff, !moff,
+    h <- resolve.lambdacross(Amacrine, moff, !moff,
                               lambdaX=function(x,y,m){ d(x,y) })
     #'
     #' multitype inhomogeneous pcf

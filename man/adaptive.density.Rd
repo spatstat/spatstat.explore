@@ -44,7 +44,7 @@ adaptive.density(X, \dots, method=c("voronoi","kernel"))
   plot(adaptive.density(nztrees, 1), main="Voronoi estimate")
 }
 \author{
-  \spatstatAuthors and Mehdi Moradi.
+  \spatstatAuthors and \mehdi.
 }
 \keyword{spatial}
 \keyword{methods}

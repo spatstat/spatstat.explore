@@ -151,7 +151,7 @@ densityVoronoi(X, \dots)
   plot(densityVoronoi(nztrees, f=0.5, nrep=nr), main="smoothed Voronoi estimate")
 }
 \author{
-  \spatstatAuthors and Mehdi Moradi.
+  \spatstatAuthors and \mehdi.
 }
 \keyword{spatial}
 \keyword{methods}

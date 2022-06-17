@@ -133,8 +133,11 @@
 \alias{resolve.2D.kernel}
 \alias{resolve.foxall.window}
 \alias{resolve.lambda}
+\alias{resolve.lambda.ppp}
+\alias{resolve.lambdacross}
+\alias{resolve.lambdacross.ppp}
 \alias{resolve.reciplambda}
-\alias{resolve.lambda.cross}
+\alias{resolve.reciplambda.ppp}
 \alias{resolveEinfo}
 \alias{rhohatEngine}
 \alias{rhohatCalc}
@@ -364,13 +367,16 @@ rename.fv(x, fname, ylab, yexp)
 resolve.2D.kernel(\dots,
             sigma, varcov, x, mindist, adjust, bwfun, allow.zero)
 resolve.foxall.window(X, Y, W, warn.trim)
-resolve.lambda(X, lambda, \dots,
+resolve.lambda(X, lambda, \dots)
+\method{resolve.lambda}{ppp}(X, lambda, \dots,
                sigma, varcov, leaveoneout, update, check)
-resolve.reciplambda(X, lambda, reciplambda, \dots,
+resolve.lambdacross(X, I, J, lambdaI, lambdaJ, \dots)
+\method{resolve.lambdacross}{ppp}(X, I, J, lambdaI, lambdaJ, \dots,
+         lambdaX, sigma, varcov, leaveoneout, update, lambdaIJ,
+         Iexplain, Jexplain)
+resolve.reciplambda(X, lambda, reciplambda, \dots)
+\method{resolve.reciplambda}{ppp}(X, lambda, reciplambda, \dots,
                     sigma, varcov, leaveoneout, update, check)
-resolve.lambda.cross(X, I, J, lambdaI, lambdaJ, \dots, lambdaX,
-                     sigma, varcov, leaveoneout, update, lambdaIJ,
-                     Iexplain, Jexplain)
 resolveEinfo(x, what, fallback, warn, atomic)
 rhohatEngine(model, covariate, reference, volume, \dots,
                subset, weights, method, horvitz, smoother,

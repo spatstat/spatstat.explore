@@ -152,13 +152,13 @@ localLcross.inhom <- function(X, from, to, lambdaFrom = NULL, lambdaTo = NULL, .
 
     weighted <- !is.null(lambdaFrom) || !is.null(lambdaTo) || !is.null(lambdaX)
     if(weighted){
-      lambdas <- resolve.lambda.cross(X, from, to, lambdaFrom, lambdaTo, ...,
-                                      lambdaX = lambdaX,
-                                      sigma = sigma, varcov = varcov,
-                                      leaveoneout = leaveoneout,
-                                      update = update,
-                                      Iexplain=Iexplain,
-                                      Jexplain=Jexplain)
+      lambdas <- resolve.lambdacross(X, from, to, lambdaFrom, lambdaTo, ...,
+                                     lambdaX = lambdaX,
+                                     sigma = sigma, varcov = varcov,
+                                     leaveoneout = leaveoneout,
+                                     update = update,
+                                     Iexplain=Iexplain,
+                                     Jexplain=Jexplain)
       lambdaFrom <- lambdas$lambdaI
       lambdaTo <- lambdas$lambdaJ
     }

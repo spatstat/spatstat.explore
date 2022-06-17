@@ -205,15 +205,15 @@ function(X, I, J, lambdaI=NULL, lambdaJ=NULL,
   rmax <- breaks$max
 
   ## lambda values
-  a <- resolve.lambda.cross(X=X, I=I, J=J,
-                            lambdaI=lambdaI,
-                            lambdaJ=lambdaJ,
-                            lambdaX=lambdaX,
-                            lambdaIJ=lambdaIJ,
-                            ...,
-                            sigma=sigma, varcov=varcov,
-                            leaveoneout=leaveoneout, update=update,
-                            Iexplain=Iname, Jexplain=Jname)
+  a <- resolve.lambdacross(X=X, I=I, J=J,
+                           lambdaI=lambdaI,
+                           lambdaJ=lambdaJ,
+                           lambdaX=lambdaX,
+                           lambdaIJ=lambdaIJ,
+                           ...,
+                           sigma=sigma, varcov=varcov,
+                           leaveoneout=leaveoneout, update=update,
+                           Iexplain=Iname, Jexplain=Jname)
   lambdaI <- a$lambdaI
   lambdaJ <- a$lambdaJ
   lambdaIJ <- a$lambdaIJ

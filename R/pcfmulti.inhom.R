@@ -154,14 +154,14 @@ pcfmulti.inhom <- function(X, I, J, lambdaI=NULL, lambdaJ=NULL, ...,
   
   ########## intensity values #########################
 
-  a <- resolve.lambda.cross(X=X, I=I, J=J,
-                            lambdaI=lambdaI,
-                            lambdaJ=lambdaJ,
-                            lambdaX=lambdaX,
-                            ...,
-                            sigma=sigma, varcov=varcov,
-                            leaveoneout=leaveoneout, update=update,
-                            Iexplain=Iname, Jexplain=Jname)
+  a <- resolve.lambdacross(X=X, I=I, J=J,
+                           lambdaI=lambdaI,
+                           lambdaJ=lambdaJ,
+                           lambdaX=lambdaX,
+                           ...,
+                           sigma=sigma, varcov=varcov,
+                           leaveoneout=leaveoneout, update=update,
+                           Iexplain=Iname, Jexplain=Jname)
   lambdaI <- a$lambdaI
   lambdaJ <- a$lambdaJ
   danger    <- a$danger
