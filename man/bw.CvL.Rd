@@ -72,6 +72,8 @@
   \code{\link{bw.scott}},
   \code{\link{bw.ppl}},
   \code{\link{bw.frac}}.
+
+  For adaptive smoothing bandwidths, use \code{\link{bw.CvL.adaptive}}.
 }
 \examples{
   if(interactive()) {

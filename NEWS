@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 2.999-999.007
+        CHANGES IN spatstat.explore VERSION 2.999-999.008
 
 OVERVIEW
 
@@ -8,9 +8,18 @@ OVERVIEW
     o Package will be initialised at version 3.0-0.
       Versions less than 3 are developmental.
 
+    o We thank Marie-Colette van Lieshout for contributions.
+    
     o Periodic edge correction for K function.
 
+    o Bandwidth selection for adaptive kernel estimation of intensity.
+
     o Minor improvements.
+
+NEW FUNCTIONS
+
+    o bw.CvL.adaptive
+    Bandwidth selection for adaptive kernel estimation of intensity.
     
 SIGNIFICANT USER-VISIBLE CHANGES
 
@@ -43,7 +52,13 @@ SIGNIFICANT USER-VISIBLE CHANGES
     
     o bw.relrisk
     This function is now generic, with a method for class 'ppp'
-    
+
+    o compileK, compilepcf
+    These functions have a new argument 'samplesize'.
+    If 'ratio=TRUE' the numerator and denominator will be rescaled
+    by a common factor so that the denominator is equal to 'samplesize'.
+    The default value of 'samplesize' is the number of ordered pairs of
+    distinct points, n(n-1). 
         CHANGES IN spatstat.core VERSION 2.4-4.010
 
 OVERVIEW

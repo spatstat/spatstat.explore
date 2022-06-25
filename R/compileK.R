@@ -3,11 +3,11 @@
 # Function to take a matrix of pairwise distances
 # and compile a 'K' function in the format required by spatstat.
 #
-#   $Revision: 1.10 $  $Date: 2018/07/21 04:05:36 $
+#   $Revision: 1.12 $  $Date: 2022/06/25 04:42:20 $
 # -------------------------------------------------------------------
 
 compileK <- function(D, r, weights=NULL, denom=1, check=TRUE, ratio=FALSE,
-                     fname="K") {
+                     fname="K", samplesize) {
   # process r values
   breaks <- breakpts.from.r(r)
   rmax <- breaks$max
@@ -28,30 +28,40 @@ compileK <- function(D, r, weights=NULL, denom=1, check=TRUE, ratio=FALSE,
   counts <- whist(Dvalues, breaks=breaks$val, weights=wvalues)
   # cumulative counts: number of D values in [0, r[k])
   Kcount <- cumsum(counts)
-  # divide by appropriate denominator
+  # calculate estimate
   Kratio <- Kcount/denom
   # wrap it up as an 'fv' object for use in spatstat
   df <- data.frame(r=r, est=Kratio)
-  if(!ratio) {
-    K <- fv(df, "r", quote(K(r)), "est", . ~ r , c(0,rmax),
-            c("r", makefvlabel(NULL, "hat", fname)), 
-            c("distance argument r", "estimated %s"),
-            fname=fname)
-  } else {
-    num <- data.frame(r=r, est=Kcount)
-    den <- data.frame(r=r, est=denom)
-    K <- ratfv(df=NULL, numer=num, denom=den,
-               "r", quote(K(r)), "est", . ~ r , c(0,rmax),
-               c("r", makefvlabel(NULL, "hat", fname)), 
-               c("distance argument r", "estimated %s"),
+  labl <- c("r", makefvlabel(NULL, "hat", fname))
+  K <- fv(df, "r", quote(K(r)), "est", . ~ r , c(0,rmax), labl,
+          c("distance argument r", "estimated %s"),
+          fname=fname)
+  if(ratio) {
+    if(missing(samplesize) || is.null(samplesize)) {
+      nX <- nrow(D)
+      samplesize <- as.numeric(nX) * (nX-1)
+    }
+    ## adjust numer/denom so that denominator is sample size
+    Numer <- Kcount * samplesize/denom
+    Denom <- samplesize
+    ## create numerator and denominator as fv objects
+    Knum <- fv(data.frame(r=r, est=Numer),
+               "r", quote(K(r)), "est", . ~ r , c(0,rmax), labl,
+               c("distance argument r", "numerator of estimated %s"),
                fname=fname)
+    Kden <- fv(data.frame(r=r, est=Denom),
+               "r", quote(K(r)), "est", . ~ r , c(0,rmax), labl,
+               c("distance argument r", "denominator of estimated %s"),
+               fname=fname)
+    K <- rat(K, Knum, Kden, check=FALSE)
   }
   return(K)
 }
 
 
 compilepcf <- function(D, r, weights=NULL, denom=1, check=TRUE,
-                       endcorrect=TRUE, ratio=FALSE, ..., fname="g") {
+                       endcorrect=TRUE, ratio=FALSE, ...,
+                       fname="g", samplesize) {
   # process r values
   breaks <- breakpts.from.r(r)
   if(!breaks$even)
@@ -80,9 +90,9 @@ compilepcf <- function(D, r, weights=NULL, denom=1, check=TRUE,
   rmin <- min(r)
   rmax <- max(r)
   nr   <- length(r)
-  den <- density(Dvalues, weights=normwvalues,
-                 from=rmin, to=rmax, n=nr, ...)
-  gval <- den$y * totwt
+  Ddens <- density(Dvalues, weights=normwvalues,
+                   from=rmin, to=rmax, n=nr, ...)
+  gval <- Ddens$y * totwt
   # normalise
   gval <- gval/denom
   # edge effect correction at r = 0
@@ -90,11 +100,11 @@ compilepcf <- function(D, r, weights=NULL, denom=1, check=TRUE,
     one <- do.call(density,
                    resolve.defaults(
                                     list(seq(rmin,rmax,length=512)),
-                                    list(bw=den$bw, adjust=1),
+                                    list(bw=Ddens$bw, adjust=1),
                                     list(from=rmin, to=rmax, n=nr),
                                     list(...)))
     onefun <- approxfun(one$x, one$y, rule=2)
-    gval <- gval /((rmax-rmin) * onefun(den$x))
+    gval <- gval /((rmax-rmin) * onefun(Ddens$x))
   }
   # wrap it up as an 'fv' object for use in spatstat
   df <- data.frame(r=r, est=gval)
@@ -104,14 +114,18 @@ compilepcf <- function(D, r, weights=NULL, denom=1, check=TRUE,
     	    c("distance argument r", "estimated %s"),
 	    fname=fname)
   } else {
-      num <- data.frame(r=r, est=gval * denom)
-      den <- data.frame(r=r, est=denom)
-      g <- ratfv(df=NULL, numer=num, denom=den,
-                 "r", quote(g(r)), "est", . ~ r , c(0,rmax),
-                 c("r", makefvlabel(NULL, "hat", fname)), 
-                 c("distance argument r", "estimated %s"),
-                 fname=fname)
+    if(missing(samplesize) || is.null(samplesize)) {
+      nX <- nrow(D)
+      samplesize <- as.numeric(nX) * (nX-1)
+    }
+    num <- data.frame(r=r, est=gval * samplesize)
+    den <- data.frame(r=r, est=samplesize)
+    g <- ratfv(df=NULL, numer=num, denom=den,
+               "r", quote(g(r)), "est", . ~ r , c(0,rmax),
+               c("r", makefvlabel(NULL, "hat", fname)), 
+               c("distance argument r", "estimated %s"),
+               fname=fname)
   }
-  attr(g, "bw") <- den$bw
+  attr(g, "bw") <- Ddens$bw
   return(g)
 }

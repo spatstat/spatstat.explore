@@ -13,11 +13,12 @@
 }
 \usage{
 compileK(D, r, weights = NULL, denom = 1,
-         check = TRUE, ratio = FALSE, fname = "K")
+         check = TRUE, ratio = FALSE, fname = "K",
+         samplesize)
 
 compilepcf(D, r, weights = NULL, denom = 1,
          check = TRUE, endcorrect = TRUE, ratio=FALSE,
-	 \dots, fname = "g")
+	 \dots, fname = "g", samplesize)
 }
 \arguments{
   \item{D}{
@@ -54,6 +55,10 @@ compilepcf(D, r, weights = NULL, denom = 1,
   }
   \item{fname}{
     Character string giving the name of the function being estimated.
+  }
+  \item{samplesize}{
+    The sample size that should be used as the denominator when
+    \code{ratio=TRUE}.
   }
 }
 \details{
@@ -100,6 +105,12 @@ compilepcf(D, r, weights = NULL, denom = 1,
   and has attributes containing the numerator and denominator
   of the function estimate. This allows function estimates from
   several datasets to be pooled using \code{\link{pool}}.
+
+  When \code{ratio=TRUE}, the numerator and denominator
+  are rescaled by a common factor
+  so that the denominator is equal to \code{samplesize}.
+  The default value of \code{samplesize} is the 
+  number of ordered pairs of data points.
 }
 \value{
   An object of class \code{"fv"} representing the estimated function.
