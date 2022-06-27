@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 2.999-999.008
+        CHANGES IN spatstat.explore VERSION 2.999-999.009
 
 OVERVIEW
 
@@ -57,8 +57,7 @@ SIGNIFICANT USER-VISIBLE CHANGES
     These functions have a new argument 'samplesize'.
     If 'ratio=TRUE' the numerator and denominator will be rescaled
     by a common factor so that the denominator is equal to 'samplesize'.
-    The default value of 'samplesize' is the number of ordered pairs of
-    distinct points, n(n-1). 
+
         CHANGES IN spatstat.core VERSION 2.4-4.010
 
 OVERVIEW

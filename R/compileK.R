@@ -3,11 +3,11 @@
 # Function to take a matrix of pairwise distances
 # and compile a 'K' function in the format required by spatstat.
 #
-#   $Revision: 1.12 $  $Date: 2022/06/25 04:42:20 $
+#   $Revision: 1.13 $  $Date: 2022/06/27 01:22:02 $
 # -------------------------------------------------------------------
 
 compileK <- function(D, r, weights=NULL, denom=1, check=TRUE, ratio=FALSE,
-                     fname="K", samplesize) {
+                     fname="K", samplesize=denom) {
   # process r values
   breaks <- breakpts.from.r(r)
   rmax <- breaks$max
@@ -37,13 +37,14 @@ compileK <- function(D, r, weights=NULL, denom=1, check=TRUE, ratio=FALSE,
           c("distance argument r", "estimated %s"),
           fname=fname)
   if(ratio) {
-    if(missing(samplesize) || is.null(samplesize)) {
-      nX <- nrow(D)
-      samplesize <- as.numeric(nX) * (nX-1)
+    if(missing(samplesize)) {
+      Numer <- Kcount
+      Denom <- samplesize
+    } else {
+      ## adjust numer/denom so that denominator is sample size
+      Numer <- Kcount * samplesize/denom
+      Denom <- samplesize
     }
-    ## adjust numer/denom so that denominator is sample size
-    Numer <- Kcount * samplesize/denom
-    Denom <- samplesize
     ## create numerator and denominator as fv objects
     Knum <- fv(data.frame(r=r, est=Numer),
                "r", quote(K(r)), "est", . ~ r , c(0,rmax), labl,
@@ -61,7 +62,7 @@ compileK <- function(D, r, weights=NULL, denom=1, check=TRUE, ratio=FALSE,
 
 compilepcf <- function(D, r, weights=NULL, denom=1, check=TRUE,
                        endcorrect=TRUE, ratio=FALSE, ...,
-                       fname="g", samplesize) {
+                       fname="g", samplesize=denom) {
   # process r values
   breaks <- breakpts.from.r(r)
   if(!breaks$even)
@@ -114,10 +115,6 @@ compilepcf <- function(D, r, weights=NULL, denom=1, check=TRUE,
     	    c("distance argument r", "estimated %s"),
 	    fname=fname)
   } else {
-    if(missing(samplesize) || is.null(samplesize)) {
-      nX <- nrow(D)
-      samplesize <- as.numeric(nX) * (nX-1)
-    }
     num <- data.frame(r=r, est=gval * samplesize)
     den <- data.frame(r=r, est=samplesize)
     g <- ratfv(df=NULL, numer=num, denom=den,
