@@ -8,7 +8,7 @@
 ##
 ##     and its derivative estimated by kernel smoothing
 ##
-##  $Revision: 1.10 $ $Date: 2019/01/13 07:33:20 $
+##  $Revision: 1.12 $ $Date: 2022/06/27 07:45:30 $
 
 pairorient <- function(X, r1, r2, ...,
                        cumulative=FALSE,
@@ -70,6 +70,7 @@ pairorient <- function(X, r1, r2, ...,
   }
   close <- close[ok, , drop=FALSE]
   ANGLE <- with(close, atan2(dy, dx) * Convert) %% FullCircle
+  nangles <- length(ANGLE)
 
   ## initialise output object
   Nphi <- 512
@@ -81,7 +82,7 @@ pairorient <- function(X, r1, r2, ...,
             "theoretical isotropic %s")
   Oletter <- if(cumulative) "O" else "o"
   Osymbol <- as.name(Oletter)
-  OO <- ratfv(Odf, NULL, denom=nrow(close),
+  OO <- ratfv(Odf, NULL, denom=nangles,
               argu="phi",
               ylab=substitute(fn[R1,R2](phi), list(R1=r1, R2=r2, fn=Osymbol)),
               valu="theo",
@@ -96,8 +97,6 @@ pairorient <- function(X, r1, r2, ...,
 
   ## ^^^^^^^^^^^^^^^  Compute edge corrected estimates ^^^^^^^^^^^^^^^^
 
-  nangles <- length(ANGLE)
-  
   if(any(correction == "none")) {
     ## uncorrected! For demonstration purposes only!
     if(cumulative) {

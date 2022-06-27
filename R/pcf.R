@@ -28,8 +28,9 @@ pcf.ppp <- function(X, ..., r=NULL,
   win <- Window(X)
   areaW <- area(win)
   npts <- npoints(X)
+  samplesize <- npairs <- npts * (npts - 1)
   lambda <- npts/areaW
-  lambda2area <- areaW * lambda^2
+  lambda2area <- npairs/areaW^2
 
   kernel <- match.kernel(kernel)
 
@@ -42,8 +43,9 @@ pcf.ppp <- function(X, ..., r=NULL,
       stop(paste(dQuote("domain"),
                  "is not a subset of the window of X"))
     # trick pcfdot() into doing it
-    indom <- factor(inside.owin(X$x, X$y, domain), levels=c(FALSE,TRUE))
-    g <- pcfdot(X %mark% indom,
+    indom <- inside.owin(X$x, X$y, domain)
+    marx <- factor(indom, levels=c(FALSE,TRUE))
+    g <- pcfdot(X %mark% marx,
                 i="TRUE",
                 r=r,
                 correction=correction, kernel=kernel, bw=bw, stoyan=stoyan,
@@ -54,8 +56,9 @@ pcf.ppp <- function(X, ..., r=NULL,
       g <- rebadge.fv(g, quote(g(r)), "g")
     } else {
       ## construct ratfv object
-      denom <- sum(indom == "TRUE") * lambda
-      g <- ratfv(as.data.frame(g), NULL, denom,
+      ninside <- sum(indom)
+      samplesize <- ninside * (npts-1)
+      g <- ratfv(as.data.frame(g), NULL, samplesize,
                  "r", quote(g(r)),
                  "theo", NULL, c(0, rmaxdefault), 
                  attr(g, "labl"), attr(g, "desc"), fname="g",
@@ -144,7 +147,7 @@ pcf.ppp <- function(X, ..., r=NULL,
   
   df <- data.frame(r=r, theo=rep.int(1,length(r)))
   out <- ratfv(df,
-               NULL, lambda2area,
+               NULL, samplesize,
                "r", quote(g(r)),
                "theo", NULL,
                alim,
@@ -164,20 +167,13 @@ pcf.ppp <- function(X, ..., r=NULL,
       gN <- kdenN$g
       bw.used <- attr(kdenN, "bw")
     } else gN <- undefined
-    if(!ratio) {
-      out <- bind.fv(out,
-                     data.frame(un=gN),
-                     "hat(%s)[un](r)",
-                     "uncorrected estimate of %s",
-                     "un")
-    } else {
-      out <- bind.ratfv(out,
-                        data.frame(un=gN * lambda2area),
-                        lambda2area,
-                        "hat(%s)[un](r)",
-                        "uncorrected estimate of %s",
-                        "un")
-    }
+    out <- bind.ratfv(out,
+                      quotient=data.frame(un=gN),
+                      denominator=samplesize,
+                      labl="hat(%s)[un](r)",
+                      desc="uncorrected estimate of %s",
+                      preferred="un",
+                      ratio=ratio)
   }
   
   if(any(correction=="translate")) {
@@ -188,20 +184,13 @@ pcf.ppp <- function(X, ..., r=NULL,
       gT <- kdenT$g
       bw.used <- attr(kdenT, "bw")
     } else gT <- undefined
-    if(!ratio) {
-      out <- bind.fv(out,
-                     data.frame(trans=gT),
-                     "hat(%s)[Trans](r)",
-                     "translation-corrected estimate of %s",
-                     "trans")
-    } else {
-      out <- bind.ratfv(out,
-                        data.frame(trans=gT * lambda2area),
-                        lambda2area,
-                        "hat(%s)[Trans](r)",
-                        "translation-corrected estimate of %s",
-                        "trans")
-    }
+    out <- bind.ratfv(out,
+                      quotient=data.frame(trans=gT),
+                      denominator=samplesize,
+                      labl="hat(%s)[Trans](r)",
+                      desc="translation-corrected estimate of %s",
+                      preferred="trans",
+                      ratio=ratio)
   }
 
   if(any(correction=="isotropic")) {
@@ -213,20 +202,13 @@ pcf.ppp <- function(X, ..., r=NULL,
       gR <- kdenR$g
       bw.used <- attr(kdenR, "bw")
     } else gR <- undefined
-    if(!ratio) {
-      out <- bind.fv(out,
-                     data.frame(iso=gR),
-                     "hat(%s)[Ripley](r)",
-                     "isotropic-corrected estimate of %s",
-                     "iso")
-    } else {
-      out <- bind.ratfv(out,
-                        data.frame(iso=gR * lambda2area),
-                        lambda2area,
-                        "hat(%s)[Ripley](r)",
-                        "isotropic-corrected estimate of %s",
-                        "iso")
-    }
+    out <- bind.ratfv(out,
+                      quotient=data.frame(iso=gR),
+                      denominator=samplesize,
+                      labl="hat(%s)[Ripley](r)",
+                      desc="isotropic-corrected estimate of %s",
+                      preferred="iso",
+                      ratio=ratio)
   }
   
   # sanity check
@@ -244,22 +226,12 @@ pcf.ppp <- function(X, ..., r=NULL,
     # isotropised set covariance of window
     gWbar <- as.function(rotmean(setcov(win), result="fv"))
     vest <- gr * intk2/(pi * r * gWbar(r) * lambda^2)
-    if(!ratio) {
-      out <- bind.fv(out,
-                     data.frame(v=vest),
-                     "v(r)",
-                     "approximate variance of %s",
-                     "v")
-    } else {
-      vden <- rep((npts-1)^2, length(vest))
-      vnum <- vden * vest
-      out <- bind.ratfv(out,
-                        data.frame(v=vnum),
-                        data.frame(v=vden),
-                        "v(r)", 
-                        "approximate variance of %s",
-                        "v")
-    }
+    out <- bind.ratfv(out,
+                      quotient=data.frame(v=vest),
+                      denominator=samplesize,
+                      labl="v(r)", 
+                      desc="approximate variance of %s",
+                      ratio=ratio)
   }
 
   ## Finish off

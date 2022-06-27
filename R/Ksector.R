@@ -1,7 +1,7 @@
 #
 #	Ksector.R	Estimation of 'sector K function'
 #
-#	$Revision: 1.5 $	$Date: 2014/11/10 10:41:14 $
+#	$Revision: 1.7 $	$Date: 2022/06/27 07:37:57 $
 #
 
 Ksector <- function(X, begin=0, end=360, ...,
@@ -17,7 +17,8 @@ Ksector <- function(X, begin=0, end=360, ...,
   W <- Window(X)
   areaW <- area(W)
   lambda <- npts/areaW
-  lambda2 <- (npts * (npts - 1))/(areaW^2)
+  npairs <- npts * (npts - 1)
+  lambda2 <- npairs/(areaW^2)
   rmaxdefault <- rmax.rule("K", W, lambda)        
   breaks <- handle.r.b.args(r, breaks, W, rmaxdefault=rmaxdefault)
   r <- breaks$r
@@ -97,13 +98,13 @@ Ksector <- function(X, begin=0, end=360, ...,
   ## this will be the output data frame
   Kdf <- data.frame(r=r, theo = ((END-BEGIN)/2) * r^2)
   desc <- c("distance argument r", "theoretical Poisson %s")
-  denom <- lambda2 * areaW
+  denom <- npairs
   K <- ratfv(Kdf, NULL, denom,
              "r",
              ylab = ylab,
              valu = "theo",
              fmla = NULL,
-             alim =alim,
+             alim = alim,
              labl = c("r","{%s[%s]^{pois}}(r)"),
              desc = desc,
              fname=fname, yexp=yexp, 
@@ -136,14 +137,14 @@ Ksector <- function(X, begin=0, end=360, ...,
   if(any(correction == "none")) {
     # uncorrected! For demonstration purposes only!
     wh <- whist(DIJ, breaks$val)  # no weights
-    numKun <- cumsum(wh)
-    denKun <- lambda2 * areaW
+    Kun <- cumsum(wh)/(lambda2 * areaW)
     # uncorrected estimate of K
     K <- bind.ratfv(K,
-                    data.frame(un=numKun), denKun,
-                    "{hat(%s)[%s]^{un}}(r)",
-                    "uncorrected estimate of %s",
-                    "un",
+                    quotient    = data.frame(un=Kun),
+                    denominator = npairs,
+                    labl        = "{hat(%s)[%s]^{un}}(r)",
+                    desc        = "uncorrected estimate of %s",
+                    preferred   = "un",
                     ratio=ratio)
   }
   
@@ -160,25 +161,23 @@ Ksector <- function(X, begin=0, end=360, ...,
     if(any(correction == "bord.modif")) {
       # modified border correction
       denom.area <- eroded.areas(W, r, subset=domain)
-      numKbm <- RS$numerator
-      denKbm <- lambda2 * denom.area
+      Kbm <- RS$numerator/(lambda2 * denom.area)
       K <- bind.ratfv(K,
-                      data.frame(bord.modif=numKbm),
-                      data.frame(bord.modif=denKbm),
-                      "{hat(%s)[%s]^{bordm}}(r)",
-                      "modified border-corrected estimate of %s",
-                      "bord.modif",
+                      quotient    = data.frame(bord.modif=Kbm),
+                      denominator = lambda2 * areaW * denom.area,
+                      labl        = "{hat(%s)[%s]^{bordm}}(r)",
+                      desc        = "modified border-corrected estimate of %s",
+                      preferred   = "bord.modif",
                       ratio=ratio)
     }
     if(any(correction == "border")) {
-      numKb <- RS$numerator
-      denKb <- lambda * RS$denom.count
+      Kb <- RS$numerator/(lambda * RS$denom.count)
       K <- bind.ratfv(K,
-                      data.frame(border=numKb), 
-                      data.frame(border=denKb), 
-                      "{hat(%s)[%s]^{bord}}(r)",
-                      "border-corrected estimate of %s",
-                      "border",
+                      quotient    = data.frame(border=Kb), 
+                      denominator = npts * RS$denom.count,
+                      labl        = "{hat(%s)[%s]^{bord}}(r)",
+                      desc        = "border-corrected estimate of %s",
+                      preferred   = "border",
                       ratio=ratio)
     }
   }
@@ -187,16 +186,15 @@ Ksector <- function(X, begin=0, end=360, ...,
     ## Ohser-Stoyan translation correction
     edgewt <- edge.Trans(dx=close$dx, dy=close$dy, W=W, paired=TRUE)
     wh <- whist(DIJ, breaks$val, edgewt)
-    numKtrans <- cumsum(wh)
-    denKtrans <- lambda2 * areaW
+    Ktrans <- cumsum(wh)/(lambda2 * areaW)
     h <- diameter(as.rectangle(W))/2
-    numKtrans[r >= h] <- NA
+    Ktrans[r >= h] <- NA
     K <- bind.ratfv(K,
-                    data.frame(trans=numKtrans),
-                    denKtrans,
-                    "{hat(%s)[%s]^{trans}}(r)",
-                    "translation-corrected estimate of %s",
-                    "trans",
+                    quotient    = data.frame(trans=Ktrans),
+                    denominator = npairs, 
+                    labl        = "{hat(%s)[%s]^{trans}}(r)",
+                    desc        = "translation-corrected estimate of %s",
+                    preferred   = "trans",
                     ratio=ratio)
   }
   if(any(correction == "isotropic")) {
@@ -204,17 +202,16 @@ Ksector <- function(X, begin=0, end=360, ...,
     XI <- ppp(close$xi, close$yi, window=W, check=FALSE)
     edgewt <- edge.Ripley(XI, matrix(DIJ, ncol=1))
     wh <- whist(DIJ, breaks$val, edgewt)
-    numKiso <- cumsum(wh)
-    denKiso <- lambda2 * areaW
+    Kiso <- cumsum(wh)/(lambda2 * areaW)
     h <- diameter(W)/2
-    numKiso[r >= h] <- NA
+    Kiso[r >= h] <- NA
     K <- bind.ratfv(K,
-                 data.frame(iso=numKiso),
-                 denKiso,
-                 "{hat(%s)[%s]^{iso}}(r)",
-                 "Ripley isotropic correction estimate of %s",
-                 "iso",
-                 ratio=ratio)
+                    quotient    = data.frame(iso=Kiso),
+                    denominator = npairs,
+                    labl        = "{hat(%s)[%s]^{iso}}(r)",
+                    desc        = "Ripley isotropic correction estimate of %s",
+                    preferred   = "iso",
+                    ratio=ratio)
   }
   #
   # default plot will display all edge corrections

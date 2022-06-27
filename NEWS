@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 2.999-999.011
+        CHANGES IN spatstat.explore VERSION 2.999-999.013
 
 OVERVIEW
 
@@ -12,6 +12,8 @@ OVERVIEW
     
     o Periodic edge correction for K function.
 
+    o Changed denominator in pair correlation function.
+    
     o Bandwidth selection for adaptive kernel estimation of intensity.
 
     o Minor improvements.
@@ -43,6 +45,16 @@ SIGNIFICANT USER-VISIBLE CHANGES
     These functions now accept the option 'correction="periodic"'
     to compute the periodic (toroidal) edge correction estimate.
 
+    o pcf
+    When ratio=TRUE, the denominator is now equal to the number of pairs of
+    points considered. This does not affect the estimate of the pair
+    correlation function, but it changes the calculation of pooled estimates.
+    
+    o Ksector
+    When ratio=TRUE, the denominator is now equal to the number of pairs of
+    points considered. This does not affect the estimate of the summary
+    function, but it changes the calculation of pooled estimates.
+    
     o markcorr, markcrosscorr
     These functions now allow negative mark values when normalise=FALSE.
     
