@@ -3,7 +3,7 @@
 # Function to take a matrix of pairwise distances
 # and compile a 'K' function in the format required by spatstat.
 #
-#   $Revision: 1.13 $  $Date: 2022/06/27 01:22:02 $
+#   $Revision: 1.14 $  $Date: 2022/06/27 01:41:14 $
 # -------------------------------------------------------------------
 
 compileK <- function(D, r, weights=NULL, denom=1, check=TRUE, ratio=FALSE,
@@ -37,7 +37,7 @@ compileK <- function(D, r, weights=NULL, denom=1, check=TRUE, ratio=FALSE,
           c("distance argument r", "estimated %s"),
           fname=fname)
   if(ratio) {
-    if(missing(samplesize)) {
+    if(missing(samplesize) || is.null(samplesize)) {
       Numer <- Kcount
       Denom <- samplesize
     } else {
@@ -115,6 +115,7 @@ compilepcf <- function(D, r, weights=NULL, denom=1, check=TRUE,
     	    c("distance argument r", "estimated %s"),
 	    fname=fname)
   } else {
+    if(is.null(samplesize)) samplesize <- denom
     num <- data.frame(r=r, est=gval * samplesize)
     den <- data.frame(r=r, est=samplesize)
     g <- ratfv(df=NULL, numer=num, denom=den,

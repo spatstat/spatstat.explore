@@ -1,5 +1,5 @@
 Package: spatstat.explore
-Version: 2.999-999.009
+Version: 2.999-999.010
 Date: 2022-06-27
 Title: Exploratory Data Analysis for the 'spatstat' Family
 Authors@R: c(person("Adrian", "Baddeley", 
