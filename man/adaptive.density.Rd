@@ -6,7 +6,7 @@
   pattern.
 }
 \usage{
-adaptive.density(X, \dots, method=c("voronoi","kernel"))
+adaptive.density(X, \dots, method=c("voronoi","kernel", "nearest"))
 }
 \arguments{
   \item{X}{Point pattern (object of class \code{"ppp"} or
@@ -14,7 +14,8 @@ adaptive.density(X, \dots, method=c("voronoi","kernel"))
   \item{method}{Character string specifying the estimation method}
   \item{\dots}{
     Additional arguments passed to
-    \code{\link{densityVoronoi}} or \code{\link{densityAdaptiveKernel}}.
+    \code{\link{densityVoronoi}}, \code{\link{densityAdaptiveKernel}}
+    or \code{\link{nndensity}}.
   }
 }
 \details{
@@ -29,6 +30,11 @@ adaptive.density(X, \dots, method=c("voronoi","kernel"))
   If \code{method="kernel"} the data are passed to the function
   \code{\link{densityAdaptiveKernel}} which estimates the intensity
   using a variable-bandwidth kernel estimator.
+
+  If \code{method="nearest"} the data are passed to the function
+  \code{\link{nndensity}} which estimates the intensity using the
+  distance to the \code{k}-th nearest data point. (This is not supported
+  when \code{X} has class \code{"lpp"}.)
 }
 \value{
   A pixel image (object of class \code{"im"}) whose values are
@@ -38,6 +44,7 @@ adaptive.density(X, \dots, method=c("voronoi","kernel"))
   \code{\link{density.ppp}},
   \code{\link{densityVoronoi}},
   \code{\link{densityAdaptiveKernel}},
+  \code{\link{nndensity}},
   \code{\link{im.object}}.
 }
 \examples{

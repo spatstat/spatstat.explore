@@ -47,6 +47,9 @@ nndensity(x, ...)
   This is the estimate computed by \code{nndensity},
   apart from an edge effect correction.
 
+  See Cressie (1991, equation (8.5.14), p. 654)
+  and Silverman (1986, p. 96).
+
   This estimator of intensity is relatively fast to compute, 
   and is spatially adaptive
   (so that it can handle wide variation in the intensity
@@ -54,8 +57,11 @@ nndensity(x, ...)
   so it does not perform well if the pattern is strongly clustered
   or strongly inhibited.
 
-  The value of \code{k} should be greater than 1 in order to avoid
-  infinite peaks in the intensity estimate around each data point.
+  In normal use, the value of \code{k} should be at least 3.
+  (Theoretically the estimator has infinite expected value if \eqn{k=1},
+  and infinite variance if \eqn{k=2}.
+  The computed intensity estimate will have infinite peaks
+  around each data point if \code{k = 1}.)
   The default value of \code{k} is the square root of the number of
   points in \code{x}, which seems to work well in many cases.
   
@@ -69,7 +75,13 @@ nndensity(x, ...)
   Pixel values are intensities (number of points per unit area).
 }
 \references{
-  NEED REFERENCES. TRY CRESSIE 
+  Cressie, N.A.C. (1991)
+  \emph{Statistics for spatial data}.
+  John Wiley and Sons, New York.
+
+  Silverman, B.W. (1986)
+  \emph{Density Estimation}.
+  Chapman and Hall, New York.
 }
 \seealso{
  \code{\link{density.ppp}},
@@ -79,11 +91,9 @@ nndensity(x, ...)
 \examples{
    plot(nndensity(swedishpines))
 }
-\author{\adrian
-  
-  
-  and \rolf
-  
+\author{
+  \adrian
+  and \rolf.
 }
 \keyword{spatial}
 \keyword{methods}

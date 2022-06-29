@@ -14,7 +14,10 @@ nndensity.ppp <- function(x, k, ..., verbose=TRUE) {
   if(missing(k) || is.null(k)) {
     k <- round(sqrt(npoints(x)))
     if(verbose) cat(paste("k=", k, "\n"))
-  } else if(k == 1) warning("k=1 will produce strange results")
+  } else {
+    check.1.integer(k)
+    if(verbose && k == 1) warning("k=1 will produce strange results")
+  }
   # distance to k-th nearest neighbour
   D <- nnmap(x, k=k, what="dist", ...)
   # area searched

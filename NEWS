@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 2.999-999.013
+        CHANGES IN spatstat.explore VERSION 2.999-999.014
 
 OVERVIEW
 
@@ -70,6 +70,8 @@ SIGNIFICANT USER-VISIBLE CHANGES
     If 'ratio=TRUE' the numerator and denominator will be rescaled
     by a common factor so that the denominator is equal to 'samplesize'.
 
+    o adaptive.density
+    Now accepts 'method="nearest"' and passes the data to 'nndensity'.
         CHANGES IN spatstat.core VERSION 2.4-4.010
 
 OVERVIEW
