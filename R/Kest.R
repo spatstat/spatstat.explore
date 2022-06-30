@@ -1,7 +1,7 @@
 #
 #	Kest.R		Estimation of K function
 #
-#	$Revision: 5.135 $	$Date: 2022/06/06 04:23:01 $
+#	$Revision: 5.139 $	$Date: 2022/06/30 07:49:47 $
 #
 #
 # -------- functions ----------------------------------------
@@ -66,11 +66,14 @@ function(X, ..., r=NULL, rmax=NULL, breaks=NULL,
   nlarge.given <- !missing(nlarge) && !is.null(nlarge)
   rfixed <- !is.null(r) || !is.null(breaks)
   npts <- npoints(X)
-  W <- X$window
+  npairs <-  npts * (npts - 1)
+  W <- Window(X)
   areaW <- area(W)
   lambda <- npts/areaW
-  lambda2 <- (npts * (npts - 1))/(areaW^2)
-
+  lambda2 <- npairs/(areaW^2)
+  lambda2area <- npairs/areaW
+  samplesize <- npairs
+  
   if(!is.null(domain)) {
     ## estimate based on contributions from a subdomain
     domain <- as.owin(domain)
@@ -191,8 +194,7 @@ function(X, ..., r=NULL, rmax=NULL, breaks=NULL,
     ## this will be the output data frame
     Kdf <- data.frame(r=r, theo = pi * r^2)
     desc <- c("distance argument r", "theoretical Poisson %s")
-    denom <- lambda2 * areaW
-    K <- ratfv(Kdf, NULL, denom,
+    K <- ratfv(Kdf, NULL, npairs,
                "r", quote(K(r)),
                "theo", NULL, alim, c("r","%s[pois](r)"), desc, fname="K",
                ratio=ratio)
@@ -220,14 +222,15 @@ function(X, ..., r=NULL, rmax=NULL, breaks=NULL,
     if(any(correction == "none")) {
       ## uncorrected! For demonstration purposes only!
       wh <- whist(DIJ, breaks$val)  # no weights
-      numKun <- cumsum(wh)
-      denKun <- lambda2 * areaW
+      Kun <- cumsum(wh)/lambda2area
       ## uncorrected estimate of K
       K <- bind.ratfv(K,
-                      data.frame(un=numKun), denKun,
-                      "hat(%s)[un](r)",
-                      "uncorrected estimate of %s",
-                      "un",
+                      numerator   = NULL,
+                      quotient    = data.frame(un=Kun),
+                      denominator = npairs,
+                      labl        = "hat(%s)[un](r)",
+                      desc        = "uncorrected estimate of %s",
+                      preferred   = "un",
                       ratio=ratio)
     }
   
@@ -237,15 +240,16 @@ function(X, ..., r=NULL, rmax=NULL, breaks=NULL,
       closeP <- closepairs(X, rmax, what="ijd", periodic=TRUE)
       DIJP <- closeP$d
       ## Compute unweighted histogram
-      wh <- whist(DIJP, breaks$val)  
-      numKper <- cumsum(wh)
-      denKper <- lambda2 * areaW
+      wh <- whist(DIJP, breaks$val)
+      Kper <- cumsum(wh)/lambda2area
       ## periodic correction estimate of K
       K <- bind.ratfv(K,
-                      data.frame(per=numKper), denKper,
-                      "hat(%s)[per](r)",
-                      "periodic-corrected estimate of %s",
-                      "per",
+                      numerator   = NULL,
+                      quotient    = data.frame(per=Kper),
+                      denominator = npairs,
+                      labl        = "hat(%s)[per](r)",
+                      desc        = "periodic-corrected estimate of %s",
+                      preferred   = "per",
                       ratio=ratio)
     }
   
@@ -260,25 +264,27 @@ function(X, ..., r=NULL, rmax=NULL, breaks=NULL,
       if(any(correction == "bord.modif")) {
         ## modified border correction
         denom.area <- eroded.areas(W, r)
-        numKbm <- RS$numerator
-        denKbm <- lambda2 * denom.area
+        Kbm <- RS$numerator/(lambda2 * denom.area)
+        samplesizeKbm <- npairs * (denom.area/areaW)
         K <- bind.ratfv(K,
-                        data.frame(bord.modif=numKbm),
-                        data.frame(bord.modif=denKbm),
-                        "hat(%s)[bordm](r)",
-                        "modified border-corrected estimate of %s",
-                        "bord.modif",
+                        numerator   = NULL,
+                        quotient    = data.frame(bord.modif=Kbm),
+                        denominator = samplesizeKbm,
+                        labl        = "hat(%s)[bordm](r)",
+                        desc        = "modified border-corrected estimate of %s",
+                        preferred   = "bord.modif",
                         ratio=ratio)
       }
       if(any(correction == "border")) {
-        numKb <- RS$numerator
-        denKb <- lambda * RS$denom.count
+        Kb <- RS$numerator/(lambda * RS$denom.count)
+        samplesizeKb <- (npts-1) * RS$denom.count
         K <- bind.ratfv(K,
-                        data.frame(border=numKb), 
-                        data.frame(border=denKb), 
-                        "hat(%s)[bord](r)",
-                        "border-corrected estimate of %s",
-                        "border",
+                        numerator   = NULL,
+                        quotient    = data.frame(border=Kb), 
+                        denominator = samplesizeKb,
+                        labl        = "hat(%s)[bord](r)",
+                        desc        = "border-corrected estimate of %s",
+                        preferred   = "border",
                         ratio=ratio)
       }
     }
@@ -288,16 +294,16 @@ function(X, ..., r=NULL, rmax=NULL, breaks=NULL,
       edgewt <- edge.Trans(dx=close$dx, dy=close$dy, W=W, paired=TRUE,
                            gW = gW, give.rmax=TRUE)
       wh <- whist(DIJ, breaks$val, edgewt)
-      numKtrans <- cumsum(wh)
-      denKtrans <- lambda2 * areaW
+      Ktrans <- cumsum(wh)/lambda2area
       h <- attr(edgewt, "rmax")
-      numKtrans[r >= h] <- NA
+      Ktrans[r >= h] <- NA
       K <- bind.ratfv(K,
-                      data.frame(trans=numKtrans),
-                      denKtrans,
-                      "hat(%s)[trans](r)",
-                      "translation-corrected estimate of %s",
-                      "trans",
+                      numerator   = NULL,
+                      quotient    = data.frame(trans=Ktrans),
+                      denominator = npairs,
+                      labl        = "hat(%s)[trans](r)",
+                      desc        = "translation-corrected estimate of %s",
+                      preferred   = "trans",
                       ratio=ratio)
     }
     if(any(correction == "rigid")) {
@@ -305,16 +311,16 @@ function(X, ..., r=NULL, rmax=NULL, breaks=NULL,
       CW <- rotmean(gW)
       edgewt <- areaW/as.function(CW)(DIJ)
       wh <- whist(DIJ, breaks$val, edgewt)
-      numKrigid <- cumsum(wh)
-      denKrigid <- lambda2 * areaW
+      Krigid <- cumsum(wh)/lambda2area
       h <- rmax.Rigid(X, gW) #sic: X not W
-      numKrigid[r >= h] <- NA
+      Krigid[r >= h] <- NA
       K <- bind.ratfv(K,
-                      data.frame(rigid=numKrigid),
-                      denKrigid,
-                      "hat(%s)[rigid](r)",
-                      "rigid motion-corrected estimate of %s",
-                      "rigid",
+                      numerator   = NULL,
+                      quotient    = data.frame(rigid=Krigid),
+                      denominator = npairs,
+                      labl        = "hat(%s)[rigid](r)",
+                      desc        = "rigid motion-corrected estimate of %s",
+                      preferred   = "rigid",
                       ratio=ratio)
     }
     if(any(correction == "isotropic")) {
@@ -322,16 +328,16 @@ function(X, ..., r=NULL, rmax=NULL, breaks=NULL,
       XI <- ppp(close$xi, close$yi, window=W, check=FALSE)
       edgewt <- edge.Ripley(XI, matrix(DIJ, ncol=1))
       wh <- whist(DIJ, breaks$val, edgewt)
-      numKiso <- cumsum(wh)
-      denKiso <- lambda2 * areaW
+      Kiso <- cumsum(wh)/lambda2area
       h <- boundingradius(W)
-      numKiso[r >= h] <- NA
+      Kiso[r >= h] <- NA
       K <- bind.ratfv(K,
-                      data.frame(iso=numKiso),
-                      denKiso,
-                      "hat(%s)[iso](r)",
-                      "Ripley isotropic correction estimate of %s",
-                      "iso",
+                      numerator   = NULL,
+                      quotient    = data.frame(iso=Kiso),
+                      denominator = npairs,
+                      labl        = "hat(%s)[iso](r)",
+                      desc        = "Ripley isotropic correction estimate of %s",
+                      preferred   = "iso",
                       ratio=ratio)
     }
   }
@@ -355,50 +361,38 @@ function(X, ..., r=NULL, rmax=NULL, breaks=NULL,
     ## Ripley asymptotic approximation
     rip <- 2 * ((A/(n-1))^2) * (pi * r^2/A + 0.96 * P * r^3/A^2
                                 + 0.13 * (n/A) * P * r^5/A^2)
-    if(!ratio) {
-      K <- bind.fv(K, data.frame(rip=rip),
-                 "vR(r)", 
-                 "Ripley approximation to var(%s) under CSR",
-                 "iso")
-    } else {
-      den <- (n-1)^2
-      ripnum <- den * rip
-      ripden <- rep.int(den, length(rip))
-      K <- bind.ratfv(K,
-                      data.frame(rip=ripnum),
-                      data.frame(rip=ripden),
-                      "vR(r)", 
-                      "Ripley approximation to var(%s) under CSR",
-                      "iso")
-    }
+    ##
+    vsamplesize <- (npts - 1)^2
+    K <- bind.ratfv(K,
+                    numerator   = NULL,
+                    quotient    = data.frame(rip=rip),
+                    denominator = vsamplesize,
+                    labl        = "vR(r)", 
+                    desc        = "Ripley approximation to var(%s) under CSR",
+                    preferred   = "iso",
+                    ratio=ratio)
+    
     if(W$type == "rectangle") {
-      # Lotwick-Silverman
+      ## Lotwick-Silverman
       a1r <- (0.21 * P * r^3 + 1.3 * r^4)/A^2
       a2r <- (0.24 * P * r^5 + 2.62 * r^6)/A^3
-      # contains correction to typo on p52 of Diggle 2003
-      # cf Lotwick & Silverman 1982 eq (5)
+      ## contains correction to typo on p52 of Diggle 2003
+      ## cf Lotwick & Silverman 1982 eq (5)
       br <- (pi * r^2/A) * (1 - pi * r^2/A) +
         (1.0716 * P * r^3 + 2.2375 * r^4)/A^2
-      ls <- (A^2) * (2 * br - a1r + (n-2) * a2r)/(n*(n-1))
-      # add column 
-      if(!ratio) {
-        K <- bind.fv(K, data.frame(ls=ls), "vLS(r)",
-                     "Lotwick-Silverman approx to var(%s) under CSR",
-                     "iso")
-      } else {
-        den <- n*(n-1)
-        lsnum <- ls * den
-        lsden <- rep.int(den, length(ls))
-        K <- bind.ratfv(K,
-                        data.frame(ls=lsnum),
-                        data.frame(ls=lsden),
-                        "vLS(r)",
-                        "Lotwick-Silverman approx to var(%s) under CSR",
-                        "iso")
-      }
+      vls <- (A^2) * (2 * br - a1r + (n-2) * a2r)/(n*(n-1))
+      ## add column 
+      K <- bind.ratfv(K,
+                      numerator   = NULL,
+                      quotient    = data.frame(ls=vls),
+                      denominator = vsamplesize,
+                      "vLS(r)",
+                      "Lotwick-Silverman approx to var(%s) under CSR",
+                      "iso",
+                      ratio=ratio)
     }
   }
-
+  
   ### FINISH OFF #####
   ## default plot will display all edge corrections
   formula(K) <- . ~ r
@@ -466,7 +460,9 @@ Kborder.engine <- function(X, rmax, nr=100,
 
   areaW <- area(W)
   lambda <- npts/areaW
-  lambda2 <- (npts * (npts - 1))/(areaW^2)
+  npairs <- npts * (npts - 1)
+  lambda2 <- npairs/(areaW^2)
+  lambda2area <- npairs/areaW
 
   if(missing(rmax))
     rmax <- diameter(W)/4
@@ -475,21 +471,14 @@ Kborder.engine <- function(X, rmax, nr=100,
   # this will be the output data frame
   Kdf <- data.frame(r=r, theo= pi * r^2)
   desc <- c("distance argument r", "theoretical Poisson %s")
-  Kfv <- fv(Kdf, "r", quote(K(r)),
-          "theo", , c(0,rmax), c("r","%s[pois](r)"), desc, fname="K")
+  Kfv <- ratfv(Kdf, NULL, npairs,
+               "r", quote(K(r)),
+               "theo",
+               . ~ r,
+               c(0,rmax), c("r","%s[pois](r)"), desc, fname="K",
+               unitname=unitname(X),
+               ratio=ratio)
 
-  if(ratio) {
-    # save numerator and denominator
-    denom <- lambda2 * areaW
-    numK <- eval.fv(denom * Kfv)
-    denK <- eval.fv(denom + Kfv * 0)
-    attributes(numK) <- attributes(denK) <- attributes(Kfv)
-    numK <- rebadge.fv(numK, tags="theo",
-                       new.desc="numerator for theoretical Poisson %s")
-    denK <- rebadge.fv(denK, tags="theo",
-                       new.desc="denominator for theoretical Poisson %s")
-  }
-  
   ####### start computing ############
   # sort in ascending order of x coordinate
   orderX <- fave.order(X$x)
@@ -531,44 +520,31 @@ Kborder.engine <- function(X, rmax, nr=100,
     }
     if("bord.modif" %in% correction) {
       denom.area <- eroded.areas(W, r)
-      numKbm <- res$numer
-      denKbm <- lambda2 * denom.area
-      bm <- numKbm/denKbm
-      Kfv <- bind.fv(Kfv, data.frame(bord.modif=bm), "hat(%s)[bordm](r)",
-                   "modified border-corrected estimate of %s",
-                   "bord.modif")
-      if(ratio) {
-        # save numerator and denominator
-        numK <- bind.fv(numK, data.frame(bord.modif=numKbm),
+      Kbm <- res$numer/(lambda2 * denom.area)
+      samplesizeKbm <- npairs * (denom.area/areaW)
+      Kfv <- bind.ratfv(Kfv,
+                        numerator=NULL,
+                        quotient=data.frame(bord.modif=Kbm),
+                        denominator=samplesizeKbm,
                         "hat(%s)[bordm](r)",
-                        "numerator of modified border-corrected estimate of %s",
-                        "bord.modif")
-        denK <- bind.fv(denK, data.frame(bord.modif=denKbm),
-                        "hat(%s)[bordm](r)",
-                        "denominator of modified border-corrected estimate of %s",
-                        "bord.modif")
-      }
+                        "modified border-corrected estimate of %s",
+                        "bord.modif",
+                        ratio=ratio)
     }
     if("border" %in% correction) {
-      numKb <- res$numer
-      denKb <- lambda * res$denom
-      bord <- numKb/denKb
-      Kfv <- bind.fv(Kfv, data.frame(border=bord), "hat(%s)[bord](r)",
-                   "border-corrected estimate of %s",
-                   "border")
-      if(ratio) {
-        numK <- bind.fv(numK, data.frame(border=numKb),
+      Kb <- res$numer/(lambda * res$denom)
+      samplesizeKb <- (npts - 1) * res$denom
+      Kfv <- bind.ratfv(Kfv,
+                        numerator=NULL,
+                        quotient=data.frame(border=Kb),
+                        denominator=samplesizeKb,
                         "hat(%s)[bord](r)",
-                        "numerator of border-corrected estimate of %s",
-                        "border")
-        denK <- bind.fv(denK, data.frame(border=denKb),
-                        "hat(%s)[bord](r)",
-                        "denominator of border-corrected estimate of %s",
-                        "border")
-      }
+                        "border-corrected estimate of %s",
+                        "border",
+                        ratio=ratio)
     }
   } else {
-    # weighted version
+    ## weighted version
     if(is.numeric(weights)) {
       if(length(weights) != X$n)
         stop("length of weights argument does not match number of points in X")
@@ -591,51 +567,27 @@ Kborder.engine <- function(X, rmax, nr=100,
               denom=as.double(numeric(nr)),
               PACKAGE="spatstat.explore")
     if("border" %in% correction) {
-      bord <- res$numer/res$denom
-      Kfv <- bind.fv(Kfv, data.frame(border=bord), "hat(%s)[bord](r)",
-                     "border-corrected estimate of %s",
-                     "border")
-      if(ratio) {
-        numK <- bind.fv(numK, data.frame(border=res$numer),
+      numKb <- res$numer
+      denKb <- res$denom
+      Kfv <- bind.ratfv(Kfv,
+                        numerator=data.frame(border=numKb),
+                        denominator=data.frame(border=denKb),
                         "hat(%s)[bord](r)",
-                        "numerator of border-corrected estimate of %s",
-                        "border")
-        denK <- bind.fv(denK, data.frame(border=res$denom),
-                        "hat(%s)[bord](r)",
-                        "denominator of border-corrected estimate of %s",
-                        "border")
-      }
+                        "border-corrected estimate of %s",
+                        "border",
+                        ratio=ratio)
     }
     if("bord.modif" %in% correction) {
       numKbm <- res$numer
       denKbm <- eroded.areas(W, r)
-      bm <- numKbm/denKbm
-      Kfv <- bind.fv(Kfv, data.frame(bord.modif=bm), "hat(%s)[bordm](r)",
-                     "modified border-corrected estimate of %s",
-                     "bord.modif")
-      if(ratio) {
-        # save numerator and denominator
-        numK <- bind.fv(numK, data.frame(bord.modif=numKbm),
+      Kfv <- bind.ratfv(Kfv,
+                        numerator=data.frame(bord.modif=numKbm),
+                        denominator=data.frame(bord.modif=denKbm),
                         "hat(%s)[bordm](r)",
-                        "numerator of modified border-corrected estimate of %s",
-                        "bord.modif")
-        denK <- bind.fv(denK, data.frame(bord.modif=denKbm),
-                        "hat(%s)[bordm](r)",
-                        "denominator of modified border-corrected estimate of %s",
-                        "bord.modif")
-      }
+                        "modified border-corrected estimate of %s",
+                        "bord.modif",
+                        ratio=ratio)
     }
-  }
-  ##
-  # default is to display them all
-  formula(Kfv) <- . ~ r
-  unitname(Kfv) <- unitname(X)
-  if(ratio) {
-    # finish off numerator and denominator
-    formula(numK) <- formula(denK) <- . ~ r
-    unitname(denK) <- unitname(numK) <- unitname(X)
-    # tack on to result
-    Kfv <- rat(Kfv, numK, denK, check=FALSE)
   }
   return(Kfv)
 }
@@ -648,9 +600,10 @@ Knone.engine <- function(X, rmax, nr=100,
   W <- as.owin(X)
 
   areaW <- area(W)
-#  lambda <- npts/areaW
-  lambda2 <- (npts * (npts - 1))/(areaW^2)
-  denom <- lambda2 * areaW
+  ##  lambda <- npts/areaW
+  npairs <- npts * (npts - 1)
+  lambda2 <- npairs/(areaW^2)
+  lambda2area <- npairs/areaW
 
   if(missing(rmax))
     rmax <- diameter(W)/4
@@ -659,19 +612,13 @@ Knone.engine <- function(X, rmax, nr=100,
   # this will be the output data frame
   Kdf <- data.frame(r=r, theo= pi * r^2)
   desc <- c("distance argument r", "theoretical Poisson %s")
-  Kfv <- fv(Kdf, "r", quote(K(r)),
-          "theo", , c(0,rmax), c("r","%s[pois](r)"), desc, fname="K")
-
-  if(ratio) {
-    # save numerator and denominator
-    numK <- eval.fv(denom * Kfv)
-    denK <- eval.fv(denom + Kfv * 0)
-    attributes(numK) <- attributes(denK) <- attributes(Kfv)
-    numK <- rebadge.fv(numK, tags="theo",
-                       new.desc="numerator for theoretical Poisson %s")
-    denK <- rebadge.fv(denK, tags="theo",
-                       new.desc="denominator for theoretical Poisson %s")
-  }
+  Kfv <- ratfv(Kdf, NULL, npairs,
+               "r", quote(K(r)),
+               "theo",
+               . ~ r,
+               c(0,rmax), c("r","%s[pois](r)"), desc, fname="K",
+               unitname=unitname(X),
+               ratio=ratio)
   
   ####### start computing ############
   # sort in ascending order of x coordinate
@@ -682,10 +629,10 @@ Knone.engine <- function(X, rmax, nr=100,
   
   # call the C code
   if(is.null(weights)) {
-    # determine whether the numerator can be stored as an integer
+    ## determine whether the numerator can be stored as an integer
     bigint <- .Machine$integer.max
     if(npts < sqrt(bigint)) {
-      # yes - use faster integer arithmetic
+      ## yes - use faster integer arithmetic
       res <- .C(SE_KnoneI,
                 nxy=as.integer(npts),
                 x=as.double(x),
@@ -695,7 +642,7 @@ Knone.engine <- function(X, rmax, nr=100,
                 numer=as.integer(integer(nr)),
                 PACKAGE="spatstat.explore")
     } else {
-      # no - need double precision storage
+      ## no - need double precision storage
       res <- .C(SE_KnoneD,
                 nxy=as.integer(npts),
                 x=as.double(x),
@@ -705,14 +652,12 @@ Knone.engine <- function(X, rmax, nr=100,
                 numer=as.double(numeric(nr)),
                 PACKAGE="spatstat.explore")
     }
-
-    numKun <- res$numer
-    denKun <- denom # = lambda2 * areaW
-    Kun <- numKun/denKun
+    Kun <- res$numer/lambda2area
+    samplesizeKun <- npairs
   } else {
-    # weighted version
+    ## weighted version
     if(is.numeric(weights)) {
-      if(length(weights) != X$n)
+      if(length(weights) != npts)
         stop("length of weights argument does not match number of points in X")
     } else {
       wim <- as.im(weights, W)
@@ -730,36 +675,19 @@ Knone.engine <- function(X, rmax, nr=100,
               rmax=as.double(rmax),
               numer=as.double(numeric(nr)),
               PACKAGE="spatstat.explore")
-    numKun <- res$numer
-    denKun <- sum(weights)
-    Kun <- numKun/denKun
+    samplesizeKun <- totwt <- sum(weights)
+    Kun <- res$numer/totwt
   }
 
   # tack on to fv object
-  Kfv <- bind.fv(Kfv, data.frame(un=Kun), "hat(%s)[un](r)",
-                 "uncorrected estimate of %s",
-                 "un")
-  if(ratio) {
-    numK <- bind.fv(numK, data.frame(un=numKun),
+  Kfv <- bind.ratfv(Kfv,
+                    numerator=NULL,
+                    quotient=data.frame(un=Kun),
+                    denominator=samplesizeKun,
                     "hat(%s)[un](r)",
-                    "numerator of uncorrected estimate of %s",
-                    "un")
-    denK <- bind.fv(denK, data.frame(un=denKun),
-                    "hat(%s)[un](r)",
-                    "denominator of uncorrected estimate of %s",
-                    "un")
-  }
-  ##
-  # default is to display them all
-  formula(Kfv) <- . ~ r
-  unitname(Kfv) <- unitname(X)
-  if(ratio) {
-    # finish off numerator and denominator
-    formula(numK) <- formula(denK) <- . ~ r
-    unitname(denK) <- unitname(numK) <- unitname(X)
-    # tack on to result
-    Kfv <- rat(Kfv, numK, denK, check=FALSE)
-  }
+                    "uncorrected estimate of %s",
+                    "un",
+                    ratio=ratio)
   return(Kfv)
 }
 
@@ -848,7 +776,9 @@ Krect.engine <- function(X, rmax, nr=100,
   width <- sidelengths(W)[1]
   height <- sidelengths(W)[2]
   lambda <- npts/areaW
-  lambda2 <- (npts * (npts - 1))/(areaW^2)
+  npairs <- npts * (npts - 1)
+  lambda2 <- npairs/(areaW^2)
+  lambda2area <- npairs/areaW
 
   if(missing(rmax))
     rmax <- diameter(W)/4
@@ -864,6 +794,7 @@ Krect.engine <- function(X, rmax, nr=100,
       if(anyNA(weights))
         stop("domain of weights image does not contain all points of X")
     }
+    totalweight <- sum(weights)
   }
 
   # this will be the output data frame
@@ -872,9 +803,12 @@ Krect.engine <- function(X, rmax, nr=100,
   denom <- if(weighted) areaW else (lambda2 * areaW)
   Kfv <- ratfv(Kdf, NULL, denom,
                "r", quote(K(r)),
-               "theo", NULL, c(0,rmax),
+               "theo",
+               . ~ r,
+               c(0,rmax),
                c("r", makefvlabel(NULL, NULL, fname, "pois")),
                desc, fname=fname,
+               unitname=unitname(X),
                ratio=ratio)
 
   ####### prepare data ############
@@ -988,11 +922,17 @@ Krect.engine <- function(X, rmax, nr=100,
 
   ## Uncorrected estimate
   if("none" %in% correction) {
-    numKun <- res$unco
-    denKun <- if(weighted) areaW else (lambda2 * areaW)
+    if(!weighted) {
+      Kun <- res$unco/lambda2area
+      samplesizeKun <- npairs
+    } else {
+      Kun <- res$unco/areaW
+      samplesizeKun <- totalweight
+    }
     Kfv <- bind.ratfv(Kfv,
-                      data.frame(un=numKun),
-                      denKun,
+                      numerator=NULL,
+                      quotient = data.frame(un=Kun),
+                      denominator=samplesizeKun,
                       makefvlabel(NULL, "hat", fname, "un"),
                       "uncorrected estimate of %s",
                       "un",
@@ -1002,11 +942,17 @@ Krect.engine <- function(X, rmax, nr=100,
   ## Modified border correction
   if("bord.modif" %in% correction) {
     denom.area <- eroded.areas(W, r)
-    numKbm <- res$bnumer
-    denKbm <- if(weighted) denom.area else (lambda2 * denom.area)
+    if(!weighted) {
+      Kbm <- res$bnumer/lambda2area
+      samplesizeKbm <- npairs * (denom.area/areaW)
+    } else {
+      Kbm <- res$bnumer/denom.area
+      samplesizeKbm <- denom.area
+    }
     Kfv <- bind.ratfv(Kfv,
-                      data.frame(bord.modif=numKbm),
-                      denKbm,
+                      numerator=NULL,
+                      quotient=data.frame(bord.modif=Kbm),
+                      denominator=samplesizeKbm,
                       makefvlabel(NULL, "hat", fname, "bordm"),
                       "modified border-corrected estimate of %s",
                       "bord.modif",
@@ -1014,11 +960,17 @@ Krect.engine <- function(X, rmax, nr=100,
   }
   ## Border correction
   if("border" %in% correction) {
-    numKb <- res$bnumer
-    denKb <- if(weighted) res$bdenom else lambda * res$bdenom
+    if(!weighted) {
+      Kb <- res$bnumer/(lambda * res$bdenom)
+      samplesizeKb <- (npts - 1) * res$bdenom
+    } else {
+      Kb <- res$bnumer/res$bdenom
+      samplesizeKb <- res$bdenom
+    }
     Kfv <- bind.ratfv(Kfv,
-                      data.frame(border=numKb),
-                      denKb,
+                      numerator=NULL,
+                      quotient=data.frame(border=Kb),
+                      denominator=samplesizeKb,
                       makefvlabel(NULL, "hat", fname, "bord"),
                       "border-corrected estimate of %s",
                       "border",
@@ -1027,13 +979,19 @@ Krect.engine <- function(X, rmax, nr=100,
   
   ## translation correction
   if("translate" %in% correction) {
-    numKtrans <- res$trans
-    denKtrans <- if(weighted) areaW else (lambda2 * areaW)
+    if(!weighted) {
+      Ktrans <- res$trans/lambda2area
+      samplesizeKtrans <- npairs
+    } else {
+      Ktrans <- res$trans/areaW
+      samplesizeKtrans <- areaW
+    }
     h <- diameter(as.rectangle(W))/2
-    numKtrans[r >= h] <- NA
+    Ktrans[r >= h] <- NA
     Kfv <- bind.ratfv(Kfv,
-                      data.frame(trans=numKtrans),
-                      denKtrans,
+                      numerator=NULL,
+                      quotient=data.frame(trans=Ktrans),
+                      denominator=samplesizeKtrans,
                       makefvlabel(NULL, "hat", fname, "trans"),
                       "translation-corrected estimate of %s",
                       "trans",
@@ -1041,24 +999,25 @@ Krect.engine <- function(X, rmax, nr=100,
   }
   ## isotropic correction
   if("isotropic" %in% correction) {
-    numKiso <- res$iso
-    denKiso <- if(weighted) areaW else (lambda2 * areaW)
+    if(!weighted) {
+      Kiso <- res$iso/lambda2area
+      samplesizeKiso <- npairs
+    } else {
+      Kiso <- res$iso/areaW
+      samplesizeKiso <- areaW
+    }
     h <- diameter(as.rectangle(W))/2
-    numKiso[r >= h] <- NA
+    Kiso[r >= h] <- NA
     Kfv <- bind.ratfv(Kfv,
-                      data.frame(iso=numKiso),
-                      denKiso,
+                      numerator=NULL,
+                      quotient=data.frame(iso=Kiso),
+                      denominator=samplesizeKiso,
                       makefvlabel(NULL, "hat", fname, "iso"),
                       "isotropic-corrected estimate of %s",
                       "iso",
                       ratio=ratio)
   }
   ##
-  # default is to display them all
-  formula(Kfv) <- . ~ r
-  unitname(Kfv) <- unitname(X)
-  if(ratio) 
-    Kfv <- conform.ratfv(Kfv)
   return(Kfv)
 }
 
