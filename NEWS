@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 2.999-999.015
+        CHANGES IN spatstat.explore VERSION 2.999-999.016
 
 OVERVIEW
 
@@ -45,7 +45,7 @@ SIGNIFICANT USER-VISIBLE CHANGES
     These functions now accept the option 'correction="periodic"'
     to compute the periodic (toroidal) edge correction estimate.
 
-    o Kest, pcf, Ksector
+    o Kest, pcf, Ksector, Kdot, Kcross, Kmulti
     When ratio=TRUE, the denominator is now equal to the number of pairs of
     points considered. This does not affect the estimate of the summary
     function, but it changes the calculation of pooled estimates

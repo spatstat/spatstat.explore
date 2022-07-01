@@ -4,7 +4,7 @@
 #	Compute estimates of cross-type K functions
 #	for multitype point patterns
 #
-#	$Revision: 5.59 $	$Date: 2022/06/06 09:49:33 $
+#	$Revision: 5.60 $	$Date: 2022/07/01 01:49:47 $
 #
 #
 # -------- functions ----------------------------------------
@@ -157,8 +157,8 @@ function(X, I, J, r=NULL, breaks=NULL,
   verifyclass(X, "ppp")
 
   npts <- npoints(X)
-  W <- X$window
-  ## areaW <- area(W)
+  W <- Window(X)
+  areaW <- area(W)
 
   dotargs <- list(...)
   domainI <- resolve.1.default("domainI", dotargs) %orifnull% W
@@ -197,6 +197,7 @@ function(X, I, J, r=NULL, breaks=NULL,
   nJ <- sum(J)
   lambdaI <- nI/areaI
   lambdaJ <- nJ/areaJ
+  npairs <- nI * nJ
 
   # r values 
   rmaxdefault <- rmax %orifnull% rmax.rule("K", W, lambdaJ)
@@ -211,21 +212,13 @@ function(X, I, J, r=NULL, breaks=NULL,
   # It will be given more columns later
   K <- data.frame(r=r, theo= pi * r^2)
   desc <- c("distance argument r", "theoretical Poisson %s")
-  K <- fv(K, "r", quote(K[IJ](r)), 
-          "theo", , alim, c("r","{%s[%s]^{pois}}(r)"),
-          desc, fname=c("K", "list(I,J)"),
-          yexp=quote(K[list(I,J)](r)))
+  K <- ratfv(K, NULL, npairs,
+             "r", quote(K[IJ](r)), 
+             "theo", , alim, c("r","{%s[%s]^{pois}}(r)"),
+             desc, fname=c("K", "list(I,J)"),
+             yexp=quote(K[list(I,J)](r)),
+             ratio=ratio)
   
-  # save numerator and denominator?
-  if(ratio) {
-    denom <- lambdaI * lambdaJ * areaI
-    numK <- eval.fv(denom * K)
-    denK <- eval.fv(denom + K * 0)
-    attributes(numK) <- attributes(denK) <- attributes(K)
-    attr(numK, "desc")[2] <- "numerator for theoretical Poisson %s"
-    attr(denK, "desc")[2] <- "denominator for theoretical Poisson %s"
-  }
-
   ## Extract relevant points
   XI <- X[I]
   XJ <- X[J]
@@ -249,6 +242,20 @@ function(X, I, J, r=NULL, breaks=NULL,
   ## Compute estimates by each of the selected edge corrections.
   ## ...........................................................
 
+  if(any(correction == "none")) {
+    # uncorrected! 
+    wh <- whist(dcloseIJ, breaks$val)  # no weights
+    Kun <- cumsum(wh)/(lambdaI * lambdaJ * areaI)
+    K <- bind.ratfv(K,
+                    numerator   = NULL,
+                    quotient    = data.frame(un=Kun),
+                    denominator = npairs,
+                    labl        = "{hat(%s)[%s]^{un}}(r)",
+                    desc        = "uncorrected estimate of %s",
+                    preferred   = "un",
+                    ratio=ratio)
+  }
+  
   if(any(correction == "periodic")) {
     ## Periodic (toroidal) correction
     ## Compute periodic distances
@@ -257,41 +264,15 @@ function(X, I, J, r=NULL, breaks=NULL,
                          iX=imap, iY=jmap)
     ## evaluate estimate
     wh <- whist(closeP$d, breaks$val)  # no weights
-    numKper <- cumsum(wh)
-    denKper <- lambdaI * lambdaJ * areaI
-    Kper <- numKper/denKper
-    K <- bind.fv(K, data.frame(per=Kper), "{hat(%s)[%s]^{per}}(r)",
-                 "periodic-corrected estimate of %s",
-                 "per")
-    if(ratio) {
-      # save numerator and denominator
-      numK <- bind.fv(numK, data.frame(per=numKper), "{hat(%s)[%s]^{per}}(r)",
-                 "numerator of periodic-corrected estimate of %s",
-                 "per")
-      denK <- bind.fv(denK, data.frame(per=denKper), "{hat(%s)[%s]^{per}}(r)",
-                 "denominator of periodic-corrected estimate of %s",
-                 "per")
-    }
-  }
-  
-  if(any(correction == "none")) {
-    # uncorrected! 
-    wh <- whist(dcloseIJ, breaks$val)  # no weights
-    numKun <- cumsum(wh)
-    denKun <- lambdaI * lambdaJ * areaI
-    Kun <- numKun/denKun
-    K <- bind.fv(K, data.frame(un=Kun), "{hat(%s)[%s]^{un}}(r)",
-                 "uncorrected estimate of %s",
-                 "un")
-    if(ratio) {
-      # save numerator and denominator
-      numK <- bind.fv(numK, data.frame(un=numKun), "{hat(%s)[%s]^{un}}(r)",
-                 "numerator of uncorrected estimate of %s",
-                 "un")
-      denK <- bind.fv(denK, data.frame(un=denKun), "{hat(%s)[%s]^{un}}(r)",
-                 "denominator of uncorrected estimate of %s",
-                 "un")
-    }
+    Kper <- cumsum(wh)/(lambdaI * lambdaJ * areaI)
+    K <- bind.ratfv(K,
+                    numerator   = NULL,
+                    quotient    = data.frame(per=Kper),
+                    denominator = npairs,
+                    labl        = "{hat(%s)[%s]^{per}}(r)",
+                    desc        = "periodic-corrected estimate of %s",
+                    preferred   = "per",
+                    ratio=ratio)
   }
   
   if(any(correction == "border" | correction == "bord.modif")) {
@@ -304,98 +285,67 @@ function(X, I, J, r=NULL, breaks=NULL,
     RS <- Kount(dcloseIJ, bcloseI, bI, breaks)
     if(any(correction == "bord.modif")) {
       denom.area <- eroded.areas(W, r)
-      numKbm <- RS$numerator
-      denKbm <- denom.area * nI * nJ
-      Kbm <- numKbm/denKbm
-      K <- bind.fv(K, data.frame(bord.modif=Kbm), "{hat(%s)[%s]^{bordm}}(r)",
-                   "modified border-corrected estimate of %s",
-                   "bord.modif")
-      if(ratio) {
-        # save numerator and denominator
-        numK <- bind.fv(numK, data.frame(bord.modif=numKbm),
-                        "{hat(%s)[%s]^{bordm}}(r)",
-                        "numerator of modified border-corrected estimate of %s",
-                        "bord.modif")
-        denK <- bind.fv(denK, data.frame(bord.modif=denKbm),
-                        "{hat(%s)[%s]^{bordm}}(r)",
-                        "denominator of modified border-corrected estimate of %s",
-                        "bord.modif")
-      }
+      Kbm <- RS$numerator/(denom.area * npairs)
+      samplesizeKbm <- npairs * (denom.area/areaW)
+      K <- bind.ratfv(K,
+                      numerator   = NULL,
+                      quotient    = data.frame(bord.modif=Kbm),
+                      denominator = npairs,
+                      labl        = "{hat(%s)[%s]^{bordm}}(r)",
+                      desc        = "modified border-corrected estimate of %s",
+                      preferred   = "bord.modif",
+                      ratio=ratio)
     }
     if(any(correction == "border")) {
-      numKb <- RS$numerator
-      denKb <- lambdaJ * RS$denom.count
-      Kb <- numKb/denKb
-      K <- bind.fv(K, data.frame(border=Kb), "{hat(%s)[%s]^{bord}}(r)",
-                   "border-corrected estimate of %s",
-                   "border")
-      if(ratio) {
-        numK <- bind.fv(numK, data.frame(border=numKb),
-                        "{hat(%s)[%s]^{bord}}(r)",
-                        "numerator of border-corrected estimate of %s",
-                        "border")
-        denK <- bind.fv(denK, data.frame(border=denKb),
-                        "{hat(%s)[%s]^{bord}}(r)",
-                        "denominator of border-corrected estimate of %s",
-                        "border")
-      }
+      Kb <- RS$numerator/(lambdaJ * RS$denom.count)
+      K <- bind.ratfv(K,
+                      numerator   = NULL,
+                      quotient    = data.frame(border=Kb),
+                      denominator = RS$denom.count * nJ,
+                      labl        = "{hat(%s)[%s]^{bord}}(r)",
+                      desc        = "border-corrected estimate of %s",
+                      preferred   = "border",
+                      ratio=ratio)
     }
   }
   if(any(correction == "translate")) {
     # translation correction
     edgewt <- edge.Trans(XI[icloseI], XJ[jcloseJ], paired=TRUE)
     wh <- whist(dcloseIJ, breaks$val, edgewt)
-    numKtrans <- cumsum(wh)
-    denKtrans <- lambdaI * lambdaJ * areaI
-    Ktrans <- numKtrans/denKtrans
+    Ktrans <- cumsum(wh)/(lambdaI * lambdaJ * areaI)
     rmax <- diameter(W)/2
     Ktrans[r >= rmax] <- NA
-    K <- bind.fv(K, data.frame(trans=Ktrans), "{hat(%s)[%s]^{trans}}(r)", 
-                 "translation-corrected estimate of %s",
-                 "trans")
-    if(ratio) {
-      numK <- bind.fv(numK, data.frame(trans=numKtrans),
-                      "{hat(%s)[%s]^{trans}}(r)",
-                      "numerator of translation-corrected estimate of %s",
-                      "trans")
-      denK <- bind.fv(denK, data.frame(trans=denKtrans),
-                      "{hat(%s)[%s]^{trans}}(r)",
-                      "denominator of translation-corrected estimate of %s",
-                      "trans")
-    }
+    K <- bind.ratfv(K,
+                    numerator   = NULL,
+                    quotient    = data.frame(trans=Ktrans), 
+                    denominator = npairs,
+                    labl        = "{hat(%s)[%s]^{trans}}(r)",             
+                    desc        = "translation-corrected estimate of %s", 
+                    preferred   = "trans",                                
+                    ratio=ratio)
   }
   if(any(correction == "isotropic")) {
     # Ripley isotropic correction
     edgewt <- edge.Ripley(XI[icloseI], matrix(dcloseIJ, ncol=1))
     wh <- whist(dcloseIJ, breaks$val, edgewt)
-    numKiso <- cumsum(wh)
-    denKiso <- lambdaI * lambdaJ * areaI
-    Kiso <- numKiso/denKiso
+    Kiso <- cumsum(wh)/(lambdaI * lambdaJ * areaI)
     rmax <- diameter(W)/2
     Kiso[r >= rmax] <- NA
-    K <- bind.fv(K, data.frame(iso=Kiso), "{hat(%s)[%s]^{iso}}(r)",
-                 "Ripley isotropic correction estimate of %s",
-                 "iso")
-   if(ratio) {
-      numK <- bind.fv(numK, data.frame(iso=numKiso), "{hat(%s)[%s]^{iso}}(r)",
-                      "numerator of Ripley isotropic correction estimate of %s",
-                      "iso")
-      denK <- bind.fv(denK, data.frame(iso=denKiso), "{hat(%s)[%s]^{iso}}(r)",
-                      "denominator of Ripley isotropic correction estimate of %s",
-                      "iso")
-    }
+    K <- bind.ratfv(K,
+                    numerator   = NULL,
+                    quotient    = data.frame(iso=Kiso),
+                    denominator = npairs,
+                    labl        = "{hat(%s)[%s]^{iso}}(r)",             
+                    desc        = "Ripley isotropic corrected estimate of %s", 
+                    preferred   = "iso",                                
+                    ratio=ratio)
   }
   # default is to display them all
   formula(K) <- . ~ r
   unitname(K) <- unitname(X)
   
-  if(ratio) {
-    # finish up numerator & denominator
-    formula(numK) <- formula(denK) <- . ~ r
-    unitname(numK) <- unitname(denK) <- unitname(K)
-    # tack on to result
-    K <- rat(K, numK, denK, check=FALSE)
-  }
+  if(ratio) K <- conform.ratfv(K)
+  
   return(K)
 }
 
