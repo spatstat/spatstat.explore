@@ -1,7 +1,7 @@
 #'
 #'  rhohat.R
 #'
-#'  $Revision: 1.107 $  $Date: 2022/05/22 01:39:21 $
+#'  $Revision: 1.108 $  $Date: 2022/07/08 13:21:12 $
 #'
 #'  Non-parametric estimation of a function rho(z) determining
 #'  the intensity function lambda(u) of a point process in terms of a
@@ -23,6 +23,7 @@ rhohat.ppp <- rhohat.quad <-
            horvitz=FALSE,
            smoother=c("kernel", "local",
                       "decreasing", "increasing",
+                      "mountain", "valley",
                       "piecewise"),
            subset=NULL,
            dimyx=NULL, eps=NULL,
@@ -103,6 +104,7 @@ rhohatEngine <- function(model, covariate,
                          horvitz=FALSE,
                          smoother=c("kernel", "local",
                                     "decreasing", "increasing",
+                                    "mountain", "valley",
                                     "piecewise"),
                          resolution=list(),
                          spatCovarArgs=list(),
@@ -197,12 +199,74 @@ rhohatCalc <- local({
     return(se^2)
   }
 
+  unimodalLogLikelihood <- function(zcrit, allargs) {
+    rhofun <- unimodalEstimate(zcrit, allargs)
+    ZX <- allargs$ZX
+    return(sum(log(pmax(.Machine$double.eps, rhofun(ZX)))))
+  }
+
+  unimodalEstimate <- function(zcrit, allargs) {
+    #' unpack
+    ZX        <- allargs$ZX
+    weights   <- allargs$weights
+    areas     <- allargs$areas
+    totalarea <- allargs$totalarea
+    G         <- allargs$G
+    inverted  <- allargs$inverted
+    #' split according to zcrit
+    left <- (ZX <= zcrit)
+    right <- !left
+    zleft <- ZX[left]
+    zright <- ZX[right]
+    weightsleft <- weights[left]
+    weightsright <- weights[right]
+    areacrit <- G(zcrit) * totalarea
+    arealeft <- areas[left]
+    arearight <- areas[right]
+    #' left side of critical point
+    yleft <- monoCalc(weightsleft, arealeft, areacrit, increasing=!inverted)
+    #' right side of critical point
+    yright <- monoCalc(weightsright, arearight - areacrit,
+                       totalarea - areacrit, increasing=inverted)
+    #' value at critical point
+    ycrit <- if(inverted) min(yleft, yright) else max(yleft, yright)
+    yinf <- if(inverted) max(yright) else 0
+    #' build function
+    zz <- c(zleft, zright)
+    yy <- c(yleft, yright, yinf)
+    lambda <- stepfun(x = zz, y = yy, right=TRUE, f=1)
+    return(lambda)
+  }
+
+  monoCalc <- function(weights, areas, totarea, increasing) {
+    if(length(weights) == 0) return(numeric(0))
+    if(increasing) areas <- totarea - rev(areas)
+    ## maximum upper sets algorithm
+    y <- numeric(0)
+    a <- weights
+    b <- diff(c(0, areas))
+    while(length(b) > 0) {
+      u <- cumsum(a)/cumsum(b)
+      if(any(bad <- !is.finite(u))) # divide by zero etc
+        u[bad] <- max(u[!bad], 0)
+      k <- which.max(u)
+      y <- c(y, rep(u[k], k))
+      a <- a[-(1:k)]
+      b <- b[-(1:k)]
+    }
+    if(increasing) y <- rev(y)
+    return(y)
+  }
+
+  ## ............... main function ......................
+
   rhohatCalc <- function(ZX, Zvalues, lambda, denom, ...,
                          weights=NULL, lambdaX,
                          method=c("ratio", "reweight", "transform"),
                          horvitz=FALSE, 
                          smoother=c("kernel", "local",
                                     "decreasing", "increasing",
+                                    "mountain", "valley",
                                     "piecewise"),
                          n=512, bw="nrd0", adjust=1, from=NULL, to=NULL, 
                          bwref=bw, covname, confidence=0.95,
@@ -407,6 +471,7 @@ rhohatCalc <- local({
     },
     increasing = ,
     decreasing = {
+      ## .................  monotone ....................................
       ## .................. nonparametric maximum likelihood ............
       if(is.null(weights)) weights <- rep(1, length(ZX))
       if(method != "ratio") 
@@ -442,6 +507,52 @@ rhohatCalc <- local({
       if(smoother == "increasing") rho <- rev(rho)
       #' compute as a stepfun
       rhofun <- stepfun(x = ZX, y=rho, right=TRUE, f=1)
+      #' evaluate on a grid
+      xlim <- c(from, to)
+      xxx <- seq(from, to, length=n)
+      yyy <- rhofun(xxx)
+      #'
+      vvv <- hi <- lo <- NULL
+      savestuff$rhofun <- rhofun
+    },
+    mountain = ,
+    valley = {
+      ## .................  unimodal ....................................
+      ## .................. nonparametric maximum likelihood ............
+      if(is.null(weights)) weights <- rep(1, length(ZX))
+      if(method != "ratio") 
+        warning(paste("Argument method =", sQuote(method),
+                      "is ignored when smoother =",
+                      sQuote(smoother)))
+      #' observed (sorted)
+      oX <- order(ZX)
+      ZX <- ZX[oX]
+      weights <- weights[oX]
+      #' collapse duplicates
+      if(anyDuplicated(ZX)) {
+        islast <- rev(c(TRUE, diff(rev(ZX)) != 0))
+        ZX <- ZX[islast]
+        weights <- diff(c(0, cumsum(weights)[islast]))
+      }
+      #' reference CDF
+      G <- ewcdf(Zvalues, lambda)
+      #' reference denominator ('area') at each observed value
+      areas <- denom * G(ZX)
+      totalarea <- denom
+      #' bundle all data
+      allargs <- list(ZX        = ZX,
+                      weights   = weights,
+                      areas     = areas,
+                      totalarea = totalarea,
+                      G         = G,
+                      inverted  = (smoother == "valley"))
+      #' optimize position of peak
+      v <- optimise(unimodalLogLikelihood, range(ZX), maximum=TRUE,
+                    allargs=allargs)
+      zcrit <- as.numeric(v$maximum)
+      #' form stepfun
+      rhofun <- unimodalEstimate(zcrit, allargs)
+      attr(rhofun, "zcrit") <- zcrit
       #' evaluate on a grid
       xlim <- c(from, to)
       xxx <- seq(from, to, length=n)
@@ -588,6 +699,8 @@ print.rhohat <- function(x, ...) {
          local  = splat("Smooth function of covariate"),
          increasing = splat("Increasing function of covariate"),
          decreasing = splat("Decreasing function of covariate"),
+         mountain = splat("Unimodal (mountain) function of covariate"),
+         valley = splat("Inverted unimodal (valley) function of covariate"),
          piecewise  = splat("Piecewise-constant function of covariate"),
          splat("unknown smoother =", sQuote(smoother))
          )
@@ -595,7 +708,9 @@ print.rhohat <- function(x, ...) {
   switch(smoother,
          piecewise  = splat("average intensity in sub-regions"),
          increasing = ,
-         decreasing = splat("nonparametric maximum likelihood"),
+         decreasing = ,
+         mountain =,
+         valley = splat("nonparametric maximum likelihood"),
          kernel = {
            switch(method,
                   ratio = splat("ratio of fixed-bandwidth kernel smoothers"),
@@ -627,7 +742,7 @@ print.rhohat <- function(x, ...) {
            if(isTRUE(s$horvitz))
              splat("\twith Horvitz-Thompson weight")
          })
-  if(!(smoother %in% c("increasing", "decreasing"))) {
+  if(!(smoother %in% c("increasing", "decreasing", "mountain", "valley"))) {
     positiveCI <- s$positiveCI %orifnull% (smoother == "local")
     confidence <- s$confidence %orifnull% 0.95
     splat("Pointwise", paste0(100 * confidence, "%"),

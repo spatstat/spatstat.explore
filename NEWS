@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 2.999-999.016
+        CHANGES IN spatstat.explore VERSION 2.999-999.017
 
 OVERVIEW
 
@@ -16,6 +16,8 @@ OVERVIEW
     
     o Bandwidth selection for adaptive kernel estimation of intensity.
 
+    o U-shaped curves in 'rhohat'.
+    
     o Minor improvements.
 
 NEW FUNCTIONS
@@ -68,6 +70,12 @@ SIGNIFICANT USER-VISIBLE CHANGES
 
     o adaptive.density
     Now accepts 'method="nearest"' and passes the data to 'nndensity'.
+
+    o rhohat.ppp
+    New options 'smoother="mountain"' and 'smoother="valley"'
+    for estimating a unimodal function (U-shaped curve).
+    
+    
         CHANGES IN spatstat.core VERSION 2.4-4.010
 
 OVERVIEW
