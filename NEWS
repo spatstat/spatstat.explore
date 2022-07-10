@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 2.999-999.018
+        CHANGES IN spatstat.explore VERSION 2.999-999.019
 
 OVERVIEW
 
@@ -74,7 +74,10 @@ SIGNIFICANT USER-VISIBLE CHANGES
     o rhohat.ppp
     New options 'smoother="mountain"' and 'smoother="valley"'
     for estimating a unimodal function (U-shaped curve).
-    
+
+    o rhohat
+    If the covariate is a 'distfun', the name of the unit of length is saved
+    and displayed on the plot.
     
         CHANGES IN spatstat.core VERSION 2.4-4.010
 

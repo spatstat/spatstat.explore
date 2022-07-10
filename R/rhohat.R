@@ -1,7 +1,7 @@
 #'
 #'  rhohat.R
 #'
-#'  $Revision: 1.108 $  $Date: 2022/07/08 13:21:12 $
+#'  $Revision: 1.110 $  $Date: 2022/07/10 10:28:15 $
 #'
 #'  Non-parametric estimation of a function rho(z) determining
 #'  the intensity function lambda(u) of a point process in terms of a
@@ -65,6 +65,8 @@ rhohat.ppp <- rhohat.quad <-
            stop("Unrecognised covariate name")
          )
     covunits <- unitname(X)
+  } else if(inherits(covariate, "distfun")) {
+    covunits <- unitname(covariate)
   } else {
     covunits <- NULL
   }
@@ -552,14 +554,15 @@ rhohatCalc <- local({
       zcrit <- as.numeric(v$maximum)
       #' form stepfun
       rhofun <- unimodalEstimate(zcrit, allargs)
-      attr(rhofun, "zcrit") <- zcrit
       #' evaluate on a grid
       xlim <- c(from, to)
       xxx <- seq(from, to, length=n)
       yyy <- rhofun(xxx)
-      #'
+      #' No variances
       vvv <- hi <- lo <- NULL
+      #' save info
       savestuff$rhofun <- rhofun
+      savestuff$zcrit  <- zcrit
     },
     piecewise = {
       ## .................. piecewise constant ............
@@ -708,9 +711,16 @@ print.rhohat <- function(x, ...) {
   switch(smoother,
          piecewise  = splat("average intensity in sub-regions"),
          increasing = ,
-         decreasing = ,
-         mountain =,
-         valley = splat("nonparametric maximum likelihood"),
+         decreasing = splat("nonparametric maximum likelihood"),
+         mountain = ,
+         valley = {
+           splat("nonparametric maximum likelihood")
+           if(!is.null(zcrit <- s$zcrit)) {
+             with(summary(unitname(x)),
+                  splat("Critical z value =",
+                        signif(zcrit, 4), plural, explain))
+           }
+         },
          kernel = {
            switch(method,
                   ratio = splat("ratio of fixed-bandwidth kernel smoothers"),
