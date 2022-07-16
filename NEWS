@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 2.999-999.019
+        CHANGES IN spatstat.explore VERSION 2.999-999.020
 
 OVERVIEW
 
@@ -18,12 +18,17 @@ OVERVIEW
 
     o U-shaped curves in 'rhohat'.
     
+    o Radial cumulative integral of an image.
+    
     o Minor improvements.
 
 NEW FUNCTIONS
 
     o bw.CvL.adaptive
     Bandwidth selection for adaptive kernel estimation of intensity.
+
+    o radcumint
+    Radial cumulative integral of an image.
     
 SIGNIFICANT USER-VISIBLE CHANGES
 
