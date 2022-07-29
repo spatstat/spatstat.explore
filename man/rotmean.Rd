@@ -74,6 +74,9 @@ rotmean(X, ..., origin, padzero=TRUE, Xname, result=c("fv", "im"), adjust=1)
 \author{
   \spatstatAuthors.
 }
+\seealso{
+  \code{\link{radcumint}}
+}
 \examples{
   if(interactive()) {
     Z <- setcov(square(1))

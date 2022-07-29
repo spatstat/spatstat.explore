@@ -165,7 +165,8 @@ spatialCDFtestCalc <- function(fra, test=c("ks", "cvm", "ad"), ...,
   return(result)        
 }
 
-spatialCDFframe <- function(model, covariate, ..., jitter=TRUE) {
+spatialCDFframe <- function(model, covariate, ...,
+                            jitter=TRUE, covariateAtPoints=NULL) {
   # evaluate CDF of covariate values at data points and at pixels
   stuff <- spatialCovariateEvidence(model, covariate, ..., jitter=jitter)
   # extract 
@@ -174,7 +175,7 @@ spatialCDFframe <- function(model, covariate, ..., jitter=TRUE) {
   Zvalues <- values$Zvalues
   lambda  <- values$lambda
   weights <- values$weights
-  ZX      <- values$ZX
+  ZX      <- covariateAtPoints %orifnull% values$ZX
   # compute empirical cdf of Z values at points of X
   FZX <- ecdf(ZX)
   # form weighted cdf of Z values in window

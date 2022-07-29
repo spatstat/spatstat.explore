@@ -57,7 +57,7 @@ radcumint(X, \dots, origin, Xname, result = c("fv", "im"))
   \spatstatAuthors.
 }
 \seealso{
-  \code{\link{rotmean}}
+  \code{\link{rotmean}}, \code{\link{spatialcdf}}
 }
 \examples{
    D <- density(redwood)
