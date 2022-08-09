@@ -53,7 +53,7 @@ Authors@R: c(person("Adrian", "Baddeley",
 Maintainer: Adrian Baddeley <Adrian.Baddeley@curtin.edu.au>
 Depends: R (>= 3.5.0), spatstat.data (>= 2.999-999), spatstat.geom (>= 2.999-999), spatstat.random (>= 2.999-999), stats, graphics, grDevices, utils, methods, nlme
 Imports: spatstat.utils (>= 2.999-999), spatstat.sparse (>= 2.999-999), goftest (>= 1.2-2), Matrix, abind
-Suggests: sm, maptools (>= 0.9-9), gsl, locfit, spatial, fftwtools (>= 0.9-8), spatstat.linnet (>= 2.999-999), spatstat.model (>= 2.999-999), spatstat (>= 2.999-999)
+Suggests: sm, maptools (>= 0.9-9), gsl, locfit, spatial, fftwtools (>= 0.9-8), spatstat.linnet (>= 2.999-999.016), spatstat.model (>= 2.999-999.022), spatstat (>= 2.999-999)
 Additional_repositories: https://spatstat.r-universe.dev
 Description: Functionality for exploratory data analysis and nonparametric analysis of
 	     spatial data, mainly spatial point patterns,

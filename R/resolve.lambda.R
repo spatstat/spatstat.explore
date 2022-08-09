@@ -7,9 +7,9 @@
 #'    resolve.lambdacross
 #'    resolve.reciplambda
 #'    validate.weights
-#'    updateData
+#'    updateData (generic)
 #'
-#' $Revision: 1.17 $ $Date: 2022/08/09 04:10:27 $
+#' $Revision: 1.18 $ $Date: 2022/08/09 06:46:50 $
 
 resolve.lambda <- function(X, lambda=NULL, ...) {
   UseMethod("resolve.lambda")
@@ -357,14 +357,37 @@ validate.weights <- function(x, recip=FALSE, how = NULL,
 }
 
 updateData <- function(model, X, ...) {
-  ## wrapper to refit the 'model' to new data 'X'
   UseMethod("updateData")
 }
 
 updateData.default <- function(model, X, ..., warn=TRUE) {
-  ## We only arrive here if spatstat.model is absent or out-of-date
-  if(warn)
-    warning("Model was not updated; this requires a recent version of spatstat.model",
-            call.=FALSE)
+  ## for some bizarre reason, method dispatch often fails for this function
+  ## so we do it by hand as a backup
+  if(warn) warning("Reached 'updateData.default'", call.=FALSE)
+  if(inherits(model, c("ppm", "kppm", "dppm", "slrm"))) {
+    if(requireNamespace("spatstat.model")) {
+      if(inherits(model, "ppm")) {
+        model <- spatstat.model::updateData.ppm(model, X)
+      } else if(inherits(model, "kppm")) {
+        model <- spatstat.model::updateData.kppm(model, X)
+      } else if(inherits(model, "dppm")) {
+        model <- spatstat.model::updateData.dppm(model, X)
+      } else if(inherits(model, "slrm")) {
+        model <- spatstat.model::updateData.slrm(model, X)
+      }
+    } else
+      if(warn)
+        warning("Model was not updated; this requires a recent version of spatstat.model", call.=FALSE)
+  } else if(inherits(model, "lppm")) {
+    if(requireNamespace("spatstat.linnet")) {
+      model <- spatstat.linnet::updateData.lppm(model, X)
+    } else
+      if(warn)
+        warning("Model was not updated; this requires a recent version of spatstat.linnet", call.=FALSE)
+  } else
+    if(warn)
+      warning("Unrecognised kind of 'model'; no update performed",
+              call.=FALSE)
   return(model)
 }
+  
