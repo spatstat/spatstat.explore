@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 2.999-999.022
+        CHANGES IN spatstat.explore VERSION 2.999-999.023
 
 OVERVIEW
 
@@ -17,7 +17,7 @@ OVERVIEW
     o Bandwidth selection for adaptive kernel estimation of intensity.
 
     o U-shaped curves in 'rhohat'.
-    
+
     o Radial cumulative integral of an image.
     
     o Minor improvements.
@@ -80,9 +80,13 @@ SIGNIFICANT USER-VISIBLE CHANGES
     New options 'smoother="mountain"' and 'smoother="valley"'
     for estimating a unimodal function (U-shaped curve).
 
-    o rhohat
+    o rhohat.ppp
     If the covariate is a 'distfun', the name of the unit of length is saved
     and displayed on the plot.
+
+    o rhohat.ppp
+    New arguments 'jitter', 'jitterfactor', 'interpolate' allow greater
+    control over the calculation.
     
         CHANGES IN spatstat.core VERSION 2.4-4.010
 
