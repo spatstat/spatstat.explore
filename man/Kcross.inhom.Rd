@@ -294,13 +294,16 @@ Kcross.inhom(X, i, j, lambdaI=NULL, lambdaJ=NULL, \dots,  r=NULL, breaks=NULL,
     if(require("spatstat.model")) {
     fit <- ppm(woods ~marks * polynom(x,y,2))
     # alternative (a): use fitted model as 'lambda' argument
+    online <- interactive()
     K <- Kcross.inhom(woods, "whiteoak", "maple",
-                      lambdaI=fit, lambdaJ=fit, update=FALSE)
+                      lambdaI=fit, lambdaJ=fit,
+                      update=online, leaveoneout=online)
     K <- Kcross.inhom(woods, "whiteoak", "maple",
-                      lambdaX=fit, update=FALSE)
+                      lambdaX=fit,
+                      update=online, leaveoneout=online)
     # alternative (b): evaluate fitted intensities at data points
     # (these are the intensities of the sub-processes of each type)
-    inten <- fitted(fit, dataonly=TRUE)
+    inten <- fitted(fit, dataonly=TRUE, leaveoneout=FALSE)
     # split according to types of points
     lambda <- split(inten, marks(woods))
     K <- Kcross.inhom(woods, "whiteoak", "maple",

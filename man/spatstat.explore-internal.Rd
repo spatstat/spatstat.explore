@@ -173,6 +173,7 @@
 \alias{twostage.test}
 \alias{twostage.envelope}
 \alias{updateData}
+\alias{updateData.default}
 \alias{validate2Dkernel}
 \alias{validate.angles}        
 \alias{validate.weights}        
@@ -439,7 +440,8 @@ twostage.test(X, \dots, exponent, nsim, nsimsub,
 twostage.envelope(X, \dots, nsim, nsimsub, nrank,
                   alternative, reuse, leaveout, interpolate,
                   savefuns, savepatterns, verbose, badXfatal, testlabel)
-updateData(model, X, warn)
+updateData(model, X, \dots)
+\method{updateData}{default}(model, X, \dots, warn)
 validate2Dkernel(kernel, fatal)
 validate.angles(angles, unit, guess)
 validate.weights(x, recip, how, allowzero, allowinf)

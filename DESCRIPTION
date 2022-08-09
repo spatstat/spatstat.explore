@@ -1,5 +1,5 @@
 Package: spatstat.explore
-Version: 2.999-999.023
+Version: 2.999-999.024
 Date: 2022-08-09
 Title: Exploratory Data Analysis for the 'spatstat' Family
 Authors@R: c(person("Adrian", "Baddeley", 
@@ -51,9 +51,9 @@ Authors@R: c(person("Adrian", "Baddeley",
 	     person("Hangsheng", "Wang",
 	            role = "ctb"))
 Maintainer: Adrian Baddeley <Adrian.Baddeley@curtin.edu.au>
-Depends: R (>= 3.5.0), spatstat.data (>= 2.2-0.003), spatstat.geom (>= 2.4-0.026), spatstat.random (>= 2.2-0.007), stats, graphics, grDevices, utils, methods, nlme
-Imports: spatstat.utils (>= 2.3-1.003), spatstat.sparse (>= 2.0-0), goftest (>= 1.2-2), Matrix, abind
-Suggests: sm, maptools (>= 0.9-9), gsl, locfit, spatial, fftwtools (>= 0.9-8), spatstat.linnet (>= 2.3-2.017), spatstat.model, spatstat (>= 2.3-3)
+Depends: R (>= 3.5.0), spatstat.data (>= 2.999-999), spatstat.geom (>= 2.999-999), spatstat.random (>= 2.999-999), stats, graphics, grDevices, utils, methods, nlme
+Imports: spatstat.utils (>= 2.999-999), spatstat.sparse (>= 2.999-999), goftest (>= 1.2-2), Matrix, abind
+Suggests: sm, maptools (>= 0.9-9), gsl, locfit, spatial, fftwtools (>= 0.9-8), spatstat.linnet (>= 2.999-999), spatstat.model (>= 2.999-999), spatstat (>= 2.999-999)
 Additional_repositories: https://spatstat.r-universe.dev
 Description: Functionality for exploratory data analysis and nonparametric analysis of
 	     spatial data, mainly spatial point patterns,
