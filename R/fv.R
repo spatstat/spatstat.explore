@@ -4,7 +4,7 @@
 ##
 ##    class "fv" of function value objects
 ##
-##    $Revision: 1.175 $   $Date: 2022/05/17 07:42:06 $
+##    $Revision: 1.176 $   $Date: 2022/08/11 04:26:13 $
 ##
 ##
 ##    An "fv" object represents one or more related functions
@@ -627,6 +627,8 @@ collapse.fv <- local({
     xalias <- c(xname, ".x")
     same <- setdiff(same, xalias)
     different <- setdiff(different, xalias)
+    ## dotnames
+    alldotnames <- unique(as.character(lapply(x, fvnames, a=".")))
     ## validate
     either <- c(same, different)
     if(length(either) == 0)
@@ -682,7 +684,7 @@ collapse.fv <- local({
         }
       }
     }
-    dotnames <- same
+    dotnames <- intersect(same, alldotnames)
     ## .............. different  .............................
     ## create names for different versions
     versionnames <- good.names(names(x), "f", seq_along(x))
@@ -700,11 +702,12 @@ collapse.fv <- local({
           y <- as.data.frame(xi)[, wanted, drop=FALSE]
           desc <- attr(xi, "desc")[wanted]
           labl <- attr(xi, "labl")[wanted]
+          indots <- names(y) %in% alldotnames
           ## relabel
           prefix <- shortnames[i]
           preamble <- versionnames[i]
           names(y) <- if(ncol(y) == 1) prefix else paste(prefix,names(y),sep="")
-          dotnames <- c(dotnames, names(y))
+          dotnames <- c(dotnames, names(y)[indots])
           ## glue onto fv object
           z <- bind.fv(z, y,
                        labl=paste(prefix, labl, sep="~"),
