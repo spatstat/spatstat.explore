@@ -4,7 +4,7 @@
 ##
 ##    class "fv" of function value objects
 ##
-##    $Revision: 1.176 $   $Date: 2022/08/11 04:26:13 $
+##    $Revision: 1.177 $   $Date: 2022/08/11 05:00:35 $
 ##
 ##
 ##    An "fv" object represents one or more related functions
@@ -628,7 +628,7 @@ collapse.fv <- local({
     same <- setdiff(same, xalias)
     different <- setdiff(different, xalias)
     ## dotnames
-    alldotnames <- unique(as.character(lapply(x, fvnames, a=".")))
+    alldotnames <- unique(unlist(lapply(x, fvnames, a=".")))
     ## validate
     either <- c(same, different)
     if(length(either) == 0)
