@@ -237,6 +237,7 @@ densityHeat.ppp <- function(x, sigma, ..., weights=NULL,
     if(want.Xpos) {
       #' adjust serial numbers
       Xpos <- cumsum(ok)[Xpos]
+      backmap <- which(ok)
     }
     mx <- mx[ok,ok,drop=FALSE]
     my <- my[ok,ok,drop=FALSE]
@@ -250,6 +251,7 @@ densityHeat.ppp <- function(x, sigma, ..., weights=NULL,
     }
   } else {
     ok <- TRUE
+    backmap <- NULL
     if(is.im(sigma)) {
       px <- px[]
       py <- py[]
@@ -262,11 +264,17 @@ densityHeat.ppp <- function(x, sigma, ..., weights=NULL,
   } else {
     A <- px * (1 - 2 * py) * mx + py * (1 - 2 * px) * my + pxy * mxy
   }
+
+  #' construct one-step transition probability matrix
+  if(any(A < 0)) 
+    stop("Internal error: negative jump probabilities", call.=FALSE)
+  totaljump <- rowSums(A)
+  if(max(totaljump) > 1)
+    stop("Internal error: jump probability exceeds 1", call.=FALSE)
+  diag(A) <- 1 - totaljump
+  
   #' debug
-  stopifnot(min(rowSums(A)) >= 0)
-  stopifnot(max(rowSums(A)) <= 1)
-  #' 
-  diag(A) <- 1 - rowSums(A)
+  
   #' k-step transition probabilities
   if(k > 1) {
     Ak <- A
@@ -278,7 +286,8 @@ densityHeat.ppp <- function(x, sigma, ..., weights=NULL,
   Nrump  <- Nstep - Nblock * k
   #' secret exit - return setup data only
   if(setuponly)
-    return(list(Y=Y, u=u, Xpos=Xpos, sigma=sigma, A=A, Ak=Ak, k=k,
+    return(list(Y=Y, u=u, Xpos=Xpos, backmap=backmap,
+                sigma=sigma, A=A, Ak=Ak, k=k,
                 Nstep=Nstep, Nblock=Nblock, Nrump=Nrump,
                 dx=xstep, dy=ystep, dt=dt))
   #' run
