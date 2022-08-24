@@ -418,7 +418,8 @@ smoothcrossEngine(Xdata, Xquery, values, sigma, \dots,
 smoothpointsEngine(x, values, sigma, \dots,
                    kernel, scalekernel,
                    weights, varcov, leaveoneout, sorted, cutoff, debug)
-spatialCDFframe(model, covariate, \dots, jitter, covariateAtPoints)
+spatialCDFframe(model, covariate, \dots, jitter, covariateAtPoints,
+                make.quantile.function)
 spatialCDFtest(model, covariate, test, \dots,
          dimyx, eps, interpolate, jitter,
          nsim, verbose, modelname, covname, dataname)

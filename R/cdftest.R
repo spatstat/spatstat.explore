@@ -166,7 +166,8 @@ spatialCDFtestCalc <- function(fra, test=c("ks", "cvm", "ad"), ...,
 }
 
 spatialCDFframe <- function(model, covariate, ...,
-                            jitter=TRUE, covariateAtPoints=NULL) {
+                            jitter=TRUE, covariateAtPoints=NULL,
+                            make.quantile.function=FALSE) {
   # evaluate CDF of covariate values at data points and at pixels
   stuff <- spatialCovariateEvidence(model, covariate, ..., jitter=jitter)
   # extract 
@@ -212,12 +213,29 @@ spatialCDFframe <- function(model, covariate, ...,
     U <- U + runif(nU, -1, 1)/max(100, 2*nU)
     U <- pmax(0, pmin(1, U))
   }
+
+  if(make.quantile.function) {
+    ## right-continuous inverse of FZ
+    pZ <- get("y", environment(FZ))
+    qZ <- get("x", environment(FZ))
+    ok <- !duplicated(pZ)
+    qZ <- qZ[ok]
+    pZ <- pZ[ok]
+    if(length(qZ) > 1) {
+      FZinverse <- approxfun(pZ, qZ, rule=2)
+    } else {
+      ## degenerate
+      FZinverse <- approxfun(c(0,1), rep(qZ, 2), rule=2)
+    }
+  } else FZinverse <- NULL ## to placate package checker
   
   # pack up
   stuff$values$FZ  <- FZ
   stuff$values$FZX <- FZX
   stuff$values$U   <- U
   stuff$values$EN <- sumwts  ## integral of intensity = expected number of pts
+  if(make.quantile.function)
+    stuff$values$FZinverse  <- FZinverse
   class(stuff) <- "spatialCDFframe"
   return(stuff)
 }
