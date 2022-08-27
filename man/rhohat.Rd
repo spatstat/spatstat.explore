@@ -20,7 +20,8 @@ rhohat(object, covariate, ...)
        horvitz=FALSE,
        smoother=c("kernel", "local", "decreasing", "increasing",
        "mountain", "valley", "piecewise"),
-       subset=NULL, 
+       subset=NULL,
+       do.CI=TRUE, 
        jitter=TRUE, jitterfactor=1, interpolate=TRUE,
        dimyx=NULL, eps=NULL,
        n = 512, bw = "nrd0", adjust=1, from = NULL, to = NULL,
@@ -34,6 +35,7 @@ rhohat(object, covariate, ...)
        smoother=c("kernel", "local", "decreasing", "increasing",
                   "mountain", "valley", "piecewise"),
        subset=NULL, 
+       do.CI=TRUE, 
        jitter=TRUE, jitterfactor=1, interpolate=TRUE,
        dimyx=NULL, eps=NULL,
        n = 512, bw = "nrd0", adjust=1, from = NULL, to = NULL,
@@ -83,6 +85,10 @@ rhohat(object, covariate, ...)
     Optional. A spatial window (object of class \code{"owin"})
     specifying a subset of the data, from which the estimate should
     be calculated.
+  }
+  \item{do.CI}{
+    Logical value specifying whether to calculate standard errors
+    and confidence bands.
   }
   \item{jitter}{
     Logical value. If \code{jitter=TRUE} (the default),
@@ -213,7 +219,8 @@ rhohat(object, covariate, ...)
     of \eqn{\rho(z)}{rho(z)} (Guan, 2008; Baddeley et al, 2012).
     The estimated function \eqn{\rho(z)}{rho(z)} will be
     a smooth function of \eqn{z} which takes nonnegative values.
-    Confidence bands are also computed, assuming a Poisson point process.
+    If \code{do.CI=TRUE} (the default),
+    confidence bands are also computed, assuming a Poisson point process.
     See the section on \emph{Smooth estimates}.
     \item
     If \code{smoother="local"}, 
@@ -222,7 +229,8 @@ rhohat(object, covariate, ...)
     local likelihood.
     The estimated function \eqn{\rho(z)}{rho(z)} will be
     a smooth function of \eqn{z}.
-    Confidence bands are also computed, assuming a Poisson point process.
+    If \code{do.CI=TRUE} (the default),
+    confidence bands are also computed, assuming a Poisson point process.
     See the section on \emph{Smooth estimates}.
     \item
     If \code{smoother="increasing"}, we assume that
@@ -275,6 +283,8 @@ rhohat(object, covariate, ...)
     The estimate of \eqn{\rho(z)}{rho(z)} in each interval of covariate
     values is simply the average intensity
     (number of points per unit area) in the relevant sub-region.
+    If \code{do.CI=TRUE} (the default),
+    confidence bands are computed assuming a Poisson process.
   }
   See Baddeley (2018) for a comparison of these estimation techniques
   (except for \code{"mountain"} and \code{"valley"}).

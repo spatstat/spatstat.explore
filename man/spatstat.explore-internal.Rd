@@ -388,7 +388,7 @@ rhohatEngine(model, covariate, reference, volume, \dots,
                modelcall, callstring)
 rhohatCalc(ZX, Zvalues, lambda, denom, \dots,
            weights, lambdaX,
-           method, horvitz, smoother,
+           method, horvitz, smoother, do.CI, 
            n, bw, adjust, from, to, 
            bwref, covname, confidence, breaks, positiveCI, markovCI,
            covunits, modelcall, callstring, savestuff)

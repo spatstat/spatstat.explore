@@ -24,7 +24,8 @@ pool.fv <- local({
   Square <- function(A) { force(A); eval.fv(A^2, relabel=FALSE) }
   Add <- function(A,B){ force(A); force(B); eval.fv(A+B, relabel=FALSE) }
   Cmul <- function(A, f) { force(A); force(f); eval.fv(f * A, relabel=FALSE) }
-
+  DotOnly <- function(A) { force(A); eval.fv(A, relabel=FALSE) }
+  
   pool.fv <- function(..., weights=NULL, relabel=TRUE, variance=TRUE) {
     argh <- list(...)
     n <- narg <- length(argh)
@@ -35,7 +36,10 @@ pool.fv <- local({
     if(!all(isfv))
       stop("All arguments must be fv objects")
     argh <- do.call(harmonise, append(argh, list(strict=TRUE)))
-    template <- vanilla.fv(argh[[1]])
+    ## make a template for the result
+    template <- argh[[1L]]
+    template <- eval.fv(template) ## restricts to 'dotnames'
+    template <- vanilla.fv(template) ## remove weird attributes
     ## compute products
     if(!is.null(weights)) {
       check.nvector(weights, narg, things="Functions", vname="weights")

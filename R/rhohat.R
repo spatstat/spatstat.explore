@@ -1,7 +1,7 @@
 #'
 #'  rhohat.R
 #'
-#'  $Revision: 1.111 $  $Date: 2022/08/09 02:01:37 $
+#'  $Revision: 1.113 $  $Date: 2022/08/27 05:59:54 $
 #'
 #'  Non-parametric estimation of a function rho(z) determining
 #'  the intensity function lambda(u) of a point process in terms of a
@@ -26,6 +26,7 @@ rhohat.ppp <- rhohat.quad <-
                       "mountain", "valley",
                       "piecewise"),
            subset=NULL,
+           do.CI=TRUE,
            jitter=TRUE, jitterfactor=1, interpolate=TRUE,
            dimyx=NULL, eps=NULL,
            n=512, bw="nrd0", adjust=1, from=NULL, to=NULL, 
@@ -78,6 +79,7 @@ rhohat.ppp <- rhohat.quad <-
   
   rhohatEngine(model, covariate, reference, areaW, ..., 
                subset=subset,
+               do.CI=do.CI,
                weights=weights,
                method=method,
                horvitz=horvitz,
@@ -274,6 +276,7 @@ rhohatCalc <- local({
                                     "decreasing", "increasing",
                                     "mountain", "valley",
                                     "piecewise"),
+                         do.CI=TRUE,
                          n=512, bw="nrd0", adjust=1, from=NULL, to=NULL, 
                          bwref=bw, covname, confidence=0.95,
                          breaks=NULL,
@@ -299,6 +302,8 @@ rhohatCalc <- local({
     stopifnot(length(lambda) == length(Zvalues))
     stopifnot(all(is.finite(lambda))) 
     check.1.real(denom)
+    ## 
+    if(!do.CI) vvv <- NULL
     ## 
     if(horvitz) {
       ## data points will be weighted by reciprocal of model intensity
@@ -340,15 +345,17 @@ rhohatCalc <- local({
                fhatfun <- interpolate(fhat)
                Ghat.xxx <- denom * ghatfun(xxx)
                yyy <- fhatfun(xxx)/Ghat.xxx
-               ## compute variance approximation
-               sigma <- fhat$bw
-               weights2 <- if(is.null(weights)) NULL else weights^2
-               fstar <- unnormdensity(ZX,weights=weights2,
-                                      bw=bw,adjust=adjust/sqrt(2),
-                                      n=n,from=from, to=to, ...)
-               fstarfun <- interpolate(fstar)
-               const <- 1/(2 * sigma * sqrt(pi))
-               vvv  <- const * fstarfun(xxx)/Ghat.xxx^2
+               if(do.CI) {
+                 ## compute variance approximation
+                 sigma <- fhat$bw
+                 weights2 <- if(is.null(weights)) NULL else weights^2
+                 fstar <- unnormdensity(ZX,weights=weights2,
+                                        bw=bw,adjust=adjust/sqrt(2),
+                                        n=n,from=from, to=to, ...)
+                 fstarfun <- interpolate(fstar)
+                 const <- 1/(2 * sigma * sqrt(pi))
+                 vvv  <- const * fstarfun(xxx)/Ghat.xxx^2
+               }
              },
              reweight={
                ## weight Z values by reciprocal of reference
@@ -357,14 +364,16 @@ rhohatCalc <- local({
                                      n=n,from=from, to=to, ...)
                rhatfun <- interpolate(rhat)
                yyy <- rhatfun(xxx)
-               ## compute variance approximation
-               sigma <- rhat$bw
-               rongstar <- unnormdensity(ZX, weights=wt^2,
-                                         bw=bw,adjust=adjust/sqrt(2),
-                                         n=n,from=from, to=to, ...)
-               rongstarfun <- interpolate(rongstar)
-               const <- 1/(2 * sigma * sqrt(pi))
-               vvv  <- const * rongstarfun(xxx)
+               if(do.CI) {
+                 ## compute variance approximation
+                 sigma <- rhat$bw
+                 rongstar <- unnormdensity(ZX, weights=wt^2,
+                                           bw=bw,adjust=adjust/sqrt(2),
+                                           n=n,from=from, to=to, ...)
+                 rongstarfun <- interpolate(rongstar)
+                 const <- 1/(2 * sigma * sqrt(pi))
+                 vvv  <- const * rongstarfun(xxx)
+               }
              },
              transform={
                ## probability integral transform
@@ -384,31 +393,35 @@ rhohatCalc <- local({
                Gxxx <- Gfun(xxx)
                Dxxx <- denom * onefun(Gxxx)
                yyy <- qhatfun(Gxxx)/Dxxx
-               ## compute variance approximation
-               sigma <- qhat$bw
-               weights2 <- if(is.null(weights)) NULL else weights^2
-               qstar <- unnormdensity(GZX,weights=weights2,
-                                      bw=bw,adjust=adjust/sqrt(2),
-                                      n=n,from=0, to=1, ...)
-               qstarfun <- interpolate(qstar)
-               const <- 1/(2 * sigma * sqrt(pi))
-               vvv  <- const * qstarfun(Gxxx)/Dxxx^2
+               if(do.CI) {
+                 ## compute variance approximation
+                 sigma <- qhat$bw
+                 weights2 <- if(is.null(weights)) NULL else weights^2
+                 qstar <- unnormdensity(GZX,weights=weights2,
+                                        bw=bw,adjust=adjust/sqrt(2),
+                                        n=n,from=0, to=1, ...)
+                 qstarfun <- interpolate(qstar)
+                 const <- 1/(2 * sigma * sqrt(pi))
+                 vvv  <- const * qstarfun(Gxxx)/Dxxx^2
+               }
              })
-      vvvname <- "Variance of estimator"
-      vvvlabel <- paste("bold(Var)~hat(%s)", paren(covname), sep="")
-      sd <- sqrt(vvv)
-      if(!positiveCI) {
-        hi <- yyy + crit * sd
-        lo <- yyy - crit * sd
-      } else {
-        sdlog <- ifelse(yyy > 0, sd/yyy, 0)
-        sss <- exp(crit * sdlog)
-        hi <- yyy * sss
-        lo <- yyy / sss
-        if(markovCI) {
-          ## truncate extremely large confidence intervals
-          ## using Markov's Inequality
-          hi <- pmin(hi, yyy/(1-confidence))
+      if(do.CI) {
+        vvvname <- "Variance of estimator"
+        vvvlabel <- paste("bold(Var)~hat(%s)", paren(covname), sep="")
+        sd <- sqrt(vvv)
+        if(!positiveCI) {
+          hi <- yyy + crit * sd
+          lo <- yyy - crit * sd
+        } else {
+          sdlog <- ifelse(yyy > 0, sd/yyy, 0)
+          sss <- exp(crit * sdlog)
+          hi <- yyy * sss
+          lo <- yyy / sss
+          if(markovCI) {
+            ## truncate extremely large confidence intervals
+            ## using Markov's Inequality
+            hi <- pmin(hi, yyy/(1-confidence))
+          }
         }
       }
     },
@@ -428,9 +441,11 @@ rhohatCalc <- local({
                fhat <- LocfitRaw(ZX, weights=weights, xlim=xlim, ...)
                fff <- predict(fhat, xxx)
                yyy <- kappahat * fff/ggg
-               ## compute approximation to variance of log rho-hat
-               varlogN <- 1/nX
-               vvv <- varlog(fhat, xxx) + varlogN
+               if(do.CI) {
+                 ## compute approximation to variance of log rho-hat
+                 varlogN <- 1/nX
+                 vvv <- varlog(fhat, xxx) + varlogN
+               }
              },
              reweight={
                ## weight Z values by reciprocal of reference
@@ -439,10 +454,12 @@ rhohatCalc <- local({
                rhat <- LocfitRaw(ZX, weights=wt, xlim=xlim, ...)
                rrr <- predict(rhat, xxx)
                yyy <- sumwt * rrr
-               ## compute approximation to variance of log rho-hat
-               varsumwt <- mean(yyy /(denom * ggg)) * diff(xlim)
-               varlogsumwt <- varsumwt/sumwt^2
-               vvv <- varlog(rhat, xxx) + varlogsumwt
+               if(do.CI) {
+                 ## compute approximation to variance of log rho-hat
+                 varsumwt <- mean(yyy /(denom * ggg)) * diff(xlim)
+                 varlogsumwt <- varsumwt/sumwt^2
+                 vvv <- varlog(rhat, xxx) + varlogsumwt
+               }
              },
              transform={
                ## probability integral transform
@@ -454,25 +471,29 @@ rhohatCalc <- local({
                Gxxx <- Gfun(xxx)
                qqq <- predict(qhat, Gxxx)
                yyy <- kappahat * qqq
-               ## compute approximation to variance of log rho-hat
-               varlogN <- 1/nX
-               vvv <- varlog(qhat, Gxxx) + varlogN
+               if(do.CI) {
+                 ## compute approximation to variance of log rho-hat
+                 varlogN <- 1/nX
+                 vvv <- varlog(qhat, Gxxx) + varlogN
+               }
              })
-      vvvname <- "Variance of log of estimator"
-      vvvlabel <- paste("bold(Var)~log(hat(%s)", paren(covname), ")", sep="")
-      sdlog <- sqrt(vvv)
-      if(positiveCI) {
-        sss <- exp(crit * sdlog)
-        hi <- yyy * sss
-        lo <- yyy / sss
-        if(markovCI) {
-          ## truncate extremely large confidence intervals
-          ## using Markov's Inequality
-          hi <- pmin(hi, yyy/(1-confidence))
+      if(do.CI) {
+        vvvname <- "Variance of log of estimator"
+        vvvlabel <- paste("bold(Var)~log(hat(%s)", paren(covname), ")", sep="")
+        sdlog <- sqrt(vvv)
+        if(positiveCI) {
+          sss <- exp(crit * sdlog)
+          hi <- yyy * sss
+          lo <- yyy / sss
+          if(markovCI) {
+            ## truncate extremely large confidence intervals
+            ## using Markov's Inequality
+            hi <- pmin(hi, yyy/(1-confidence))
+          }
+        } else {
+          hi <- yyy * (1 + crit * sdlog)
+          lo <- yyy * (1 - crit * sdlog)
         }
-      } else {
-        hi <- yyy * (1 + crit * sdlog)
-        lo <- yyy * (1 - crit * sdlog)
       }
     },
     increasing = ,
@@ -601,26 +622,29 @@ rhohatCalc <- local({
       xlim <- c(from, to)
       xxx <- seq(from, to, length=n)
       yyy <- rhofun(xxx)
-      #' variance
-      vvvname <- "Variance of estimator"
-      vvvlabel <- paste("bold(Var)~hat(%s)", paren(covname), sep="")
-      varnum <- if(is.null(weights)) counts else tapplysum(weights^2, list(cutZX))
-      varvals <- varnum/areas^2
-      varfun <- stepfun(x = breaks, y=c(0, varvals, 0))
-      vvv <- varfun(xxx)
-      sd <- sqrt(vvv)
-      if(!positiveCI) {
-        hi <- yyy + crit * sd
-        lo <- yyy - crit * sd
-      } else {
-        sdlog <- ifelse(yyy > 0, sd/yyy, 0)
-        sss <- exp(crit * sdlog)
-        hi <- yyy * sss
-        lo <- yyy / sss
-        if(markovCI) {
-          ## truncate extremely large confidence intervals
-          ## using Markov's Inequality
-          hi <- pmin(hi, yyy/(1-confidence))
+      if(do.CI) {
+        #' variance
+        vvvname <- "Variance of estimator"
+        vvvlabel <- paste("bold(Var)~hat(%s)", paren(covname), sep="")
+        varnum <- if(is.null(weights)) counts else tapplysum(weights^2, list(cutZX))
+        varvals <- varnum/areas^2
+        varfun <- stepfun(x = breaks, y=c(0, varvals, 0))
+        vvv <- varfun(xxx)
+        sd <- sqrt(vvv)
+        #' confidence bands
+        if(!positiveCI) {
+          hi <- yyy + crit * sd
+          lo <- yyy - crit * sd
+        } else {
+          sdlog <- ifelse(yyy > 0, sd/yyy, 0)
+          sss <- exp(crit * sdlog)
+          hi <- yyy * sss
+          lo <- yyy / sss
+          if(markovCI) {
+            ## truncate extremely large confidence intervals
+            ## using Markov's Inequality
+            hi <- pmin(hi, yyy/(1-confidence))
+          }
         }
       }
       ## pack up
@@ -756,7 +780,7 @@ print.rhohat <- function(x, ...) {
            if(isTRUE(s$horvitz))
              splat("\twith Horvitz-Thompson weight")
          })
-  if(!(smoother %in% c("increasing", "decreasing", "mountain", "valley"))) {
+  if(all(c("hi", "lo") %in% names(x))) {
     positiveCI <- s$positiveCI %orifnull% (smoother == "local")
     confidence <- s$confidence %orifnull% 0.95
     splat("Pointwise", paste0(100 * confidence, "%"),

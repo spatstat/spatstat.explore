@@ -87,6 +87,9 @@ SIGNIFICANT USER-VISIBLE CHANGES
     o rhohat.ppp
     New arguments 'jitter', 'jitterfactor', 'interpolate' allow greater
     control over the calculation.
+
+    o rhohat.ppp
+    New argument 'do.CI' specifies whether to calculate confidence bands.
     
         CHANGES IN spatstat.core VERSION 2.4-4.010
 
