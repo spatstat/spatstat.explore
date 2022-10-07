@@ -285,7 +285,8 @@ Kdot.inhom(X, i, lambdaI=NULL, lambdadot=NULL, \dots, r=NULL, breaks=NULL,
     # Fit model
     if(require("spatstat.model")) {
     fit <- ppm(woods ~ marks * polynom(x,y,2))
-    K <- Kdot.inhom(woods, "maple", lambdaX=fit, update=FALSE)
+    K <- Kdot.inhom(woods, "maple", lambdaX=fit,
+                    update=FALSE, leaveoneout=FALSE)
     }
     
     # synthetic example: type A points have intensity 50,

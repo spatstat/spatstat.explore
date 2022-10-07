@@ -169,7 +169,9 @@ mad.test(X, \dots,  alternative=c("two.sided", "less", "greater"),
   determines whether to compare the summary function for the data
   to its theoretical value for CSR (\code{use.theory=TRUE})
   or to the sample mean of simulations from CSR
-  (\code{use.theory=FALSE}).
+  (\code{use.theory=FALSE}). The test statistic \eqn{T} is defined in
+  equations (10.21) and (10.22) respectively on page 394 of Baddeley,
+  Rubak and Turner (2015).
 
   The argument \code{leaveout} specifies how to calculate the
   discrepancy between the summary function for the data and the
@@ -197,8 +199,9 @@ mad.test(X, \dots,  alternative=c("two.sided", "less", "greater"),
   simulation envelopes. 
   \emph{Ecological Monographs} \bold{84}(3) 477--489.
   
-  Baddeley, A., Hardegen, A., Lawrence, T., Milne, R.K. and Nair,
-  G. (2015) \emph{Pushing the envelope}. In preparation.
+  Baddeley, A., Rubak, E. and Turner, R. (2015)
+  \emph{Spatial Point Patterns: Methodology and Applications with R}.
+  Chapman and Hall/CRC Press.
   
   Besag, J. (1977) 
   Discussion of Dr Ripley's paper.

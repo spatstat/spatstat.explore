@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 2.999-999.028
+        CHANGES IN spatstat.explore VERSION 2.999-999.030
 
 OVERVIEW
 
@@ -8,7 +8,8 @@ OVERVIEW
     o Package will be initialised at version 3.0-0.
       Versions less than 3 are developmental.
 
-    o We thank Marie-Colette van Lieshout for contributions.
+    o We thank Marie-Colette van Lieshout and Daniel Manrique-Castano
+    for contributions.
     
     o Periodic edge correction for K function.
 
