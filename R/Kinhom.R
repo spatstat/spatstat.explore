@@ -1,7 +1,7 @@
 #
 #	Kinhom.S	Estimation of K function for inhomogeneous patterns
 #
-#	$Revision: 1.102 $	$Date: 2022/05/18 06:40:21 $
+#	$Revision: 1.103 $	$Date: 2022/10/16 01:50:51 $
 #
 #	Kinhom()	compute estimate of K_inhom
 #
@@ -117,7 +117,7 @@
     # The matrix 'lambda2' or 'reciplambda2' is sufficient information
     # unless we want the border correction.
     lambda2.given    <- !is.null(lambda2) || !is.null(reciplambda2)
-    lambda2.suffices <- !any(correction %in% c("bord", "bord.modif"))
+    lambda2.suffices <- !any(correction %in% c("border", "bord.modif"))
     
     ## Arguments that are 'dangerous' for envelope, if fixed
     dangerous <- c("lambda", "reciplambda", "lambda2", "reciplambda2")
