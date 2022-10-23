@@ -13,23 +13,31 @@
   *CHUNKLOOP     defined in chunkloop.h
   TWOPI          defined in Rmath.h
 
-  $Revision: 1.3 $     $Date: 2021/10/31 06:40:58 $
+  $Revision: 1.4 $     $Date: 2022/10/20 10:57:43 $
 
   Copyright (C) Adrian Baddeley, Ege Rubak and Rolf Turner 2001-2019
   Licence: GNU Public Licence >= 2
 
 */
 
-void RIPLEYFUN(nx, x, y, rmat, nr, xmin, ymin, xmax, ymax,  epsilon, out)
-     /* inputs */
-     int *nx, *nr;  /* dimensions */
-     double *x, *y; /* coordinate vectors of length nx */
-     double *rmat;  /* matrix nx by nr  */
-     double *xmin, *ymin, *xmax, *ymax;  /* box dimensions */
-     double *epsilon; /* threshold for proximity to corner */
-     /* output */
-     double *out;  /* output matrix nx by nr */
-{
+void RIPLEYFUN(
+  /* coordinate vectors of length nx */
+  int    *nx,
+  double *x, 
+  double *y,
+  /* matrix of radii nx by nr  */
+  double *rmat, 
+  int    *nr,
+  /* box dimensions */  
+  double *xmin,
+  double *ymin,
+  double *xmax,
+  double *ymax,
+  /* threshold for proximity to corner */
+  double *epsilon, 
+  /* output matrix nx by nr */
+  double *out 
+) {
   int i, j, n, m, ijpos, ncor, maxchunk;
   double xx, yy, x0, y0, x1, y1, dL, dR, dU, dD, aL, aU, aD, aR, rij;
   double cL, cU, cD, cR, bLU, bLD, bRU, bRD, bUL, bUR, bDL, bDR;

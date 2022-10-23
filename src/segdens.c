@@ -16,7 +16,7 @@
   Copyright (c) Adrian Baddeley, 02 dec 2016 (modified 01 mar 2021)
   Licence: GPL >= 2.0
 
-  $Revision: 1.6 $ $Date: 2021/03/01 00:28:37 $
+  $Revision: 1.8 $ $Date: 2022/10/23 05:56:57 $
 */
 
 
@@ -24,14 +24,21 @@
 
 #define PNORM(X, SIG) pnorm((X), (double) 0.0, (SIG), TRUE, FALSE)
 
-void segdens(sigma, ns, xs, ys, alps, lens, np, xp, yp, z) 
-     double *sigma; /* bandwidth */
-     int *ns; /* number of line segments */
-     double *xs, *ys, *alps, *lens;  /* first endpoint, angle, length */
-     int *np; /* number of pixels or test locations */
-     double *xp, *yp; /* pixel coordinates */
-     double *z; /* result, assumed initially 0 */
-{
+void segdens(
+  double *sigma,   /* bandwidth */
+  /* input line segments */
+  int *ns,         /* number of line segments */
+  double *xs,
+  double *ys,
+  double *alps,
+  double *lens,    /* first endpoint, angle, length */
+  /* query locations */
+  int *np,         /* number of pixels or test locations */
+  double *xp,
+  double *yp,      /* coordinates of pixels or test locations */
+  /* output */
+  double *z       /* result, assumed initially 0 */
+) {
   int i, j, Ns, Np;
   double Sigma;
   double xsi, ysi, angi, leni, cosi, sini;
@@ -59,15 +66,22 @@ void segdens(sigma, ns, xs, ys, alps, lens, np, xp, yp, z)
   }
 }
 
-void segwdens(sigma, ns, xs, ys, alps, lens, ws, np, xp, yp, z) 
-     double *sigma; /* bandwidth */
-     int *ns; /* number of line segments */
-     double *xs, *ys, *alps, *lens;  /* first endpoint, angle, length */
-     double *ws;  /* segment weights */
-     int *np; /* number of pixels or test locations */
-     double *xp, *yp; /* pixel coordinates */
-     double *z; /* result, assumed initially 0 */
-{
+void segwdens(
+  double *sigma,   /* bandwidth */
+  /* input line segments */
+  int *ns,         /* number of line segments */
+  double *xs,
+  double *ys,
+  double *alps,
+  double *lens,    /* first endpoint, angle, length */
+  double *ws,  /* segment weights */
+  /* query locations */
+  int *np,         /* number of pixels or test locations */
+  double *xp,
+  double *yp,      /* coordinates of pixels or test locations */
+  /* output */
+  double *z       /* result, assumed initially 0 */
+) {
   int i, j, Ns, Np;
   double Sigma;
   double xsi, ysi, angi, leni, cosi, sini, wi;

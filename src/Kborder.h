@@ -17,7 +17,7 @@
   Copyright (C) Adrian Baddeley, Julian Gilbey and Rolf Turner 2000-2013
   Licence: GPL >= 2
 
-  $Revision: 1.12 $     $Date: 2018/12/18 02:43:11 $
+  $Revision: 1.13 $     $Date: 2022/10/21 10:43:01 $
 
   Copyright (C) Adrian Baddeley, Ege Rubak and Rolf Turner 2001-2018
   Licence: GNU Public Licence >= 2
@@ -25,20 +25,20 @@
 */
 
 void FNAME(
-	   nxy, x, y, 
+  /* inputs */
+  int  *nxy,
+  double *x,
+  double *y,
 #ifdef WEIGHTED
-	   w,
+  double *w,
 #endif
-	   b, nr, rmax, numer, denom) 
-     /* inputs */
-     int *nxy, *nr;
-     double *x, *y, *b, *rmax;
-#ifdef WEIGHTED
-     double *w;
-#endif
-     /* outputs */
-     OUTTYPE *numer, *denom;
-{
+  double *b,
+  int    *nr,
+  double *rmax,
+  /* outputs */
+  OUTTYPE *numer,
+  OUTTYPE *denom
+) {
   int i, j, l, n, nt, n1, nt1, lmin, lmax, maxchunk;
   double dt, tmax, xi, yi, bi, maxsearch, max2search;
   double bratio, dratio, dij, dij2, dx, dy, dx2;

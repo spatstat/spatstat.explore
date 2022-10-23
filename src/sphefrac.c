@@ -3,7 +3,7 @@
 #include "geom3.h"
 /*
 
-	$Revision: 1.2 $ 	$Date: 2018/12/18 02:43:11 $
+	$Revision: 1.4 $ 	$Date: 2022/10/22 10:04:19 $
 
 	Routine for calculating surface area of sphere
 	intersected with box
@@ -11,7 +11,7 @@
 # /////////////////////////////////////////////
 # AUTHOR: Adrian Baddeley, CWI, Amsterdam, 1991.
 # 
-# MODIFIED BY: Adrian Baddeley, Perth 2009, 2013
+# MODIFIED BY: Adrian Baddeley, Perth 2009, 2013, 2022
 #
 # This software is distributed free
 # under the conditions that
@@ -37,13 +37,15 @@ static double pi = 3.141592653589793;
 /* Factor of 4 * pi * r * r IS ALREADY TAKEN OUT */
 
 double
-sphesfrac(point, box, r)
-Point *point;
-Box *box;
-double r;
-{
+sphesfrac(
+   Point *point,
+   Box *box,
+   double r
+) {
 	double sum, p[4], q[4];
-	double a1(), a2(), a3();
+	double a1(double t, double r);
+	double a2(double t1, double t2, double r);
+	double a3(double t1, double t2, double t3, double r);
 
 	int i, j;
 
@@ -96,8 +98,7 @@ double r;
 }
 
 double 
-a1(t, r)
-double t, r;
+a1(double t, double r)
 {
 	/* This is the function A1 divided by 4 pi r^2 */
 
@@ -108,44 +109,39 @@ double t, r;
 }
 
 double
-a2(t1, t2, r)
-double t1, t2, r;
+a2(double t1, double t2, double r)
 {
-	double c2();
-	/* This is A2 divided by 4 pi r^2 because c2 is C divided by pi */
+  double c2(double a, double b);
+  /* This is A2 divided by 4 pi r^2 because c2 is C divided by pi */
 	
-	return(c2( t1 / r, t2 / r) / 2.0);
+  return(c2( t1 / r, t2 / r) / 2.0);
 }
 
 double
-a3(t1, t2, t3, r)
-double t1, t2, t3, r;
+a3(double t1, double t2, double t3, double r)
 {
-	double c3();
-	/* This is A3 divided by 4 pi r^2 because c3 is C divided by pi */
+  double c3(double a, double b, double c);
+  /* This is A3 divided by 4 pi r^2 because c3 is C divided by pi */
 
-	return(c3(t1 / r, t2 / r, t3 / r) / 4.0);
+  return(c3(t1 / r, t2 / r, t3 / r) / 4.0);
 }
 
 double 
-c2(a, b)
-double a, b;
+c2(double a, double b)
 {
-	double z, z2;
-	double c2();
+  double z, z2;
 
-	/* This is the function C(a, b, 0) divided by pi 
-		- assumes a, b > 0  */
+  /* This is the function C(a, b, 0) divided by pi 
+     - assumes a, b > 0  */
 
-	if( ( z2 = 1.0 - a * a - b * b) < 0.0 )
-		return(0.0);
-	z = sqrt(z2);
-	return((atan2(z, a * b) - a * atan2(z, b) - b * atan2(z, a)) / pi);
+  if( ( z2 = 1.0 - a * a - b * b) < 0.0 )
+    return(0.0);
+  z = sqrt(z2);
+  return((atan2(z, a * b) - a * atan2(z, b) - b * atan2(z, a)) / pi);
 }
 
 double
-c3(a, b, c)
-double a, b, c;
+c3(double a, double b, double c)
 {
 	double za, zb, zc, sum;
 	/* This is C(a,b,c) divided by pi. Arguments assumed > 0 */

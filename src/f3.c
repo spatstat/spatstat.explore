@@ -18,7 +18,7 @@
 # /////////////////////////////////////////////
 # AUTHOR: Adrian Baddeley, CWI, Amsterdam, 1991.
 # 
-# MODIFIED BY: Adrian Baddeley, Perth 2009
+# MODIFIED BY: Adrian Baddeley, Perth 2009, 2022
 # 
 # This software is distributed free
 # under the conditions that
@@ -61,10 +61,10 @@ typedef struct BinaryImage {
 
 
 void
-allocBinImage(b, ok)
-     BinaryImage	*b;
-     int		*ok;
-{
+allocBinImage(
+  BinaryImage	*b,
+  int		*ok
+) {
   b->length = b->Mx * b->My * b->Mz;
   b->data = (unsigned char *) 
     R_alloc(b->length, sizeof(unsigned char));
@@ -77,10 +77,10 @@ allocBinImage(b, ok)
 }
 
 void
-allocIntImage(v, ok)
-     IntImage	*v;
-     int	*ok;
-{
+allocIntImage(
+  IntImage *v,
+  int	  *ok
+) {
   v->length = v->Mx * v->My * v->Mz;
   v->data = (int *) R_alloc(v->length, sizeof(int));
 
@@ -91,20 +91,20 @@ allocIntImage(v, ok)
   *ok = 1;
 }
 
-void freeBinImage(b) BinaryImage *b; { }
-void freeIntImage(v) IntImage *v; { }
+void freeBinImage(BinaryImage *b) { }
+void freeIntImage(IntImage *v) { }
 
 void
-cts2bin(p, n, box, vside, b, ok)
-     /* convert a list of points inside a box
-	into a 3D binary image */
-     Point	*p;
-     int	n;
-     Box	*box;
-     double	vside;	/* side of a (cubic) voxel */
-     BinaryImage	*b;
-     int	*ok;
-{
+cts2bin(
+  /* convert a list of points inside a box
+     into a 3D binary image */
+  Point	*p,
+  int	n,
+  Box	*box,
+  double vside,	 /* side of a (cubic) voxel */
+  BinaryImage *b,
+  int	*ok
+) {
   int	i, lx, ly, lz;
   unsigned char	*cp;
 
@@ -133,12 +133,12 @@ cts2bin(p, n, box, vside, b, ok)
 }
 
 void
-distrans3(b, v, ok)
-			/* Distance transform in 3D */
-     BinaryImage *b;		/* input */
-     IntImage    *v;		/* output */
-     int	    *ok;
-{
+distrans3(
+  /* Distance transform in 3D */
+  BinaryImage *b,		/* input */
+  IntImage    *v,		/* output */
+  int	    *ok
+) {
   register int x, y, z;
   int infinity, q;
 
@@ -241,16 +241,16 @@ distrans3(b, v, ok)
 }
 
 void
-hist3d(v, vside, count)
-     /* compute histogram of all values in *v
-	using count->n histogram cells 
-	ranging from count->t0 to count->t1 
-	and put results in count->num
-     */
-     IntImage *v;
-     double	vside;
-     Itable	*count;
-{
+hist3d(
+ /* compute histogram of all values in *v
+    using count->n histogram cells 
+    ranging from count->t0 to count->t1 
+    and put results in count->num
+ */
+  IntImage *v,
+  double   vside,
+  Itable  *count
+) {
   register int i, j, k; 
   register int *ip;
   register double scale, width;
@@ -276,11 +276,11 @@ hist3d(v, vside, count)
 }	
 
 void
-hist3dminus(v, vside, count)	/* minus sampling */
-     IntImage *v;
-     double	vside;
-     Itable	*count;
-{
+hist3dminus(	/* minus sampling */
+  IntImage *v,
+  double   vside,
+  Itable   *count
+) {
   register int x, y, z, val, border, bx, by, bz, byz, j, kbord, kval;
   register double scale, width;
 
@@ -335,11 +335,11 @@ hist3dminus(v, vside, count)	/* minus sampling */
 }	
 
 void
-hist3dCen(v, vside, count)	/* four censoring-related histograms */
-     IntImage *v;
-     double	vside;
-     H4table	*count;
-{
+hist3dCen(      /* four censoring-related histograms */
+  IntImage *v,
+  double   vside,
+  H4table  *count
+) {
   register int x, y, z, val, border, bx, by, bz, byz, kbord, kval;
   register double scale, width, realborder, realval;
 
@@ -418,13 +418,13 @@ hist3dCen(v, vside, count)	/* four censoring-related histograms */
 */
 
 void
-phatminus(p, n, box, vside, count)
-     Point	*p;
-     int	n;
-     Box	*box;
-     double	vside;
-     Itable	*count;
-{
+phatminus(
+  Point	*p,
+  int	n,
+  Box	*box,
+  double vside,
+  Itable *count
+) {
   BinaryImage	b;
   IntImage	v;
   int		ok;
@@ -445,13 +445,13 @@ phatminus(p, n, box, vside, count)
 }
 
 void
-phatnaive(p, n, box, vside, count)
-     Point	*p;
-     int	n;
-     Box	*box;
-     double	vside;
-     Itable	*count;
-{
+phatnaive(
+  Point	*p,
+  int	n,
+  Box	*box,
+  double vside,
+  Itable *count
+) {
   BinaryImage	b;
   IntImage	v;
   int		ok;
@@ -471,13 +471,13 @@ phatnaive(p, n, box, vside, count)
 }
 
 void
-p3hat4(p, n, box, vside, count)
-     Point	*p;
-     int	n;
-     Box	*box;
-     double	vside;
-     H4table	*count;
-{
+p3hat4(
+  Point	*p,
+  int	n,
+  Box	*box,
+  double vside,
+  H4table *count
+) {
   BinaryImage	b;
   IntImage	v;
   int		ok;

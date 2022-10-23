@@ -10,7 +10,7 @@
        phi(t, r) = 2 r^2 * (acos(y) - y sqrt(1 - y^2))
                         where y = t/(2r).
 
-  $Revision: 1.8 $     $Date: 2018/12/18 02:43:11 $
+  $Revision: 1.10 $     $Date: 2022/10/22 10:09:51 $
 
   Copyright (C) Adrian Baddeley, Ege Rubak and Rolf Turner 2001-2018
   Licence: GNU Public Licence >= 2
@@ -19,7 +19,8 @@
 
 #include <math.h>
 
-double sqrt(), acos();
+double sqrt(double x);
+double acos(double x);
 
 /* 
    r is the vector of distance values, starting from 0, with length nr,
@@ -34,13 +35,14 @@ double sqrt(), acos();
 
 */
 
-void digberJ(r, dK, nr, nrmax, ndK, J) 
-     /* inputs */
-     int *nr, *nrmax, *ndK;
-     double *r, *dK;
-     /* output */
-     double *J;  
-{ 
+void digberJ(
+   /* inputs */
+   double *r, 
+   double *dK,
+   int *nr,  int *nrmax, int *ndK, 
+   /* output */
+   double *J
+) { 
   int i, j, Ni, NdK;
   double ri, twori, tj, y, phiy, integral;
 

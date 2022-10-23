@@ -4,7 +4,7 @@
 #include "functable.h"
 
 /*
-	$Revision: 1.1 $	$Date: 2009/11/04 23:54:15 $
+	$Revision: 1.3 $	$Date: 2022/10/22 10:09:51 $
 
 	K function of 3D point pattern
 
@@ -17,7 +17,7 @@
 # /////////////////////////////////////////////
 # AUTHOR: Adrian Baddeley, CWI, Amsterdam, 1991.
 #         
-# MODIFIED BY: Adrian Baddeley, Perth 2009.
+# MODIFIED BY: Adrian Baddeley, Perth 2009, 2022.
 #
 # This software is distributed free
 # under the conditions that
@@ -35,18 +35,20 @@
 
 
 void
-k3trans(p, n, b, k)
-     Point *p;
-     int n;
-     Box *b;
-     Ftable *k;
-{
+k3trans(
+  Point *p,
+  int n,
+  Box *b,
+  Ftable *k
+) {
   register int i, j, l, lmin;
   register double dx, dy, dz, dist;
   register double  vx, vy, vz;
   Point *ip, *jp;
   double dt, vol, lambda, denom, term;
-  double sphesfrac(), sphevol();
+
+  double sphesfrac(Point *point, Box *box, double r);
+  double sphevol(Point *point, Box *box, double r);
 
   /* compute denominator & initialise numerator*/
   vol = (b->x1 - b->x0) * (b->y1 - b->y0) * (b->z1 - b->z0);
@@ -94,20 +96,23 @@ k3trans(p, n, b, k)
 }
 
 void
-k3isot(p, n, b, k)
-     Point *p;
-     int n;
-     Box *b;
-     Ftable *k;
-{
+k3isot(
+  Point *p,
+  int n,
+  Box *b,
+  Ftable *k
+) {
   register int i, j, l, lmin;
   register double dx, dy, dz, dist;
   Point *ip, *jp;
   double dt, vol, denom, term;
-  double sphesfrac(), sphevol();
   Point vertex;
   Box   half;
 
+  double sphesfrac(Point *point, Box *box, double r);
+  double sphevol(Point *point, Box *box, double r);
+
+  
   /* compute denominator & initialise numerator*/
   vol = (b->x1 - b->x0) * (b->y1 - b->y0) * (b->z1 - b->z0);
   denom = ((double) (n * n))/vol;

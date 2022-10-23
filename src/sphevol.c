@@ -3,7 +3,7 @@
 #include "geom3.h"
 /*
 
-	$Revision: 1.2 $ 	$Date: 2013/05/27 02:09:10 $
+	$Revision: 1.3 $ 	$Date: 2022/10/22 02:32:10 $
 
 	Routine for calculating ABSOLUTE volume of intersection 
 	between sphere and box
@@ -41,15 +41,17 @@
 static	double	rcubed, spherevol;
 
 double
-sphevol(point, box, r)
-Point *point;
-Box *box;
-double r;
-{
+sphevol(
+  Point *point,
+  Box *box,
+  double r
+) {
 	double sum, p[4], q[4];
-	double v1(), v2(), v3();
-
 	int i, j;
+
+	double v1(double a, int s, double r);
+	double v2(double a, int sa, double b, int sb, double r);
+	double v3(double a, int sa, double b, int sb, double c, int sc, double r);
 
 	rcubed = r * r * r;
 	spherevol = (4.0/3.0) * PI * rcubed;
@@ -109,14 +111,13 @@ double r;
 }
 
 double
-v1(a,s,r)
-double a, r;
-int	s;
+v1(double a, int s, double r)
 {
 	double value;
-	double u();
 	short sign;
 
+	double u(double a, double b, double c);
+  
 	value = 4.0 * rcubed * u(ABS(a)/r, 0.0, 0.0);
 
 	sign = (a >= 0.0) ? 1 : -1;
@@ -128,13 +129,11 @@ int	s;
 }
 		
 double
-v2(a, sa, b, sb, r)
-	double a, b, r;
-	int sa, sb;
+v2(double a, int sa, double b, int sb, double r)
 {
 	short sign;
-	double u();
-
+	double u(double a, double b, double c);
+	
 	sign = (b >= 0.0) ? 1 : -1;
 
 	if(sign != sb )
@@ -154,13 +153,11 @@ v2(a, sa, b, sb, r)
 }
 	
 double
-v3(a, sa, b, sb, c, sc, r)
-	double	a, b, c, r;
-	int	sa, sb, sc;
+v3(double a, int sa, double b, int sb, double c, int sc, double r)
 {
 	short sign;
-	double u();
-
+	double u(double a, double b, double c);
+	
 	sign = (c >= 0.0) ? 1 : -1;
 
 	if(sign != sc)
@@ -188,11 +185,10 @@ v3(a, sa, b, sb, c, sc, r)
 }
 	
 double
-u(a, b, c)
-double a, b, c;
+u(double a, double b, double c)
 {
-	double	w();
-
+	double w(double x, double y);
+	
 	if(a * a + b * b + c * c >= 1.0)
 		return(0.0);
 
@@ -207,8 +203,7 @@ double a, b, c;
 	
 
 double 
-w(x,y)
-double	x,y; 	/* Arguments assumed >= 0 */
+w(double x, double y) 	/* Arguments assumed >= 0 */
 {
 	double z;
 

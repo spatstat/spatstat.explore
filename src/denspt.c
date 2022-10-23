@@ -10,7 +10,7 @@
 
   Calculation of density estimate at data points
 
-  $Revision: 1.19 $     $Date: 2018/12/18 02:43:11 $
+  $Revision: 1.22 $     $Date: 2022/10/23 05:55:01 $
 
   Assumes point pattern is sorted in increasing order of x coordinate
 
@@ -24,7 +24,8 @@
 
 #define TWOPI M_2PI
 
-double sqrt(), exp();
+double sqrt(double x);
+double exp(double x);
 
 #define STD_DECLARATIONS				\
   int n, i, j, maxchunk;				\
@@ -38,15 +39,15 @@ double sqrt(), exp();
 
 /* ----------------- density estimation -------------------- */
 
-void denspt(nxy, x, y, rmaxi, sig, result) 
-     /* inputs */
-     int *nxy;         /* number of (x,y) points */
-     double *x, *y;    /* (x,y) coordinates */
-     double *rmaxi;    /* maximum distance at which points contribute */
-     double *sig;      /* Gaussian sd */
-     /* output */
-     double *result;   /* vector of computed density values */
-{
+void denspt(
+  /* inputs */
+  int    *nxy,             /* number of (x,y) points */
+  double *x, double *y,    /* (x,y) coordinates */
+  double *rmaxi,           /* maximum distance at which points contribute */
+  double *sig,             /* Gaussian sd */
+  /* output */
+  double *result           /* vector of computed density values */
+) {
   STD_DECLARATIONS;
   double resulti, coef;	
   double sigma, twosig2; 
@@ -66,16 +67,16 @@ void denspt(nxy, x, y, rmaxi, sig, result)
 }
 
 
-void wtdenspt(nxy, x, y, rmaxi, sig, weight, result) 
+void wtdenspt(
      /* inputs */
-     int *nxy;         /* number of (x,y) points */
-     double *x, *y;    /* (x,y) coordinates */
-     double *rmaxi;    /* maximum distance */
-     double *sig;      /* Gaussian sd */
-     double *weight;      /* vector of weights */
+     int *nxy,                /* number of (x,y) points */
+     double *x, double *y,    /* (x,y) coordinates */
+     double *rmaxi,           /* maximum distance */
+     double *sig,             /* Gaussian sd */
+     double *weight,          /* vector of weights */
      /* output */
-     double *result;    /* vector of weighted density values */
-{
+     double *result           /* vector of weighted density values */
+) {
   STD_DECLARATIONS;
   double resulti, coef;	
   double sigma, twosig2; 
@@ -96,16 +97,16 @@ void wtdenspt(nxy, x, y, rmaxi, sig, weight, result)
 
 /* ------------- anisotropic versions -------------------- */
 
-void adenspt(nxy, x, y, rmaxi, detsigma, sinv, result) 
+void adenspt(
      /* inputs */
-     int *nxy;         /* number of (x,y) points */
-     double *x, *y;    /* (x,y) coordinates */
-     double *rmaxi;    /* maximum distance at which points contribute */
-     double *detsigma;  /* determinant of variance matrix */
-     double *sinv;      /* inverse variance matrix (2x2, flattened) */
+     int *nxy,                /* number of (x,y) points */
+     double *x, double *y,    /* (x,y) coordinates */
+     double *rmaxi,           /* maximum distance at which points contribute */
+     double *detsigma,        /* determinant of variance matrix */
+     double *sinv,            /* inverse variance matrix (2x2, flattened) */
      /* output */
-     double *result;   /* vector of density values */
-{
+     double *result           /* vector of density values */
+) {
   STD_DECLARATIONS;
   double resulti, coef;	
   double detsig, s11, s12, s21, s22;
@@ -124,17 +125,18 @@ void adenspt(nxy, x, y, rmaxi, detsigma, sinv, result)
 }
 
 
-void awtdenspt(nxy, x, y, rmaxi, detsigma, sinv, weight, result) 
+void awtdenspt(
      /* inputs */
-     int *nxy;         /* number of (x,y) points */
-     double *x, *y;    /* (x,y) coordinates */
-     double *rmaxi;    /* maximum distance at which points contribute */
-     double *detsigma;  /* determinant of variance matrix */
-     double *sinv;      /* inverse variance matrix (2x2, flattened) */
-     double *weight;      /* vector of weights */
+     int *nxy,         /* number of (x,y) points */
+     double *x,
+     double *y,    /* (x,y) coordinates */
+     double *rmaxi,    /* maximum distance at which points contribute */
+     double *detsigma,  /* determinant of variance matrix */
+     double *sinv,      /* inverse variance matrix (2x2, flattened) */
+     double *weight,      /* vector of weights */
      /* output */
-     double *result;    /* vector of weighted density values */
-{
+     double *result    /* vector of weighted density values */
+) {
   STD_DECLARATIONS;
   double resulti, coef;	
   double detsig, s11, s12, s21, s22;
@@ -159,17 +161,17 @@ void awtdenspt(nxy, x, y, rmaxi, detsigma, sinv, weight, result)
 
 /* --------------- smoothing --------------------------- */
 
-void smoopt(nxy, x, y, v, self, rmaxi, sig, result) 
+void smoopt(
      /* inputs */
-     int *nxy;         /* number of (x,y) points */
-     double *x, *y;    /* (x,y) coordinates */
-     double *v;        /* vector of mark values to be smoothed */
-     int *self;       /* 0 if leave-one-out */
-     double *rmaxi;    /* maximum distance at which points contribute */
-     double *sig;      /* Gaussian sd */
+     int *nxy,                /* number of (x,y) points */
+     double *x, double *y,    /* (x,y) coordinates */
+     double *v,               /* vector of mark values to be smoothed */
+     int *self,               /* 0 if leave-one-out */
+     double *rmaxi,           /* maximum distance at which points contribute */
+     double *sig,             /* Gaussian sd */
      /* output */
-     double *result;   /* vector of computed smoothed values */
-{
+     double *result           /* vector of computed smoothed values */
+) {
   STD_DECLARATIONS;
   int countself;
   double sigma, twosig2;
@@ -209,18 +211,18 @@ void smoopt(nxy, x, y, v, self, rmaxi, sig, result)
  }
 
 
-void wtsmoopt(nxy, x, y, v, self, rmaxi, sig, weight, result) 
+void wtsmoopt(
      /* inputs */
-     int *nxy;         /* number of (x,y) points */
-     double *x, *y;    /* (x,y) coordinates */
-     double *v;        /* vector of mark values to be smoothed */
-     int *self;       /* 0 if leave-one-out */
-     double *rmaxi;    /* maximum distance */
-     double *sig;      /* Gaussian sd */
-     double *weight;      /* vector of weights */
+     int *nxy,                /* number of (x,y) points */
+     double *x, double *y,    /* (x,y) coordinates */
+     double *v,               /* vector of mark values to be smoothed */
+     int *self,               /* 0 if leave-one-out */
+     double *rmaxi,           /* maximum distance */
+     double *sig,             /* Gaussian sd */
+     double *weight,          /* vector of weights */
      /* output */
-     double *result;    /* vector of computed smoothed values */
-{
+     double *result    /* vector of computed smoothed values */
+) {
   STD_DECLARATIONS;
   int countself;
   double sigma, twosig2;
@@ -261,17 +263,17 @@ void wtsmoopt(nxy, x, y, v, self, rmaxi, sig, weight, result)
 
 /* ------------- anisotropic versions -------------------- */
 
-void asmoopt(nxy, x, y, v, self, rmaxi, sinv, result) 
+void asmoopt(
      /* inputs */
-     int *nxy;         /* number of (x,y) points */
-     double *x, *y;    /* (x,y) coordinates */
-     double *v;        /* vector of mark values to be smoothed */
-     int *self;       /* 0 if leave-one-out */
-     double *rmaxi;    /* maximum distance at which points contribute */
-     double *sinv;      /* inverse variance matrix (2x2, flattened) */
+     int *nxy,                /* number of (x,y) points */
+     double *x, double *y,    /* (x,y) coordinates */
+     double *v,               /* vector of mark values to be smoothed */
+     int *self,               /* 0 if leave-one-out */
+     double *rmaxi,           /* maximum distance at which points contribute */
+     double *sinv,            /* inverse variance matrix (2x2, flattened) */
      /* output */
-     double *result;   /* vector of smoothed values */
-{
+     double *result           /* vector of smoothed values */
+) {
   STD_DECLARATIONS;
   int countself;
   double s11, s12, s21, s22;
@@ -315,18 +317,18 @@ void asmoopt(nxy, x, y, v, self, rmaxi, sinv, result)
 }
 
 
-void awtsmoopt(nxy, x, y, v, self, rmaxi, sinv, weight, result) 
+void awtsmoopt(
      /* inputs */
-     int *nxy;         /* number of (x,y) points */
-     double *x, *y;    /* (x,y) coordinates */
-     double *v;        /* vector of mark values to be smoothed */
-     int *self;       /* 0 if leave-one-out */
-     double *rmaxi;    /* maximum distance at which points contribute */
-     double *sinv;      /* inverse variance matrix (2x2, flattened) */
-     double *weight;      /* vector of weights */
+     int *nxy,                /* number of (x,y) points */
+     double *x, double *y,    /* (x,y) coordinates */
+     double *v,               /* vector of mark values to be smoothed */
+     int *self,               /* 0 if leave-one-out */
+     double *rmaxi,           /* maximum distance at which points contribute */
+     double *sinv,            /* inverse variance matrix (2x2, flattened) */
+     double *weight,          /* vector of weights */
      /* output */
-     double *result;    /* vector of smoothed values */
-{
+     double *result           /* vector of smoothed values */
+) {
   STD_DECLARATIONS;
   int countself;
   double s11, s12, s21, s22;
@@ -381,14 +383,14 @@ void awtsmoopt(nxy, x, y, v, self, rmaxi, sinv, weight, result)
    Constant factor in density is omitted.
 */
    
-void Gdenspt(nxy, x, y, rmaxi, result) 
+void Gdenspt(
      /* inputs */
-     int *nxy;         /* number of (x,y) points */
-     double *x, *y;    /* (x,y) coordinates */
-     double *rmaxi;    /* maximum distance at which points contribute */
+     int *nxy,                /* number of (x,y) points */
+     double *x, double *y,    /* (x,y) coordinates */
+     double *rmaxi,           /* maximum distance at which points contribute */
      /* output */
-     double *result;   /* vector of computed density values */
-{
+     double *result           /* vector of computed density values */
+) {
   STD_DECLARATIONS;
   double resulti;
   STD_INITIALISE;
@@ -401,15 +403,15 @@ void Gdenspt(nxy, x, y, rmaxi, result)
 	    { result[i] = resulti; })
 }
 
-void Gwtdenspt(nxy, x, y, rmaxi, weight, result) 
+void Gwtdenspt(
      /* inputs */
-     int *nxy;         /* number of (x,y) points */
-     double *x, *y;    /* (x,y) coordinates */
-     double *rmaxi;    /* maximum distance */
-     double *weight;      /* vector of weights */
+     int *nxy,                /* number of (x,y) points */
+     double *x, double *y,    /* (x,y) coordinates */
+     double *rmaxi,           /* maximum distance */
+     double *weight,          /* vector of weights */
      /* output */
-     double *result;    /* vector of weighted density values */
-{
+     double *result           /* vector of weighted density values */
+) {
   STD_DECLARATIONS;
   double resulti;	
   STD_INITIALISE;
@@ -422,16 +424,16 @@ void Gwtdenspt(nxy, x, y, rmaxi, weight, result)
 	    { result[i] = resulti; } )
  }
 
-void Gsmoopt(nxy, x, y, v, self, rmaxi, result) 
+void Gsmoopt(
      /* inputs */
-     int *nxy;         /* number of (x,y) points */
-     double *x, *y;    /* (x,y) coordinates */
-     double *v;        /* vector of mark values to be smoothed */
-     int *self;       /* 0 if leave-one-out */
-     double *rmaxi;    /* maximum distance at which points contribute */
+     int *nxy,                /* number of (x,y) points */
+     double *x, double *y,    /* (x,y) coordinates */
+     double *v,               /* vector of mark values to be smoothed */
+     int *self,               /* 0 if leave-one-out */
+     double *rmaxi,           /* maximum distance at which points contribute */
      /* output */
-     double *result;   /* vector of computed smoothed values */
-{
+     double *result           /* vector of computed smoothed values */
+) {
   STD_DECLARATIONS;
   int countself;
   double numer, denom, wij; 
@@ -468,17 +470,17 @@ void Gsmoopt(nxy, x, y, v, self, rmaxi, result)
  }
 
 
-void Gwtsmoopt(nxy, x, y, v, self, rmaxi, weight, result) 
+void Gwtsmoopt(
      /* inputs */
-     int *nxy;         /* number of (x,y) points */
-     double *x, *y;    /* (x,y) coordinates */
-     double *v;        /* vector of mark values to be smoothed */
-     int *self;       /* 0 if leave-one-out */
-     double *rmaxi;    /* maximum distance */
-     double *weight;      /* vector of weights */
+     int *nxy,                /* number of (x,y) points */
+     double *x, double *y,    /* (x,y) coordinates */
+     double *v,               /* vector of mark values to be smoothed */
+     int *self,               /* 0 if leave-one-out */
+     double *rmaxi,           /* maximum distance */
+     double *weight,          /* vector of weights */
      /* output */
-     double *result;    /* vector of computed smoothed values */
-{
+     double *result           /* vector of computed smoothed values */
+) {
   STD_DECLARATIONS;
   int countself;
   double numer, denom, wij; 

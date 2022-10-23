@@ -4,7 +4,7 @@
 #include "functable.h"
 
 /*
-	$Revision: 1.3 $	$Date: 2012/05/22 07:17:31 $
+	$Revision: 1.4 $	$Date: 2022/10/21 10:43:01 $
 
 	G function (nearest neighbour distribution) of 3D point pattern
 
@@ -42,7 +42,7 @@
 # /////////////////////////////////////////////
 # AUTHOR: Adrian Baddeley, CWI, Amsterdam, 1991.
 #
-# MODIFIED BY: Adrian Baddeley, Perth 2009, 2012.
+# MODIFIED BY: Adrian Baddeley, Perth 2009, 2012, 2022.
 #
 # This software is distributed free
 # under the conditions that
@@ -61,12 +61,11 @@
 #define MIN(X,Y) (((X) > (Y)) ? (Y) : (X))
 
 double *
-nndist3(p, n, b)
-		/* compute nearest neighbour distance for each p[i] */
-     Point *p;
-     int n;
-     Box *b;
-{
+nndist3(    /* compute nearest neighbour distance for each p[i] */
+  Point *p,
+  int n,
+  Box *b
+) {
   register int i, j;
   register double dx, dy, dz, dist2, nearest2, huge2;
   Point *ip, *jp;
@@ -99,12 +98,11 @@ nndist3(p, n, b)
 }
 
 double *
-border3(p, n, b)
-		/* compute distances to border */
-     Point *p;
-     int n;
-     Box *b;
-{
+border3(    /* compute distances to border */
+  Point *p,
+  int n,
+  Box *b
+) {
   register int i;
   register double bord;
   register Point *ip;
@@ -125,12 +123,12 @@ border3(p, n, b)
 }
 
 void
-g3one(p, n, b, g)
-     Point *p;
-     int n;
-     Box *b;
-     Ftable *g;
-{
+g3one(
+     Point *p,
+     int n,
+     Box *b,
+     Ftable *g
+) {
   register int i, l, lbord, lnnd;
   double dt;
   double	*bord, *nnd;
@@ -166,12 +164,12 @@ g3one(p, n, b, g)
 }
 
 void
-g3three(p, n, b, g)
-     Point *p;
-     int n;
-     Box *b;
-     Ftable *g;
-{
+g3three(
+  Point *p,
+  int n,
+  Box *b,
+  Ftable *g
+) {
   register int i, l, lmin;
   double dt;
   int	denom;
@@ -209,12 +207,12 @@ g3three(p, n, b, g)
 }
 
 void
-g3cen(p, n, b, count)
-     Point *p;
-     int n;
-     Box *b;
-     H4table *count;
-{
+g3cen(
+  Point *p,
+  int n,
+  Box *b,
+  H4table *count
+) {
   register int i, lcen, lobs;
   register double dt, cens, obsv;
   double	*bord, *nnd;

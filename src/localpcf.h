@@ -8,7 +8,7 @@
 
   Assumes point patterns are sorted in increasing order of x coordinate
 
-  $Revision: 1.6 $  $Date: 2018/12/18 02:43:11 $
+  $Revision: 1.7 $  $Date: 2022/10/21 10:43:01 $
 
   Copyright (C) Adrian Baddeley, Ege Rubak and Rolf Turner 2001-2018
   Licence: GNU Public Licence >= 2
@@ -21,24 +21,19 @@
 #define FNAME locpcfx
 #endif
 
-void FNAME(nn1, x1, y1, id1, 
-	   nn2, x2, y2, id2, 
+void FNAME(
+   int *nn1, double *x1, double *y1, int *id1, 
+   int *nn2, double *x2, double *y2, int *id2, 
 #ifdef WEIGHTED
-           w2,
+   double *w2,
 #endif
-	   nnr, rmaxi, 
-	   del, pcf)
-     /* inputs */
-     int *nn1, *nn2, *nnr;
-     double *x1, *y1, *x2, *y2;
-     int *id1, *id2;
-     double *rmaxi, *del;
-#ifdef WEIGHTED
-     double *w2;
-#endif
-     /* output */
-     double *pcf;  /* matrix of column vectors of pcf's 
-		      for each point of first pattern */
+   int *nnr,
+   double *rmaxi, 
+   double *del,
+   /* output */
+   double *pcf  /* matrix of column vectors of pcf's 
+		   for each point of first pattern */
+)
 {
   int n1, n2, nr, i, j, k, jleft, kmin, kmax, id1i, maxchunk;
   double x1i, y1i, rmax, delta, xleft, dx, dy, dx2;

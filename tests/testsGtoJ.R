@@ -65,7 +65,34 @@ local({
 #
 #  tests/imageops.R
 #
-#   $Revision: 1.35 $   $Date: 2022/04/14 00:49:39 $
+#   $Revision: 1.40 $   $Date: 2022/10/23 01:57:03 $
 #
 
+
+if(FULLTEST) {
+  local({
+    #' case of "[.im" and "[<-.im" where index is an ssf
+    d <- distmap(cells, dimyx=32)
+    Empty <- cells[FALSE]
+    EmptyFun <- ssf(Empty, numeric(0))
+    ff <- d[EmptyFun]
+    d[EmptyFun] <- 42
+
+    #' Smooth.im -> blur.im with sigma=NULL
+    Z <- as.im(function(x,y) { x - y }, letterR, dimyx=32)
+    ZS <- Smooth(Z)
+
+    #' deprecated -> im.apply(DA, which.max)
+    Z <- which.max.im(bei.extra) 
+
+    #' rotmean
+    U <- rotmean(Z, origin="midpoint", result="im", padzero=FALSE)
+    
+    #' cases of distcdf
+    distcdf(cells[1:5])
+    distcdf(W=cells[1:5], dW=1:5)
+    distcdf(W=Window(cells), V=cells[1:5])
+    distcdf(W=Window(cells), V=cells[1:5], dV=1:5)
+  })
+}
 

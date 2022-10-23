@@ -16,25 +16,22 @@
   Copyright (C) Adrian Baddeley, Julian Gilbey and Rolf Turner 2000-2013
   Licence: GPL >= 2
 
-  $Revision: 1.6 $     $Date: 2013/09/18 04:08:26 $
+  $Revision: 1.7 $     $Date: 2022/10/21 10:43:01 $
 
 */
 
 void FNAME(
-	   nxy, x, y, 
+  /* inputs */
+  int *nxy,
+  double *x, double *y,
 #ifdef WEIGHTED
-	   w,
+  double *w,
 #endif
-	   nr, rmax, numer) 
-/* inputs */
-     int *nxy, *nr;
-     double *x, *y, *rmax;
-#ifdef WEIGHTED
-     double *w;
-#endif
-     /* output */
-     OUTTYPE *numer;
-{
+  int *nr,
+  double *rmax,
+  /* output */
+  OUTTYPE *numer
+) {
   int i, j, l, n, nt, n1, lmin, lmax, maxchunk;
   double dt, tmax, tmax2, xi, yi;
   double dratio, dij, dij2, dx, dy, dx2;

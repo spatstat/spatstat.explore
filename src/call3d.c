@@ -1,5 +1,5 @@
 /*
-	$Revision: 1.5 $ $Date: 2010/10/24 10:57:02 $
+	$Revision: 1.7 $ $Date: 2022/10/23 05:50:50 $
 
 	R interface
 
@@ -9,7 +9,7 @@
 # /////////////////////////////////////////////
 # AUTHOR: Adrian Baddeley, CWI, Amsterdam, 1991.
 # 
-# MODIFIED BY: Adrian Baddeley, Perth 2009
+# MODIFIED BY: Adrian Baddeley, Perth 2009, 2022
 # 
 # This software is distributed free
 # under the conditions that
@@ -60,8 +60,7 @@ void p3hat4(Point *p, int n, Box *b, double vside, H4table *count);
 */
 
 Ftable *
-allocFtable(n)		/* allocate function table of size n */
-int	n;
+allocFtable(int n)		/* allocate function table of size n */
 {
   Ftable *x;
   x = (Ftable *) R_alloc(1, sizeof(Ftable));
@@ -75,8 +74,7 @@ int	n;
 void freeFtable(x) Ftable *x; { }
 
 Itable	*
-allocItable(n)
-int	n;
+allocItable(int n)
 {
   Itable *x;
   x = (Itable *) R_alloc(1, sizeof(Itable));
@@ -86,11 +84,10 @@ int	n;
   return(x);
 }
 
-void freeItable(x) Itable *x; { }
+void freeItable(Itable *x) { }
 
 H4table	*
-allocH4table(n)
-int	n;
+allocH4table(int n)
 {
   H4table *x;
   x = (H4table *) R_alloc(1, sizeof(H4table));
@@ -102,29 +99,28 @@ int	n;
   return(x);
 }
 
-void freeH4table(x) H4table *x; { }
+void freeH4table(H4table *x) { }
 
 Box	*
-allocBox()		/* I know this is ridiculous but it's consistent. */
+allocBox(void)		/* I know this is ridiculous but it's consistent. */
 {
   Box *b;
   b = (Box *) R_alloc(1, sizeof(Box));
   return(b);
 }
 
-void freeBox(x) Box *x; { }
+void freeBox(Box *x) { }
 
 
 Point	*
-allocParray(n)		/* allocate array of n Points */
-int	n;
+allocParray(int n)		/* allocate array of n Points */
 {
   Point *p;
   p = (Point *) R_alloc(n, sizeof(Point));
   return(p);
 }
 
-void freeParray(x) Point *x; { }
+void freeParray(Point *x) { }
 
 /*
 	CREATE AND INITIALISE DATA STORAGE
@@ -132,9 +128,7 @@ void freeParray(x) Point *x; { }
 */
 
 Ftable *
-MakeFtable(t0, t1, n)
-     double *t0, *t1;
-     int	*n;
+MakeFtable(double *t0, double *t1, int *n)
 {
   Ftable	*tab;
   int	i, nn;
@@ -154,9 +148,7 @@ MakeFtable(t0, t1, n)
 }
 	
 Itable	*
-MakeItable(t0, t1, n)
-     double *t0, *t1;
-     int *n;
+MakeItable(double *t0, double *t1, int *n)
 {
   Itable *tab;
   int i, nn;
@@ -175,9 +167,7 @@ MakeItable(t0, t1, n)
 }
 
 H4table	*
-MakeH4table(t0, t1, n)
-     double *t0, *t1;
-     int *n;
+MakeH4table(double *t0, double *t1, int *n)
 {
   H4table *tab;
   int i, nn;
@@ -209,9 +199,7 @@ MakeH4table(t0, t1, n)
 */
 
 Point	*
-RtoPointarray(x,y,z,n)
-     double *x, *y, *z;
-     int	*n;
+RtoPointarray(double *x, double *y, double *z, int *n)
 {
   int	i, nn;
   Point	*p;
@@ -228,8 +216,7 @@ RtoPointarray(x,y,z,n)
 }
 
 Box *
-RtoBox(x0, x1, y0, y1, z0, z1)
-     double	*x0, *x1, *y0, *y1, *z0, *z1;
+RtoBox(double *x0, double *x1, double *y0, double *y1, double *z0, double *z1)
 {
   Box *b;
   b = allocBox();
@@ -256,14 +243,17 @@ RtoBox(x0, x1, y0, y1, z0, z1)
 */
 
 void
-FtabletoR(tab, t0, t1, n, f, num, denom)
-     /* internal */
-     Ftable	*tab;
-     /* R representation */
-     double	*t0, *t1;
-     int	*n;
-     double	*f, *num, *denom;
-{
+FtabletoR(
+  /* internal */
+  Ftable	*tab,
+  /* R representation */
+  double       *t0,
+  double       *t1,
+  int	       *n,
+  double	*f,
+  double      *num,
+  double     *denom
+)  {
   int	i;
 
   *t0 = tab->t0;
@@ -280,14 +270,16 @@ FtabletoR(tab, t0, t1, n, f, num, denom)
 }
 
 void
-ItabletoR(tab, t0, t1, m, num, denom)
+ItabletoR(
      /* internal */
-     Itable	*tab;
+  Itable *tab,
      /* R representation */
-     double	*t0, *t1;
-     int  *m;
-     int  *num, *denom;
-{
+  double *t0,
+  double *t1,
+  int  *m,
+  int  *num,
+  int *denom
+) {
   int	i;
   
   *t0 = tab->t0;
@@ -302,15 +294,20 @@ ItabletoR(tab, t0, t1, m, num, denom)
 }
 	
 void
-H4tabletoR(tab, t0, t1, m, obs, nco, cen, ncc, upperobs, uppercen)
-     /* internal */
-     H4table	*tab;
-     /* R representation */
-     double	*t0, *t1;
-     int  *m;
-     int  *obs, *nco, *cen, *ncc;
-     int *upperobs, *uppercen;
-{
+H4tabletoR(
+  /* internal */
+  H4table	*tab,
+  /* R representation */
+  double *t0,
+  double *t1,
+  int *m,
+  int *obs,
+  int *nco,
+  int *cen,
+  int *ncc,
+  int *upperobs,
+  int *uppercen
+) {
   int	i;
   
   *t0 = tab->t0;
@@ -339,22 +336,29 @@ H4tabletoR(tab, t0, t1, m, obs, nco, cen, ncc, upperobs, uppercen)
 */
 
 void
-RcallK3(x,y,z, n, x0, x1, y0, y1, z0, z1, t0, t1, m, f, num, denom, method)
-
-     double *x, *y, *z;	/* points */
-     int    *n;
-
-     double *x0, *x1, 	/* box */
-            *y0, *y1, 
-            *z0, *z1;	
-
-     double *t0, *t1;	/* Ftable */
-     int    *m;
-     double *f, *num, *denom;
-
-     int    *method;
-	
-{
+RcallK3(
+  /* points */	
+  double *x,
+  double *y,
+  double *z,	
+  int    *n,
+  /* box */
+  double *x0,
+  double *x1,
+  double *y0,
+  double *y1, 
+  double *z0,
+  double *z1,
+  /* Ftable */
+  double *t0,
+  double *t1,
+  int    *m,
+  double *f,
+  double *num,
+  double *denom,
+  /* edge correction */
+  int    *method
+) {
   Point	*p;
   Box 	*b;
   Ftable	*tab;
@@ -376,21 +380,29 @@ RcallK3(x,y,z, n, x0, x1, y0, y1, z0, z1, t0, t1, m, f, num, denom, method)
 }
 
 void
-RcallG3(x,y,z, n, x0, x1, y0, y1, z0, z1, t0, t1, m, f, num, denom, method)
-
-     double *x, *y, *z;	/* points */
-     int    *n;
-
-     double *x0, *x1, 	/* box */
-            *y0, *y1, 
-	    *z0, *z1;	
-
-     double *t0, *t1;	/* Ftable */
-     int    *m;
-     double *f, *num, *denom;
-
-     int    *method;
-{
+RcallG3(
+  /* points */
+  double *x,
+  double *y,
+  double *z,
+  int    *n,
+  /* box */
+  double *x0,
+  double *x1,
+  double *y0,
+  double *y1, 
+  double *z0,
+  double *z1,
+  /* Ftable */
+  double *t0,
+  double *t1,	/* Ftable */
+  int    *m,
+  double *f,
+  double *num,
+  double *denom,
+  /* edge correction */
+  int    *method
+) {
   Point	*p;
   Box 	*b;
   Ftable	*tab;
@@ -414,21 +426,30 @@ RcallG3(x,y,z, n, x0, x1, y0, y1, z0, z1, t0, t1, m, f, num, denom, method)
 }
 
 void
-RcallG3cen(x,y,z, n, x0, x1, y0, y1, z0, z1, 
-	 t0, t1, m, obs, nco, cen, ncc, upperobs, uppercen)
-     
-     double *x, *y, *z;	/* points */
-     int    *n;
-
-     double *x0, *x1, 	/* box */
-	    *y0, *y1, 
-	    *z0, *z1;	
-
-     double *t0, *t1;
-     int    *m;		/* H4table */
-     int    *obs, *nco, *cen, *ncc;
-     int    *upperobs, *uppercen;
-{
+RcallG3cen(
+  /* points */     
+  double *x,
+  double *y,
+  double *z,
+  int    *n,
+  /* box */
+  double *x0,
+  double *x1,
+  double *y0,
+  double *y1, 
+  double *z0,
+  double *z1,
+  /* H4table */
+  double *t0,
+  double *t1,
+  int    *m,
+  int    *obs,
+  int    *nco,
+  int    *cen,
+  int    *ncc,
+  int    *upperobs,
+  int    *uppercen
+) {
   Point	*p;
   Box 	*b;
   H4table *count;
@@ -443,25 +464,30 @@ RcallG3cen(x,y,z, n, x0, x1, y0, y1, z0, z1,
 }
 
 void
-RcallF3(x,y,z, n, x0, x1, y0, y1, z0, z1, 
-	 vside, 
-	 t0, t1, m, num, denom, method)
-     
-     double *x, *y, *z;	/* points */
-     int    *n;
-
-     double *x0, *x1, 	/* box */
-	    *y0, *y1, 
-	    *z0, *z1;	
-
-     double *vside;
-
-     double *t0, *t1;
-     int    *m;		/* Itable */
-     int    *num, *denom;
-
-     int    *method;
-{
+RcallF3(
+  /* points */
+  double *x,
+  double *y,
+  double *z,	
+  int    *n,
+  /* box */
+  double *x0,
+  double *x1,
+  double *y0,
+  double *y1, 
+  double *z0,
+  double *z1,
+  /* voxel size */
+  double *vside,
+  /* Itable */
+  double *t0,
+  double *t1,
+  int    *m,		
+  int    *num,
+  int    *denom,
+  /* edge correction */
+  int    *method
+) {
   Point	*p;
   Box 	*b;
   Itable *count;
@@ -488,24 +514,32 @@ RcallF3(x,y,z, n, x0, x1, y0, y1, z0, z1,
 }
 
 void
-RcallF3cen(x,y,z, n, x0, x1, y0, y1, z0, z1, 
-	 vside, 
-	 t0, t1, m, obs, nco, cen, ncc, upperobs, uppercen)
-     
-     double *x, *y, *z;	/* points */
-     int    *n;
-
-     double *x0, *x1, 	/* box */
-	    *y0, *y1, 
-	    *z0, *z1;	
-
-     double *vside;
-
-     double *t0, *t1;
-     int    *m;		/* H4table */
-     int    *obs, *nco, *cen, *ncc;
-     int    *upperobs, *uppercen;
-{
+RcallF3cen(
+  /* points */     
+  double *x,
+  double *y,
+  double *z,
+  int    *n,
+  /* box */
+  double *x0,
+  double *x1, 	
+  double *y0,
+  double *y1, 
+  double *z0,
+  double *z1,
+  /* voxel size */
+  double *vside,
+  /* H4table */
+  double *t0,
+  double *t1,
+  int    *m,	
+  int    *obs,
+  int    *nco,
+  int    *cen,
+  int    *ncc,
+  int    *upperobs,
+  int    *uppercen
+) {
   Point	*p;
   Box 	*b;
   H4table *count;
@@ -520,24 +554,31 @@ RcallF3cen(x,y,z, n, x0, x1, y0, y1, z0, z1,
 }
 
 void
-Rcallpcf3(x,y,z, n, x0, x1, y0, y1, z0, z1, t0, t1, m, f, num, denom, method, 
-delta)
-
-     double *x, *y, *z;	/* points */
-     int    *n;
-
-     double *x0, *x1, 	/* box */
-            *y0, *y1, 
-            *z0, *z1;	
-
-     double *t0, *t1;	/* Ftable */
-     int    *m;
-     double *f, *num, *denom;
-
-     int    *method;
-
-     double *delta;    /* Epanechnikov kernel halfwidth */
-{
+Rcallpcf3(
+  /* points */
+  double *x,
+  double *y,
+  double *z,
+  int    *n,
+  /* box */
+  double *x0,
+  double *x1,
+  double *y0,
+  double *y1, 
+  double *z0,
+  double *z1,
+  /* Ftable */
+  double *t0,
+  double *t1,
+  int    *m,
+  double *f,
+  double *num,
+  double *denom,
+  /* edge correction */
+  int    *method,
+  /* Epanechnikov kernel halfwidth */
+  double *delta
+) {
   Point	*p;
   Box 	*b;
   Ftable	*tab;

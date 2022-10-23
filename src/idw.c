@@ -3,7 +3,7 @@
 
   Inverse-distance weighted smoothing
 
-  $Revision: 1.12 $ $Date: 2020/01/01 01:27:35 $
+  $Revision: 1.13 $ $Date: 2022/10/21 10:43:01 $
 
   Cidw    inverse distance smoothing from data points onto pixel grid
   idwloo  leave-one-out estimate at data points
@@ -24,14 +24,26 @@
 
 /*  inverse-distance smoothing from data points onto pixel grid */
 
-void Cidw(x, y, v, n, xstart, xstep, nx, ystart, ystep, ny, power, num, den, rat)
-     double *x, *y, *v;           /* data points and values */
-     int *n;
-     double *xstart, *xstep, *ystart, *ystep;   /* pixel grid */
-     int *nx, *ny;
-     double *power;                   /* exponent for IDW */
-     double *num, *den, *rat;     /* output arrays - assumed initialised 0 */
-{
+void Cidw(
+/* data points and values */
+  double *x,
+  double *y,
+  double *v,
+  int    *n,
+  /* pixel grid */
+  double *xstart,
+  double *xstep,
+  int *nx,
+  double *ystart,
+  double *ystep,   
+  int  *ny,
+  /* exponent for IDW */
+  double *power,                  
+  /* output arrays - assumed initialised 0 */
+  double *num,
+  double *den,
+  double *rat     
+) {
   int N, i, Nx, Ny, ix, iy;
   double xg, yg, x0, dx, y0, dy, pon2, d2, w, sumw, sumwv;
   
@@ -88,12 +100,19 @@ void Cidw(x, y, v, n, xstart, xstep, nx, ystart, ystep, ny, power, num, den, rat
 
 /* Leave-one-out IDW at data points only */
 
-void idwloo(x, y, v, n, power, num, den, rat)
-     double *x, *y, *v;           /* data points and values */
-     int *n;
-     double *power;                   /* exponent for IDW */
-     double *num, *den, *rat;     /* output vectors - assumed initialised 0 */
-{
+void idwloo(
+  /* data points and values */
+  double *x,
+  double *y,
+  double *v,          
+  int *n,
+  /* exponent for IDW */
+  double *power,
+  /* output vectors - assumed initialised 0 */
+  double *num,
+  double *den,
+  double *rat     
+) {
   int N, i, j, maxchunk;
   double xi, yi, d2, w, pon2, sumw, sumwv;
   
@@ -169,16 +188,29 @@ void idwloo(x, y, v, n, power, num, den, rat)
 
 /*  inverse-distance smoothing from data points onto pixel grid */
 
-void Cidw2(x, y, v, n, xstart, xstep, nx, ystart, ystep, ny, power,
-	   num, den, rat, mtwo, wtwo)
-     double *x, *y, *v;           /* data points and values */
-     int *n;
-     double *xstart, *xstep, *ystart, *ystep;   /* pixel grid */
-     int *nx, *ny;
-     double *power;                   /* exponent for IDW */
-     double *num, *den, *rat;    /* output arrays - assumed initialised 0 */
-     double *mtwo, *wtwo;    /* output arrays - assumed initialised 0 */
-{
+void Cidw2(
+  /* data points and values */
+  double *x,
+  double *y,
+  double *v,           
+  int *n,
+  /* pixel grid */
+  double *xstart,
+  double *xstep,
+  int *nx,
+  double *ystart,
+  double *ystep,   
+  int *ny,
+  /* exponent for IDW */
+  double *power,
+  /* output arrays - assumed initialised 0 */
+  double *num,
+  double *den,
+  double *rat,
+  /* output arrays - assumed initialised 0 */
+  double *mtwo,
+  double *wtwo    
+) {
   int N, i, Nx, Ny, ix, iy;
   double xg, yg, x0, dx, y0, dy, pon2, d2, w, vi,
     sumw, sumwv, sumw2, runmean, m2, delta, epsilon;
@@ -252,12 +284,21 @@ void Cidw2(x, y, v, n, xstart, xstep, nx, ystart, ystep, ny, power,
 
 /* Leave-one-out IDW at data points only */
 
-void idwloo2(x, y, v, n, power, num, den, rat, mtwo, wtwo)
-     double *x, *y, *v;           /* data points and values */
-     int *n;
-     double *power;                   /* exponent for IDW */
-     double *num, *den, *rat, *mtwo, *wtwo;   /* output vectors - initialised 0 */
-{
+void idwloo2(
+  /* data points and values */
+  double *x,
+  double *y,
+  double *v,           
+  int *n,
+  /* exponent for IDW */
+  double *power,
+  /* output vectors - initialised 0 */
+  double *num,
+  double *den,
+  double *rat,
+  double *mtwo,
+  double *wtwo   
+) {
   int N, i, j, maxchunk;
   double xi, yi, d2, w, pon2,
     vj, sumw, sumwv, sumw2, runmean, m2, delta, epsilon;

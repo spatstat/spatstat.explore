@@ -8,7 +8,7 @@
 
   densptcross.c
 
-  $Revision: 1.3 $     $Date: 2018/12/18 02:43:11 $
+  $Revision: 1.5 $     $Date: 2022/10/22 10:09:51 $
 
   Assumes point patterns are sorted in increasing order of x coordinate
 
@@ -22,7 +22,8 @@
 
 #define TWOPI M_2PI
 
-double sqrt(), exp();
+double sqrt(double x);
+double exp(double x);
 
 #define STD_DECLARATIONS				\
   int i, j, n1, n2, maxchunk, jleft;                    \
@@ -40,17 +41,17 @@ double sqrt(), exp();
 
 /* ----------------- density estimation -------------------- */
 
-void crdenspt(nquery, xq, yq, ndata, xd, yd, rmaxi, sig, result) 
+void crdenspt(
      /* inputs */
-     int *nquery;            /* number of locations to be interrogated */
-     double *xq, *yq;    /* (x,y) coordinates to be interrogated */
-     int *ndata;            /* number of data points */
-     double *xd, *yd;    /* (x,y) coordinates of data */
-     double *rmaxi;    /* maximum distance at which points contribute */
-     double *sig;      /* Gaussian sd */
+     int *nquery,             /* number of locations to be interrogated */
+     double *xq, double *yq,  /* (x,y) coordinates to be interrogated */
+     int *ndata,              /* number of data points */
+     double *xd, double *yd,  /* (x,y) coordinates of data */
+     double *rmaxi,           /* maximum distance at which points contribute */
+     double *sig,             /* Gaussian sd */
      /* output */
-     double *result;   /* vector of computed density values */
-{
+     double *result           /* vector of computed density values */
+) {
   STD_DECLARATIONS;
   double resulti, coef;	
   double sigma, twosig2; 
@@ -70,18 +71,18 @@ void crdenspt(nquery, xq, yq, ndata, xd, yd, rmaxi, sig, result)
 }
 
 
-void wtcrdenspt(nquery, xq, yq, ndata, xd, yd, wd, rmaxi, sig, result) 
+void wtcrdenspt(
      /* inputs */
-     int *nquery;        /* number of locations to be interrogated */
-     double *xq, *yq;    /* (x,y) coordinates to be interrogated */
-     int *ndata;         /* number of data points */
-     double *xd, *yd;    /* (x,y) coordinates of data */
-     double *wd;         /* weights of data points */
-     double *rmaxi;      /* maximum distance at which points contribute */
-     double *sig;        /* Gaussian sd */
+     int *nquery,             /* number of locations to be interrogated */
+     double *xq, double *yq,  /* (x,y) coordinates to be interrogated */
+     int *ndata,              /* number of data points */
+     double *xd, double *yd,  /* (x,y) coordinates of data */
+     double *wd,              /* weights of data points */
+     double *rmaxi,           /* maximum distance at which points contribute */
+     double *sig,             /* Gaussian sd */
      /* output */
-     double *result;   /* vector of computed density values */
-{
+     double *result           /* vector of computed density values */
+) {
   STD_DECLARATIONS;
   double resulti, coef;	
   double sigma, twosig2; 
@@ -102,18 +103,18 @@ void wtcrdenspt(nquery, xq, yq, ndata, xd, yd, wd, rmaxi, sig, result)
 
 /* ------------- anisotropic versions -------------------- */
 
-void acrdenspt(nquery, xq, yq, ndata, xd, yd, rmaxi, detsigma, sinv, result) 
+void acrdenspt(
      /* inputs */
-     int *nquery;            /* number of locations to be interrogated */
-     double *xq, *yq;    /* (x,y) coordinates to be interrogated */
-     int *ndata;            /* number of data points */
-     double *xd, *yd;    /* (x,y) coordinates of data */
-     double *rmaxi;    /* maximum distance at which points contribute */
-     double *detsigma;  /* determinant of variance matrix */
-     double *sinv;      /* inverse variance matrix (2x2, flattened) */
+     int *nquery,              /* number of locations to be interrogated */
+     double *xq, double *yq,   /* (x,y) coordinates to be interrogated */
+     int *ndata,               /* number of data points */
+     double *xd, double *yd,   /* (x,y) coordinates of data */
+     double *rmaxi,            /* maximum distance at which points contribute */
+     double *detsigma,         /* determinant of variance matrix */
+     double *sinv,             /* inverse variance matrix (2x2, flattened) */
      /* output */
-     double *result;   /* vector of computed density values */
-{
+     double *result            /* vector of computed density values */
+) {
   STD_DECLARATIONS;
   double resulti, coef;	
   double detsig, s11, s12, s21, s22;
@@ -135,19 +136,19 @@ void acrdenspt(nquery, xq, yq, ndata, xd, yd, rmaxi, detsigma, sinv, result)
 }
 
 
-void awtcrdenspt(nquery, xq, yq, ndata, xd, yd, wd, rmaxi, detsigma, sinv, result) 
-     /* inputs */
-     int *nquery;        /* number of locations to be interrogated */
-     double *xq, *yq;    /* (x,y) coordinates to be interrogated */
-     int *ndata;         /* number of data points */
-     double *xd, *yd;    /* (x,y) coordinates of data */
-     double *wd;         /* weights of data points */
-     double *rmaxi;      /* maximum distance at which points contribute */
-     double *detsigma;   /* determinant of variance matrix */
-     double *sinv;       /* inverse variance matrix (2x2, flattened) */
-     /* output */
-     double *result;     /* vector of weighted density values */
-{
+void awtcrdenspt(
+  /* inputs */
+  int *nquery,             /* number of locations to be interrogated */
+  double *xq, double *yq,  /* (x,y) coordinates to be interrogated */
+  int *ndata,              /* number of data points */
+  double *xd, double *yd,  /* (x,y) coordinates of data */
+  double *wd,              /* weights of data points */
+  double *rmaxi,           /* maximum distance at which points contribute */
+  double *detsigma,        /* determinant of variance matrix */
+  double *sinv,            /* inverse variance matrix (2x2, flattened) */
+  /* output */
+  double *result           /* vector of weighted density values */
+) {
   STD_DECLARATIONS;
   double resulti, coef;	
   double detsig, s11, s12, s21, s22;
@@ -172,18 +173,18 @@ void awtcrdenspt(nquery, xq, yq, ndata, xd, yd, wd, rmaxi, detsigma, sinv, resul
 
 /* --------------- smoothing --------------------------- */
 
-void crsmoopt(nquery, xq, yq, ndata, xd, yd, vd, rmaxi, sig, result) 
-     /* inputs */
-     int *nquery;            /* number of locations to be interrogated */
-     double *xq, *yq;    /* (x,y) coordinates to be interrogated */
-     int *ndata;            /* number of data points */
-     double *xd, *yd;    /* (x,y) coordinates of data */
-     double *vd;         /* mark values at data points */
-     double *rmaxi;    /* maximum distance at which points contribute */
-     double *sig;      /* Gaussian sd */
-     /* output */
-     double *result;   /* vector of computed smoothed values */
-{
+void crsmoopt(
+  /* inputs */
+  int *nquery,             /* number of locations to be interrogated */
+  double *xq, double *yq,  /* (x,y) coordinates to be interrogated */
+  int *ndata,              /* number of data points */
+  double *xd, double *yd,  /* (x,y) coordinates of data */
+  double *vd,              /* mark values at data points */
+  double *rmaxi,           /* maximum distance at which points contribute */
+  double *sig,             /* Gaussian sd */
+  /* output */
+  double *result           /* vector of computed smoothed values */
+) {
   STD_DECLARATIONS;
   double sigma, twosig2;
   double numer, denom, wij; 
@@ -207,19 +208,19 @@ void crsmoopt(nquery, xq, yq, ndata, xd, yd, vd, rmaxi, sig, result)
  }
 
 
-void wtcrsmoopt(nquery, xq, yq, ndata, xd, yd, vd, wd, rmaxi, sig, result) 
-     /* inputs */
-     int *nquery;            /* number of locations to be interrogated */
-     double *xq, *yq;    /* (x,y) coordinates to be interrogated */
-     int *ndata;            /* number of data points */
-     double *xd, *yd;    /* (x,y) coordinates of data */
-     double *vd;         /* mark values at data points */
-     double *wd;         /* weights of data points */
-     double *rmaxi;    /* maximum distance */
-     double *sig;      /* Gaussian sd */
-     /* output */
-     double *result;    /* vector of computed smoothed values */
-{
+void wtcrsmoopt(
+  /* inputs */
+  int *nquery,              /* number of locations to be interrogated */
+  double *xq, double *yq,   /* (x,y) coordinates to be interrogated */
+  int *ndata,               /* number of data points */
+  double *xd, double *yd,   /* (x,y) coordinates of data */
+  double *vd,               /* mark values at data points */
+  double *wd,               /* weights of data points */
+  double *rmaxi,            /* maximum distance */
+  double *sig,              /* Gaussian sd */
+  /* output */
+  double *result    /* vector of computed smoothed values */
+) {
   STD_DECLARATIONS;
   double sigma, twosig2;
   double numer, denom, wij; 
@@ -244,18 +245,18 @@ void wtcrsmoopt(nquery, xq, yq, ndata, xd, yd, vd, wd, rmaxi, sig, result)
 
 /* ------------- anisotropic versions -------------------- */
 
-void acrsmoopt(nquery, xq, yq, ndata, xd, yd, vd, rmaxi, sinv, result) 
-     /* inputs */
-     int *nquery;            /* number of locations to be interrogated */
-     double *xq, *yq;    /* (x,y) coordinates to be interrogated */
-     int *ndata;            /* number of data points */
-     double *xd, *yd;    /* (x,y) coordinates of data */
-     double *vd;         /* mark values at data points */
-     double *rmaxi;    /* maximum distance at which points contribute */
-     double *sinv;      /* inverse variance matrix (2x2, flattened) */
-     /* output */
-     double *result;   /* vector of smoothed values */
-{
+void acrsmoopt(
+  /* inputs */
+  int *nquery,             /* number of locations to be interrogated */
+  double *xq, double *yq,  /* (x,y) coordinates to be interrogated */
+  int *ndata,              /* number of data points */
+  double *xd, double *yd,  /* (x,y) coordinates of data */
+  double *vd,              /* mark values at data points */
+  double *rmaxi,           /* maximum distance at which points contribute */
+  double *sinv,            /* inverse variance matrix (2x2, flattened) */
+  /* output */
+  double *result           /* vector of smoothed values */
+) {
   STD_DECLARATIONS;
   double s11, s12, s21, s22;
   double numer, denom, wij; 
@@ -282,19 +283,19 @@ void acrsmoopt(nquery, xq, yq, ndata, xd, yd, vd, rmaxi, sinv, result)
 }
 
 
-void awtcrsmoopt(nquery, xq, yq, ndata, xd, yd, vd, wd, rmaxi, sinv, result) 
-     /* inputs */
-     int *nquery;        /* number of locations to be interrogated */
-     double *xq, *yq;    /* (x,y) coordinates to be interrogated */
-     int *ndata;         /* number of data points */
-     double *xd, *yd;    /* (x,y) coordinates of data */
-     double *vd;         /* mark values at data points */
-     double *wd;         /* weights of data points */
-     double *rmaxi;      /* maximum distance at which points contribute */
-     double *sinv;       /* inverse variance matrix (2x2, flattened) */
-     /* output */
-     double *result;    /* vector of smoothed values */
-{
+void awtcrsmoopt(
+  /* inputs */
+  int *nquery,              /* number of locations to be interrogated */
+  double *xq, double *yq,   /* (x,y) coordinates to be interrogated */
+  int *ndata,               /* number of data points */
+  double *xd, double *yd,   /* (x,y) coordinates of data */
+  double *vd,               /* mark values at data points */
+  double *wd,               /* weights of data points */
+  double *rmaxi,            /* maximum distance at which points contribute */
+  double *sinv,             /* inverse variance matrix (2x2, flattened) */
+  /* output */
+  double *result            /* vector of smoothed values */
+) {
   STD_DECLARATIONS;
   double s11, s12, s21, s22;
   double numer, denom, wij; 

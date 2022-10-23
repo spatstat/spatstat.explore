@@ -8,7 +8,7 @@
 #include "constants.h"
 
 /*
-	$Revision: 1.8 $	$Date: 2018/12/18 02:43:11 $
+	$Revision: 1.9 $	$Date: 2022/10/22 10:09:51 $
 
 	pair correlation function of 3D point pattern
 	(Epanechnikov kernel) 
@@ -40,7 +40,8 @@ pcf3trans(p, n, b, pcf, delta)
   double dt, vol, lambda, denom;
   double coef, twocoef, frac, invweight, kernel;
 
-  double sphesfrac(), sphevol();
+  double sphesfrac(Point *point, Box *box, double r);
+  double sphevol(Point *point, Box *box, double r);
 
   /* compute denominator & initialise numerator*/
   vol = (b->x1 - b->x0) * (b->y1 - b->y0) * (b->z1 - b->z0);
@@ -125,7 +126,9 @@ pcf3isot(p, n, b, pcf, delta)
   double dt, vol, denom, mass, tval;
   double coef, frac, kernel;
 
-  double sphesfrac(), sphevol();
+  double sphesfrac(Point *point, Box *box, double r);
+  double sphevol(Point *point, Box *box, double r);
+
   Point vertex;
   Box   half;
 

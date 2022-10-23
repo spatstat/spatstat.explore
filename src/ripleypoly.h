@@ -14,7 +14,7 @@
   *CHUNKLOOP     defined in chunkloop.h
   TWOPI          defined in Rmath.h
 
-  $Revision: 1.21 $     $Date: 2021/10/31 06:43:56 $
+  $Revision: 1.22 $     $Date: 2022/10/20 10:57:43 $
 
   Copyright (C) Adrian Baddeley, Ege Rubak and Rolf Turner 2001-2019
   Licence: GNU Public Licence >= 2
@@ -42,14 +42,22 @@
 /* WAS: define ROUNDED(X) ((double)(X)) */
 #endif
 
-void RIPLEYFUN(nc, xc, yc, bd, nr, rmat, nseg, x0, y0, x1, y1, out) 
+void RIPLEYFUN(
      /* inputs */
-     int *nc, *nr, *nseg;
-     double *xc, *yc, *bd, *rmat;
-     double *x0, *y0, *x1, *y1;
+     int    *nc,      /* number of centre points */
+     double *xc,      /* coordinates of centre points */
+     double *yc,  
+     double *bd,      /* distances to boundary from centre points */
+     int *nr,
+     double *rmat,    /* matrix of radii (nc by nr) */
+     int *nseg,       /* number of polygon edges */
+     double *x0,      /* coordinates of polygon vertices */
+     double *y0,
+     double *x1,
+     double *y1,
      /* output */
-     double *out;
-{
+     double *out
+) {
   int n, m, i, j, k, l, nradperpt, ncut, nchanges, maxchunk;
   double xcentre, ycentre, xx0, yy0, xx1, yy1, xx01, yy01;
   double bdisti;

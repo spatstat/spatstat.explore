@@ -2,7 +2,7 @@
 
   KrectFunDec.h
 
-  $Revision: 1.4 $     $Date: 2018/12/18 02:43:11 $
+  $Revision: 1.5 $     $Date: 2022/10/21 10:43:01 $
 
   Function declarations for Krect
 
@@ -11,41 +11,36 @@
 
       WEIGHTED  #defined for weighted version (Kinhom etc)
 
-  +++  Copyright (C) Adrian Baddeley 2014 ++++
+  +++  Copyright (C) Adrian Baddeley 2014-2022 ++++
 
 */
 
-void FNAME(width, height,
-	   nxy, x, y, 
+void FNAME(
+  /* input data */
+  double *width,
+  double *height,        /* window is (0, width) x (0, height) */
+  int    *nxy,           /* number of (x,y) points */
+  double *x,
+  double *y,             /* (x,y) coordinates */
 #ifdef WEIGHTED
-           w,
+  double *w,             /* weights (e.g. reciprocal intensities) */
 #endif
-	   nr, rmax, trimedge, 
-	   doIso, doTrans, doBord, doUnco,
-	   iso, trans, bnumer, bdenom, unco)
-     /* input data */
-     double *width, *height;   /* window is (0, width) x (0, height) */
-     int    *nxy;           /* number of (x,y) points */
-     double *x, *y;         /* (x,y) coordinates */
-#ifdef WEIGHTED
-     double *w;             /* weights (e.g. reciprocal intensities) */
-#endif
-     /* algorithm parameters */
-     int    *nr;            /* number of r values */
-     double *rmax;          /* maximum r value */
-     double *trimedge;      /* maximum edge correction weight */
-     int    *doIso;         /* logical: whether to do isotropic correction */
-     int    *doTrans;       /* logical: whether to do translation correction */
-     int    *doBord;        /* logical: whether to do border correction */
-     int    *doUnco;        /* logical: whether to do uncorrected estimator */
-     /* outputs */
-     /* These are vectors of length nr if required, otherwise ignored */
-     double *iso;           /* isotropic-corrected estimator */
-     double *trans;         /* translation-corrected estimator */
-     COUNTTYPE *bnumer;        /* numerator of border-corrected estimator */
-     COUNTTYPE *bdenom;        /* denominator of border-corrected estimator */
-     COUNTTYPE *unco;          /* uncorrected estimator */
-{
+  /* algorithm parameters */
+  int    *nr,            /* number of r values */
+  double *rmax,          /* maximum r value */
+  double *trimedge,      /* maximum edge correction weight */
+  int    *doIso,         /* logical: whether to do isotropic correction */
+  int    *doTrans,       /* logical: whether to do translation correction */
+  int    *doBord,        /* logical: whether to do border correction */
+  int    *doUnco,        /* logical: whether to do uncorrected estimator */
+  /* outputs */
+  /* These are vectors of length nr if required, otherwise ignored */
+  double *iso,           /* isotropic-corrected estimator */
+  double *trans,         /* translation-corrected estimator */
+  COUNTTYPE *bnumer,     /* numerator of border-corrected estimator */
+  COUNTTYPE *bdenom,     /* denominator of border-corrected estimator */
+  COUNTTYPE *unco        /* uncorrected estimator */
+) {
   int i, j, l, ldist, lbord, M, maxchunk, N, Nr, N1, Nr1;
   double rstep, Rmax, R2max, wide, high, trim;
   double xi, yi, bdisti, bx, by, bratio;
