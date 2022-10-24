@@ -1,12 +1,9 @@
 
-        CHANGES IN spatstat.explore VERSION 2.999-999.032
+        CHANGES IN spatstat.explore VERSION 3.0-0
 
 OVERVIEW
 
     o New package
-
-    o Package will be initialised at version 3.0-0.
-      Versions less than 3 are developmental.
 
     o We thank Marie-Colette van Lieshout and Daniel Manrique-Castano
     for contributions.
