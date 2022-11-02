@@ -1,5 +1,5 @@
 /*
-	$Revision: 1.7 $ $Date: 2022/10/23 05:50:50 $
+	$Revision: 1.8 $ $Date: 2022/11/02 10:18:16 $
 
 	R interface
 
@@ -71,7 +71,7 @@ allocFtable(int n)		/* allocate function table of size n */
   return(x);
 }
 
-void freeFtable(x) Ftable *x; { }
+void freeFtable(Ftable *x) { }
 
 Itable	*
 allocItable(int n)

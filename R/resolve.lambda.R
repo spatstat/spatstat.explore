@@ -9,7 +9,7 @@
 #'    validate.weights
 #'    updateData (generic)
 #'
-#' $Revision: 1.18 $ $Date: 2022/08/09 06:46:50 $
+#' $Revision: 1.19 $ $Date: 2022/11/02 10:25:21 $
 
 resolve.lambda <- function(X, lambda=NULL, ...) {
   UseMethod("resolve.lambda")
@@ -379,11 +379,11 @@ updateData.default <- function(model, X, ..., warn=TRUE) {
       if(warn)
         warning("Model was not updated; this requires a recent version of spatstat.model", call.=FALSE)
   } else if(inherits(model, "lppm")) {
-    if(requireNamespace("spatstat.linnet")) {
-      model <- spatstat.linnet::updateData.lppm(model, X)
-    } else
-      if(warn)
-        warning("Model was not updated; this requires a recent version of spatstat.linnet", call.=FALSE)
+    ##    if(requireNamespace("spatstat.linnet")) {
+    ##      model <- spatstat.linnet::updateData.lppm(model, X)
+    ##    } else
+    if(warn)
+      warning("Model was not updated; this requires a recent version of spatstat.linnet", call.=FALSE)
   } else
     if(warn)
       warning("Unrecognised kind of 'model'; no update performed",

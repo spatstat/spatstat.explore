@@ -8,7 +8,7 @@
 #include "constants.h"
 
 /*
-	$Revision: 1.9 $	$Date: 2022/10/22 10:09:51 $
+	$Revision: 1.10 $	$Date: 2022/11/02 10:17:55 $
 
 	pair correlation function of 3D point pattern
 	(Epanechnikov kernel) 
@@ -17,7 +17,7 @@
 
 	pcf3isot		isotropic correction
 
-  Copyright (C) Adrian Baddeley, Ege Rubak and Rolf Turner 2001-2018
+  Copyright (C) Adrian Baddeley, Ege Rubak and Rolf Turner 2001-2022
   Licence: GNU Public Licence >= 2
 
 */
@@ -26,13 +26,13 @@
 
 
 void
-pcf3trans(p, n, b, pcf, delta)
-     Point *p;
-     int n;
-     Box *b;
-     Ftable *pcf;
-     double delta;
-{
+pcf3trans(
+ Point *p,
+ int n,
+ Box *b,
+ Ftable *pcf,
+ double delta
+) {
   register int i, j, l, lmin, lmax, maxchunk;
   register double dx, dy, dz, dist;
   register double  vx, vy, vz, tval;
@@ -113,13 +113,13 @@ pcf3trans(p, n, b, pcf, delta)
 
 
 void
-pcf3isot(p, n, b, pcf, delta)
-     Point *p;
-     int n;
-     Box *b;
-     Ftable *pcf;
-     double delta;
-{
+pcf3isot(
+ Point *p,
+ int n,
+ Box *b,
+ Ftable *pcf,
+ double delta
+) {
   register int i, j, l, lmin, lmax, maxchunk;
   register double dx, dy, dz, dist;
   Point *ip, *jp;

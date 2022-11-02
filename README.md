@@ -2,7 +2,7 @@
 
 ## Exploratory/nonparametric data analysis for the spatstat family
 
-[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/spatstat.explore)](http://cran.r-project.org/web/packages/spatstat.explore) 
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/spatstat.explore)](https://CRAN.R-project.org/package=spatstat.explore) 
 [![GitHub R package version](https://img.shields.io/github/r-package/v/spatstat/spatstat.explore)](https://github.com/spatstat/spatstat.explore)
 
 The original `spatstat` package has been split into
