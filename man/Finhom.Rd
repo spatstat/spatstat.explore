@@ -174,7 +174,9 @@
 \examples{
   plot(Finhom(swedishpines, sigma=10))
 
-  # plot(Finhom(swedishpines, sigma=bw.diggle, adjust=2))
+  \donttest{
+    plot(Finhom(swedishpines, sigma=bw.diggle, adjust=2))
+  }
 }
 \author{
   Original code by Marie-Colette van Lieshout.

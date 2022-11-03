@@ -237,13 +237,9 @@ quadrat.test(X, ...)
 
   # Using Monte Carlo p-values
   quadrat.test(swedishpines) # Get warning, small expected values.
-  # quadrat.test(swedishpines, method="M", nsim=4999)
-  #  quadrat.test(swedishpines, method="M", nsim=4999, conditional=FALSE)
-
-  \testonly{
-    quadrat.test(swedishpines, method="M", nsim=19)
-    quadrat.test(swedishpines, method="M", nsim=19, conditional=FALSE)
-  }
+  Nsim <- if(interactive()) 4999 else 9
+  quadrat.test(swedishpines, method="M", nsim=Nsim)
+  quadrat.test(swedishpines, method="M", nsim=Nsim, conditional=FALSE)
 
   # quadrat counts
   qS <- quadratcount(simdat, 4, 3)

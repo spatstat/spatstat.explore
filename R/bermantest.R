@@ -3,7 +3,7 @@
 #
 # Test statistics from Berman (1986)
 #
-#  $Revision: 1.24 $  $Date: 2022/05/22 02:23:18 $
+#  $Revision: 1.25 $  $Date: 2022/11/03 11:08:33 $
 #
 #
 
@@ -186,6 +186,7 @@ plot.bermantest <-
   }
   work <- x$working
   op <- options(useFancyQuotes=FALSE)
+  on.exit(options(op))
   switch(x$which,
          Z1={
            # plot cdf's of Z

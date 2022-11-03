@@ -738,14 +738,9 @@ nsim=Nsim, global=TRUE))
  }
  E <- envelope(X, Kest, nsim=Nsim, simulate=PatList)
 
-# re-using the same point patterns
-# EK <- envelope(X, Kest, savepatterns=TRUE)
-# EG <- envelope(X, Gest, simulate=EK)
-
- if(online) {
-   EK <- envelope(X, Kest, nsim=Nsim, savepatterns=TRUE)
-   EG <- envelope(X, Gest, nsim=Nsim, simulate=EK)
- }
+ # re-using the same point patterns
+ EK <- envelope(X, Kest, nsim=Nsim, savepatterns=TRUE)
+ EG <- envelope(X, Gest, nsim=Nsim, simulate=EK)
 }
 \author{
   \spatstatAuthors.

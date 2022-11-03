@@ -78,13 +78,13 @@ rotmean(X, ..., origin, padzero=TRUE, Xname, result=c("fv", "im"), adjust=1)
   \code{\link{radcumint}}
 }
 \examples{
-  if(interactive()) {
-    Z <- setcov(square(1))
+  online <- interactive()
+  resolution <- if(online) 128 else 32
+  Z <- setcov(square(1), dimyx=resolution)
+  f <- rotmean(Z)
+  if(online) {
     plot(rotmean(Z))
     plot(rotmean(Z, result="im"))
-  } else {
-    Z <- setcov(square(1), dimyx=32)
-    f <- rotmean(Z)
   }
 }
 \keyword{spatial}

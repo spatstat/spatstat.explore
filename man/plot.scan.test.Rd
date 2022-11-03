@@ -61,8 +61,6 @@
   class \code{"im"}). The value of \code{plot.scan.test} is \code{NULL}.
 }
 \author{\adrian
-  
-  
   and \rolf
   
 }
@@ -71,12 +69,10 @@
   \code{\link{scanLRTS}}
 }
 \examples{
-   if(interactive()) {
-     a <- scan.test(redwood, seq(0.04, 0.1, by=0.01),
-                    method="poisson", nsim=19)
-   } else {
-     a <- scan.test(redwood, c(0.05, 0.1), method="poisson", nsim=2)
-   }
+   online <- interactive()
+   Nsim <- if(online) 19 else 2
+   r <- if(online) seq(0.04, 0.1, by=0.01) else c(0.05, 0.1)
+   a <- scan.test(redwood, r=r, method="poisson", nsim=Nsim)
    plot(a)
    as.im(a)
    plot(a, what="radius")

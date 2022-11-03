@@ -1,7 +1,7 @@
 #
 #   pcfmulti.inhom.R
 #
-#   $Revision: 1.17 $   $Date: 2022/05/18 06:56:19 $
+#   $Revision: 1.18 $   $Date: 2022/11/03 11:08:33 $
 #
 #   inhomogeneous multitype pair correlation functions
 #

@@ -184,14 +184,13 @@ Jdot(X, i, eps=NULL, r=NULL, breaks=NULL, \dots, correction=NULL)
     plot(Jhh, add=TRUE, legendpos="bottom")
 
     # synthetic example with two marks "a" and "b"
-    ## pp <- runifpoint(30) \%mark\% factor(sample(c("a","b"), 30, replace=TRUE))
-    ## J <- Jdot(pp, "a")
+    \donttest{
+    pp <- runifpoint(30) \%mark\% factor(sample(c("a","b"), 30, replace=TRUE))
+    J <- Jdot(pp, "a")
+    }
 }
-\author{\adrian
-  
-  
-  and \rolf
-  
+\author{
+  \adrian and \rolf.
 }
 \keyword{spatial}
 \keyword{nonparametric}

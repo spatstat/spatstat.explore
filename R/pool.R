@@ -6,7 +6,7 @@
 #'     pool.rat
 #'     pool.fasp
 #' 
-#'  $Revision: 1.8 $  $Date: 2022/05/23 02:33:06 $
+#'  $Revision: 1.9 $  $Date: 2022/11/03 11:08:33 $
 
 pool <- function(...) {
   UseMethod("pool")

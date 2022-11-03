@@ -219,7 +219,9 @@ Gcross(X, i, j, r=NULL, breaks=NULL, \dots, correction=c("rs", "km", "han"))
     G01 <- Gcross(amacrine)
 
     # equivalent to:
-    # G01 <- Gcross(amacrine, "off", "on")
+    \donttest{
+      G01 <- Gcross(amacrine, "off", "on")
+    }
 
     plot(G01)
 
@@ -234,11 +236,9 @@ Gcross(X, i, j, r=NULL, breaks=NULL, \dots, correction=c("rs", "km", "han"))
     pp <- pp \%mark\% factor(sample(0:1, npoints(pp), replace=TRUE))
     G <- Gcross(pp, "0", "1")   # note: "0" not 0
 }
-\author{\adrian
-  
-  
-  and \rolf
-  
+\author{
+  \adrian
+  and \rolf.
 }
 \keyword{spatial}
 \keyword{nonparametric}

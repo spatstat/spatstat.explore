@@ -1,7 +1,7 @@
 #
 #   pairs.im.R
 #
-#   $Revision: 1.22 $   $Date: 2021/06/29 03:43:35 $
+#   $Revision: 1.23 $   $Date: 2022/11/03 11:08:33 $
 #
 
 pairs.listof <- pairs.solist <- function(..., plot=TRUE) {
@@ -123,8 +123,8 @@ print.plotpairsim <- function(x, ...) {
 }
 
 panel.image <- function(x, y, ..., sigma=NULL) {
-  usr <- par("usr"); on.exit(par(usr))
-  par(usr = c(0, 1, 0, 1))
+  opa <- par(usr = c(0, 1, 0, 1))
+  on.exit(par(opa))
   xx <- scaletointerval(x)
   yy <- scaletointerval(y)
   p <- ppp(xx, yy, window=square(1), check=FALSE)
@@ -132,8 +132,8 @@ panel.image <- function(x, y, ..., sigma=NULL) {
 }
 
 panel.contour <- function(x, y, ..., sigma=NULL) {
-  usr <- par("usr"); on.exit(par(usr))
-  par(usr = c(0, 1, 0, 1))
+  opa <- par(usr = c(0, 1, 0, 1))
+  on.exit(par(opa))
   xx <- scaletointerval(x)
   yy <- scaletointerval(y)
   p <- ppp(xx, yy, window=square(1), check=FALSE)
@@ -146,8 +146,9 @@ panel.contour <- function(x, y, ..., sigma=NULL) {
 }
 
 panel.histogram <- function(x, ...) {
-  usr <- par("usr"); on.exit(par(usr))
-  par(usr = c(usr[1:2], 0, 1.5) )
+  usr <- par("usr")
+  opa <- par(usr = c(usr[1:2], 0, 1.5) )
+  on.exit(par(opa))
   h <- hist(x, plot = FALSE)
   breaks <- h$breaks; nB <- length(breaks)
   y <- h$counts; y <- y/max(y)

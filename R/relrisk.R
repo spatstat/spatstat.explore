@@ -3,7 +3,7 @@
 #
 #   Estimation of relative risk
 #
-#  $Revision: 1.54 $  $Date: 2022/06/17 02:42:16 $
+#  $Revision: 1.55 $  $Date: 2022/11/03 11:08:33 $
 #
 
 relrisk <- function(X, ...) UseMethod("relrisk")

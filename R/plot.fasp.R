@@ -1,7 +1,7 @@
 #
 #   plot.fasp.R
 #
-#   $Revision: 1.30 $   $Date: 2020/11/17 03:47:24 $
+#   $Revision: 1.31 $   $Date: 2022/11/03 11:08:33 $
 #
 plot.fasp <- function(x, formule=NULL, ..., subset=NULL,
                       title=NULL, banner=TRUE,
@@ -124,6 +124,7 @@ plot.fasp <- function(x, formule=NULL, ..., subset=NULL,
   if(is.null(mar.panel)) 
     mar.panel <- if(nrc > 3 && outerlabels) rep.int(1/nrc, 4) else par("mar")
   opa <- par(mar=mar.panel, xpd=TRUE)
+  on.exit(par(opa))
 #
 # plot each function  
   for(i in 1:nrows) {
@@ -181,6 +182,5 @@ plot.fasp <- function(x, formule=NULL, ..., subset=NULL,
   
   # revert
   layout(1)
-  par(opa)
   return(invisible(NULL))
 }

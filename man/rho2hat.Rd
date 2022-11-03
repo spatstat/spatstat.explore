@@ -100,7 +100,9 @@ rho2hat(object, cov1, cov2, ..., method=c("ratio", "reweight"))
   plot(rho2hat(bei, elev, grad))
   if(require("spatstat.model")) {
     fit <- ppm(bei ~elev, covariates=bei.extra)
-    # plot(rho2hat(fit, elev, grad))
+    \donttest{
+      plot(rho2hat(fit, elev, grad))
+    }
     plot(rho2hat(fit, elev, grad, method="reweight"))
   }
 }

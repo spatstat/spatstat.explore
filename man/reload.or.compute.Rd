@@ -77,19 +77,17 @@ reload.or.compute(filename, expr, objects = NULL,
   or loaded.
 }
 \examples{
-    \dontrun{
-    if(FALSE) {
-     reload.or.compute("mydata.rda", {
-        x <- very.long.computation()
-        y <- 42
-      })
-   }
-   }
+  ## Demonstration using a temporary file
+  ## (For real applications, use a permanent file in your own filespace)
+  myfile <- paste0(tempdir(), .Platform$file.sep, "mydata.rda")
+  reload.or.compute(myfile, {
+     # some very long computation ending with ..
+     x <- 42
+     y <- sqrt(x)
+  })
 }
-\author{\adrian
-  
-  
-  and \rolf
-  
+\author{
+  \adrian
+  and \rolf.
 }
 \keyword{utilities}

@@ -176,9 +176,11 @@
   \code{\link{Jest}}
 }
 \examples{
-  # plot(Jinhom(swedishpines, sigma=bw.diggle, adjust=2))
-
   plot(Jinhom(swedishpines, sigma=10))
+
+  \donttest{
+    plot(Jinhom(swedishpines, sigma=bw.diggle, adjust=2))
+  }
 }
 \author{
   Original code by Marie-Colette van Lieshout.

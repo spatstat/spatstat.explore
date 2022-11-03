@@ -3,7 +3,7 @@
 #
 #  Density estimation based on nn distance
 #
-#  $Revision: 1.3 $  $Date: 2014/10/24 00:22:30 $
+#  $Revision: 1.4 $  $Date: 2022/11/03 11:08:33 $
 #
 
 nndensity <- function(x, ...) {

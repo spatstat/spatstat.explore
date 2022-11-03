@@ -176,7 +176,9 @@
 \examples{
   plot(Ginhom(swedishpines, sigma=10))
 
-  # plot(Ginhom(swedishpines, sigma=bw.diggle, adjust=2))
+  \donttest{
+    plot(Ginhom(swedishpines, sigma=bw.diggle, adjust=2))
+  }
 }
 \author{
   Original code by Marie-Colette van Lieshout.

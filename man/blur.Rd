@@ -90,14 +90,14 @@ blur(x, sigma = NULL, \dots,
 }
 \examples{
    Z <- as.im(function(x,y) { 4 * x^2 + 3 * y }, letterR)
-   par(mfrow=c(1,3))
+   opa <- par(mfrow=c(1,3))
    plot(Z)
    plot(letterR, add=TRUE)
    plot(blur(Z, 0.3, bleed=TRUE))
    plot(letterR, add=TRUE)
    plot(blur(Z, 0.3, bleed=FALSE))
    plot(letterR, add=TRUE)
-   par(mfrow=c(1,1))
+   par(opa)
 }
 \author{
   \adrian

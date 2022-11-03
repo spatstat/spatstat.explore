@@ -237,15 +237,19 @@
 
    plot(alltypes(amacrine, "pcf"), ylim=c(0,1.3))
 
-   # A setting where you might REALLY want to use dataname:
-   # xxx <- alltypes(ppp(Melvin$x,Melvin$y,
-   #              window=as.owin(c(5,20,15,50)),marks=clyde),
-   #              fun="F",verb=TRUE,dataname="Melvin")
+   \dontrun{
+     ## A setting where you might REALLY want to use dataname:
+     xxx <- alltypes(ppp(Melvin$x,Melvin$y,
+                     window=as.owin(c(5,20,15,50)),marks=clyde),
+                     fun="F",verb=TRUE,dataname="Melvin")
+   }
 
    # envelopes
    bKE <- alltypes(bram,"K",envelope=TRUE,nsim=19)
    # global version:
-   # bFE <- alltypes(bram,"F",envelope=TRUE,nsim=19,global=TRUE)
+   \donttest{
+     bFE <- alltypes(bram,"F",envelope=TRUE,nsim=19,global=TRUE)
+   }
 
    # extract one entry
    as.fv(bKE[1,1])
