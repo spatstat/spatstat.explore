@@ -298,6 +298,7 @@ densityHeat.ppp <- function(x, sigma, ..., weights=NULL,
       for(iblock in 1:Nblock) U <- U %*% Ak
     } else {
       opa <- par(ask=FALSE)
+      on.exit(par(opa))
       each <- max(1, round(Nblock/60))
       for(iblock in 1:Nblock) {
         U <- U %*% Ak
@@ -331,6 +332,7 @@ densityHeat.ppp <- function(x, sigma, ..., weights=NULL,
       }
     } else {
       opa <- par(ask=FALSE)
+      on.exit(par(opa))
       each <- max(1, round(Nblock/60))
       for(iblock in 1:Nblock) {
         U <- U %*% Ak

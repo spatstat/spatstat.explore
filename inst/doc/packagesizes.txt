@@ -1,3 +1,3 @@
 date version nhelpfiles nobjects ndatasets Rlines srclines
 "2022-05-25" "3.0-0" 224 500 0 30319 6183
-"2022-11-03" "3.0-2" 226 507 0 30636 6295
+"2022-11-04" "3.0-3" 226 507 0 30638 6295

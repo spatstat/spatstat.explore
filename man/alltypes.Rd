@@ -237,13 +237,6 @@
 
    plot(alltypes(amacrine, "pcf"), ylim=c(0,1.3))
 
-   \dontrun{
-     ## A setting where you might REALLY want to use dataname:
-     xxx <- alltypes(ppp(Melvin$x,Melvin$y,
-                     window=as.owin(c(5,20,15,50)),marks=clyde),
-                     fun="F",verb=TRUE,dataname="Melvin")
-   }
-
    # envelopes
    bKE <- alltypes(bram,"K",envelope=TRUE,nsim=19)
    # global version:
