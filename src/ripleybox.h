@@ -13,7 +13,7 @@
   *CHUNKLOOP     defined in chunkloop.h
   TWOPI          defined in Rmath.h
 
-  $Revision: 1.4 $     $Date: 2022/10/20 10:57:43 $
+  $Revision: 1.5 $     $Date: 2022/11/08 01:37:31 $
 
   Copyright (C) Adrian Baddeley, Ege Rubak and Rolf Turner 2001-2019
   Licence: GNU Public Licence >= 2
@@ -146,7 +146,7 @@ void RIPLEYFUN(
 	  }
 	
 	  /* OK, now compute weight */
-	  out[ijpos] = 1 / (1 - extang);
+	  out[ijpos] = 1.0 / (1.0 - extang);
 	}
       }
     }

@@ -1,4 +1,17 @@
 
+        CHANGES IN spatstat.explore VERSION 3.0-4
+
+OVERVIEW
+
+    o Bug fix in Kest in a very special case.
+
+BUG FIXES
+
+    o Kest
+    Isotropic edge correction weight was computed incorrectly
+    for a data point lying exactly on a corner of a rectangular window.
+    Fixed.
+    
         CHANGES IN spatstat.explore VERSION 3.0-3
 
 OVERVIEW

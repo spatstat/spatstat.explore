@@ -3,7 +3,7 @@
 
   Code to increment numerators of K-function
 
-  $Revision: 1.5 $  $Date: 2014/02/09 03:00:51 $
+  $Revision: 1.6 $  $Date: 2022/11/08 01:37:41 $
 
   +++  Copyright (C) Adrian Baddeley, Julian Gilbey and Rolf Turner 2014 ++++
 
@@ -80,10 +80,10 @@
 
 	      /* add pi/2 for corners */
 	      if(corner) 
-		extang += 1/4;
+		extang += 1.0/4.0;
 
 	      /* edge correction factor */
-	      edgeiso = 1 / (1 - extang);
+	      edgeiso = 1.0 / (1.0 - extang);
               edgeiso = MIN(edgeiso, trim);
 
 #ifdef WEIGHTED
