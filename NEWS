@@ -1,15 +1,35 @@
 
+        CHANGES IN spatstat.explore VERSION 3.0-5
+
+OVERVIEW
+
+    o Bug fix in pcf.
+
+    o We thank Maximilian Hesselbarth for contributions.
+    
+BUG FIXES
+
+    o pcf.ppp
+    Estimates were incorrectly scaled (they were incorrectly multiplied
+    by the area of the window.) Spotted by Maximilian Hesselbarth.
+    Bug introduced in spatstat.explore 3.0-0.
+    Fixed.
+    
+
         CHANGES IN spatstat.explore VERSION 3.0-4
 
 OVERVIEW
 
     o Bug fix in Kest in a very special case.
 
+    o We thank 'Marjolein9' for contributions.
+    
 BUG FIXES
 
     o Kest
     Isotropic edge correction weight was computed incorrectly
     for a data point lying exactly on a corner of a rectangular window.
+    Spotted by GitHub contributor 'Marjolein9'.
     Fixed.
     
         CHANGES IN spatstat.explore VERSION 3.0-3

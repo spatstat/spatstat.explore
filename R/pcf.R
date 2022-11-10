@@ -1,7 +1,7 @@
 #
 #   pcf.R
 #
-#   $Revision: 1.72 $   $Date: 2022/11/03 11:08:33 $
+#   $Revision: 1.73 $   $Date: 2022/11/10 02:37:30 $
 #
 #
 #   calculate pair correlation function
@@ -30,7 +30,7 @@ pcf.ppp <- function(X, ..., r=NULL,
   npts <- npoints(X)
   samplesize <- npairs <- npts * (npts - 1)
   lambda <- npts/areaW
-  lambda2area <- npairs/areaW^2
+  lambda2area <- npairs/areaW
 
   kernel <- match.kernel(kernel)
 
