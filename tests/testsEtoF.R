@@ -17,7 +17,7 @@ cat(paste("--------- Executing",
 #
 #  Test validity of envelope data
 #
-#  $Revision: 1.27 $  $Date: 2022/05/22 11:19:56 $
+#  $Revision: 1.28 $  $Date: 2022/11/24 01:35:26 $
 #
 
 local({
@@ -111,6 +111,9 @@ if(FULLTEST) {
   #' pooling envelopes with non-identical attributes
   H0 <- envelope(cells, nsim=4, savefuns=TRUE)
   HH <- pool(H0, H1)
+  #' malformed argument 'simulate'
+  A <- replicate(3, list(list(runifpoint(ex=cells))))   # list(list(ppp), list(ppp), list(ppp))
+  E <- envelope(cells, simulate=A, nsim=3)
   #' undocumented/secret
   K <- envelope(cells, nsim=4, saveresultof=npoints, collectrubbish=TRUE)
   #' so secret I've even forgotten how to do it

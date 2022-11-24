@@ -3,7 +3,7 @@
 #
 #   computes simulation envelopes 
 #
-#   $Revision: 2.113 $  $Date: 2022/05/22 00:47:39 $
+#   $Revision: 2.114 $  $Date: 2022/11/24 01:22:16 $
 #
 
 
@@ -327,21 +327,41 @@ envelopeEngine <-
       envir <- envir.here
     } else if(is.list(simulate) &&
               all(sapply(simulate, inherits, what=Xclass))) {
-      # The user-supplied list of point patterns will be used
+      #' The user-supplied list of point patterns will be used
       simtype <- "list"
       SimDataList <- simulate
-      # expression that will be evaluated
+      #' expression that will be evaluated
       simexpr <- expression(SimDataList[[i+nerr]])
       dont.complain.about(SimDataList)
       envir <- envir.here
-      # ensure that `i' is defined
+      #' ensure that `i' is defined
       i <- 1L
       nerr <- 0L
       maxnerr <- min(length(SimDataList)-nsim, maxnerr)
-      # any messages?
+      #' any messages?
       if(!is.null(mess <- attr(simulate, "internal"))) {
         # determine whether these point patterns are realisations of CSR
-        csr <- !is.null(mc <- mess$csr) && mc
+        csr <- isTRUE(mess$csr)
+      }
+    } else if(is.list(simulate) &&
+              all(sapply(simulate, is.list)) &&
+              all(lengths(simulate) == 1) &&
+              all(sapply((elements <- lapply(simulate, "[[", i=1)), inherits, what=Xclass))) {
+      #' malformed argument: list(list(ppp), list(ppp), ....) 
+      SimDataList <- elements
+      simtype <- "list"
+      #' expression that will be evaluated
+      simexpr <- expression(SimDataList[[i+nerr]])
+      dont.complain.about(SimDataList)
+      envir <- envir.here
+      #' ensure that `i' is defined
+      i <- 1L
+      nerr <- 0L
+      maxnerr <- min(length(SimDataList)-nsim, maxnerr)
+      #' any messages?
+      if(!is.null(mess <- attr(simulate, "internal"))) {
+        # determine whether these point patterns are realisations of CSR
+        csr <- isTRUE(mess$csr) 
       }
     } else stop(paste(sQuote("simulate"),
                       "should be an expression,",
