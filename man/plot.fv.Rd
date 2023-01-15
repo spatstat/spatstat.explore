@@ -130,6 +130,12 @@
 \details{
   This is the \code{plot} method for the class \code{"fv"}.
 
+  An object of class \code{"fv"} is a convenient way of storing several different
+  statistical estimates of a summary function; see \code{\link{fv.object}}.
+  The default behaviour, executed by \code{plot(x)}, displays these
+  different estimates as curves with different colours and line styles,
+  and plots a legend explaining them.
+
   The use of the argument \code{fmla} is like \code{plot.formula}, but offers
   some extra functionality.
 
@@ -232,16 +238,15 @@
    plot(K, xlim=xlim, ylim=ylim)
    plot(Kr, xlim=xlim, ylim=ylim)
    par(opa)
+   # For a shortcut, try plot(anylist(K, Kr), equal.scales=TRUE)
 }
 \seealso{
   \code{\link{fv.object}},
   \code{\link[spatstat.explore]{Kest}}
 }
-\author{\adrian
-  
-  
+\author{
+  \adrian
   and \rolf
-  
 }
 \keyword{spatial}
 \keyword{hplot}

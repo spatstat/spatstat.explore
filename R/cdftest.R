@@ -1,7 +1,7 @@
 #
 #  cdftest.R
 #
-#  $Revision: 2.28 $  $Date: 2022/11/03 11:08:33 $
+#  $Revision: 2.33 $  $Date: 2023/01/15 03:23:28 $
 #
 #
 
@@ -199,9 +199,9 @@ spatialCDFframe <- function(model, covariate, ...,
     yyy <- c(yyy, 1)
   }
   if(length(xxx) > 1) {
-    #' non-degenerate cdf
     ## replace by piecewise linear approximation
     FZ <- approxfun(xxx, yyy, rule=2)
+    class(FZ) <- c("interpolatedCDF", class(FZ)) 
   }
   # now apply cdf
   U <- FZ(ZX)
@@ -214,28 +214,13 @@ spatialCDFframe <- function(model, covariate, ...,
     U <- pmax(0, pmin(1, U))
   }
 
-  if(make.quantile.function) {
-    ## right-continuous inverse of FZ
-    pZ <- get("y", environment(FZ))
-    qZ <- get("x", environment(FZ))
-    ok <- !duplicated(pZ)
-    qZ <- qZ[ok]
-    pZ <- pZ[ok]
-    if(length(qZ) > 1) {
-      FZinverse <- approxfun(pZ, qZ, rule=2)
-    } else {
-      ## degenerate
-      FZinverse <- approxfun(c(0,1), rep(qZ, 2), rule=2)
-    }
-  } else FZinverse <- NULL ## to placate package checker
-  
   # pack up
   stuff$values$FZ  <- FZ
   stuff$values$FZX <- FZX
   stuff$values$U   <- U
   stuff$values$EN <- sumwts  ## integral of intensity = expected number of pts
   if(make.quantile.function)
-    stuff$values$FZinverse  <- FZinverse
+    stuff$values$FZinverse  <- quantilefun(FZ)    ## right-continuous inverse of FZ
   class(stuff) <- "spatialCDFframe"
   return(stuff)
 }
@@ -288,7 +273,9 @@ plot.cdftest <- function(x, ..., style=c("cdf", "PP", "QQ"),
                     lty=c(lty2char(lty),lty2char(lty0)))
          },
          PP={
-           # plot FZX o (FZ)^{-1}
+           ## plot FZX o (FZ)^{-1}
+           ## y-axis: sample probabilities i/n for i=1, .., n
+           ## x-axis: corresponding reference probabilities P(Z < z_[i])
            pX <- get("y", environment(FZX))
            qX <- get("x", environment(FZX))
            p0 <- FZ(qX)
@@ -305,16 +292,17 @@ plot.cdftest <- function(x, ..., style=c("cdf", "PP", "QQ"),
            abline(0,1, lwd=lwd0, col=col0, lty=lty0)           
          },
          QQ={
-           # plot (FZX)^{-1} o FZ
-           pZ <- get("y", environment(FZ))
-           qZ <- get("x", environment(FZ))
-           FZinverse <- approxfun(pZ, qZ, rule=2)
-           pX <- get("y", environment(FZX))
+           ## plot (FZX)^{-1} o FZ
+           ## x-axis: order statistics z_[i] of values at data points
+           ## y-axis: quantiles of Z on window with probabilities i/n
            qX <- get("x", environment(FZX))
+           pX <- get("y", environment(FZX))
+           FZinverse <- quantilefun(FZ)
            qZX <- FZinverse(pX)
-           Zrange <- range(qZ, qX, qZX)
            xlab <- paste("Theoretical quantile of", covname)
            ylab <- paste("Observed quantile of", covname)
+           qZ <- get("x", environment(FZ))
+           Zrange <- range(qZ, qX, qZX)
            do.call(plot.default,
                    resolve.defaults(
                                     list(x=qZX, y=qX),
