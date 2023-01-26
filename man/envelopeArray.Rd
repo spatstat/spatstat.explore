@@ -74,8 +74,17 @@ envelopeArray(X, fun, \dots, dataname = NULL, verb = FALSE, reuse = TRUE)
   \code{\link{envelope}}, \code{\link{alltypes}}.
 }
 \examples{
-  Nsim <- if(interactive()) 19 else 3
-  A <- envelopeArray(finpines, markcrosscorr, nsim=Nsim)
+  if(interactive()) {
+    Nsim <- 19
+    X <- finpines
+    co <- "best"
+  } else {
+    ## smaller task to reduce check time
+    Nsim <- 3
+    X <- finpines[c(FALSE, TRUE)]
+    co <- "none"
+  }
+  A <- envelopeArray(X, markcrosscorr, nsim=Nsim, correction=co)
   plot(A)
 }
 \keyword{spatial}
