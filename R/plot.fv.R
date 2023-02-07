@@ -1,7 +1,7 @@
 #
 #       plot.fv.R   (was: conspire.S)
 #
-#  $Revision: 1.133 $    $Date: 2022/02/06 10:42:20 $
+#  $Revision: 1.134 $    $Date: 2023/02/07 01:00:45 $
 #
 #
 
@@ -635,6 +635,9 @@ assemble.plot.objects <- function(xlim, ylim, ..., lines=NULL, polygon=NULL) {
           n <- sum(ok)
         }
         segs.i <- psp(x.i[-n], y.i[-n], x.i[-1], y.i[-1], W, check=FALSE)
+        if(!all(inside.range(range(x.i), xlim))
+           || !all(inside.range(range(y.i), ylim)))
+          segs.i <- cliprect.psp(segs.i, W)
         objects <- append(objects, list(segs.i))        
       }
     }
@@ -647,8 +650,10 @@ assemble.plot.objects <- function(xlim, ylim, ..., lines=NULL, polygon=NULL) {
       pol <- with(pol, list(x=x[ok], y=y[ok]))
     if(Area.xypolygon(pol) < 0) pol <- lapply(pol, rev)
     P <- try(owin(poly=pol, xrange=xlim, yrange=ylim, check=FALSE))
-    if(!inherits(P, "try-error"))
+    if(!inherits(P, "try-error")) {
+      P <- intersect.owin(P, W)
       objects <- append(objects, list(P))
+    }
   }
   return(objects)
 }
