@@ -9,7 +9,7 @@
 #'    validate.weights
 #'    updateData (generic)
 #'
-#' $Revision: 1.19 $ $Date: 2022/11/02 10:25:21 $
+#' $Revision: 1.20 $ $Date: 2023/02/16 02:53:01 $
 
 resolve.lambda <- function(X, lambda=NULL, ...) {
   UseMethod("resolve.lambda")
@@ -221,7 +221,7 @@ resolve.lambdacross.ppp <- function(X, I, J,
       ## point process model provides intensity
       model <- lambdaX
       if(update) {
-        model <- update(model, X)
+        model <- updateData(model, X)
         dangerI <- dangerJ <- FALSE
         dangerous <- "lambdaIJ"
       }
@@ -356,6 +356,11 @@ validate.weights <- function(x, recip=FALSE, how = NULL,
   return(TRUE)
 }
 
+## The following functions will be Deprecated and eventually removed
+## once spatstat.model >= 3.2 can be assumed. 
+## They will be replaced by the idiom
+##      model <- update(model, X, ...)
+
 updateData <- function(model, X, ...) {
   UseMethod("updateData")
 }
@@ -365,29 +370,29 @@ updateData.default <- function(model, X, ..., warn=TRUE) {
   ## so we do it by hand as a backup
   if(warn) warning("Reached 'updateData.default'", call.=FALSE)
   if(inherits(model, c("ppm", "kppm", "dppm", "slrm"))) {
-    if(requireNamespace("spatstat.model")) {
-      if(inherits(model, "ppm")) {
+    if (requireNamespace("spatstat.model")) {
+      if (inherits(model, "ppm")) {
         model <- spatstat.model::updateData.ppm(model, X)
-      } else if(inherits(model, "kppm")) {
+      } else if (inherits(model, "kppm")) {
         model <- spatstat.model::updateData.kppm(model, X)
-      } else if(inherits(model, "dppm")) {
+      } else if (inherits(model, "dppm")) {
         model <- spatstat.model::updateData.dppm(model, X)
-      } else if(inherits(model, "slrm")) {
+      } else if (inherits(model, "slrm")) {
         model <- spatstat.model::updateData.slrm(model, X)
       }
-    } else
-      if(warn)
-        warning("Model was not updated; this requires a recent version of spatstat.model", call.=FALSE)
-  } else if(inherits(model, "lppm")) {
-    ##    if(requireNamespace("spatstat.linnet")) {
-    ##      model <- spatstat.linnet::updateData.lppm(model, X)
-    ##    } else
-    if(warn)
-      warning("Model was not updated; this requires a recent version of spatstat.linnet", call.=FALSE)
-  } else
-    if(warn)
-      warning("Unrecognised kind of 'model'; no update performed",
-              call.=FALSE)
+    } else if (warn) 
+      warning("Model was not updated; this requires a recent version of spatstat.model", 
+                call. = FALSE)
+    } else if (inherits(model, "lppm")) {
+      if (requireNamespace("spatstat.linnet") &&
+          exists("updateData.lppm", asNamespace("spatstat.linnet"))) {
+        model <- spatstat.linnet::updateData.lppm(model, X)
+      } else if (warn) 
+        warning("Model was not updated; this requires a recent version of spatstat.linnet", 
+                call. = FALSE)
+    }  else if (warn) 
+    warning("Unrecognised kind of 'model'; no update performed", 
+            call. = FALSE)
   return(model)
 }
-  
+

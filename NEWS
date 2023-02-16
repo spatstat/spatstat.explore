@@ -1,10 +1,19 @@
 
-        CHANGES IN spatstat.explore VERSION 3.0-6.001
+        CHANGES IN spatstat.explore VERSION 3.0-6.002
 
 OVERVIEW
 
-    o Minor bug fix.
+    o Extension to support for one-dimensional smoothing kernels.
+    
+    o Internal improvements and bug fixes.
 
+SIGNIFICANT USER-VISIBLE CHANGES
+
+    o kernel.moment
+    New arguments 'mean' and 'sd'.
+    Computation accelerated for kernel='cosine' or 'optcosine'.
+    All cases are now computed using analytic expressions, for m <= 2.
+    
 BUG FIXES
 
     o plot.fv

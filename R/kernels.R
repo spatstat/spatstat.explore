@@ -3,7 +3,7 @@
 #
 #  rXXX, dXXX, pXXX and qXXX for kernels
 #
-#  $Revision: 1.19 $  $Date: 2018/06/07 05:42:54 $
+#  $Revision: 1.21 $  $Date: 2023/02/16 05:54:41 $
 #
 
 match.kernel <- function(kernel) {
@@ -198,29 +198,48 @@ qkernel <- function(p, kernel="gaussian", mean=0, sd=1, lower.tail=TRUE) {
 
 kernel.moment <- local({
 
-  kernel.moment <- function(m, r, kernel="gaussian") {
+  kernel.moment <- function(m, r, kernel="gaussian",
+                            mean=0, sd=1/kernel.factor(kernel)) {
     ker <- match.kernel(kernel)
     check.1.integer(m)
+    needs.rescaling <- !missing(mean) || !missing(sd)
+    halfwidth <- if(missing(sd)) 1 else (sd * kernel.factor(ker))
     #' restrict to support
     if(ker != "gaussian") {
-      r <- pmin(r, 1)
-      r <- pmax(r, -1)
+      r <- pmin(r, mean+halfwidth)
+      r <- pmax(r, mean-halfwidth)
     }
-    if(!(m %in% c(0,1,2)) || (ker %in% c("cosine", "optcosine"))) {
+    if(!(m %in% c(0,1,2))) {
       ## use generic integration
-      neginf <- if(ker == "gaussian") -10 else -1
+      neginf <- mean - if(ker == "gaussian") (10 * sd) else halfwidth
       result <- numeric(length(r))
       for(i in seq_along(r))
         result[i] <- integralvalue(kintegrand,
                                    lower=neginf, upper=r[i],
-                                   m=m, ker=ker)
+                                   m=m, ker=ker, mean=mean, sd=sd)
       return(result)
     }
+    if(needs.rescaling) {
+      ## convert to standard form and use analytic results
+      y <- (r - mean)/halfwidth
+      if(m == 0)
+        return(kernel.moment(0, y, kernel=ker))
+      else if(m == 1)
+        return(mean * kernel.moment(0, y, kernel=ker)
+               + halfwidth * kernel.moment(1, y, kernel=ker))
+      else
+        return(mean^2 * kernel.moment(0, y, kernel=ker)
+               + 2 * mean * halfwidth * kernel.moment(1, y, kernel=ker)
+               + halfwidth^2 * kernel.moment(2, y, kernel=ker))
+    }
+    ## kernel is now in standard form with support [-1, 1] unless Gaussian
     switch(ker,
            gaussian={
              if(m == 0) return(pnorm(r)) else
              if(m == 1) return(-dnorm(r)) else
-             return(pnorm(r) - r * dnorm(r))
+             return(ifelse(r == -Inf, 0,
+                    ifelse(r == Inf, 1,
+                           pnorm(r) - r * dnorm(r))))
            },
            rectangular = {
              if(m == 0) return((r + 1)/2) else
@@ -250,21 +269,51 @@ kernel.moment <- local({
              else 
                return((15*r^7 - 42*r^5 + 35*r^3 + 8)/112)
            },
-           # never reached!
-           cosine={stop("Sorry, not yet implemented for cosine kernel")},
-           optcosine={stop("Sorry, not yet implemented for optcosine kernel")}
+           cosine={
+             pr <- pi * r
+             if(m == 0)
+               return((r + sin(pr)/pi + 1)/2)
+             else if(m == 1)
+               return((r^2-1)/4 + (pr*sin(pr) + cos(pr) + 1)/(2*pi^2))
+             else
+               return((r^3 + 1)/6 +
+                      ((pr^2-2) * sin(pr) + 2*pr*cos(pr) - 2*pi)/(2*pi^3))
+           },
+           optcosine={
+             p2r <- (pi/2) * r
+             if(m == 0)
+               return((sin(p2r) + 1)/2)
+             else if(m == 1)
+               return((p2r * sin(p2r) + cos(p2r) - pi/2)/pi)
+             else
+               return((2/pi^2) *
+                      ((p2r^2-2)*sin(p2r) + 2*p2r*cos(p2r) + (pi/2)^2-2))
+           }
            )
   }
 
   integralvalue <- function(...) integrate(...)$value
   
-  kintegrand <- function(x, m, ker) {
-    (x^m) * dkernel(x, ker, mean=0, sd=1/kernel.factor(ker))
+  kintegrand <- function(x, m, ker, mean, sd) {
+    (x^m) * dkernel(x=x, kernel=ker, mean=mean, sd=sd)
   }
 
   kernel.moment
 })
 
+kernel.squint <- function(kernel="gaussian", bw=1) {
+  kernel <- match.kernel(kernel)
+  check.1.real(bw)
+  RK <- switch(kernel,
+               gaussian = 1/(2 * sqrt(pi)),
+               rectangular = sqrt(3)/6, 
+               triangular = sqrt(6)/9,
+               epanechnikov = 3/(5 * sqrt(5)), 
+               biweight = 5 * sqrt(7)/49,
+               cosine = 3/4 * sqrt(1/3 - 2/pi^2),
+               optcosine = sqrt(1 - 8/pi^2) * pi^2/16)
+  return(RK/bw^2)
+}
 kernel.squint <- function(kernel="gaussian", bw=1) {
   kernel <- match.kernel(kernel)
   check.1.real(bw)
