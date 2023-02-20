@@ -7,7 +7,7 @@
 #'    resolve.lambdacross
 #'    resolve.reciplambda
 #'    validate.weights
-#'    updateData (generic)
+#'    updateData (generic) (soon to be deprecated)
 #'
 #' $Revision: 1.20 $ $Date: 2023/02/16 02:53:01 $
 
@@ -45,7 +45,7 @@ resolve.lambda.ppp <- function(X, lambda=NULL, ...,
     ## model provides intensity
     model <- lambda
     if(update) {
-      model <- updateData(model, X)
+      model <- update(model, X)
       danger <- FALSE
     }
     if(inherits(model, "slrm")) {
@@ -120,7 +120,7 @@ resolve.reciplambda.ppp <- function(X, lambda=NULL, reciplambda=NULL,
       ## model provides intensity
       model <- lambda
       if(update) {
-        model <- updateData(model, X)
+        model <- update(model, X)
         danger <- FALSE
       }
       if(inherits(model, "slrm")) {
@@ -221,7 +221,7 @@ resolve.lambdacross.ppp <- function(X, I, J,
       ## point process model provides intensity
       model <- lambdaX
       if(update) {
-        model <- updateData(model, X)
+        model <- update(model, X)
         dangerI <- dangerJ <- FALSE
         dangerous <- "lambdaIJ"
       }
@@ -265,7 +265,7 @@ resolve.lambdacross.ppp <- function(X, I, J,
       ## point process model provides intensity
       model <- lambdaI
       if(update) {
-        model <- updateData(model, X)
+        model <- update(model, X)
         dangerI <- FALSE
         dangerous <- setdiff(dangerous, "lambdaI")
       }
@@ -301,7 +301,7 @@ resolve.lambdacross.ppp <- function(X, I, J,
       ## point process model provides intensity
       model <- lambdaJ
       if(update) {
-        model <- updateData(model, X)
+        model <- update(model, X)
         dangerJ <- FALSE
         dangerous <- setdiff(dangerous, "lambdaJ")
       }
@@ -356,8 +356,7 @@ validate.weights <- function(x, recip=FALSE, how = NULL,
   return(TRUE)
 }
 
-## The following functions will be Deprecated and eventually removed
-## once spatstat.model >= 3.2 can be assumed. 
+## The following internal functions will soon be removed.
 ## They will be replaced by the idiom
 ##      model <- update(model, X, ...)
 
@@ -368,31 +367,24 @@ updateData <- function(model, X, ...) {
 updateData.default <- function(model, X, ..., warn=TRUE) {
   ## for some bizarre reason, method dispatch often fails for this function
   ## so we do it by hand as a backup
-  if(warn) warning("Reached 'updateData.default'", call.=FALSE)
   if(inherits(model, c("ppm", "kppm", "dppm", "slrm"))) {
     if (requireNamespace("spatstat.model")) {
-      if (inherits(model, "ppm")) {
-        model <- spatstat.model::updateData.ppm(model, X)
-      } else if (inherits(model, "kppm")) {
-        model <- spatstat.model::updateData.kppm(model, X)
-      } else if (inherits(model, "dppm")) {
-        model <- spatstat.model::updateData.dppm(model, X)
-      } else if (inherits(model, "slrm")) {
-        model <- spatstat.model::updateData.slrm(model, X)
+      model <- update(model, X)
+    } else if (warn) {
+      warning("Model was not updated; this requires package spatstat.model", 
+              call. = FALSE)
+    }
+  } else if(inherits(model, "lppm")) {
+      if (requireNamespace("spatstat.linnet")) {
+        model <- update(model, X)
+      } else if (warn) {
+        warning("Model was not updated; this requires package spatstat.linnet", 
+                call. = FALSE)
       }
-    } else if (warn) 
-      warning("Model was not updated; this requires a recent version of spatstat.model", 
-                call. = FALSE)
-    } else if (inherits(model, "lppm")) {
-      if (requireNamespace("spatstat.linnet") &&
-          exists("updateData.lppm", asNamespace("spatstat.linnet"))) {
-        model <- spatstat.linnet::updateData.lppm(model, X)
-      } else if (warn) 
-        warning("Model was not updated; this requires a recent version of spatstat.linnet", 
-                call. = FALSE)
-    }  else if (warn) 
+  } else if (warn) {
     warning("Unrecognised kind of 'model'; no update performed", 
             call. = FALSE)
+  }
   return(model)
 }
 

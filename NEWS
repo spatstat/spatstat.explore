@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.0-6.003
+        CHANGES IN spatstat.explore VERSION 3.0-6.004
 
 OVERVIEW
 
@@ -16,6 +16,11 @@ SIGNIFICANT USER-VISIBLE CHANGES
     
 BUG FIXES
 
+    o plot.fv
+    When the argument 'log' was given, the plotted curves were
+    incorrectly clipped, or were missing altogether.
+    Fixed.
+    
     o plot.fv
     Sometimes gave an obscure warning about 'rebound.owin',
     when 'xlim' or 'ylim' was given.

@@ -1,7 +1,7 @@
 #
 # Jinhom.R
 #
-#  $Revision: 1.18 $ $Date: 2022/05/23 02:33:06 $
+#  $Revision: 1.19 $ $Date: 2023/02/20 03:39:17 $
 #
 
 Ginhom <- function(X, lambda=NULL, lmin=NULL,
@@ -54,7 +54,7 @@ Ginhom <- function(X, lambda=NULL, lmin=NULL,
             lambdaX <- predict(lambda, locations=X, type="trend")
           } else {
             ## re-fit model to data X
-            model <- updateData(model, X)
+            model <- update(model, X)
             lambdaX <- fitted(model, dataonly=TRUE)
             danger <- FALSE
             if(miss.update) 
@@ -231,7 +231,7 @@ Finhom <- function(X, lambda=NULL, lmin=NULL,
             lambdaX <- predict(lambda, locations=X, type="trend")
           } else {
             ## re-fit model to data X
-            model <- updateData(model, X)
+            model <- update(model, X)
             lambdaX <- fitted(model, dataonly=TRUE)
             danger <- FALSE
             if(miss.update) 

@@ -1,7 +1,7 @@
 #
 #       plot.fv.R   (was: conspire.S)
 #
-#  $Revision: 1.134 $    $Date: 2023/02/07 01:00:45 $
+#  $Revision: 1.137 $    $Date: 2023/02/20 06:14:01 $
 #
 #
 
@@ -39,8 +39,12 @@ plot.fv <- local({
 
   pow10 <- function(x) { 10^x }
 
-  clip.to.usr <- function() {
+  clip.to.usr <- function(xlogscale=FALSE, ylogscale=FALSE) {
     usr <- par('usr')
+    if(xlogscale)
+      usr[1:2] <- 10^(usr[1:2])
+    if(ylogscale)
+      usr[3:4] <- 10^(usr[3:4])
     clip(usr[1], usr[2], usr[3], usr[4])
   }
   
@@ -445,7 +449,7 @@ plot.fv <- local({
       miss2 <- !is.finite(shdata2)
       if(!any(broken <- (miss1 | miss2))) {
         ## single polygon
-        clip.to.usr()
+        clip.to.usr(xlogscale, ylogscale)
         polygon(xpoly, ypoly, border=shadecol, col=shadecol)
       } else {
         ## interrupted
@@ -456,7 +460,7 @@ plot.fv <- local({
                  with(z, {
                    xp <- c(rhsdata, rev(rhsdata))
                    yp <- c(shdata1, rev(shdata2))
-                   clip.to.usr()
+                   clip.to.usr(xlogscale, ylogscale)
                    polygon(xp, yp, border=shadecol, col=shadecol)
                  })
                })
@@ -487,7 +491,7 @@ plot.fv <- local({
     ## ----------------- plot lines ------------------------------
 
     for(i in allind) {
-      clip.to.usr()
+      clip.to.usr(xlogscale, ylogscale)
       lines(rhsdata, lhsdata[,i], lty=lty[i], col=col[i], lwd=lwd[i])
     }
 
@@ -664,6 +668,11 @@ findbestlegendpos <- local({
   bestlegendpos <- function(objects, show=FALSE, aspect=1, bdryok=TRUE,
                             preference="float", verbose=FALSE,
                             legendspec=NULL) {
+    if(any(vacuous <- sapply(objects, is.empty))) {
+      if(all(vacuous))
+        stop("All objects were empty")
+      objects <- objects[!vacuous]
+    }
     ## find bounding box
     W <- do.call(boundingbox, lapply(objects, as.rectangle))
     ## convert to common box
@@ -683,6 +692,9 @@ findbestlegendpos <- local({
     scaled.objects <- lapply(scaled.objects, rebound, rect=scaledW)
     ## pixellate the scaled objects
     pix.scal.objects <- lapply(scaled.objects, asma)
+    ## handle very tiny or thin objects
+    if(any(tiny <- sapply(pix.scal.objects, is.empty))) 
+      pix.scal.objects[tiny] <- lapply(scaled.objects[tiny], distmap)
     ## apply distance transforms in scaled space
     D1 <- distmap(pix.scal.objects[[1]])
     Dlist <- lapply(pix.scal.objects, distmap, xy=list(x=D1$xcol, y=D1$yrow))
