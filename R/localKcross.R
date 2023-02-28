@@ -3,7 +3,7 @@
 #'
 #'     original by Ege Rubak
 #' 
-#'     $Revision: 1.17 $ $Date: 2022/11/03 11:08:33 $
+#'     $Revision: 1.18 $ $Date: 2023/02/28 02:06:58 $
 
 "localLcross" <- function(X, from, to, ..., rmax = NULL, correction = "Ripley") {
   localKcross(X, from, to, ..., rmax = rmax, correction = correction, wantL = TRUE)
@@ -133,8 +133,8 @@ localLcross.inhom <- function(X, from, to, lambdaFrom = NULL, lambdaTo = NULL, .
     areaW <- area(W)
     lambda.ave <- npts/areaW
     
-    from <- ppsubset(X, from)
-    to <- ppsubset(X, to)
+    from <- ppsubset(X, from, "from")
+    to <- ppsubset(X, to, "to")
     if(is.null(from) || is.null(to))
       stop("from and to must be valid subset indices")
     

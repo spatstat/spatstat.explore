@@ -4,7 +4,7 @@
 #	Compute estimates of cross-type K functions
 #	for multitype point patterns
 #
-#	$Revision: 5.60 $	$Date: 2022/07/01 01:49:47 $
+#	$Revision: 5.61 $	$Date: 2023/02/28 02:06:33 $
 #
 #
 # -------- functions ----------------------------------------
@@ -185,8 +185,8 @@ function(X, I, J, r=NULL, breaks=NULL,
 
   correction <- implemented.for.K(correction, W$type, correction.given)
 
-  I <- ppsubset(X, I)
-  J <- ppsubset(X, J)
+  I <- ppsubset(X, I, "I")
+  J <- ppsubset(X, J, "J")
   if(is.null(I) || is.null(J))
     stop("I and J must be valid subset indices")
 	

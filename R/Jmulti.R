@@ -3,7 +3,7 @@
 #	Usual invocations to compute multitype J function(s)
 #	if F and G are not required 
 #
-#	$Revision: 4.45 $	$Date: 2020/10/30 03:59:35 $
+#	$Revision: 4.46 $	$Date: 2023/02/28 02:05:58 $
 #
 #
 #
@@ -104,8 +104,8 @@ function(X, I, J, eps=NULL, r=NULL, breaks=NULL, ..., disjoint=NULL,
 #
   X <- as.ppp(X)
   W<- X$window
-  I <- ppsubset(X, I)
-  J <- ppsubset(X, J)
+  I <- ppsubset(X, I, "I")
+  J <- ppsubset(X, J, "J")
   if(is.null(I) || is.null(J))
     stop("I and J must be valid subset indices")
   XJ <- X[J]

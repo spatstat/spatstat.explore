@@ -141,8 +141,8 @@
     is used. By default, the recommendations of Stoyan and Stoyan (1994)
     are followed exactly. 
     \item
-    If \code{divisor="d"} then a modified estimator is used:
-    the contribution from
+    If \code{divisor="d"} then a modified estimator is used
+    (Guan, 2007): the contribution from
     an interpoint distance \eqn{d_{ij}}{d[ij]} to the
     estimate of \eqn{g(r)} is divided by \eqn{d_{ij}}{d[ij]}
     instead of dividing by \eqn{r}. This usually improves the
@@ -235,6 +235,11 @@
   \code{rmax >= max(r) + 3 * bw}.
 }
 \references{
+  Guan, Y. (2007)
+  A least-squares cross-validation bandwidth selection approach in pair
+  correlation function estimation.
+  \emph{Statistics and Probability Letters} \bold{77} (18) 1722--1729.
+
   Illian, J., Penttinen, A., Stoyan, H. and Stoyan, D. (2008)
   \emph{Statistical Analysis and Modelling of Spatial Point Patterns.}
   Wiley.

@@ -1,7 +1,7 @@
 #
 #   pcfmulti.R
 #
-#   $Revision: 1.8 $   $Date: 2016/09/21 07:28:58 $
+#   $Revision: 1.9 $   $Date: 2023/02/28 02:07:53 $
 #
 #   multitype pair correlation functions
 #
@@ -117,8 +117,8 @@ pcfmulti <- function(X, I, J, ...,
   
   ## .......... indices I and J .............................
   
-  I <- ppsubset(X, I)
-  J <- ppsubset(X, J)
+  I <- ppsubset(X, I, "I")
+  J <- ppsubset(X, J, "J")
   if(is.null(I) || is.null(J))
     stop("I and J must be valid subset indices")
 

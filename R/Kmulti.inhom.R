@@ -1,7 +1,7 @@
 #
 #	Kmulti.inhom.S		
 #
-#	$Revision: 1.55 $	$Date: 2022/11/03 11:08:33 $
+#	$Revision: 1.56 $	$Date: 2023/02/28 02:06:17 $
 #
 #
 # ------------------------------------------------------------------------
@@ -186,8 +186,8 @@ function(X, I, J, lambdaI=NULL, lambdaJ=NULL,
   correction <- implemented.for.K(correction, W$type, correction.given)
 
   # validate I, J
-  I <- ppsubset(X, I)
-  J <- ppsubset(X, J)
+  I <- ppsubset(X, I, "I")
+  J <- ppsubset(X, J, "J")
   if(is.null(I) || is.null(J))
     stop("I and J must be valid subset indices")
   XI <- X[I]

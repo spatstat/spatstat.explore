@@ -4,7 +4,7 @@
 #  Class of optimised bandwidths
 #  Plotting the object displays the optimisation criterion
 #
-#  $Revision: 1.34 $  $Date: 2022/06/17 03:18:56 $
+#  $Revision: 1.35 $  $Date: 2023/02/28 01:57:16 $
 #
 
 bw.optim <- function(cv, h,
@@ -16,8 +16,8 @@ bw.optim <- function(cv, h,
                      warnextreme=TRUE, hargnames=NULL,
                      yexp=NULL,
                      unitname=NULL) {
-  if(missing(cvname) || is.null(cvname)) cvname <- deparse(substitute(cv))
-  if(missing(hname) || is.null(hname)) hname <- deparse(substitute(h))
+  if(missing(cvname) || is.null(cvname)) cvname <- short.deparse(substitute(cv))
+  if(missing(hname) || is.null(hname)) hname <- short.deparse(substitute(h))
   stopifnot(is.numeric(cv))
   stopifnot(is.numeric(h))
   stopifnot(length(h) == length(cv))

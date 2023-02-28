@@ -10,7 +10,7 @@
 #'     GmultiInhom
 #'     FmultiInhom
 #'
-#'      $Revision: 1.9 $ $Date: 2022/05/21 08:53:38 $
+#'      $Revision: 1.10 $ $Date: 2023/02/28 02:05:20 $
 
 GmultiInhom <- function(X, I, J, 
                         lambda=NULL, lambdaI=NULL, lambdaJ=NULL,
@@ -32,7 +32,7 @@ GmultiInhom <- function(X, I, J,
   nr   <- length(r)
   
   #' Accept any kind of index for I; convert it to a logical index
-  I <- ppsubset(X, I)
+  I <- ppsubset(X, I, "I")
   if(is.null(I))
     stop("I must be a valid subset index")
   XI <- X[I]
@@ -49,7 +49,9 @@ GmultiInhom <- function(X, I, J,
   if(missing(J) || is.null(J)) {
     J <- rep(TRUE, nX)
   } else {
-    J <- ppsubset(X, J)
+    J <- ppsubset(X, J, "J")
+    if(is.null(J))
+      stop("J must be a valid subset index")
   }
   XJ <- X[J]
   nJ <- sum(J)
@@ -216,7 +218,7 @@ FmultiInhom <- function(X, J,
   nX <- npoints(X)
   
   #' Accept any kind of index for J; convert it to a logical index
-  J <- ppsubset(X, J)
+  J <- ppsubset(X, J, "J")
   if(is.null(J))
     stop("J must be a valid subset index")
   XJ <- X[J]

@@ -3,7 +3,7 @@
 #
 #   computes simulation envelopes 
 #
-#   $Revision: 2.114 $  $Date: 2022/11/24 01:22:16 $
+#   $Revision: 2.115 $  $Date: 2023/02/28 01:56:55 $
 #
 
 
@@ -1002,7 +1002,7 @@ summary.envelope <- function(object, ...) {
   has.theo <- "theo" %in% fvnames(object, "*")
   csr.theo <- csr && has.theo
   use.theory <- if(is.null(use.theory)) csr.theo else (use.theory && has.theo)
-  fname <- deparse(attr(object, "ylab"))
+  fname <- short.deparse(attr(object, "ylab"))
   type <- if(V) paste("Pointwise", e$nSD, "sigma") else
           if(g) "Simultaneous" else "Pointwise"
   splat(type, "critical envelopes for", fname, 

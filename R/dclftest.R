@@ -1,7 +1,7 @@
 #
 #  dclftest.R
 #
-#  $Revision: 1.46 $  $Date: 2019/10/09 06:25:49 $
+#  $Revision: 1.47 $  $Date: 2023/02/28 01:57:06 $
 #
 #  Monte Carlo tests for CSR (etc)
 #
@@ -337,13 +337,13 @@ envelopeTest <-
              list = "model simulated by drawing patterns from a list",
              "unrecognised model")
     } else "unrecognised model"
-    fname <- deparse(attr(X, "ylab"))
+    fname <- short.deparse(attr(X, "ylab"))
     uname <- with(summary(unitname(X)),
                   if(!vanilla) paste(plural, explain) else NULL)
     testtype <- paste0(if(interpolate) "Interpolated " else NULL,
                        "Monte Carlo")
     scaleblurb <- if(is.null(scale)) NULL else
-                  paste("Scale function:", paste(deparse(scale), collapse=" "))
+                  paste("Scale function:", paste(short.deparse(scale), collapse=" "))
     refblurb <- if(theo.used) "theoretical" else "sample mean"
     leaveblurb <- if(leaveout == 0) paste("observed minus", refblurb) else
                   if(leaveout == 1) "leave-one-out" else "leave-two-out"
