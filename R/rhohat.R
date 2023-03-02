@@ -1,7 +1,7 @@
 #'
 #'  rhohat.R
 #'
-#'  $Revision: 1.113 $  $Date: 2022/08/27 05:59:54 $
+#'  $Revision: 1.114 $  $Date: 2023/03/02 06:12:28 $
 #'
 #'  Non-parametric estimation of a function rho(z) determining
 #'  the intensity function lambda(u) of a point process in terms of a
@@ -35,6 +35,12 @@ rhohat.ppp <- rhohat.quad <-
   smoother <- match.arg(smoother)
   method <- match.arg(method)
   X <- if(is.ppp(object)) object else object$data
+  if(is.marked(X) && !is.multitype(X)) {
+    warning(paste("rhohat does not handle marked point pattern data",
+                  "unless the marks are categorical (factor) values;",
+                  "marks were ignored"), call.=FALSE)
+    X <- unmark(X)
+  }
   if(missing(positiveCI))
     positiveCI <- (smoother == "local")
   if(missing(covname)) 
