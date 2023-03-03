@@ -41,7 +41,8 @@
     or \code{lambda[J]}.
   }
   \item{\dots}{
-    Ignored. 
+    Extra arguments passed to \code{\link[spatstat.geom]{as.mask}} to control
+    the pixel resolution for the computation.
   }
   \item{r}{
     Vector of distance values at which the inhomogeneous \eqn{G}
@@ -71,15 +72,20 @@
 \examples{
   X <- amacrine
   J <- (marks(X) == "off")
-  if(require(spatstat.model)) {
-    mod <- ppm(X ~ marks * x)
-    lam <- fitted(mod, dataonly=TRUE)
-    lmin <- min(predict(mod)[["off"]]) * 0.9
+  online <- interactive()
+  eps <- if(online) NULL else 0.025
+  if(online && require(spatstat.model)) {
+    mod <- ppm(X ~ marks * x, eps=eps)
+    lambdaX <- fitted(mod, dataonly=TRUE)
+    lambdaOff <- predict(mod, eps=eps)[["off"]]
+    lmin <- min(lambdaOff) * 0.9
   } else {
-    lam <- intensity(X)[as.integer(marks(X))]
+    ## faster computation for package checker only
+    lambdaX <- intensity(X)[as.integer(marks(X))]
     lmin <- intensity(X)[2] * 0.9
   }
-  plot(FmultiInhom(X, J, lambda=lam, lambdamin=lmin))
+
+  plot(FmultiInhom(X, J, lambda=lambdaX, lambdamin=lmin, eps=eps))
 }
 \keyword{spatial}
 \keyword{nonparametric}

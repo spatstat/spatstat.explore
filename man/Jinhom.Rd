@@ -41,7 +41,7 @@
     estimated by kernel smoothing.
   }
   \item{\dots}{
-    Extra arguments passed to \code{\link{as.mask}} to control
+    Extra arguments passed to \code{\link[spatstat.geom]{as.mask}} to control
     the pixel resolution, or passed to \code{\link{density.ppp}}
     to control the smoothing bandwidth.
 }
@@ -176,11 +176,15 @@
   \code{\link{Jest}}
 }
 \examples{
-  plot(Jinhom(swedishpines, sigma=10))
-
-  \donttest{
+  online <- interactive()
+  if(online) {
+    plot(Jinhom(swedishpines, sigma=10))
     plot(Jinhom(swedishpines, sigma=bw.diggle, adjust=2))
+  } else {
+    ## use a coarse grid for faster computation and package testing
+    plot(Jinhom(swedishpines, sigma=10, dimyx=32))
   }
+
 }
 \author{
   Original code by Marie-Colette van Lieshout.

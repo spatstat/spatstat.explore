@@ -172,10 +172,13 @@
   \code{\link{Fest}}
 }
 \examples{
-  plot(Finhom(swedishpines, sigma=10))
-
-  \donttest{
+  online <- interactive()
+  if(online) {
+    plot(Finhom(swedishpines, sigma=10))
     plot(Finhom(swedishpines, sigma=bw.diggle, adjust=2))
+  } else {
+    ## use a coarse grid for faster computation and package testing
+    plot(Finhom(swedishpines, sigma=10, dimyx=32))
   }
 }
 \author{

@@ -10,7 +10,7 @@
 #'     GmultiInhom
 #'     FmultiInhom
 #'
-#'      $Revision: 1.10 $ $Date: 2023/02/28 02:05:20 $
+#'      $Revision: 1.11 $ $Date: 2023/03/03 07:19:49 $
 
 GmultiInhom <- function(X, I, J, 
                         lambda=NULL, lambdaI=NULL, lambdaJ=NULL,
@@ -245,7 +245,7 @@ FmultiInhom <- function(X, J,
     stopifnot(lambdamin <= min(lambdaJ))
   }
 
-  FJ <- Finhom(XJ, lambda=lambdaJ, lmin=lambdamin, r=r)
+  FJ <- Finhom(XJ, lambda=lambdaJ, lmin=lambdamin, r=r, ...)
   FJ <- rebadge.fv(FJ,
                    new.ylab  = quote(F[inhom, J](r)),
                    new.fname = c("F", "list(inhom,J)"),

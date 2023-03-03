@@ -45,7 +45,8 @@ transect.im <- local({
       if(length(curve)) {
         ## parametric curve
         ## validate specification of curve
-        check.named.list(curve, c("f", "tlim"), namopt=c("tname", "tdescrip"))
+        check.named.list(curve, c("f", "tlim"), namopt=c("tname", "tdescrip"), 
+                         xtitle="curve")
         stopifnot(is.function(curve$f))
         check.range(curve$tlim)
         ## extract info
