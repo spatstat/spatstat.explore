@@ -115,7 +115,8 @@ bits.test(X, \dots,
   Baddeley, A., Hardegen, A., Lawrence, L., 
   Milne, R.K., Nair, G.M. and Rakshit, S. (2017)
   On two-stage Monte Carlo tests of composite hypotheses.
-  \emph{Computational Statistics and Data Analysis}, in press.
+  \emph{Computational Statistics and Data Analysis}
+  \bold{114}, 75--87. 
 }
 \author{
   Adrian Baddeley, Andrew Hardegen, Tom Lawrence,
