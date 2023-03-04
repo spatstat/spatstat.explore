@@ -1,7 +1,7 @@
 #
 #       plot.fv.R   (was: conspire.S)
 #
-#  $Revision: 1.137 $    $Date: 2023/02/20 06:14:01 $
+#  $Revision: 1.138 $    $Date: 2023/03/04 03:58:56 $
 #
 #
 
@@ -72,8 +72,15 @@ plot.fv <- local({
 
     indata <- as.data.frame(x)
 
-    xlogscale <- (log %in% c("x", "xy", "yx"))
-    ylogscale <- (log %in% c("y", "xy", "yx"))
+    if(missing(log) && add) {
+      ## determine 'log' from current plot
+      xlogscale <- par('xlog')
+      ylogscale <- par('ylog')
+      log <- paste(c("x","y")[c(xlogscale, ylogscale)], collapse="")
+    } else {
+      xlogscale <- (log %in% c("x", "xy", "yx"))
+      ylogscale <- (log %in% c("y", "xy", "yx"))
+    }
 
     ## ---------------- determine plot formula ----------------
   

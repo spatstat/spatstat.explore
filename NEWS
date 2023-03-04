@@ -1,9 +1,11 @@
 
-        CHANGES IN spatstat.explore VERSION 3.0-6.009
+        CHANGES IN spatstat.explore VERSION 3.0-6.010
 
 OVERVIEW
 
     o Extension to support for one-dimensional smoothing kernels.
+
+    o Bug fixes in plot.fv.
     
     o Internal improvements and bug fixes.
 
@@ -19,6 +21,11 @@ BUG FIXES
     o plot.fv
     When the argument 'log' was given, the plotted curves were
     incorrectly clipped, or were missing altogether.
+    Fixed.
+    
+    o plot.fv
+    If 'add=TRUE', and if the existing plot was created using logarithmic axes,
+    the logarithmic scale was ignored.
     Fixed.
     
     o plot.fv
