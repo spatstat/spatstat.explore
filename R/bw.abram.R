@@ -3,14 +3,18 @@
 #'
 #'   Abramson bandwidths
 #'
-#'   $Revision: 1.8 $ $Date: 2019/04/25 05:34:49 $
+#'   $Revision: 1.9 $ $Date: 2023/03/07 07:26:49 $
 #'
 
-bw.abram <- function(X, h0,
-                     ..., 
-                     at=c("points", "pixels"), 
-                     hp=h0, pilot=NULL, trim=5,
-                     smoother=density.ppp){
+bw.abram <- function(X, h0, ...) {
+  UseMethod("bw.abram")
+}
+
+bw.abram.ppp <- function(X, h0,
+                         ..., 
+                         at=c("points", "pixels"), 
+                         hp=h0, pilot=NULL, trim=5,
+                         smoother=density.ppp){
   stopifnot(is.ppp(X))
   at <- match.arg(at)
 

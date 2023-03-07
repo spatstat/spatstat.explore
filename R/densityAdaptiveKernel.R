@@ -1,7 +1,7 @@
 #'
 #'   densityAdaptiveKernel.R
 #'
-#'   $Revision: 1.6 $  $Date: 2022/05/23 02:33:06 $
+#'   $Revision: 1.7 $  $Date: 2023/03/07 02:05:45 $
 #'
 #'
 #'  Adaptive kernel smoothing via 3D FFT
@@ -26,7 +26,8 @@ densityAdaptiveKernel.ppp <- function(X, bw, ...,
            pixels = return(as.im(0, W=Window(X), ...)))
                      
   if(missing(ngroups) || is.null(ngroups)) {
-    ngroups <- max(1L, floor(sqrt(npoints(X))))
+    ## default rule
+    ngroups <- max(1L, floor(sqrt(nX)))
   } else if(any(is.infinite(ngroups))) {
     ngroups <- nX
   } else {
@@ -61,12 +62,19 @@ densityAdaptiveKernel.ppp <- function(X, bw, ...,
   } else stop("Argument 'bw' should be a numeric vector or a pixel image")
 
   #' divide bandwidths into groups
-  p <- seq(0,1,length=ngroups+1)
-  qbands <- quantile(bw, p)
-  groupid <- findInterval(bw,qbands,all.inside=TRUE)
-  #' map to middle of group
-  pmid <- (p[-1] + p[-length(p)])/2
-  qmid   <- quantile(bw, pmid)
+  if(ngroups == nX) {
+    ## every data point is a separate group
+    groupid <- 1:nX
+    qmid <- bw
+  } else {
+    ## usual case
+    p <- seq(0,1,length=ngroups+1)
+    qbands <- quantile(bw, p)
+    groupid <- findInterval(bw,qbands,all.inside=TRUE)
+    #' map to middle of group
+    pmid <- (p[-1] + p[-length(p)])/2
+    qmid   <- quantile(bw, pmid)
+  }
 
   marks(X) <- if(weighted) weights else NULL
   group <- factor(groupid, levels=1:ngroups)

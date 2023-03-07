@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.0-6.010
+        CHANGES IN spatstat.explore VERSION 3.0-6.011
 
 OVERVIEW
 
@@ -15,6 +15,9 @@ SIGNIFICANT USER-VISIBLE CHANGES
     New arguments 'mean' and 'sd'.
     Computation accelerated for kernel='cosine' or 'optcosine'.
     All cases are now computed using analytic expressions, for m <= 2.
+
+    o bw.abram
+    This function is now generic, with a method for class 'ppp'.
     
 BUG FIXES
 
