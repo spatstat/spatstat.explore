@@ -23,7 +23,7 @@ densityAdaptiveKernel(X, \dots)
     or a pixel image giving the smoothing bandwidth at each spatial
     location, or a spatial function of class \code{"funxy"} giving the
     smoothing bandwidth at each location.
-    The default is to compute bandwidths using \code{\link{bw.abram}}.
+    The default is to compute bandwidths using \code{\link{bw.abram.ppp}}.
   }
   \item{\dots}{
     Arguments passed to
@@ -119,12 +119,12 @@ densityAdaptiveKernel(X, \dots)
 \references{
   Davies, T.M. and Baddeley, A. (2018)
   Fast computation of spatially adaptive kernel estimates.
-  \emph{Statistics and Computing}, \bold{28}(4), 937-956.\cr
+  \emph{Statistics and Computing}, \bold{28}(4), 937-956.
 
   Hall, P. and Marron, J.S. (1988)
   Variable window width kernel density estimates of probability
   densities.
-  \emph{Probability Theory and Related Fields}, \bold{80}, 37-49.\cr
+  \emph{Probability Theory and Related Fields}, \bold{80}, 37-49.
 
   Silverman, B.W. (1986)
   \emph{Density Estimation for Statistics and Data Analysis}.

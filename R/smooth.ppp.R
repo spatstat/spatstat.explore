@@ -6,12 +6,6 @@
 #  $Revision: 1.80 $  $Date: 2022/05/21 08:53:38 $
 #
 
-# smooth.ppp <- function(X, ..., weights=rep(1, npoints(X)), at="pixels") {
-#   .Deprecated("Smooth.ppp", package="spatstat",
-#    msg="smooth.ppp is deprecated: use the generic Smooth with a capital S")
-#   Smooth(X, ..., weights=weights, at=at)
-# }
-
 Smooth <- function(X, ...) {
   UseMethod("Smooth")
 }

@@ -327,8 +327,9 @@ nncleanEngine(kthNND, k, d, \dots, tol, maxit,
 \method{pairs}{solist}(\dots, plot=TRUE)
 pcf3engine(x, y, z, box, rmax, nrval, correction, delta)
 pcfmulti.inhom(X, I, J, lambdaI, lambdaJ, \dots,
-               lambdaX, r, breaks, kernel, bw, stoyan, correction,
-               sigma, varcov, update, leaveoneout, 
+               lambdaX, r, breaks, kernel,
+               bw, adjust.bw, stoyan, correction,
+               sigma, adjust.sigma, varcov, update, leaveoneout, 
                Iname, Jname)
 \method{plot}{bw.frac}(x, \dots)
 \method{plot}{bw.optim}(x, \dots, showopt, optargs)

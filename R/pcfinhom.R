@@ -1,21 +1,23 @@
 #
 #   pcfinhom.R
 #
-#   $Revision: 1.27 $   $Date: 2022/05/23 02:33:06 $
+#   $Revision: 1.28 $   $Date: 2023/03/11 06:04:23 $
 #
 #   inhomogeneous pair correlation function of point pattern 
 #
 #
 
 pcfinhom <- function(X, lambda=NULL, ..., r=NULL,
-                     kernel="epanechnikov", bw=NULL, stoyan=0.15,
+                     kernel="epanechnikov",
+                     bw=NULL, adjust.bw=1, stoyan=0.15,
                      correction=c("translate", "Ripley"),
                      divisor=c("r","d"),
                      renormalise=TRUE,
                      normpower=1,
                      update=TRUE, leaveoneout=TRUE,
                      reciplambda=NULL, 
-                     sigma=NULL, varcov=NULL, close=NULL)
+                     sigma=NULL, adjust.sigma=1,
+                     varcov=NULL, close=NULL)
 {
   verifyclass(X, "ppp")
 #  r.override <- !is.null(r)
@@ -61,7 +63,7 @@ pcfinhom <- function(X, lambda=NULL, ..., r=NULL,
   ########## intensity values #########################
 
   a <- resolve.reciplambda(X, lambda=lambda, reciplambda=reciplambda,
-                           ..., sigma=sigma, varcov=varcov,
+                           ..., sigma=sigma, adjust=adjust.sigma, varcov=varcov,
                            leaveoneout=leaveoneout, update=update, check=TRUE)
   reciplambda <- a$reciplambda
   lambda      <- a$lambda
@@ -91,7 +93,7 @@ pcfinhom <- function(X, lambda=NULL, ..., r=NULL,
   ########## smoothing parameters for pcf ############################  
   # arguments for 'density'
 
-  denargs <- resolve.defaults(list(kernel=kernel, bw=bw),
+  denargs <- resolve.defaults(list(kernel=kernel, bw=bw, adjust=adjust.bw),
                               list(...),
                               list(n=length(r), from=0, to=rmax))
   

@@ -9,13 +9,15 @@
 }
 \usage{
 pcfinhom(X, lambda = NULL, ..., r = NULL,
-         kernel = "epanechnikov", bw = NULL, stoyan = 0.15,
+         kernel = "epanechnikov",
+         bw = NULL, adjust.bw=1, stoyan = 0.15,
          correction = c("translate", "Ripley"),
          divisor = c("r", "d"),
          renormalise = TRUE, normpower=1,
          update = TRUE, leaveoneout = TRUE,
          reciplambda = NULL,
-         sigma = NULL, varcov = NULL, close=NULL)
+         sigma = NULL, adjust.sigma = 1,
+         varcov = NULL, close=NULL)
 }
 \arguments{
   \item{X}{
@@ -40,7 +42,7 @@ pcfinhom(X, lambda = NULL, ..., r = NULL,
     Choice of smoothing kernel, passed to \code{\link{density.default}}.
   }
   \item{bw}{
-    Bandwidth for smoothing kernel,
+    Bandwidth for one-dimensional smoothing kernel,
     passed to \code{\link{density.default}}.
     Either a single numeric value,
     or a character string specifying a bandwidth selection rule
@@ -48,6 +50,9 @@ pcfinhom(X, lambda = NULL, ..., r = NULL,
     If \code{bw} is missing or \code{NULL},
     the default value is computed using
     Stoyan's rule of thumb: see \code{\link{bw.stoyan}}.
+  }
+  \item{adjust.bw}{
+    Numeric value. \code{bw} will be multiplied by this value.
   }
   \item{\dots}{
     Other arguments passed to the kernel density estimation 
@@ -104,6 +109,9 @@ pcfinhom(X, lambda = NULL, ..., r = NULL,
     Optional arguments passed to  \code{\link{density.ppp}}
     to control the smoothing bandwidth, when \code{lambda} is
     estimated by kernel smoothing.
+  }
+  \item{adjust.sigma}{
+    Numeric value. \code{sigma} will be multiplied by this value.
   }
   \item{close}{
     Advanced use only. Precomputed data. See section on Advanced Use.
@@ -199,9 +207,19 @@ pcfinhom(X, lambda = NULL, ..., r = NULL,
 }
 \examples{
   X <- residualspaper$Fig4b
+  online <- interactive()
+  if(!online) {
+    ## reduce size of dataset
+    X <- X[c(FALSE, TRUE)]
+  }
   plot(pcfinhom(X, stoyan=0.2, sigma=0.1))
   if(require("spatstat.model")) {
-    fit <- ppm(X, ~polynom(x,y,2))
+    if(online) {
+      fit <- ppm(X ~ polynom(x,y,2))
+    } else {
+      ## simpler model, faster computation
+      fit <- ppm(X ~ x)
+    }
     plot(pcfinhom(X, lambda=fit, normpower=2))
   }
 }

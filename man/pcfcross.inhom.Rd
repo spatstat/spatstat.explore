@@ -10,9 +10,9 @@
 \usage{
 pcfcross.inhom(X, i, j, lambdaI = NULL, lambdaJ = NULL, ...,
                r = NULL, breaks = NULL,
-               kernel="epanechnikov", bw=NULL, stoyan=0.15,
+               kernel="epanechnikov", bw=NULL, adjust.bw = 1, stoyan=0.15,
                correction = c("isotropic", "Ripley", "translate"),
-               sigma = NULL, varcov = NULL)
+               sigma = NULL, adjust.sigma = 1, varcov = NULL)
 }
 \arguments{
   \item{X}{The observed point pattern, 
@@ -55,16 +55,21 @@ pcfcross.inhom(X, i, j, lambdaI = NULL, lambdaJ = NULL, ...,
     should be evaluated. There is a sensible default.
   }
   \item{breaks}{
-	This argument is for internal use only.
+    This argument is for internal use only.
   }
   \item{kernel}{
-    Choice of smoothing kernel, passed to \code{\link{density.default}}.
+    Choice of one-dimensional smoothing kernel,
+    passed to \code{\link{density.default}}.
   }
   \item{bw}{
-    Bandwidth for smoothing kernel, passed to \code{\link{density.default}}.
+    Bandwidth for one-dimensional smoothing kernel,
+    passed to \code{\link{density.default}}.
+  }
+  \item{adjust.bw}{
+    Numeric value. \code{bw} will be multiplied by this value.
   }
   \item{\dots}{
-    Other arguments passed to the kernel density estimation 
+    Other arguments passed to the one-dimensional kernel density estimation 
     function \code{\link{density.default}}.
   }
   \item{stoyan}{
@@ -76,7 +81,10 @@ pcfcross.inhom(X, i, j, lambdaI = NULL, lambdaJ = NULL, ...,
   \item{sigma,varcov}{
     Optional arguments passed to  \code{\link{density.ppp}}
     to control the smoothing bandwidth, when \code{lambdaI} or
-    \code{lambdaJ} is estimated by kernel smoothing.
+    \code{lambdaJ} is estimated by spatial kernel smoothing.
+  }
+  \item{adjust.sigma}{
+    Numeric value. \code{sigma} will be multiplied by this value.
   }
 }
 \details{
@@ -105,10 +113,14 @@ pcfcross.inhom(X, i, j, lambdaI = NULL, lambdaJ = NULL, ...,
   The command \code{pcfcross.inhom} estimates the inhomogeneous
   pair correlation using a modified version of
   the algorithm in \code{\link{pcf.ppp}}.
+  The arguments \code{bw} and \code{adjust.bw} control the
+  degree of one-dimensional smoothing of the estimate of pair correlation.
 
-  If the arguments \code{lambdaI} and \code{lambdaJ} are missing or
-  null, they are estimated from \code{X} by kernel smoothing using a
-  leave-one-out estimator. 
+  If the arguments \code{lambdaI} and/or \code{lambdaJ} are missing or
+  null, they will be estimated from \code{X} by spatial kernel smoothing
+  using a leave-one-out estimator, computed by \code{\link{density.ppp}}.
+  The arguments \code{sigma}, \code{varcov}
+  and \code{adjust.sigma} control the degree of spatial smoothing.
 }
 \value{
   A function value table (object of class \code{"fv"}).

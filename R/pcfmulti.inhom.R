@@ -1,7 +1,7 @@
 #
 #   pcfmulti.inhom.R
 #
-#   $Revision: 1.18 $   $Date: 2022/11/03 11:08:33 $
+#   $Revision: 1.19 $   $Date: 2023/03/11 06:15:44 $
 #
 #   inhomogeneous multitype pair correlation functions
 #
@@ -10,9 +10,9 @@
 pcfcross.inhom <- 
   function(X, i, j, lambdaI=NULL, lambdaJ=NULL, ...,
          r=NULL, breaks=NULL,
-         kernel="epanechnikov", bw=NULL, stoyan=0.15,
+         kernel="epanechnikov", bw=NULL, adjust.bw=1, stoyan=0.15,
          correction = c("isotropic", "Ripley", "translate"),
-         sigma=NULL, varcov=NULL)
+         sigma=NULL, adjust.sigma=1, varcov=NULL)
 {
   verifyclass(X, "ppp")
   stopifnot(is.multitype(X))
@@ -29,9 +29,9 @@ pcfcross.inhom <-
   Jname <- paste("points with mark j =", j)
   g <- pcfmulti.inhom(X, I, J, lambdaI, lambdaJ, ...,
                       r=r,breaks=breaks,
-                      kernel=kernel, bw=bw, stoyan=stoyan,
+                      kernel=kernel, bw=bw, adjust.bw=adjust.bw, stoyan=stoyan,
                       correction=correction,
-                      sigma=sigma, varcov=varcov,
+                      sigma=sigma, adjust.sigma=adjust.sigma, varcov=varcov,
                       Iname=Iname, Jname=Jname)
   iname <- make.parseable(paste(i))
   jname <- make.parseable(paste(j))
@@ -49,9 +49,9 @@ pcfcross.inhom <-
 pcfdot.inhom <- 
 function(X, i, lambdaI=NULL, lambdadot=NULL, ...,
          r=NULL, breaks=NULL,
-         kernel="epanechnikov", bw=NULL, stoyan=0.15,
+         kernel="epanechnikov", bw=NULL, adjust.bw=1, stoyan=0.15,
          correction = c("isotropic", "Ripley", "translate"),
-         sigma=NULL, varcov=NULL)
+         sigma=NULL, adjust.sigma=1, varcov=NULL)
 {
   verifyclass(X, "ppp")
   stopifnot(is.multitype(X))
@@ -69,9 +69,9 @@ function(X, i, lambdaI=NULL, lambdadot=NULL, ...,
 	
   g <- pcfmulti.inhom(X, I, J, lambdaI, lambdadot, ...,
                       r=r,breaks=breaks,
-                      kernel=kernel, bw=bw, stoyan=stoyan,
+                      kernel=kernel, bw=bw, adjust.bw=adjust.bw, stoyan=stoyan,
                       correction=correction,
-                      sigma=sigma, varcov=varcov,
+                      sigma=sigma, adjust.sigma=adjust.sigma, varcov=varcov,
                       Iname=Iname, Jname=Jname)
   iname <- make.parseable(paste(i))
   result <-
@@ -92,9 +92,10 @@ function(X, i, lambdaI=NULL, lambdadot=NULL, ...,
 pcfmulti.inhom <- function(X, I, J, lambdaI=NULL, lambdaJ=NULL, ...,
                            lambdaX=NULL,
                            r=NULL, breaks=NULL, 
-                           kernel="epanechnikov", bw=NULL, stoyan=0.15,
+                           kernel="epanechnikov",
+                           bw=NULL, adjust.bw=1, stoyan=0.15,
                            correction=c("translate", "Ripley"),
-                           sigma=NULL, varcov=NULL,
+                           sigma=NULL, adjust.sigma=1, varcov=NULL,
                            update=TRUE, leaveoneout=TRUE,
                            Iname="points satisfying condition I",
                            Jname="points satisfying condition J")
@@ -136,6 +137,8 @@ pcfmulti.inhom <- function(X, I, J, lambdaI=NULL, lambdaJ=NULL, ...,
     hmax <- 2 * stoyan /sqrt(npts/areaW)
   }
 
+  hmax <- adjust.bw * hmax
+  
   ##########  indices I and J  ########################
   
   if(!is.logical(I) || !is.logical(J))
@@ -159,7 +162,7 @@ pcfmulti.inhom <- function(X, I, J, lambdaI=NULL, lambdaJ=NULL, ...,
                            lambdaJ=lambdaJ,
                            lambdaX=lambdaX,
                            ...,
-                           sigma=sigma, varcov=varcov,
+                           sigma=sigma, adjust=adjust.sigma, varcov=varcov,
                            leaveoneout=leaveoneout, update=update,
                            Iexplain=Iname, Jexplain=Jname)
   lambdaI <- a$lambdaI
@@ -195,7 +198,7 @@ pcfmulti.inhom <- function(X, I, J, lambdaI=NULL, lambdaJ=NULL, ...,
   ########## smoothing parameters for pcf ############################  
   # arguments for 'density'
 
-  denargs <- resolve.defaults(list(kernel=kernel, bw=bw),
+  denargs <- resolve.defaults(list(kernel=kernel, bw=bw, adjust=adjust.bw),
                               list(...),
                               list(n=length(r), from=0, to=rmax))
   

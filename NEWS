@@ -1,12 +1,14 @@
 
-        CHANGES IN spatstat.explore VERSION 3.0-6.011
+        CHANGES IN spatstat.explore VERSION 3.0-6.012
 
 OVERVIEW
 
     o Extension to support for one-dimensional smoothing kernels.
 
-    o Bug fixes in plot.fv.
+    o Pair correlation functions allow more control over smoothing parameters.
     
+    o Bug fixes in plot.fv.
+
     o Internal improvements and bug fixes.
 
 SIGNIFICANT USER-VISIBLE CHANGES
@@ -18,6 +20,11 @@ SIGNIFICANT USER-VISIBLE CHANGES
 
     o bw.abram
     This function is now generic, with a method for class 'ppp'.
+
+    o pcfinhom, pcfdot.inhom, pcfcross.inhom
+    New arguments 'adjust.sigma' and 'adjust.bw' allow
+    separate adjustment of the one-dimensional smoothing bandwidth 'bw'
+    and the spatial smoothing bandwidth 'sigma'.
     
 BUG FIXES
 
