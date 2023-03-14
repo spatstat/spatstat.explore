@@ -1,12 +1,12 @@
 
-        CHANGES IN spatstat.explore VERSION 3.0-6.012
+        CHANGES IN spatstat.explore VERSION 3.1-0
 
 OVERVIEW
 
-    o Extension to support for one-dimensional smoothing kernels.
-
     o Pair correlation functions allow more control over smoothing parameters.
     
+    o Improved support for one-dimensional smoothing kernels.
+
     o Bug fixes in plot.fv.
 
     o Internal improvements and bug fixes.
