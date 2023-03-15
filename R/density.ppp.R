@@ -3,7 +3,7 @@
 #
 #  Method for 'density' for point patterns
 #
-#  $Revision: 1.119 $    $Date: 2022/05/21 08:53:38 $
+#  $Revision: 1.124 $    $Date: 2023/03/15 13:32:59 $
 #
 
 # ksmooth.ppp <- function(x, sigma, ..., edge=TRUE) {
@@ -33,9 +33,6 @@ density.ppp <- function(x, sigma=NULL, ...,
   
   if(!identical(kernel, "gaussian")) {
     validate2Dkernel(kernel)
-    ## kernel is only partly implemented!
-    if(se)
-      stop("Standard errors are not implemented for non-Gaussian kernel")
     if(verbose && scalekernel &&
        (is.function(sigma) || (is.null(sigma) && is.null(varcov))))
       warning("Bandwidth selection will be based on Gaussian kernel")
@@ -56,6 +53,7 @@ density.ppp <- function(x, sigma=NULL, ...,
   if(se) {
     # compute standard error
     SE <- denspppSEcalc(x, sigma=sigma, varcov=varcov,
+                        kernel=kernel,
                         ...,
                         weights=weights, edge=edge, at=output,
                         leaveoneout=leaveoneout, adjust=adjust,
@@ -205,7 +203,8 @@ divide.by.pixelarea <- function(x) {
 }
 
 denspppSEcalc <- function(x, sigma, varcov, ...,
-                          weights, edge, diggle, at) {
+                          kernel, weights, edge, diggle, at,
+                          gauss.is.special=TRUE, debug=FALSE) {
   ## Calculate standard error, rather than estimate
   nx <- npoints(x)
 
@@ -238,15 +237,29 @@ denspppSEcalc <- function(x, sigma, varcov, ...,
     return(sqrt(V))
   }
 
-  ## Usual case
-  tau <- taumat <- NULL
-  if(is.null(varcov)) {
-    varconst <- 1/(4 * pi * prod(ensure2vector(sigma)))
-    tau <- sigma/sqrt(2)
+  ## Usual case: sigma or vcov is finite
+  ## Calculations involve the squared kernel
+  specialGauss <- gauss.is.special && identical(kernel, "gaussian")
+  if(!specialGauss) {
+    ## The square of the kernel will be computed inside second.moment.engine
+    kerpow <- 2
+    tau <- sigma
+    taumat <- varcov
+    varconst <- 1
   } else {
-    varconst <- 1/(4 * pi * sqrt(det(varcov)))
-    taumat <- varcov/2
+    ## Use the fact that the square of the Gaussian kernel
+    ## is a rescaled Gaussian kernel
+    kerpow <- 1
+    tau <- taumat <- NULL
+    if(is.null(varcov)) {
+      varconst <- 1/(4 * pi * prod(ensure2vector(sigma)))
+      tau <- sigma/sqrt(2)
+    } else {
+      varconst <- 1/(4 * pi * sqrt(det(varcov)))
+      taumat <- varcov/2
+    }
   }
+  
   ## Calculate edge correction weights
   if(edge) {
     edgeim <- second.moment.calc(x, sigma, what="edge", ...,
@@ -261,18 +274,18 @@ denspppSEcalc <- function(x, sigma, varcov, ...,
   ## Perform smoothing
   if(!edge) {
     ## no edge correction
-    V <- density(x, sigma=tau, varcov=taumat, ...,
-                 weights=weights, edge=edge, diggle=diggle, at=at)
+    V <- density(x, sigma=tau, varcov=taumat, ..., kerpow=kerpow,
+                 weights=weights^2, edge=FALSE, diggle=FALSE, at=at)
   } else if(!diggle) {
     ## edge correction e(u)
-    V <- density(x, sigma=tau, varcov=taumat, ...,
-                 weights=weights, edge=edge, diggle=diggle, at=at)
-    V <- if(at == "points") V * diggleX else imagelistOp(V, edgeim, "/")
+    V <- density(x, sigma=tau, varcov=taumat, ..., kerpow=kerpow, 
+                 weights=weights^2, edge=FALSE, diggle=FALSE, at=at)
+    V <- if(at == "points") V * diggleX^2 else imagelistOp(V, edgeim^2, "/")
   } else {
     ## Diggle edge correction e(x_i)
     wts <- if(is.null(weights)) diggleX else (diggleX * weights)
-    V <- density(x, sigma=tau, varcov=taumat, ...,
-                 weights=wts, edge=edge, diggle=diggle, at=at)
+    V <- density(x, sigma=tau, varcov=taumat, ..., kerpow=kerpow,
+                 weights=wts^2, edge=FALSE, diggle=FALSE, at=at)
   }
   V <- V * varconst
   return(sqrt(V))

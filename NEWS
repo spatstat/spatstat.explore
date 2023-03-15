@@ -1,4 +1,28 @@
 
+        CHANGES IN spatstat.explore VERSION 3.1-0.001
+
+OVERVIEW
+
+    o Bug fixes.
+
+SIGNIFICANT USER-VISIBLE CHANGES
+
+    o density.ppp
+    Standard error calculation is now available with any smoothing kernel.
+    
+    o bw.relrisk.ppp
+    Additional arguments '...' are now passed to 'density.ppp'.
+
+BUG FIXES
+
+    o density.ppp
+    Calculation of standard error was incorrect if edge=TRUE.
+    Fixed.
+    
+    o relrisk.ppp
+    Calculation of standard error was incorrect for non-Gaussian kernels.
+    "Fixed" (by refusing to calculate SE for non-Gaussian kernel).
+
         CHANGES IN spatstat.explore VERSION 3.1-0
 
 OVERVIEW

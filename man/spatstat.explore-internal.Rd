@@ -407,7 +407,8 @@ scanBinomLRTS(nZ, nG, muZ, muG, alternative)
 second.moment.calc(x, sigma, edge, what, \dots,
                    varcov, expand, obswin, npts, debug)
 second.moment.engine(x, sigma, edge, what, \dots,
-      kernel, scalekernel, obswin, varcov, npts, debug, fastgauss)
+      kernel, scalekernel, kerpow,
+      obswin, varcov, npts, debug, fastgauss)
 sewpcf(d, w, denargs, lambda2area, divisor)
 sewsmod(d, ff, wt, Ef, rvals, method="smrep", \dots, nwtsteps=500)
 \method{shift}{quadrattest}(X, \dots)

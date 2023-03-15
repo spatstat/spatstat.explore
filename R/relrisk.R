@@ -3,7 +3,7 @@
 #
 #   Estimation of relative risk
 #
-#  $Revision: 1.55 $  $Date: 2022/11/03 11:08:33 $
+#  $Revision: 1.56 $  $Date: 2023/03/15 08:13:54 $
 #
 
 relrisk <- function(X, ...) UseMethod("relrisk")
@@ -65,6 +65,15 @@ relrisk.ppp <- local({
     tinythresh <- 8 * .Machine$double.eps
     ## 
     if(se) {
+      ## standard error calculation is only implemented for Gaussian kernel
+      kernel <- list(...)$kernel
+      if(!is.null(kernel)) {
+        kernel <- match2DkernelName(kernel)
+        if(!identical(kernel, "gaussian"))
+          stop(paste("Sorry, standard error calculation",
+                     "is only implemented for the Gaussian kernel"),
+               call.=FALSE)
+      }
       ## determine other bandwidth for variance estimation
       VarPars <- SmoothPars
       if(bandwidth.is.infinite(sigma)) {
@@ -481,9 +490,9 @@ bw.relrisk.ppp <- function(X, method="likelihood", ...,
            Dthis <- numeric(n)
            for(i in seq_len(nh)) {
              Dall <- density.ppp(X, sigma=h[i], at="points", edge=FALSE,
-                                 sorted=TRUE)
+                                 sorted=TRUE, ...)
              Deach <- density.splitppp(Y, sigma=h[i], at="points", edge=FALSE,
-                                       sorted=TRUE)
+                                       sorted=TRUE, ...)
              split(Dthis, marx) <- Deach
              pthis <- Dthis/Dall
              cv[i] <- -mean(log(pthis))
@@ -493,7 +502,7 @@ bw.relrisk.ppp <- function(X, method="likelihood", ...,
            methodname <- "Least Squares"
            for(i in seq_len(nh)) {
              phat <- Smooth(X01, sigma=h[i], at="points", leaveoneout=TRUE,
-                            sorted=TRUE)
+                            sorted=TRUE, ...)
              phat <- as.matrix(phat)
              cv[i] <- mean((y01 - phat)^2)
            }
@@ -503,13 +512,13 @@ bw.relrisk.ppp <- function(X, method="likelihood", ...,
            ## need initial value of h from least squares
            h0 <- bw.relrisk(X, "leastsquares", nh=ceiling(nh/4))
            phat0 <- Smooth(X01, sigma=h0, at="points", leaveoneout=TRUE,
-                           sorted=TRUE)
+                           sorted=TRUE, ...)
            phat0 <- as.matrix(phat0)
            var0 <- phat0 * (1-phat0)
            var0 <- pmax.int(var0, 1e-6)
            for(i in seq_len(nh)) {
              phat <- Smooth(X01, sigma=h[i], at="points", leaveoneout=TRUE,
-                            sorted=TRUE)
+                            sorted=TRUE, ...)
              phat <- as.matrix(phat)
              cv[i] <- mean((y01 - phat)^2/var0)
            }

@@ -1,7 +1,7 @@
 #
 #           Kmeasure.R
 #
-#           $Revision: 1.72 $    $Date: 2020/11/04 01:09:44 $
+#           $Revision: 1.75 $    $Date: 2023/03/15 13:41:48 $
 #
 #     Kmeasure()         compute an estimate of the second order moment measure
 #
@@ -154,6 +154,7 @@ second.moment.engine <-
            ...,
            kernel="gaussian",
            scalekernel=is.character(kernel),
+           kerpow=1,
            obswin = as.owin(x), varcov=NULL,
            npts=NULL, debug=FALSE, fastgauss=FALSE)
 {
@@ -214,6 +215,7 @@ second.moment.engine <-
   # compute kernel and its Fourier transform
   if(fastgauss && !needs.kernel && 
      identical(kernel, "gaussian") &&
+     (kerpow == 1) && 
      is.numeric(sigma) && (length(sigma) == 1)) {
     #' compute Fourier transform of kernel directly (*experimental*)
     ii <- c(0:(nr-1), nr:1)
@@ -289,6 +291,18 @@ second.moment.engine <-
       else 
         result$kernel <- ker
     }
+
+    ## optionally raise kernel to a power (e.g. for variance calculations)
+    if(kerpow != 1) {
+      ## convert probability mass to density
+      pixarea <- xstep * ystep
+      Kern <- Kern/pixarea
+      ## raise to exponent (this is numerically more stable)
+      Kern <- Kern^kerpow  
+      ## convert back to unnormalised masses
+      Kern <- Kern * pixarea
+    }
+    
     ## convolve using fft
     fK <- fft2D(Kern, west=west)
   }

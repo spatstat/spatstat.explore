@@ -41,7 +41,8 @@
     the cross-validation criterion occurs at one of the ends of the
     search interval.
   }
-  \item{\dots}{Ignored.}
+  \item{\dots}{Additional arguments passed to \code{\link{density.ppp}}
+    or to other methods for \code{bw.relrisk}.}
 }
 \details{
   This function selects an appropriate bandwidth for the nonparametric
