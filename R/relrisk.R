@@ -3,7 +3,7 @@
 #
 #   Estimation of relative risk
 #
-#  $Revision: 1.56 $  $Date: 2023/03/15 08:13:54 $
+#  $Revision: 1.61 $  $Date: 2023/03/16 04:32:59 $
 #
 
 relrisk <- function(X, ...) UseMethod("relrisk")
@@ -65,25 +65,28 @@ relrisk.ppp <- local({
     tinythresh <- 8 * .Machine$double.eps
     ## 
     if(se) {
-      ## standard error calculation is only implemented for Gaussian kernel
-      kernel <- list(...)$kernel
-      if(!is.null(kernel)) {
-        kernel <- match2DkernelName(kernel)
-        if(!identical(kernel, "gaussian"))
-          stop(paste("Sorry, standard error calculation",
-                     "is only implemented for the Gaussian kernel"),
-               call.=FALSE)
-      }
-      ## determine other bandwidth for variance estimation
+      ## standard error calculation
       VarPars <- SmoothPars
-      if(bandwidth.is.infinite(sigma)) {
+      VarPars$edge <- VarPars$diggle <- FALSE
+      kernel <- SmoothPars$kernel %orifnull% "gaussian"
+      if(!identical(kernel, "gaussian")) {
+        ## Any kernel other than Gaussian.
+        ## The square of the kernel will be computed inside second.moment.engine
+        VarPars$kerpow <- 2
         varconst <- 1
-      } else if(is.null(varcov)) {
-        varconst <- 1/(4 * pi * prod(sigma))
-        VarPars$sigma <- sigma/sqrt(2)
       } else {
-        varconst <- 1/(4 * pi * sqrt(det(varcov)))
-        VarPars$varcov <- varcov/2
+        ## Gaussian kernel.
+        ## Use the fact that the square of the Gaussian kernel
+        ## is a rescaled Gaussian kernel.
+        if(bandwidth.is.infinite(sigma)) {
+          varconst <- 1
+        } else if(is.null(varcov)) {
+          varconst <- 1/(4 * pi * prod(sigma))
+          VarPars$sigma <- sigma/sqrt(2)
+        } else {
+          varconst <- 1/(4 * pi * sqrt(det(varcov)))
+          VarPars$varcov <- varcov/2
+        }
       }
       if(edge) {
         ## evaluate edge correction weights
@@ -91,8 +94,8 @@ relrisk.ppp <- local({
                           append(list(x=uX, what="edge"), SmoothPars))
         if(diggle || at == "points") {
           edgeX <- safelookup(edgeim, uX, warn=FALSE)
-          diggleX <- 1/edgeX
-          diggleX[!is.finite(diggleX)] <- 0
+          invmassX <- 1/edgeX
+          invmassX[!is.finite(invmassX)] <- 0
         }
         edgeim <- edgeim[Window(X), drop=FALSE]
       }
@@ -111,29 +114,35 @@ relrisk.ppp <- local({
              ## WAS: Dall <- Reduce("+", Deach)
              ## variance terms
              if(se) {
-               if(!edge) {
-                 ## no edge correction
-                 Veach <- do.call(density.splitppp,
-                                  append(list(x=Y, weights=splitweights),
-                                         VarPars))
-               } else if(!diggle) {
-                 ## edge correction e(u)
-                 Veach <- do.call(density.splitppp,
-                                  append(list(x=Y, weights=splitweights),
-                                         VarPars))
+               ## actual weights on each data point
+               dataweights <-
+                 if(!edge) {
+                   ## no edge correction
+                   weights
+                 } else if(!diggle) {
+                   ## uniform edge correction e(u)
+                   weights
+                 } else {
+                   ## Jones-Diggle edge correction e(x_i)
+                   if(weighted) {invmassX * weights} else invmassX
+                 }
+
+               ## Compute variance of sum of weighted contributions
+               Veach <- do.call(density.splitppp,
+                                append(list(x=Y,
+                                            weights=split(dataweights^2, marx)),
+                                            VarPars))
+                                
+               if(edge && !diggle) {
+                 ## uniform edge correction e(u): rescale
+                 Veach <- imagelistOp(Veach, edgeim^2, "/")
                  #' Ops.imlist not yet working
-                 Veach <- imagelistOp(Veach, edgeim, "/")
-               } else {
-                 ## Diggle edge correction e(x_i)
-                 diggweights <- if(weighted) { diggleX * weights } else diggleX
-                 Veach <- as.solist(mapply(density.ppp,
-                                           x=Y,
-                                           weights=split(diggweights, marx),
-                                           MoreArgs=VarPars,
-                                           SIMPLIFY=FALSE))
                }
+
+               if(varconst != 1) 
+                 Veach <- imagelistOp(Veach, varconst, "*")
                #' Ops.imlist not yet working
-               Veach <- imagelistOp(Veach, varconst, "*")
+               
                Vall <- im.apply(Veach, sum, check=FALSE)
                ## WAS:   Vall <- Reduce("+", Veach)
              }
@@ -150,26 +159,33 @@ relrisk.ppp <- local({
                                      SmoothPars))
              ## compute intensity estimate for unmarked pattern
              Dall <- rowSums(Deach)
+
              ## variance terms
              if(se) {
-               if(!edge) {
-                 ## no edge correction
-                 Veach <- do.call(density.ppp,
-                                  append(list(x=uX, weights=dumm),
-                                         VarPars))
-               } else if(!diggle) {
-                 ## edge correction e(u)
-                 Veach <- do.call(density.ppp,
-                                  append(list(x=uX, weights=dumm),
-                                         VarPars))
-                 Veach <- Veach * diggleX
-               } else {
-                 ## Diggle edge correction e(x_i)
-                 Veach <- do.call(density.ppp,
-                                  append(list(x=uX, weights=dumm * diggleX),
-                                         VarPars))
+               dataweights <-
+                 if(!edge) {
+                   ## no edge correction
+                   dumm
+                 } else if(!diggle) {
+                   ## uniform edge correction e(u)
+                   dumm
+                 } else {
+                   ## Jones-Diggle edge correction e(x_i)
+                   dumm * invmassX
+                 }
+
+               ## compute sum of weighted contributions
+               Veach <- do.call(density.ppp,
+                                append(list(x=uX, weights=dataweights^2),
+                                       VarPars))
+
+               if(edge && !diggle) {
+                 ## uniform edge correction e(u)
+                 Veach <- Veach * invmassX^2
                }
-               Veach <- Veach * varconst
+
+               if(varconst != 1)
+                 Veach <- Veach * varconst
                Vall <- rowSums(Veach)
              }
            })

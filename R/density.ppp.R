@@ -286,28 +286,30 @@ denspppSEcalc <- function(x, sigma, varcov, ...,
     }
     edgeim <- edgeim[Window(x), drop=FALSE]
   }
-  ## Perform smoothing
-  if(!edge) {
-    ## no edge correction
-    V <- density(x, sigma=tau, varcov=taumat, ..., kerpow=kerpow,
-                 weights=weightspower,
-                 at=at, leaveoneout=leaveoneout,
-                 edge=FALSE, diggle=FALSE)
-  } else if(!diggle) {
-    ## uniform (convolution) edge correction e(u)
-    V <- density(x, sigma=tau, varcov=taumat, ..., kerpow=kerpow, 
-                 weights=weightspower,
-                 at=at, leaveoneout=leaveoneout,
-                 edge=FALSE, diggle=FALSE)
+  
+  ## Calculate variance of sum of weighted contributions
+  dataVarianceWeights <-
+    if(!edge) {
+      ## no edge correction
+      weightspower
+    } else if(!diggle) {
+      ## uniform edge correction e(u)
+      weightspower
+    } else {
+      ## Jones-Diggle edge correction e(x_i) 
+      if(is.null(weightspower)) invmassX^2 else (weightspower * invmassX^2)
+    }
+
+  V <- density(x, sigma=tau, varcov=taumat, ..., kerpow=kerpow,
+               weights=dataVarianceWeights,
+               at=at, leaveoneout=leaveoneout,
+               edge=FALSE, diggle=FALSE)
+
+  if(edge && !diggle) {
+    ## uniform edge correction e(u)
     V <- if(at == "points") V * invmassX^2 else imagelistOp(V, edgeim^2, "/")
-  } else {
-    ## Jones-Diggle edge correction e(x_i)
-    wts <- if(is.null(weightspower)) invmassX^2 else (weightspower * invmassX^2)
-    V <- density(x, sigma=tau, varcov=taumat, ..., kerpow=kerpow,
-                 weights=wts,
-                 at=at, leaveoneout=leaveoneout,
-                 edge=FALSE, diggle=FALSE)
   }
+
   if(varconst != 1)
     V <- V * varconst
   return(sqrt(V))

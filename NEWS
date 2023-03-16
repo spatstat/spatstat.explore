@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.1-0.002
+        CHANGES IN spatstat.explore VERSION 3.1-0.003
 
 OVERVIEW
 
@@ -27,7 +27,7 @@ BUG FIXES
     
     o relrisk.ppp
     Calculation of standard error was incorrect for non-Gaussian kernels.
-    "Fixed" (by refusing to calculate SE for non-Gaussian kernel).
+    Fixed.
 
         CHANGES IN spatstat.explore VERSION 3.1-0
 
