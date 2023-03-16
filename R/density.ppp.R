@@ -3,7 +3,7 @@
 #
 #  Method for 'density' for point patterns
 #
-#  $Revision: 1.124 $    $Date: 2023/03/15 13:32:59 $
+#  $Revision: 1.125 $    $Date: 2023/03/16 01:09:37 $
 #
 
 # ksmooth.ppp <- function(x, sigma, ..., edge=TRUE) {
@@ -14,9 +14,11 @@
 density.ppp <- local({
   
 density.ppp <- function(x, sigma=NULL, ...,
-                        weights=NULL, edge=TRUE, varcov=NULL,
+                        weights=NULL, 
+                        edge=TRUE, varcov=NULL,
                         at="pixels", leaveoneout=TRUE,
-                        adjust=1, diggle=FALSE, se=FALSE, 
+                        adjust=1, diggle=FALSE,
+                        se=FALSE, wtype=c("value", "multiplicity"),
                         kernel="gaussian",
                         scalekernel=is.character(kernel),
                         positive=FALSE, verbose=TRUE) {
@@ -51,11 +53,12 @@ density.ppp <- function(x, sigma=NULL, ...,
     weights <- NULL 
 
   if(se) {
-    # compute standard error
+    ## compute standard error
+    wtype <- match.arg(wtype)
     SE <- denspppSEcalc(x, sigma=sigma, varcov=varcov,
                         kernel=kernel,
                         ...,
-                        weights=weights, edge=edge, at=output,
+                        weights=weights, wtype=wtype, edge=edge, at=output,
                         leaveoneout=leaveoneout, adjust=adjust,
                         diggle=diggle)
     if(positive) SE <- posify(SE)
@@ -203,33 +206,44 @@ divide.by.pixelarea <- function(x) {
 }
 
 denspppSEcalc <- function(x, sigma, varcov, ...,
-                          kernel, weights, edge, diggle, at,
+                          kernel, weights, wtype, edge, diggle,
+                          at, leaveoneout=TRUE,
                           gauss.is.special=TRUE, debug=FALSE) {
   ## Calculate standard error, rather than estimate
   nx <- npoints(x)
 
   single <- is.null(dim(weights))
+
+  weightspower <-
+    if(is.null(weights)) NULL else switch(wtype,
+                                          value        = weights^2,
+                                          multiplicity = weights)
+
+  if(!is.null(weights) && wtype == "multiplicity" && any(weights < 0))
+    stop("Negative weights are not permitted when wtype='multiplicity'",
+         call.=FALSE)
   
   if(bandwidth.is.infinite(sigma)) {
     #' special case - uniform
-    totwt2 <- if(is.null(weights)) nx else
-              if(single) sum(weights^2) else colSums(weights^2)
-    if(!edge)
-      totwt2 <- 0 * totwt2
+    totwtpower <- if(is.null(weights)) nx else
+                  if(single) sum(weightspower) else colSums(weightspower)
+    if(!edge) {
+      ## infinite bandwidth without edge correction: estimate = variance = 0
+      totwtpower <- 0 * totwtpower
+    }
     W <- Window(x)
     A <- area.owin(W)
     switch(at,
            pixels = {
-             V <- solapply(totwt2/A, as.im, W=W, ...)
+             V <- solapply(totwtpower/A, as.im, W=W, ...)
              names(V) <- colnames(weights)
              if(single) V <- V[[1L]]
            },
            points = {
-             numerator <- rep(totwt2, each=nx)
+             numerator <- rep(totwtpower, each=nx)
              if(!single) numerator <- matrix(numerator, nrow=nx)
-             leaveoneout <- resolve.1.default(list(leaveoneout=TRUE), list(...))
              if(edge && leaveoneout) 
-               numerator <- numerator - (weights %orifnull% 1)^2
+               numerator <- numerator - (weightspower %orifnull% 1)
              V <- numerator/A
              if(!single) 
                colnames(V) <- colnames(weights)
@@ -262,12 +276,13 @@ denspppSEcalc <- function(x, sigma, varcov, ...,
   
   ## Calculate edge correction weights
   if(edge) {
+    ## convolution of kernel with window
     edgeim <- second.moment.calc(x, sigma, what="edge", ...,
                                  varcov=varcov)
     if(diggle || at == "points") {
       edgeX <- safelookup(edgeim, x, warn=FALSE)
-      diggleX <- 1/edgeX
-      diggleX[!is.finite(diggleX)] <- 0
+      invmassX <- 1/edgeX
+      invmassX[!is.finite(invmassX)] <- 0
     }
     edgeim <- edgeim[Window(x), drop=FALSE]
   }
@@ -275,19 +290,26 @@ denspppSEcalc <- function(x, sigma, varcov, ...,
   if(!edge) {
     ## no edge correction
     V <- density(x, sigma=tau, varcov=taumat, ..., kerpow=kerpow,
-                 weights=weights^2, edge=FALSE, diggle=FALSE, at=at)
+                 weights=weightspower,
+                 at=at, leaveoneout=leaveoneout,
+                 edge=FALSE, diggle=FALSE)
   } else if(!diggle) {
-    ## edge correction e(u)
+    ## uniform (convolution) edge correction e(u)
     V <- density(x, sigma=tau, varcov=taumat, ..., kerpow=kerpow, 
-                 weights=weights^2, edge=FALSE, diggle=FALSE, at=at)
-    V <- if(at == "points") V * diggleX^2 else imagelistOp(V, edgeim^2, "/")
+                 weights=weightspower,
+                 at=at, leaveoneout=leaveoneout,
+                 edge=FALSE, diggle=FALSE)
+    V <- if(at == "points") V * invmassX^2 else imagelistOp(V, edgeim^2, "/")
   } else {
-    ## Diggle edge correction e(x_i)
-    wts <- if(is.null(weights)) diggleX else (diggleX * weights)
+    ## Jones-Diggle edge correction e(x_i)
+    wts <- if(is.null(weightspower)) invmassX^2 else (weightspower * invmassX^2)
     V <- density(x, sigma=tau, varcov=taumat, ..., kerpow=kerpow,
-                 weights=wts^2, edge=FALSE, diggle=FALSE, at=at)
+                 weights=wts,
+                 at=at, leaveoneout=leaveoneout,
+                 edge=FALSE, diggle=FALSE)
   }
-  V <- V * varconst
+  if(varconst != 1)
+    V <- V * varconst
   return(sqrt(V))
 }       
 

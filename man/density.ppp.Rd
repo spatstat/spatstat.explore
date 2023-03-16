@@ -8,7 +8,8 @@
   \method{density}{ppp}(x, sigma=NULL, \dots,
         weights=NULL, edge=TRUE, varcov=NULL,
         at="pixels", leaveoneout=TRUE,
-        adjust=1, diggle=FALSE, se=FALSE,
+        adjust=1, diggle=FALSE,
+        se=FALSE, wtype=c("value", "multiplicity"),
         kernel="gaussian",
         scalekernel=is.character(kernel), 
         positive=FALSE, verbose=TRUE) 
@@ -77,6 +78,11 @@
   }
   \item{se}{
     Logical value indicating whether to compute standard errors as well.
+  }
+  \item{wtype}{
+    Character string (partially matched) specifying how the weights
+    should be interpreted for the calculation of standard error.
+    See Details.
   }
   \item{positive}{
     Logical value indicating whether to force all density values to
@@ -301,6 +307,32 @@
   (object of class \code{"im"}). numerical weights for the data points
   will be extracted from this image (by looking up the pixel values
   at the locations of the data points in \code{x}).
+}
+\section{Standard error}{
+  If \code{se=TRUE}, the standard error of the estimate will also be
+  calculated. The calculation assumes a Poisson point process. 
+
+  If \code{weights} are given, then the calculation of standard error
+  depends on the interpretation of the weights. This is controlled by
+  the argument \code{wtype}.
+  \itemize{
+    \item
+    If \code{wtype="value"} (the default),
+    the weights are interpreted as numerical values observed
+    at the data locations. Roughly speaking,
+    standard errors are proportional to the absolute
+    values of the weights.
+    \item
+    If \code{wtype="multiplicity"} the weights are interpreted as
+    multiplicities so that a weight of 2 is equivalent to having a pair
+    of duplicated points at the data location. Roughly speaking,
+    standard errors are proportional
+    to the square roots of the weights. Negative weights are not
+    permitted.
+  }
+  The default rule is now \code{wtype="value"} but previous versions
+  of \code{density.default} (in \pkg{spatstat.explore} versions
+  \code{3.1-0} and earlier) effectively used \code{wtype="multiplicity"}.
 }
 \section{The meaning of \code{density.ppp}}{
   This function is often misunderstood.
