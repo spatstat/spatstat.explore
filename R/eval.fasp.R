@@ -6,7 +6,7 @@
 #
 #        compatible.fasp()       Check whether two fasp objects are compatible
 #
-#     $Revision: 1.12 $     $Date: 2022/01/04 05:30:06 $
+#     $Revision: 1.13 $     $Date: 2023/03/18 10:25:19 $
 #
 
 eval.fasp <- local({
@@ -59,7 +59,7 @@ eval.fasp <- local({
           assign(varnames[k], vars[[k]], envir=fenv)
         ## evaluate
         resultij <- eval(substitute(eval.fv(ee,ff,dd),
-                                    list(ee=e, ff=fenv, dd=dotonly)))
+                                    list(ee=e[[1]], ff=fenv, dd=dotonly)))
         ## insert back into fasp
         result$fns[[which[i,j] ]] <- resultij
       }
