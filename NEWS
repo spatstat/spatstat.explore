@@ -1,12 +1,22 @@
 
-        CHANGES IN spatstat.explore VERSION 3.1-0.004
+        CHANGES IN spatstat.explore VERSION 3.1-0.005
 
 OVERVIEW
 
     o Changed the calculation of standard errors in density.ppp and relrisk.ppp.
 
+    o Inline arithmetic for function tables ('fv') and arrays ('fasp')
+    
     o Bug fixes in calculation of standard errors.
 
+NEW FUNCTIONS
+
+    o Math.fv, Complex.fv, Summary.fv, Ops.fv
+    Methods for arithmetic operations for function tables (class 'fv')
+    
+    o Math.fasp, Complex.fasp, Summary.fasp, Ops.fasp
+    Methods for arithmetic operations for function arrays (class 'fasp')
+    
 SIGNIFICANT USER-VISIBLE CHANGES
 
     o density.ppp

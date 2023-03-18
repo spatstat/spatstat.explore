@@ -168,8 +168,13 @@ fv(x, argu = "r", ylab = NULL, valu, fmla = NULL, alim = NULL,
   Use \code{\link{bind.fv}} to glue additional columns onto an existing
   \code{"fv"} object.
 
-  Use \code{\link{range.fv}} to compute the range of \eqn{y} values
-  for a function, and \code{\link{with.fv}} for more complicated
+  Simple calculations such as arithmetic and mathematical operations
+  can be computed directly.
+  The range of \eqn{y} values of a function \code{f} can be computed by
+  typing \code{range(f)}. These operations are dispatched to 
+  \code{\link{Summary.fv}}, \code{\link{Math.fv}} and \code{\link{Ops.fv}}.
+
+  Use \code{\link{eval.fv}} or \code{\link{with.fv}} for more complicated
   calculations.
   
   The functions \code{fvnames}, \code{fvnames<-} allow the user to
@@ -178,12 +183,7 @@ fv(x, argu = "r", ylab = NULL, valu, fmla = NULL, alim = NULL,
   \emph{Undocumented} functions for modifying an \code{"fv"} object
   include \code{tweak.fv.entry} and \code{rebadge.fv}.
 }
-\author{\adrian
-  
-  
-  and \rolf
-  
-}
+\author{\adrian and \rolf.}
 \examples{
   df <- data.frame(r=seq(0,5,by=0.1))
   df <- transform(df, a=pi*r^2, b=3*r^2)

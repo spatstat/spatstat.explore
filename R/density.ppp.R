@@ -219,7 +219,7 @@ denspppSEcalc <- function(x, sigma, varcov, ...,
                                           value        = weights^2,
                                           multiplicity = weights)
 
-  if(!is.null(weights) && wtype == "multiplicity" && any(weights < 0))
+  if(!is.null(weights) && wtype == "multiplicity" && min(weights) < 0)
     stop("Negative weights are not permitted when wtype='multiplicity'",
          call.=FALSE)
   
