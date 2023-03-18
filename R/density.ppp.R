@@ -3,7 +3,7 @@
 #
 #  Method for 'density' for point patterns
 #
-#  $Revision: 1.125 $    $Date: 2023/03/16 01:09:37 $
+#  $Revision: 1.126 $    $Date: 2023/03/16 05:24:31 $
 #
 
 # ksmooth.ppp <- function(x, sigma, ..., edge=TRUE) {
@@ -306,7 +306,7 @@ denspppSEcalc <- function(x, sigma, varcov, ...,
                edge=FALSE, diggle=FALSE)
 
   if(edge && !diggle) {
-    ## uniform edge correction e(u)
+    ## uniform edge correction e(u): rescale
     V <- if(at == "points") V * invmassX^2 else imagelistOp(V, edgeim^2, "/")
   }
 

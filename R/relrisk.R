@@ -3,7 +3,7 @@
 #
 #   Estimation of relative risk
 #
-#  $Revision: 1.61 $  $Date: 2023/03/16 04:32:59 $
+#  $Revision: 1.64 $  $Date: 2023/03/18 03:51:59 $
 #
 
 relrisk <- function(X, ...) UseMethod("relrisk")
@@ -14,7 +14,8 @@ relrisk.ppp <- local({
                           at=c("pixels", "points"),
                           weights = NULL, varcov=NULL, 
                           relative=FALSE,
-                          adjust=1, edge=TRUE, diggle=FALSE, se=FALSE,
+                          adjust=1, edge=TRUE, diggle=FALSE,
+                          se=FALSE, wtype=c("value", "multiplicity"),
                           casecontrol=TRUE, control=1, case) {
     stopifnot(is.ppp(X))
     stopifnot(is.multitype(X))
@@ -66,6 +67,15 @@ relrisk.ppp <- local({
     ## 
     if(se) {
       ## standard error calculation
+      wtype <- match.arg(wtype)
+      weightspower <-
+        if(is.null(weights)) NULL else  switch(wtype,
+                                               value        = weights^2,
+                                               multiplicity = weights)
+      if(!is.null(weights) && wtype == "multiplicity" && min(weights) < 0)
+        stop("Negative weights are not permitted when wtype='multiplicity'",
+             call.=FALSE)
+      ## determine smoothing parameters for variance calculation
       VarPars <- SmoothPars
       VarPars$edge <- VarPars$diggle <- FALSE
       kernel <- SmoothPars$kernel %orifnull% "gaussian"
@@ -114,23 +124,25 @@ relrisk.ppp <- local({
              ## WAS: Dall <- Reduce("+", Deach)
              ## variance terms
              if(se) {
-               ## actual weights on each data point
-               dataweights <-
+               ## weights on each data point for variance calculation
+               VarWeights <-
                  if(!edge) {
                    ## no edge correction
-                   weights
+                   weightspower
                  } else if(!diggle) {
                    ## uniform edge correction e(u)
-                   weights
+                   weightspower
                  } else {
                    ## Jones-Diggle edge correction e(x_i)
-                   if(weighted) {invmassX * weights} else invmassX
+                   if(weighted) {invmassX^2 * weightspower} else invmassX^2
                  }
+               VarWeightsSplit <-
+                 if(weighted) split(VarWeights, marx) else NULL
 
                ## Compute variance of sum of weighted contributions
                Veach <- do.call(density.splitppp,
                                 append(list(x=Y,
-                                            weights=split(dataweights^2, marx)),
+                                            weights=VarWeightsSplit),
                                             VarPars))
                                 
                if(edge && !diggle) {
@@ -153,30 +165,31 @@ relrisk.ppp <- local({
              dumm <- matrix(0, npts, ntypes)
              dumm[cbind(seq_len(npts), imarks)] <- 1
              colnames(dumm) <- types
-             if(weighted) dumm <- dumm * weights
+             dummweights <- if(weighted) dumm * weights else dumm
+             dummweightspower <- if(weighted) dumm * weightspower else dumm
              Deach <- do.call(density.ppp,
-                              append(list(x=uX, weights=dumm),
+                              append(list(x=uX, weights=dummweights),
                                      SmoothPars))
              ## compute intensity estimate for unmarked pattern
              Dall <- rowSums(Deach)
 
              ## variance terms
              if(se) {
-               dataweights <-
+               ## weights attached to data points for variance calculation
+               VarWeights <-
                  if(!edge) {
                    ## no edge correction
-                   dumm
+                   dummweightspower
                  } else if(!diggle) {
                    ## uniform edge correction e(u)
-                   dumm
+                   dummweightspower
                  } else {
                    ## Jones-Diggle edge correction e(x_i)
-                   dumm * invmassX
+                   dummweightspower * invmassX^2
                  }
-
                ## compute sum of weighted contributions
                Veach <- do.call(density.ppp,
-                                append(list(x=uX, weights=dataweights^2),
+                                append(list(x=uX, weights=VarWeights),
                                        VarPars))
 
                if(edge && !diggle) {

@@ -1,11 +1,11 @@
 
-        CHANGES IN spatstat.explore VERSION 3.1-0.003
+        CHANGES IN spatstat.explore VERSION 3.1-0.004
 
 OVERVIEW
 
-    o Changed the calculation of standard errors.
+    o Changed the calculation of standard errors in density.ppp and relrisk.ppp.
 
-    o Bug fixes.
+    o Bug fixes in calculation of standard errors.
 
 SIGNIFICANT USER-VISIBLE CHANGES
 
@@ -16,6 +16,10 @@ SIGNIFICANT USER-VISIBLE CHANGES
     The interpretation of 'weights' in the calculation of standard error
     has changed. New argument 'wtype' controls this interpretation.
     
+    o relrisk.ppp
+    The interpretation of 'weights' in the calculation of standard error
+    has changed. New argument 'wtype' controls this interpretation.
+
     o bw.relrisk.ppp
     Additional arguments '...' are now passed to 'density.ppp'.
 

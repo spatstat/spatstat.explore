@@ -331,7 +331,7 @@
     permitted.
   }
   The default rule is now \code{wtype="value"} but previous versions
-  of \code{density.default} (in \pkg{spatstat.explore} versions
+  of \code{density.ppp} (in \pkg{spatstat.explore} versions
   \code{3.1-0} and earlier) effectively used \code{wtype="multiplicity"}.
 }
 \section{The meaning of \code{density.ppp}}{
