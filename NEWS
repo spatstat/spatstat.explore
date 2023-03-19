@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.1-0.007
+        CHANGES IN spatstat.explore VERSION 3.1-0.008
 
 OVERVIEW
 
@@ -30,6 +30,11 @@ SIGNIFICANT USER-VISIBLE CHANGES
     The interpretation of 'weights' in the calculation of standard error
     has changed. New argument 'wtype' controls this interpretation.
 
+    o relrisk.ppp
+    New argument 'fudge' specifies a constant numeric value that will be
+    added to each estimate of point process intensity before calculation of
+    relative risk.
+    
     o bw.relrisk.ppp
     Additional arguments '...' are now passed to 'density.ppp'.
 

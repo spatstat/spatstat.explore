@@ -240,15 +240,17 @@ local({
     pants(relative=TRUE)
     pants(sigma=Inf)
     pants(sigma=NULL, varcov=diag(c(100,100)^2))
+    f <- 1/area(Window(ants))
+    pants(fudge=f)
   }
   if(FULLTEST) {
     pants(diggle=TRUE, at="points")
-    pants(edge=FALSE, at="points")
+    pants(edge=FALSE, at="points", fudge=f)
     pants(casecontrol=FALSE, relative=TRUE)
     pants(casecontrol=FALSE,at="points")
-    pants(relative=TRUE,at="points")
+    pants(relative=TRUE,at="points", fudge=f)
     pants(casecontrol=FALSE, relative=TRUE,at="points")
-    pants(relative=TRUE, control="Cataglyphis", case="Messor")
+    pants(relative=TRUE, control="Cataglyphis", case="Messor", fudge=f)
     pants(relative=TRUE, control="Cataglyphis", case="Messor", at="points")
     pants(casecontrol=FALSE, case="Messor", se=FALSE)
     pants(case=2, at="pixels", relative=TRUE)
@@ -266,10 +268,11 @@ local({
   if(ALWAYS) {
     pants(X=sporophores)
     pants(X=sporophores, sigma=20, at="points")
+    pants(X=sporophores, sigma=20, at="points", fudge=f)
     bw.relrisk(sporophores, method="leastsquares")
   }
   if(FULLTEST) {
-    pants(X=sporophores, sigma=20, relative=TRUE, at="points")
+    pants(X=sporophores, sigma=20, relative=TRUE, at="points", fudge=f)
     pants(X=sporophores, sigma=20, at="pixels", se=FALSE)
     pants(X=sporophores, sigma=20, relative=TRUE, at="pixels", se=FALSE)
     bw.relrisk(sporophores, method="weightedleastsquares")

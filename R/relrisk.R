@@ -3,7 +3,7 @@
 #
 #   Estimation of relative risk
 #
-#  $Revision: 1.64 $  $Date: 2023/03/18 03:51:59 $
+#  $Revision: 1.65 $  $Date: 2023/03/19 03:38:09 $
 #
 
 relrisk <- function(X, ...) UseMethod("relrisk")
@@ -16,7 +16,7 @@ relrisk.ppp <- local({
                           relative=FALSE,
                           adjust=1, edge=TRUE, diggle=FALSE,
                           se=FALSE, wtype=c("value", "multiplicity"),
-                          casecontrol=TRUE, control=1, case) {
+                          casecontrol=TRUE, control=1, case, fudge=0) {
     stopifnot(is.ppp(X))
     stopifnot(is.multitype(X))
     control.given <- !missing(control)
@@ -44,6 +44,16 @@ relrisk.ppp <- local({
                     "ignored, because relative=FALSE and",
                     if(ntypes==2) "casecontrol=FALSE" else
                     "there are more than 2 types of points"))
+    }
+    ## fudge constant
+    if(missing(fudge) || is.null(fudge)) {
+      fudge <- rep(0, ntypes)
+    } else {
+      check.nvector(fudge, ntypes,
+                    things="types of points", oneok=TRUE, vname="fudge")
+      stopifnot(all(fudge >= 0))
+      if(length(fudge) == 1)
+        fudge <- rep(fudge, ntypes)
     }
     ## prepare for analysis
     Y <- split(X) 
@@ -119,6 +129,11 @@ relrisk.ppp <- local({
              Deach <- do.call(density.splitppp,
                               append(list(x=Y, weights=splitweights),
                                      SmoothPars))
+             if(any(fudge != 0)) {
+               ## add constant to intensity estimates
+               Deach <- as.imlist(mapply("+", Deach, as.list(fudge),
+                                         SIMPLIFY=FALSE))
+             }
              ## compute intensity estimate for unmarked pattern
              Dall <- im.apply(Deach, sum, check=FALSE)
              ## WAS: Dall <- Reduce("+", Deach)
@@ -154,7 +169,7 @@ relrisk.ppp <- local({
                if(varconst != 1) 
                  Veach <- imagelistOp(Veach, varconst, "*")
                #' Ops.imlist not yet working
-               
+
                Vall <- im.apply(Veach, sum, check=FALSE)
                ## WAS:   Vall <- Reduce("+", Veach)
              }
@@ -170,6 +185,10 @@ relrisk.ppp <- local({
              Deach <- do.call(density.ppp,
                               append(list(x=uX, weights=dummweights),
                                      SmoothPars))
+             ## add constant to intensity estimates
+             if(any(fudge != 0)) 
+               Deach <- Deach + matrix(fudge[col(Deach)],
+                                       nrow=nrow(Deach), ncol=ncol(Deach))
              ## compute intensity estimate for unmarked pattern
              Dall <- rowSums(Deach)
 

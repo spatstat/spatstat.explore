@@ -17,7 +17,7 @@
            relative=FALSE,
            adjust=1, edge=TRUE, diggle=FALSE,
            se=FALSE, wtype=c("value", "multiplicity"),
-           casecontrol=TRUE, control=1, case)
+           casecontrol=TRUE, control=1, case, fudge=0)
 }
 \arguments{
   \item{X}{
@@ -95,6 +95,12 @@
     This is an alternative to the argument \code{control}
     in a bivariate point pattern. 
     Ignored if there are more than 2 types of points.
+  }
+  \item{fudge}{
+    Optional. A single numeric value,
+    or a numeric vector with one entry for each type of point.
+    This value will be added to the estimates
+    of point process intensity, before calculation of the relative risk.
   }
 }
 \details{
