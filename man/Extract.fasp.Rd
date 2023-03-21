@@ -46,15 +46,23 @@
   \code{\link{fasp.object}}
 }
 \examples{
+ online <- interactive()
  # Lansing woods data - multitype points with 6 types
- a <- alltypes(lansing, 'K')
+ X <- lansing
+
+ if(!online) {
+   # subsample data (from 2251 to 450 points) to shorten check time
+   X <- X[c(FALSE,FALSE,FALSE,FALSE,TRUE)]
+ }
+
+ a <- alltypes(X, 'K')
 
  # extract first three marks only
  b <- a[1:3,1:3]
- if(interactive()) {plot(b)}
+ if(online) {plot(b)}
  # subset of array pertaining to hickories
  h <- a["hickory", ]
- if(interactive()) {plot(h)}
+ if(online) {plot(h)}
 }
 \author{
   \spatstatAuthors
