@@ -211,6 +211,7 @@ Smooth.ppp <- function(X, sigma=NULL, ...,
                nbg <- eval.im(is.infinite(result)
                               | is.nan(result)
                               | (denominator < eps))
+               uhoh <- attr(numerator, "warnings")
                if(any(as.matrix(nbg), na.rm=TRUE)) {
                  warning(paste("Numerical underflow detected:",
                                "sigma is probably too small"),
@@ -222,7 +223,6 @@ Smooth.ppp <- function(X, sigma=NULL, ...,
                  nnvalues <- eval.im(values[whichnn])
                  result[nbg] <- nnvalues[nbg]
                }
-               uhoh <- attr(numerator, "warnings")
              })
     }
   } else {
@@ -347,7 +347,7 @@ Smooth.ppp <- function(X, sigma=NULL, ...,
   ## wrap up
   attr(result, "sigma") <- sigma
   attr(result, "varcov") <- varcov
-  attr(result, "warnings") <- uhoh
+  if(length(uhoh)) attr(result, "warnings") <- uhoh
   return(result)
 }
 

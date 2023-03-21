@@ -3,7 +3,7 @@
 #
 #   Estimation of relative risk
 #
-#  $Revision: 1.65 $  $Date: 2023/03/19 03:38:09 $
+#  $Revision: 1.67 $  $Date: 2023/03/21 07:06:28 $
 #
 
 relrisk <- function(X, ...) UseMethod("relrisk")
@@ -55,6 +55,8 @@ relrisk.ppp <- local({
       if(length(fudge) == 1)
         fudge <- rep(fudge, ntypes)
     }
+    ## initialise error report
+    uhoh <- NULL
     ## prepare for analysis
     Y <- split(X) 
     splitweights <- if(weighted) split(weights, marx) else rep(list(NULL), ntypes)
@@ -256,12 +258,16 @@ relrisk.ppp <- local({
                ## compute probability of case
                Dcase <- Deach[[icase]]
                pcase <- Dcase/Dall
-               dodgy <- (Dall < tinythresh)
                ## correct small numerical errors
                pcase <- clamp01(pcase)
                ## trap NaN values, and similar
+               dodgy <- (Dall < tinythresh)
                nbg <- badvalues(pcase) | really(dodgy)
                if(any(nbg)) {
+                 warning(paste("Numerical underflow detected:",
+                               "sigma is probably too small"),
+                         call.=FALSE)
+                 uhoh <- unique(c(uhoh, "underflow"))
                  ## apply l'Hopital's rule:
                  ##     p(case) = 1{nearest neighbour is case}
                  distcase <- distmap(Y[[icase]], xy=pcase)
@@ -295,11 +301,15 @@ relrisk.ppp <- local({
              points={
                ## compute probability of case
                pcase <- Deach[,icase]/Dall
-               dodgy <- (Dall < tinythresh)
                ## correct small numerical errors
                pcase <- clamp01(pcase)
                ## trap NaN values
+               dodgy <- (Dall < tinythresh)
                if(any(nbg <- badvalues(pcase) | really(dodgy))) {
+                 warning(paste("Numerical underflow detected:",
+                               "sigma is probably too small"),
+                         call.=FALSE)
+                 uhoh <- unique(c(uhoh, "underflow"))
                  ## apply l'Hopital's rule
                  nntype <- imarks[nnwhich(X)]
                  pcase[nbg] <- as.integer(nntype[nbg] == icase)
@@ -341,14 +351,18 @@ relrisk.ppp <- local({
              pixels={
                #' Ops.imagelist not yet working
                probs <- imagelistOp(Deach, Dall, "/")
-               dodgy <- (Dall < tinythresh)
                ## correct small numerical errors
                probs <- as.solist(lapply(probs, clamp01))
                ## trap NaN values
                nbg <- lapply(probs, badvalues)
                nbg <- Reduce("|", nbg)
+               dodgy <- (Dall < tinythresh)
                nbg <- nbg | really(dodgy)
                if(any(nbg)) {
+                 warning(paste("Numerical underflow detected:",
+                               "sigma is probably too small"),
+                         call.=FALSE)
+                 uhoh <- unique(c(uhoh, "underflow"))
                  ## apply l'Hopital's rule
                  distX <- distmap(X, xy=Dall)
                  whichnn <- attr(distX, "index")
@@ -393,13 +407,17 @@ relrisk.ppp <- local({
              },
              points = {
                probs <- Deach/Dall
-               dodgy <- (Dall < tinythresh)
                ## correct small numerical errors
                probs <- clamp01(probs)
                ## trap NaN values
+               dodgy <- (Dall < tinythresh)
                bad <- badvalues(probs) 
                badrow <- matrowany(bad) | really(dodgy)
                if(any(badrow)) {
+                 warning(paste("Numerical underflow detected:",
+                               "sigma is probably too small"),
+                         call.=FALSE)
+                 uhoh <- unique(c(uhoh, "underflow"))
                  ## apply l'Hopital's rule
                  typenn <- imarks[nnwhich(X)]
                  probs[badrow, ] <- (typenn == col(result))[badrow, ]
@@ -427,6 +445,7 @@ relrisk.ppp <- local({
     }
     attr(result, "sigma") <- sigma
     attr(result, "varcov") <- varcov
+    if(length(uhoh)) attr(result, "warnings") <- uhoh
     return(result)
   }
 

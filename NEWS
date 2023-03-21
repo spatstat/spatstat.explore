@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.1-0.008
+        CHANGES IN spatstat.explore VERSION 3.1-0.009
 
 OVERVIEW
 
@@ -40,6 +40,9 @@ SIGNIFICANT USER-VISIBLE CHANGES
 
     o eval.fasp
     Automatically-generated labels have been improved.
+
+    o relrisk.ppp
+    Issues a warning if numerical underflow is detected.
     
 BUG FIXES
 
