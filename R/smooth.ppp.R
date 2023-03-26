@@ -3,7 +3,7 @@
 #
 #  Smooth the marks of a point pattern
 # 
-#  $Revision: 1.80 $  $Date: 2022/05/21 08:53:38 $
+#  $Revision: 1.81 $  $Date: 2023/03/26 11:07:43 $
 #
 
 Smooth <- function(X, ...) {
@@ -16,44 +16,68 @@ Smooth.solist <- function(X, ...) {
 
 Smooth.ppp <- function(X, sigma=NULL, ...,
                        weights=rep(1, npoints(X)), at="pixels",
+                       leaveoneout=TRUE,
                        adjust=1, varcov=NULL, 
                        edge=TRUE, diggle=FALSE, 
                        kernel="gaussian",
                        scalekernel=is.character(kernel),
+                       se=FALSE,
+                       loctype=c("random", "fixed"),
+                       wtype=c("multiplicity", "importance"),
                        geometric=FALSE) {
   verifyclass(X, "ppp")
   if(!is.marked(X, dfok=TRUE, na.action="fatal"))
     stop("X should be a marked point pattern", call.=FALSE)
+  nX <- npoints(X)
   X <- coerce.marks.numeric(X)
-  if(!all(is.finite(as.matrix(marks(X)))))
+  marx <- marks(X)
+  if(!all(is.finite(as.matrix(marx))))
     stop("Some mark values are Inf, NaN or NA", call.=FALSE)
+  univariate <- is.null(dim(marx))
+
+  ## options
   at <- pickoption("output location type", at,
                    c(pixels="pixels",
                      points="points"))
+  loctype <- match.arg(loctype)
+  wtype <- match.arg(wtype)
+
+  if(se && loctype == "random")
+    stop("Standard errors are not yet implemented for loctype='random'")
+  
   ## trivial case
-  if(npoints(X) == 0) {
+  if(nX == 0) {
     cn <- colnames(marks(X))
     nc <- length(cn)
     switch(at,
            points = {
-             result <- if(nc == 0) numeric(0) else
-             matrix(, 0, nc, dimnames=list(NULL, cn))
+             Estimate <- if(univariate) numeric(0) else
+                       matrix(, 0, nc, dimnames=list(NULL, cn))
+             result <- if(!se) Estimate else
+                       cbind(estimate=Estimate, SE=Estimate)
            },
            pixels = {
-             result <- as.im(NA_real_, Window(X))
-             if(nc) {
-               result <- as.solist(rep(list(result), nc))
-               names(result) <- cn
+             Estimate <- as.im(NA_real_, Window(X))
+             if(!univariate) {
+               Estimate <- as.solist(rep(list(Estimate), nc))
+               names(Estimate) <- cn
              }
-           })
+             result <- if(!se) {
+                         Estimate
+                       } else if(univariate) {
+                         solist(estimate=Estimate, SE=Estimate)
+                       } else {
+                         list(estimate=Estimate, SE=Estimate)
+                       }
+             })
     return(result)
   }
 
   ## ensure weights are numeric
-  if(weightsgiven <- !missing(weights) && !is.null(weights)) {
+  if(weighted <- !missing(weights) && !is.null(weights)) {
     pa <- parent.frame()
     weights <- pointweights(X, weights=weights, parent=pa)
-    weightsgiven <- !is.null(weights)
+    weighted <- !is.null(weights)
   } else weights <- NULL
 
   ## geometric mean smoothing
@@ -61,6 +85,7 @@ Smooth.ppp <- function(X, sigma=NULL, ...,
     return(ExpSmoothLog(X, sigma=sigma, ..., at=at,
                         adjust=adjust, varcov=varcov,
                         kernel=kernel, scalekernel=scalekernel,
+                        se=se, loctype=loctype, wtype=wtype,
                         weights=weights, edge=edge, diggle=diggle))
 
   ## determine smoothing parameters
@@ -74,39 +99,76 @@ Smooth.ppp <- function(X, sigma=NULL, ...,
     adjust <- 1
   } 
   
-  ## infinite bandwidth
+  ## ............ infinite bandwidth ...............................
   if(bandwidth.is.infinite(sigma)) {
     #' uniform estimate
-    nX <- npoints(X)
-    if(is.null(weights)) weights <- rep(1, nX)
-    marx <- marks(X)
-    single <- is.null(dim(marx))
+    if(!weighted) weights <- rep(1, nX)
     wtmark <- weights * marx 
     totwt <- sum(weights)
-    totwtmark <- if(single) sum(wtmark) else colSums(wtmark)
+    totwtmark <- if(univariate) sum(wtmark) else colSums(wtmark)
     W <- Window(X)
     switch(at,
            pixels = {
-             result <- solapply(totwtmark/totwt, as.im, W=W, ...)
-             names(result) <- colnames(marx)
-             if(single) result <- result[[1L]]
+             Estimate <- solapply(totwtmark/totwt, as.im, W=W, ...)
+             names(Estimate) <- colnames(marx)
+             if(univariate) Estimate <- Estimate[[1L]]
            },
            points = {
              denominator <- rep(totwt, nX)
              numerator <- rep(totwtmark, each=nX)
-             if(!single) numerator <- matrix(numerator, nrow=nX)
-             leaveoneout <- resolve.1.default(list(leaveoneout=TRUE), list(...))
+             if(!univariate) numerator <- matrix(numerator, nrow=nX)
              if(leaveoneout) {
                numerator <- numerator - wtmark
                denominator <- denominator - weights
              }
-             result <- numerator/denominator
-             if(!single)
-               colnames(result) <- colnames(marx)
+             Estimate <- numerator/denominator
+             if(!univariate)
+               colnames(Estimate) <- colnames(marx)
            })
+    if(!se) {
+      result <- Estimate
+    } else {
+      ## calculate standard error (constant value)
+      if(univariate) {
+        V <- if(!weighted) var(marx) else
+             switch(wtype,
+                    multiplicity = weighted.var(marx, weights),
+                    importance = var(marx * weights))
+        SE <- sqrt(V) # single value
+      } else {
+        V <- if(!weighted) sapply(marx, var) else
+             switch(wtype,
+                    multiplicity = sapply(marx, weighted.var, wt=weights),
+                    importance = sapply(marx * weights, var))
+        SE <- sqrt(V) # vector
+      }
+      ## replicate constant value
+      switch(at,
+             pixels = {
+               if(univariate) {
+                 SE <- as.im(SE, W=W, ...) # constant image
+                 result <- solist(estimate=Estimate, SE=SE)
+               } else {
+                 SE <- solapply(SE, as.im, ...) # list of images
+                 result <- list(estimate=Estimate, SE=SE)
+               }
+             },
+             points = {
+               if(univariate) {
+                 SE <- rep(SE, nX)
+                 result <- cbind(estimate=Estimate, SE=SE)
+               } else {
+                 SE <- matrix(SE[col(marx)], nrow=nX, ncol=ncol(marx))
+                 colnames(SE) <- colnames(marx)
+                 result <- cbind(estimate=Estimate, SE=SE)
+               }
+             })
+    }
     return(result)
   }
 
+  ## .................. finite bandwidth .............................
+  
   ## Diggle's edge correction?
   if(diggle && !edge) warning("Option diggle=TRUE overridden by edge=FALSE")
   diggle <- diggle && edge
@@ -115,39 +177,119 @@ Smooth.ppp <- function(X, sigma=NULL, ...,
   cutoff <- cutoff2Dkernel(kernel, sigma=sigma, varcov=varcov,
                            scalekernel=scalekernel, adjust=adjust, ...,
                            fatal=TRUE)
-  ## 
+  
+  ## ...................  bandwidth close to zero .....................
   if(cutoff < minnndist(X)) {
     # very small bandwidth
-    leaveoneout <- resolve.1.default("leaveoneout",
-                                     list(...), list(leaveoneout=TRUE))
     if(!leaveoneout && at=="points") {
       warning(paste("Bandwidth is close to zero:",
                     "original values returned"))
-      Y <- marks(X)
+      Estimate <- marks(X)
     } else {
       warning(paste("Bandwidth is close to zero:",
                     "nearest-neighbour interpolation performed"))
-      Y <- nnmark(X, ..., k=1, at=at)
+      Estimate <- nnmark(X, ..., k=1, at=at)
     }
-    return(Y)
+    if(!se) {
+      result <- Estimate
+    } else {
+      SE <- 0 * Estimate
+      switch(at,
+             pixels = {
+               if(univariate) {
+                 result <- solist(estimate=Estimate, SE=SE)
+               } else {
+                 result <- list(estimate=Estimate, SE=SE)
+               }
+             },
+             points = {
+               result <- cbind(estimate=Estimate, SE=SE)
+             })
+    }
+    return(result)
   }
 
+  ## ................... bandwidth >> 0 .........................
+
+  
+  if(se) {
+    ## ................... STANDARD ERROR CALCULATION ..............
+    ## This has to be done now because the subsequent code
+    ## fiddles with the weights.
+    Estimate <- Smooth(X, sigma=sigma, varcov=varcov,
+                       weights=weights,
+                       kernel=kernel, scalekernel=scalekernel,
+                       edge=edge, diggle=diggle,
+                       at=at, leaveoneout=leaveoneout, ...)
+    ## Leave-one-out deviation
+    dev <- marks(X) - Smooth(X, sigma=sigma, ...,
+                             weights=weights, edge=edge, diggle=diggle,
+                             at="points", leaveoneout=TRUE)
+    ## calculate variance of numerator using leave-one-out estimates
+    dataweight <- dev^2
+    if(weighted)
+      dataweight <- dataweight * switch(wtype,
+                                        importance=weights^2,
+                                        multiplicity=weights)
+    if(edge && diggle) {
+      ## Jones-Diggle correction e(x_i)
+      edgeim <- second.moment.calc(X, sigma, what="edge", ...,
+                                   varcov=varcov)
+      edgeX <- safelookup(edgeim, X, warn=FALSE)
+      invmassX <- 1/edgeX
+      invmassX[!is.finite(invmassX)] <- 0
+      ## adjust data weights
+      dataweight <- dataweight * invmassX^2
+    }
+
+    ## variance of numerator
+    Vnum <- density(unmark(X), sigma=sigma, kerpow=2,
+                    weights=dataweight,
+                    at=at, leaveoneout=leaveoneout,
+                    edge=FALSE, diggle=FALSE, # sic
+                    positive=TRUE)
+
+    ## rescale by denominator^2
+    Den <- density(unmark(X), sigma=sigma,
+                   weights=weights,
+                   edge=edge && diggle, diggle=diggle, # sic
+                   at=at, leaveoneout=leaveoneout, positive=TRUE)
+    
+    Vest <- if(at == "points") Vnum/Den^2 else imagelistOp(Vnum, Den^2, "/")
+                     
+    SE <- sqrt(Vest)
+  
+    switch(at,
+           points = {
+             result <- cbind(estimate=Estimate, SE=SE)
+           },
+           pixels = {
+             result <- list(estimate=Estimate, SE=SE)
+             if(univariate) result <- as.solist(result)
+           })
+
+    return(result)
+  }
+
+  ##  ------------------------------------------------------------
+  ##  >>>>>>>>>>>. MAIN CALCULATION OF ESTIMATE <<<<<<<<<<<<<<<<<<
+  ##  ------------------------------------------------------------
+  
   if(diggle) {
     ## absorb Diggle edge correction into weights vector
     edg <- second.moment.calc(X, sigma, what="edge", ...,
                               varcov=varcov, adjust=adjust,
                               kernel=kernel, scalekernel=scalekernel)
     ei <- safelookup(edg, X, warn=FALSE)
-    weights <- if(weightsgiven) weights/ei else 1/ei
+    weights <- if(weighted) weights/ei else 1/ei
     weights[!is.finite(weights)] <- 0
-    weightsgiven <- TRUE
+    weighted <- TRUE
   }
   ## rescale weights to avoid numerical gremlins
-  if(weightsgiven && ((mw <- median(abs(weights))) > 0))
+  if(weighted && ((mw <- median(abs(weights))) > 0))
     weights <- weights/mw
 
   ## calculate...
-  marx <- marks(X)
   uhoh <- NULL
   if(!is.data.frame(marx)) {
     # ........ vector of marks ...................
@@ -174,6 +316,7 @@ Smooth.ppp <- function(X, sigma=NULL, ...,
                          resolve.defaults(list(x=quote(X),
                                                values=quote(values), 
 					       weights=quote(weights),
+                                               leaveoneout=leaveoneout,
                                                sigma=sigma, varcov=varcov,
                                                kernel=kernel,
                                                scalekernel=scalekernel,
@@ -181,7 +324,7 @@ Smooth.ppp <- function(X, sigma=NULL, ...,
                                           list(...)))
              },
              pixels={
-               values.weights <- if(weightsgiven) values * weights else values
+               values.weights <- if(weighted) values * weights else values
                dont.complain.about(values.weights)
                numerator <-
                  do.call(density.ppp,
@@ -246,6 +389,7 @@ Smooth.ppp <- function(X, sigma=NULL, ...,
         do.call(density.ppp,
                 resolve.defaults(list(x=quote(X),
                                       at=at,
+                                      leaveoneout=leaveoneout,
                                       weights = quote(weights),
                                       sigma=sigma, varcov=varcov,
                                       kernel=kernel,
@@ -253,12 +397,13 @@ Smooth.ppp <- function(X, sigma=NULL, ...,
                                       edge=FALSE),
                                  list(...)))
       ## compute numerator for each column of marks
-      marx.weights <- if(weightsgiven) marx * weights else marx
+      marx.weights <- if(weighted) marx * weights else marx
       dont.complain.about(marx.weights)
       numerators <-
         do.call(density.ppp,
                 resolve.defaults(list(x=quote(X),
                                       at=at,
+                                      leaveoneout=leaveoneout,
                                       weights = quote(marx.weights),
                                       sigma=sigma, varcov=varcov,
                                       kernel=kernel,
@@ -769,15 +914,15 @@ smoothcrossEngine <- function(Xdata, Xquery, values, sigma, ...,
   if(bandwidth.is.infinite(sigma)) {
     #' uniform estimate
     if(is.null(weights)) weights <- rep(1, ndata)
-    single <- is.null(dim(values))
+    univariate <- is.null(dim(values))
     wtval <- weights * values 
     totwt <- sum(weights)
-    totwtval <- if(single) sum(wtval) else colSums(wtval)
+    totwtval <- if(univariate) sum(wtval) else colSums(wtval)
     denominator <- rep(totwt, nquery)
     numerator <- rep(totwtval, each=nquery)
-    if(!single) numerator <- matrix(numerator, nrow=nquery)
+    if(!univariate) numerator <- matrix(numerator, nrow=nquery)
     result <- numerator/denominator
-    if(!single)
+    if(!univariate)
       colnames(result) <- colnames(values)
     return(result)
   }
@@ -990,7 +1135,10 @@ smoothcrossEngine <- function(Xdata, Xquery, values, sigma, ...,
   return(result)
 }
 
-ExpSmoothLog <- function(X, ..., at=c("pixels", "points"), weights=NULL) {
+ExpSmoothLog <- function(X, ..., at=c("pixels", "points"), weights=NULL,
+                         se=FALSE) {
+  if(se)
+    stop("Standard errors are not yet supported when geometric=TRUE")
   verifyclass(X, "ppp")
   at <- match.arg(at)
   if(!is.null(weights)) 

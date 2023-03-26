@@ -12,11 +12,15 @@
 \method{Smooth}{ppp}(X, sigma=NULL,
                      ...,
                      weights = rep(1, npoints(X)),
-                     at="pixels",
-                     adjust=1, varcov=NULL, 
-                     edge=TRUE, diggle=FALSE,
-                     kernel="gaussian", scalekernel=is.character(kernel),
-                     geometric=FALSE)
+                     at = "pixels", leaveoneout=TRUE, 
+                     adjust = 1, varcov = NULL, 
+                     edge = TRUE, diggle = FALSE,
+                     kernel = "gaussian",
+                     scalekernel = is.character(kernel),
+                     se = FALSE,
+                     loctype = c("random", "fixed"),
+                     wtype = c("multiplicity", "importance"),
+                     geometric = FALSE)
 
 markmean(X, ...)
 
@@ -46,6 +50,10 @@ markvar(X, sigma=NULL, ..., weights=NULL, varcov=NULL)
     at a grid of pixel locations (\code{at="pixels"}) or
     only at the points of \code{X} (\code{at="points"}).
   }
+  \item{leaveoneout}{
+    Logical value indicating whether to compute a leave-one-out
+    estimator. Applicable only when \code{at="points"}.
+  }
   \item{edge,diggle}{
     Arguments passed to \code{\link{density.ppp}} to
     determine the edge correction.
@@ -74,6 +82,20 @@ markvar(X, sigma=NULL, ..., weights=NULL, varcov=NULL)
     If \code{scalekernel=FALSE}, then \code{sigma} and \code{varcov}
     will be ignored: this is the default behaviour when \code{kernel} is a
     function or a pixel image.
+  }
+  \item{se}{
+    Logical value specifying whether to calculate standard errors.
+    This calculation is experimental.
+  }
+  \item{loctype}{
+    Character string (partially matched) specifying whether the
+    point locations are assumed to be fixed or random, in the
+    calculation of standard error. Experimental.
+  }
+  \item{wtype}{
+    Character string (partially matched) specifying whether the
+    weights should be interpreted as multiplicities or as importance
+    weights, in the calculation of standard error. Experimental.
   }
   \item{geometric}{
     Logical value indicating whether to perform geometric mean
