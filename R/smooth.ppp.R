@@ -3,7 +3,7 @@
 #
 #  Smooth the marks of a point pattern
 # 
-#  $Revision: 1.84 $  $Date: 2023/03/31 03:30:44 $
+#  $Revision: 1.85 $  $Date: 2023/03/31 06:42:53 $
 #
 
 Smooth <- function(X, ...) {
@@ -283,6 +283,8 @@ Smooth.ppp <- function(X, sigma=NULL, ...,
              dev <- marks(X) - Smooth(X, sigma=sigma, ...,
                                       weights=weights, edge=edge, diggle=diggle,
                                       at="points", leaveoneout=TRUE)
+             if(!univariate)
+               dev <- asNumericMatrix(as.data.frame(dev))
              ## calculate variance of numerator using leave-one-out estimates
              dataweight <- dev^2
              if(weighted)
@@ -298,6 +300,9 @@ Smooth.ppp <- function(X, sigma=NULL, ...,
                              at=at, leaveoneout=leaveoneout,
                              edge=FALSE, diggle=FALSE, # sic
                              positive=TRUE)
+             
+             if(at == "points" && !univariate)
+               Vnum <- asNumericMatrix(as.data.frame(Vnum))
     
              ## rescale by denominator^2
              Den <- density(unmark(X), sigma=sigma,

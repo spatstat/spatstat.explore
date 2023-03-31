@@ -314,8 +314,18 @@ local({
     stroke(kernel=g, cutoff=30, FUN=FALSE)
     stroke(kernel=g, cutoff=30, scalekernel=TRUE, sigma=1, FUN=FALSE)
   }
+  if(FULLTEST) {
+    ## standard errors - single column of marks
+    stroke(sigma=5, se=TRUE)
+    stroke(sigma=5, se=TRUE, loctype="f")
+    w <- runif(npoints(longleaf))
+    stroke(sigma=5, se=TRUE, weights=w, loctype="r", wtype="i")
+    stroke(sigma=5, se=TRUE, weights=w, loctype="r", wtype="m")
+    stroke(sigma=5, se=TRUE, weights=w, loctype="f", wtype="i")
+    stroke(sigma=5, se=TRUE, weights=w, loctype="f", wtype="m")
+  }
   
-  markmean(longleaf, 9)
+  niets <- markmean(longleaf, 9)
   
   strike <- function(..., Y=finpines) {
     Z <- Smooth(Y, ..., at="pixels")
@@ -344,6 +354,16 @@ local({
     flatfin <- finpines %mark% data.frame(a=rep(1, npoints(finpines)), b=2)
     strike(1.5, Y=flatfin)
     strike(1.5, Y=flatfin, geometric=TRUE)
+  }
+  if(FULLTEST) {
+    ## standard errors - multivariate marks
+    strike(sigma=1.5, se=TRUE)
+    strike(sigma=1.5, se=TRUE, loctype="f")
+    w <- runif(npoints(finpines))
+    strike(sigma=1.5, se=TRUE, weights=w, loctype="r", wtype="i")
+    strike(sigma=1.5, se=TRUE, weights=w, loctype="r", wtype="m")
+    strike(sigma=1.5, se=TRUE, weights=w, loctype="f", wtype="i")
+    strike(sigma=1.5, se=TRUE, weights=w, loctype="f", wtype="m")
   }
   opx <- spatstat.options(densityTransform=FALSE)
   if(ALWAYS) {
