@@ -230,7 +230,7 @@ densitycrossEngine(Xdata, Xquery, sigma, \dots,
                     weights, edge, varcov,
                     diggle, sorted, cutoff)
 densitypointsEngine(x, sigma, \dots,
-                    kernel, scalekernel,
+                    kernel, scalekernel, kerpow,
                     weights, edge, varcov,
                     leaveoneout, diggle, sorted, spill, cutoff,
                     debug)

@@ -3,7 +3,7 @@
 #
 #  Method for 'density' for point patterns
 #
-#  $Revision: 1.126 $    $Date: 2023/03/16 05:24:31 $
+#  $Revision: 1.128 $    $Date: 2023/03/31 03:30:24 $
 #
 
 # ksmooth.ppp <- function(x, sigma, ..., edge=TRUE) {
@@ -323,6 +323,7 @@ density.ppp
 densitypointsEngine <- function(x, sigma=NULL, ...,
                                 kernel="gaussian", 
                                 scalekernel=is.character(kernel),
+                                kerpow = 1,
                                 weights=NULL, edge=TRUE, varcov=NULL,
                                 leaveoneout=TRUE, diggle=FALSE,
                                 sorted=FALSE, spill=FALSE, cutoff=NULL,
@@ -333,6 +334,8 @@ densitypointsEngine <- function(x, sigma=NULL, ...,
   if(is.character(kernel)) kernel <- match2DkernelName(kernel)
   isgauss <- identical(kernel, "gaussian")
 
+  nx <- npoints(x)
+  
   if(isgauss) {
     ## constant factor in Gaussian density
     if(is.null(varcov)) {
@@ -350,7 +353,6 @@ densitypointsEngine <- function(x, sigma=NULL, ...,
   ## infinite bandwidth
   if(bandwidth.is.infinite(sigma)) {
     #' uniform estimate
-    nx <- npoints(x)
     single <- is.null(dim(weights))
     totwt <- if(is.null(weights)) nx else
              if(single) sum(weights) else colSums(weights)
@@ -378,7 +380,7 @@ densitypointsEngine <- function(x, sigma=NULL, ...,
   if(debug)
     cat(paste("cutoff=", cutoff, "\n"))
 
-  if(leaveoneout && npoints(x) > 1) {
+  if(leaveoneout && nx > 1) {
     ## ensure each point has its closest neighbours within the cutoff
     nndmax <- maxnndist(x)
     cutoff <- max(2 * nndmax, cutoff)
@@ -396,6 +398,8 @@ densitypointsEngine <- function(x, sigma=NULL, ...,
   } else {
     k <- 1L
     stopifnot(length(weights) == npoints(x) || length(weights) == 1L)
+    if(length(weights) == 1L)
+      weights <- rep(weights, nx)
   }
   # evaluate edge correction weights at points 
   if(edge) {
@@ -431,6 +435,7 @@ densitypointsEngine <- function(x, sigma=NULL, ...,
   }
 
   if(isgauss &&
+     kerpow == 1 &&
      spatstat.options("densityTransform") && spatstat.options("densityC")) {
     ## .................. experimental C code .....................
     if(debug)
@@ -496,7 +501,7 @@ densitypointsEngine <- function(x, sigma=NULL, ...,
       }
       result <- result * gaussconst
     }
-  } else if(isgauss && spatstat.options("densityC")) {
+  } else if(isgauss && (kerpow == 1) && spatstat.options("densityC")) {
     # .................. C code ...........................
     if(debug)
       cat('Using standard code.\n')
@@ -621,6 +626,9 @@ densitypointsEngine <- function(x, sigma=NULL, ...,
                                   sigma=sigma, varcov=varcov,
                                   scalekernel=scalekernel, ...)
     }
+    ## raise kernel density value to a power (for variance calculations etc)
+    if(kerpow != 1)
+      contrib <- contrib^kerpow
     ## sum (weighted) contributions
     ## query point i, data point j
     ifac <- factor(i, levels=1:npts)
@@ -646,6 +654,10 @@ densitypointsEngine <- function(x, sigma=NULL, ...,
       self <- evaluate2Dkernel(kernel, 0, 0, sigma=sigma, varcov=varcov,
                                scalekernel=scalekernel, ...)
     }
+    ## raise kernel density value to a power (for variance calculations etc)
+    if(kerpow != 1)
+      self <- self^kerpow
+    ## weighted
     if(!is.null(weights))
       self <- self * weights
     result <- result + self
@@ -692,6 +704,7 @@ densitypointsEngine <- function(x, sigma=NULL, ...,
   # tack on bandwidth
   attr(result, "sigma") <- sigma
   attr(result, "varcov") <- varcov
+  attr(result, "kerpow") <- kerpow
   # 
   return(result)
 }

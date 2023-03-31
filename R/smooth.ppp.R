@@ -3,7 +3,7 @@
 #
 #  Smooth the marks of a point pattern
 # 
-#  $Revision: 1.81 $  $Date: 2023/03/26 11:07:43 $
+#  $Revision: 1.84 $  $Date: 2023/03/31 03:30:44 $
 #
 
 Smooth <- function(X, ...) {
@@ -42,9 +42,6 @@ Smooth.ppp <- function(X, sigma=NULL, ...,
   loctype <- match.arg(loctype)
   wtype <- match.arg(wtype)
 
-  if(se && loctype == "random")
-    stop("Standard errors are not yet implemented for loctype='random'")
-  
   ## trivial case
   if(nX == 0) {
     cn <- colnames(marks(X))
@@ -131,15 +128,34 @@ Smooth.ppp <- function(X, sigma=NULL, ...,
       ## calculate standard error (constant value)
       if(univariate) {
         V <- if(!weighted) var(marx) else
-             switch(wtype,
-                    multiplicity = weighted.var(marx, weights),
-                    importance = var(marx * weights))
+             switch(loctype,
+                    fixed = {
+                      switch(wtype,
+                             multiplicity = weighted.var(marx, weights),
+                             importance = var(marx * weights))
+                    },
+                    random = {
+                      switch(wtype,
+                             multiplicity = VarOfWtdMean(marx, weights),
+                             importance = VarOfWtdMean(marx, weights^2))
+                    })
         SE <- sqrt(V) # single value
       } else {
         V <- if(!weighted) sapply(marx, var) else
-             switch(wtype,
-                    multiplicity = sapply(marx, weighted.var, wt=weights),
-                    importance = sapply(marx * weights, var))
+             switch(loctype,
+                    fixed = {
+                      switch(wtype,
+                             multiplicity = sapply(marx, weighted.var,
+                                                   wt=weights),
+                             importance = sapply(marx * weights, var))
+                    },
+                    random = {
+                      switch(wtype,
+                             multiplicity = sapply(marx, VarOfWtdMean,
+                                                   weights=weights),
+                             importance = sapply(marx, VarOfWtdMean,
+                                                 weights=weights^2))
+                    })
         SE <- sqrt(V) # vector
       }
       ## replicate constant value
@@ -211,66 +227,91 @@ Smooth.ppp <- function(X, sigma=NULL, ...,
 
   ## ................... bandwidth >> 0 .........................
 
-  
   if(se) {
     ## ................... STANDARD ERROR CALCULATION ..............
     ## This has to be done now because the subsequent code
     ## fiddles with the weights.
-    Estimate <- Smooth(X, sigma=sigma, varcov=varcov,
-                       weights=weights,
-                       kernel=kernel, scalekernel=scalekernel,
-                       edge=edge, diggle=diggle,
-                       at=at, leaveoneout=leaveoneout, ...)
-    ## Leave-one-out deviation
-    dev <- marks(X) - Smooth(X, sigma=sigma, ...,
-                             weights=weights, edge=edge, diggle=diggle,
-                             at="points", leaveoneout=TRUE)
-    ## calculate variance of numerator using leave-one-out estimates
-    dataweight <- dev^2
-    if(weighted)
-      dataweight <- dataweight * switch(wtype,
-                                        importance=weights^2,
-                                        multiplicity=weights)
-    if(edge && diggle) {
-      ## Jones-Diggle correction e(x_i)
+    weightspower <- if(!weighted) 1 else switch(wtype,
+                                                importance = weights^2,
+                                                multiplicity = weights)
+    if(diggle) {
+      ## Jones-Diggle correction weights e(x_i)
       edgeim <- second.moment.calc(X, sigma, what="edge", ...,
                                    varcov=varcov)
       edgeX <- safelookup(edgeim, X, warn=FALSE)
       invmassX <- 1/edgeX
       invmassX[!is.finite(invmassX)] <- 0
-      ## adjust data weights
-      dataweight <- dataweight * invmassX^2
+    } else {
+      invmassX <- 1
     }
-
-    ## variance of numerator
-    Vnum <- density(unmark(X), sigma=sigma, kerpow=2,
-                    weights=dataweight,
-                    at=at, leaveoneout=leaveoneout,
-                    edge=FALSE, diggle=FALSE, # sic
-                    positive=TRUE)
-
-    ## rescale by denominator^2
-    Den <- density(unmark(X), sigma=sigma,
-                   weights=weights,
-                   edge=edge && diggle, diggle=diggle, # sic
-                   at=at, leaveoneout=leaveoneout, positive=TRUE)
-    
-    Vest <- if(at == "points") Vnum/Den^2 else imagelistOp(Vnum, Den^2, "/")
-                     
-    SE <- sqrt(Vest)
-  
-    switch(at,
-           points = {
-             result <- cbind(estimate=Estimate, SE=SE)
+    ## 
+    switch(loctype,
+           random = {
+             denom <- density(X, sigma=sigma, ...,
+                              weights=weights,
+                              edge=edge, diggle=diggle,
+                              at=at, leaveoneout=leaveoneout)
+             numer <- density(X, sigma=sigma, ...,
+                              weights=if(weighted) weights * marx else marx,
+                              edge=edge, diggle=diggle,
+                              at=at, leaveoneout=leaveoneout)
+             varNum <- density(X, sigma=sigma, ..., kerpow=2,
+                               weights=weightspower * marx^2 * invmassX^2,
+                               edge=FALSE, diggle=FALSE,
+                               at=at, leaveoneout=leaveoneout)
+             covND <- density(X, sigma=sigma, ..., kerpow=2,
+                              weights=weightspower * marx * invmassX^2,
+                              edge=FALSE, diggle=FALSE,
+                              at=at, leaveoneout=leaveoneout)
+             varDen <- density(X, sigma=sigma, ..., kerpow=2,
+                               weights=weightspower * invmassX^2,
+                               edge=FALSE, diggle=FALSE,
+                               at=at, leaveoneout=leaveoneout)
+             if(univariate || at == "points") {
+               Vest <- DeltaMethodVarOfRatio(numer, denom,
+                                          varNum, varDen, covND)
+             } else {
+               Vest <- mapply(DeltaMethodVarOfRatio,
+                           num=numer, varnum=varNum, covnumden=covND,
+                           MoreArgs = list(den=denom, varden=varDen),
+                           SIMPLIFY=FALSE)
+               Vest <- as.solist(Vest)
+             }
            },
-           pixels = {
-             result <- list(estimate=Estimate, SE=SE)
-             if(univariate) result <- as.solist(result)
+           fixed = {
+             ## Use leave-one-out deviation
+             dev <- marks(X) - Smooth(X, sigma=sigma, ...,
+                                      weights=weights, edge=edge, diggle=diggle,
+                                      at="points", leaveoneout=TRUE)
+             ## calculate variance of numerator using leave-one-out estimates
+             dataweight <- dev^2
+             if(weighted)
+               dataweight <- dataweight * switch(wtype,
+                                                 importance=weights^2,
+                                                 multiplicity=weights)
+             if(edge && diggle) 
+               dataweight <- dataweight * invmassX^2
+
+             ## variance of numerator
+             Vnum <- density(unmark(X), sigma=sigma, kerpow=2,
+                             weights=dataweight,
+                             at=at, leaveoneout=leaveoneout,
+                             edge=FALSE, diggle=FALSE, # sic
+                             positive=TRUE)
+    
+             ## rescale by denominator^2
+             Den <- density(unmark(X), sigma=sigma,
+                            weights=weights,
+                            edge=edge && diggle, diggle=diggle, # sic
+                            at=at, leaveoneout=leaveoneout, positive=TRUE)
+    
+             Vest <- if(at == "points") Vnum/Den^2 else
+                            imagelistOp(Vnum, Den^2, "/")
+                     
            })
-
-    return(result)
+    SE <- sqrt(Vest)
   }
-
+  
   ##  ------------------------------------------------------------
   ##  >>>>>>>>>>>. MAIN CALCULATION OF ESTIMATE <<<<<<<<<<<<<<<<<<
   ##  ------------------------------------------------------------
@@ -492,7 +533,18 @@ Smooth.ppp <- function(X, sigma=NULL, ...,
   ## wrap up
   attr(result, "sigma") <- sigma
   attr(result, "varcov") <- varcov
-  if(length(uhoh)) attr(result, "warnings") <- uhoh
+  if(length(uhoh)) attr(result, "warnings") <- uhoh 
+  ## tack on standard errors?
+  if(se) {
+    result <- list(estimate=result, SE=SE)
+    switch(at,
+           points = {
+             result <- do.call(cbind, result)
+           },
+           pixels = {
+             if(univariate) result <- as.solist(result)
+           })
+  }
   return(result)
 }
 
@@ -583,7 +635,7 @@ smoothpointsEngine <- function(x, values, sigma, ...,
      spatstat.options("densityC")) {
     ## .................. experimental C code .....................
     if(debug)
-      cat('Using experimental code!\n')
+      cat('Transforming to standard coordinates (densityTransform=TRUE).\n')
     npts <- npoints(x)
     result <- numeric(npts)
     ## transform to standard coordinates
@@ -643,7 +695,7 @@ smoothpointsEngine <- function(x, values, sigma, ...,
   } else if(isgauss && spatstat.options("densityC")) {
     # .................. C code ...........................
     if(debug)
-      cat('Using standard code.\n')
+      cat('Using standard code (densityC=TRUE).\n')
     npts <- npoints(x)
     result <- numeric(npts)
     # sort into increasing order of x coordinate (required by C code)
@@ -726,6 +778,8 @@ smoothpointsEngine <- function(x, values, sigma, ...,
   } else {
     #' Either a non-Gaussian kernel or using older, partly interpreted code
     #' compute weighted densities
+    if(debug)
+      cat('Using partly-interpreted code.\n')
     if(is.null(weights)) {
       # weights are implicitly equal to 1
       numerator <- do.call(density.ppp,
@@ -1185,4 +1239,27 @@ ExpSmoothLog <- function(X, ..., at=c("pixels", "points"), weights=NULL,
            })
   }
   return(exp(Z))
+}
+
+VarOfWtdMean <- function(marx, weights) {
+  ## weighted average
+  totwt     <- sum(weights)
+  totwtmark <- sum(weights * marx)
+  Estimate  <- totwtmark/totwt
+  ## delta method approximation to variance of weighted average
+  varnum    <- sum(weights * marx^2)
+  varden    <- totwt
+  covnumden <- totwtmark
+  V <- DeltaMethodVarOfRatio(totwtmark, totwt, varnum, varden, covnumden)
+  return(V)
+}
+
+DeltaMethodVarOfRatio <- function(num, den, varnum, varden, covnumden) {
+  Estimate <- num/den
+  V <- Estimate^2 * (
+    varnum/num^2
+    - 2 * covnumden/(num * den)
+    + varden/den^2
+  )
+  return(V)
 }
