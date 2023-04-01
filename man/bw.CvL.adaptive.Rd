@@ -115,11 +115,20 @@ bw.CvL.adaptive(X, \dots,
   using the Cronie-Van Lieshout criterion, use \code{\link{bw.CvL}}.
 }
 \examples{
-  h0 <- bw.CvL.adaptive(redwood3)
+  online <- interactive()
+  if(online) {
+    h0 <- bw.CvL.adaptive(redwood3)
+  } else {
+    ## faster computation for package checker
+    h0 <- bw.CvL.adaptive(redwood3, nh=8,
+                          hrange=c(1/4, 4) * bw.diggle(redwood3))
+  }
   plot(h0)
   plot(as.fv(h0), CvL ~ h)
-  Z <- densityAdaptiveKernel(redwood3, h0)
-  plot(Z)
+  if(online) {
+    Z <- densityAdaptiveKernel(redwood3, h0)
+    plot(Z)
+  }
 }
 \keyword{spatial}
 \keyword{methods}
