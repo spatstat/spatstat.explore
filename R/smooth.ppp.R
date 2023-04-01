@@ -943,7 +943,9 @@ smoothcrossEngine <- function(Xdata, Xquery, values, sigma, ...,
   validate2Dkernel(kernel)
   if(is.character(kernel)) kernel <- match2DkernelName(kernel)
   isgauss <- identical(kernel, "gaussian") && scalekernel
-
+  if(isTRUE(list(...)$se))
+    warning("Standard errors are not yet supported", call.=FALSE)
+  
   if(!is.null(dim(weights)))
     stop("weights must be a vector")
 

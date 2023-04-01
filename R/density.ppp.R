@@ -784,6 +784,8 @@ densitycrossEngine <- function(Xdata, Xquery, sigma=NULL, ...,
   validate2Dkernel(kernel)
   if(is.character(kernel)) kernel <- match2DkernelName(kernel)
   isgauss <- identical(kernel, "gaussian") && scalekernel
+  if(isTRUE(list(...)$se))
+    warning("Standard errors are not yet supported", call.=FALSE)
 
   if(length(weights) == 0 || (!is.null(dim(weights)) && nrow(weights) == 0))
     weights <- NULL

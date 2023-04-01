@@ -3,7 +3,7 @@
 ##
 ## Exact 'funxy' counterpart of Smooth.ppp
 ##
-##  $Revision: 1.10 $ $Date: 2022/05/23 02:33:06 $
+##  $Revision: 1.11 $ $Date: 2023/04/01 02:25:41 $
 
 
 Smoothfun <- function(X, ...) {
@@ -15,6 +15,9 @@ Smoothfun.ppp <- function(X, sigma=NULL, ...,
   verifyclass(X, "ppp")
   if(!is.marked(X, dfok=TRUE))
     stop("X should be a marked point pattern")
+  if(isTRUE(list(...)$se))
+    warning("Standard errors are not yet supported in Smoothfun.ppp",
+            call.=FALSE)
   ## handle weights now
   weightsgiven <- !missing(weights) && !is.null(weights) 
   if(weightsgiven) {

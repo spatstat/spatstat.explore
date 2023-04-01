@@ -3,7 +3,7 @@
 ##
 ## Exact 'funxy' counterpart of density.ppp
 ##
-##  $Revision: 1.14 $ $Date: 2022/05/23 02:33:06 $
+##  $Revision: 1.15 $ $Date: 2023/04/01 02:25:53 $
 
 
 densityfun <- function(X, ...) {
@@ -13,6 +13,10 @@ densityfun <- function(X, ...) {
 densityfun.ppp <- function(X, sigma=NULL, ...,
                           weights=NULL, edge=TRUE, diggle=FALSE) {
   verifyclass(X, "ppp")
+  ## standard errors are not yet supported in densitycrossEngine
+  if(isTRUE(list(...)$se))
+    warning("Standard errors are not yet supported in densityfun.ppp",
+            call.=FALSE)
   ## handle weights now
   weightsgiven <- !missing(weights) && !is.null(weights) 
   if(weightsgiven) {
