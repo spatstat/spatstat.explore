@@ -3,7 +3,7 @@
 #
 #  Method for 'density' for point patterns
 #
-#  $Revision: 1.128 $    $Date: 2023/03/31 03:30:24 $
+#  $Revision: 1.132 $    $Date: 2023/04/02 00:56:06 $
 #
 
 # ksmooth.ppp <- function(x, sigma, ..., edge=TRUE) {
@@ -435,28 +435,30 @@ densitypointsEngine <- function(x, sigma=NULL, ...,
   }
 
   if(isgauss &&
-     kerpow == 1 &&
      spatstat.options("densityTransform") && spatstat.options("densityC")) {
     ## .................. experimental C code .....................
     if(debug)
-      cat('Using experimental code!\n')
+      cat('Using experimental code G*denspt\n')
     npts <- npoints(x)
     result <- if(k == 1L) numeric(npts) else matrix(, npts, k)
     xx <- x$x
     yy <- x$y
+    gaussconstpow <- gaussconst^kerpow
     ## transform to standard coordinates
     if(is.null(varcov)) {
-      xx <- xx/(sqrt(2) * sigma)
-      yy <- yy/(sqrt(2) * sigma)
+      sigroot2 <- sqrt(2/kerpow) * sigma
+      xx <- xx/sigroot2
+      yy <- yy/sigroot2
     } else {
-      xy <- cbind(xx, yy) %*% matrixsqrt(Sinv/2)
+      xy <- cbind(xx, yy) %*% matrixsqrt(Sinv * (kerpow/2))
       xx <- xy[,1L]
       yy <- xy[,2L]
       sorted <- FALSE
     }
     ## cutoff in standard coordinates
     sd <- sigma %orifnull% sqrt(min(eigen(varcov)$values))
-    cutoff <- cutoff/(sqrt(2) * sd)
+    sdscale <- sqrt(2/kerpow) * sd
+    cutoff <- cutoff/sdscale
     ## sort into increasing order of x coordinate (required by C code)
     if(!sorted) {
       oo <- fave.order(xx)
@@ -472,7 +474,7 @@ densitypointsEngine <- function(x, sigma=NULL, ...,
                result  = as.double(double(npts)),
                PACKAGE="spatstat.explore")
       if(sorted) result <- zz$result else result[oo] <- zz$result
-      result <- result * gaussconst
+      result <- result * gaussconstpow
     } else if(k == 1L) {
       wtsort <- if(sorted) weights else weights[oo]
       zz <- .C(SE_Gwtdenspt,
@@ -484,7 +486,7 @@ densitypointsEngine <- function(x, sigma=NULL, ...,
                result  = as.double(double(npts)),
                PACKAGE="spatstat.explore")
       if(sorted) result <- zz$result else result[oo] <- zz$result 
-      result <- result * gaussconst
+      result <- result * gaussconstpow
     } else {
       ## matrix of weights
       wtsort <- if(sorted) weights else weights[oo, ]
@@ -499,14 +501,17 @@ densitypointsEngine <- function(x, sigma=NULL, ...,
                  PACKAGE="spatstat.explore")
         if(sorted) result[,j] <- zz$result else result[oo,j] <- zz$result
       }
-      result <- result * gaussconst
+      result <- result * gaussconstpow
     }
-  } else if(isgauss && (kerpow == 1) && spatstat.options("densityC")) {
+  } else if(isgauss && (kerpow %in% c(1,2)) && spatstat.options("densityC")) {
     # .................. C code ...........................
     if(debug)
-      cat('Using standard code.\n')
+      cat('Using standard C code *denspt.\n')
     npts <- npoints(x)
     result <- if(k == 1L) numeric(npts) else matrix(, npts, k)
+    squared <- (kerpow == 2)
+    if(squared && debug)
+      cat('Squared kernel.\n')
     # sort into increasing order of x coordinate (required by C code)
     if(sorted) {
       xx <- x$x
@@ -525,6 +530,7 @@ densitypointsEngine <- function(x, sigma=NULL, ...,
                  y       = as.double(yy),
                  rmaxi   = as.double(cutoff),
                  sig     = as.double(sigma),
+                 squared = as.integer(squared),
                  result  = as.double(double(npts)),
                  PACKAGE="spatstat.explore")
         if(sorted) result <- zz$result else result[oo] <- zz$result 
@@ -537,6 +543,7 @@ densitypointsEngine <- function(x, sigma=NULL, ...,
                  rmaxi   = as.double(cutoff),
                  sig     = as.double(sigma),
                  weight  = as.double(wtsort),
+                 squared = as.integer(squared),
                  result  = as.double(double(npts)),
                  PACKAGE="spatstat.explore")
         if(sorted) result <- zz$result else result[oo] <- zz$result 
@@ -551,6 +558,7 @@ densitypointsEngine <- function(x, sigma=NULL, ...,
                    rmaxi   = as.double(cutoff),
                    sig     = as.double(sigma),
                    weight  = as.double(wtsort[,j]),
+                   squared = as.integer(squared),
                    result  = as.double(double(npts)),
                    PACKAGE="spatstat.explore")
           if(sorted) result[,j] <- zz$result else result[oo,j] <- zz$result
@@ -567,6 +575,7 @@ densitypointsEngine <- function(x, sigma=NULL, ...,
                  rmaxi   = as.double(cutoff),
                  detsigma = as.double(detSigma),
                  sinv    = as.double(flatSinv),
+                 squared = as.integer(squared),
                  result  = as.double(double(npts)),
                  PACKAGE="spatstat.explore")
         if(sorted) result <- zz$result else result[oo] <- zz$result 
@@ -581,6 +590,7 @@ densitypointsEngine <- function(x, sigma=NULL, ...,
                  detsigma = as.double(detSigma),
                  sinv    = as.double(flatSinv),
                  weight  = as.double(wtsort),
+                 squared = as.integer(squared),
                  result   = as.double(double(npts)),
                  PACKAGE="spatstat.explore")
         if(sorted) result <- zz$result else result[oo] <- zz$result 
@@ -596,6 +606,7 @@ densitypointsEngine <- function(x, sigma=NULL, ...,
                    detsigma = as.double(detSigma),
                    sinv    = as.double(flatSinv),
                    weight  = as.double(wtsort[,j]),
+                   squared = as.integer(squared),
                    result  = as.double(double(npts)),
                    PACKAGE="spatstat.explore")
           if(sorted) result[,j] <- zz$result else result[oo,j] <- zz$result 
@@ -604,6 +615,8 @@ densitypointsEngine <- function(x, sigma=NULL, ...,
     }
   } else {
     # ..... interpreted code .........................................
+    if(debug)
+      cat('Using interpreted code.\n')
     close <- closepairs(x, cutoff)
     i <- close$i
     j <- close$j
@@ -627,8 +640,13 @@ densitypointsEngine <- function(x, sigma=NULL, ...,
                                   scalekernel=scalekernel, ...)
     }
     ## raise kernel density value to a power (for variance calculations etc)
-    if(kerpow != 1)
+    if(kerpow != 1) {
+      if(debug) {
+        if(kerpow == 2) cat('Squaring the kernel values\n') else
+        splat('Raising kernel values to', ordinal(kerpow), 'power')
+      }
       contrib <- contrib^kerpow
+    }
     ## sum (weighted) contributions
     ## query point i, data point j
     ifac <- factor(i, levels=1:npts)
@@ -780,12 +798,16 @@ densitycrossEngine <- function(Xdata, Xquery, sigma=NULL, ...,
                                scalekernel=is.character(kernel),
                                weights=NULL, edge=TRUE, varcov=NULL,
                                diggle=FALSE,
-                               sorted=FALSE, cutoff=NULL) {
+                               sorted=FALSE, cutoff=NULL,
+                               se=FALSE, kerpow=1) {
   validate2Dkernel(kernel)
   if(is.character(kernel)) kernel <- match2DkernelName(kernel)
   isgauss <- identical(kernel, "gaussian") && scalekernel
-  if(isTRUE(list(...)$se))
+
+  if(se)
     warning("Standard errors are not yet supported", call.=FALSE)
+  if(kerpow != 1)
+    warning("Powers of the kernel are not yet supported", call.=FALSE)
 
   if(length(weights) == 0 || (!is.null(dim(weights)) && nrow(weights) == 0))
     weights <- NULL
@@ -922,6 +944,7 @@ densitycrossEngine <- function(Xdata, Xquery, sigma=NULL, ...,
                  yd      = as.double(yd),
                  rmaxi   = as.double(cutoff),
                  sig     = as.double(sigma),
+                 squared = as.integer(FALSE),
                  result  = as.double(double(nquery)),
                  PACKAGE="spatstat.explore")
         if(sorted) result <- zz$result else result[ooq] <- zz$result 
@@ -937,6 +960,7 @@ densitycrossEngine <- function(Xdata, Xquery, sigma=NULL, ...,
                  wd      = as.double(wtsort),
                  rmaxi   = as.double(cutoff),
                  sig     = as.double(sigma),
+                 squared = as.integer(FALSE),
                  result  = as.double(double(nquery)),
                  PACKAGE="spatstat.explore")
         if(sorted) result <- zz$result else result[ooq] <- zz$result 
@@ -954,6 +978,7 @@ densitycrossEngine <- function(Xdata, Xquery, sigma=NULL, ...,
                    wd      = as.double(wtsort[,j]),
                    rmaxi   = as.double(cutoff),
                    sig     = as.double(sigma),
+                   squared = as.integer(FALSE),
                    result  = as.double(double(nquery)),
                    PACKAGE="spatstat.explore")
           if(sorted) result[,j] <- zz$result else result[ooq,j] <- zz$result
@@ -967,32 +992,34 @@ densitycrossEngine <- function(Xdata, Xquery, sigma=NULL, ...,
       flatSinv <- as.vector(t(Sinv))
       if(is.null(weights)) {
         zz <- .C(SE_acrdenspt,
-                 nquery  = as.integer(nquery),
-                 xq      = as.double(xq),
-                 yq      = as.double(yq),
-                 ndata   = as.integer(ndata),
-                 xd      = as.double(xd),
-                 yd      = as.double(yd),
-                 rmaxi   = as.double(cutoff),
+                 nquery   = as.integer(nquery),
+                 xq       = as.double(xq),
+                 yq       = as.double(yq),
+                 ndata    = as.integer(ndata),
+                 xd       = as.double(xd),
+                 yd       = as.double(yd),
+                 rmaxi    = as.double(cutoff),
                  detsigma = as.double(detSigma),
-                 sinv    = as.double(flatSinv),
-                 result  = as.double(double(nquery)),
+                 sinv     = as.double(flatSinv),
+                 squared  = as.integer(FALSE),
+                 result   = as.double(double(nquery)),
                  PACKAGE="spatstat.explore")
         if(sorted) result <- zz$result else result[ooq] <- zz$result 
       } else if(k == 1L) {
         ## vector of weights
         wtsort <- if(sorted) weights else weights[ood]
         zz <- .C(SE_awtcrdenspt,
-                 nquery  = as.integer(nquery),
-                 xq      = as.double(xq),
-                 yq      = as.double(yq),
-                 ndata   = as.integer(ndata),
-                 xd      = as.double(xd),
-                 yd      = as.double(yd),
-                 wd      = as.double(wtsort),
-                 rmaxi   = as.double(cutoff),
+                 nquery   = as.integer(nquery),
+                 xq       = as.double(xq),
+                 yq       = as.double(yq),
+                 ndata    = as.integer(ndata),
+                 xd       = as.double(xd),
+                 yd       = as.double(yd),
+                 wd       = as.double(wtsort),
+                 rmaxi    = as.double(cutoff),
                  detsigma = as.double(detSigma),
-                 sinv    = as.double(flatSinv),
+                 sinv     = as.double(flatSinv),
+                 squared  = as.integer(FALSE),
                  result   = as.double(double(nquery)),
                  PACKAGE="spatstat.explore")
         if(sorted) result <- zz$result else result[ooq] <- zz$result 
@@ -1001,17 +1028,18 @@ densitycrossEngine <- function(Xdata, Xquery, sigma=NULL, ...,
         wtsort <- if(sorted) weights else weights[ood, ]
         for(j in 1:k) {
           zz <- .C(SE_awtcrdenspt,
-                   nquery  = as.integer(nquery),
-                   xq      = as.double(xq),
-                   yq      = as.double(yq),
-                   ndata   = as.integer(ndata),
-                   xd      = as.double(xd),
-                   yd      = as.double(yd),
-                   wd      = as.double(wtsort[,j]),
-                   rmaxi   = as.double(cutoff),
+                   nquery   = as.integer(nquery),
+                   xq       = as.double(xq),
+                   yq       = as.double(yq),
+                   ndata    = as.integer(ndata),
+                   xd       = as.double(xd),
+                   yd       = as.double(yd),
+                   wd       = as.double(wtsort[,j]),
+                   rmaxi    = as.double(cutoff),
                    detsigma = as.double(detSigma),
-                   sinv    = as.double(flatSinv),
-                   result  = as.double(double(nquery)),
+                   sinv     = as.double(flatSinv),
+                   squared  = as.integer(FALSE),
+                   result   = as.double(double(nquery)),
                    PACKAGE="spatstat.explore")
           if(sorted) result[,j] <- zz$result else result[ooq,j] <- zz$result 
         }

@@ -8,7 +8,7 @@
 
   densptcross.c
 
-  $Revision: 1.5 $     $Date: 2022/10/22 10:09:51 $
+  $Revision: 1.6 $     $Date: 2023/04/02 00:18:44 $
 
   Assumes point patterns are sorted in increasing order of x coordinate
 
@@ -49,23 +49,29 @@ void crdenspt(
      double *xd, double *yd,  /* (x,y) coordinates of data */
      double *rmaxi,           /* maximum distance at which points contribute */
      double *sig,             /* Gaussian sd */
+     int *squared,            /* whether to use the squared kernel */
      /* output */
      double *result           /* vector of computed density values */
 ) {
   STD_DECLARATIONS;
   double resulti, coef;	
-  double sigma, twosig2; 
+  double sigma, a; 
   STD_INITIALISE;
-
-  sigma = *sig;				      
-  twosig2 = 2.0 * sigma * sigma;	
-  coef = 1.0/(TWOPI * sigma * sigma);  
 
   if(n1 == 0 || n2 == 0) 
     return;
 
+  sigma = *sig;				      
+  a = 1.0/(2.0 * sigma * sigma);	
+  coef = 1.0/(TWOPI * sigma * sigma);  
+
+  if(*squared) {
+    coef *= coef;
+    a *= 2.0;
+  }
+  
   CROSSLOOP( { resulti = 0.0; },
-            { resulti += exp(-d2/twosig2); } ,
+            { resulti += exp(-d2 * a); } ,
 	    { result[i] = coef * resulti; })
 
 }
@@ -80,23 +86,29 @@ void wtcrdenspt(
      double *wd,              /* weights of data points */
      double *rmaxi,           /* maximum distance at which points contribute */
      double *sig,             /* Gaussian sd */
+     int *squared,            /* whether to use the squared kernel */
      /* output */
      double *result           /* vector of computed density values */
 ) {
   STD_DECLARATIONS;
   double resulti, coef;	
-  double sigma, twosig2; 
+  double sigma, a; 
   STD_INITIALISE;
-
-  sigma = *sig;				      
-  twosig2 = 2.0 * sigma * sigma;	
-  coef = 1.0/(TWOPI * sigma * sigma);  
 
   if(n1 == 0 || n2 == 0) 
     return;
 
+  sigma = *sig;				      
+  a = 1.0/(2.0 * sigma * sigma);	
+  coef = 1.0/(TWOPI * sigma * sigma);  
+
+  if(*squared) {
+    coef *= coef;
+    a *= 2.0;
+  }
+  
   CROSSLOOP( { resulti = 0.0; },
-	    { resulti += wd[j] * exp(-d2/twosig2); },
+	    { resulti += wd[j] * exp(-d2 * a); },
 	    { result[i] = coef * resulti; } )
 
  }
@@ -112,6 +124,7 @@ void acrdenspt(
      double *rmaxi,            /* maximum distance at which points contribute */
      double *detsigma,         /* determinant of variance matrix */
      double *sinv,             /* inverse variance matrix (2x2, flattened) */
+     int *squared,            /* whether to use the squared kernel */
      /* output */
      double *result            /* vector of computed density values */
 ) {
@@ -119,19 +132,29 @@ void acrdenspt(
   double resulti, coef;	
   double detsig, s11, s12, s21, s22;
   STD_INITIALISE;
-  detsig = *detsigma;
-  coef = 1.0/(TWOPI * sqrt(detsig));
-  s11 = sinv[0];
-  s12 = sinv[1];
-  s21 = sinv[2];
-  s22 = sinv[3];
 
   if(n1 == 0 || n2 == 0) 
     return;
 
+  detsig = *detsigma;
+  coef = 1.0/(TWOPI * sqrt(detsig));
+  
+  if(*squared) {
+    coef *= coef;
+    s11 = sinv[0];
+    s12 = sinv[1];
+    s21 = sinv[2];
+    s22 = sinv[3];
+  } else {
+    s11 = sinv[0]/2.0;
+    s12 = sinv[1]/2.0;
+    s21 = sinv[2]/2.0;
+    s22 = sinv[3]/2.0;
+  }
+
   CROSSLOOP( { resulti = 0.0; },
-	    { resulti += exp(-(dx * (dx * s11 + dy * s12) \
-			       + dy * (dx * s21 + dy * s22))/2.0); },
+	    { resulti += exp(- dx * (dx * s11 + dy * s12) \
+			     + dy * (dx * s21 + dy * s22)); },
 	    { result[i] = coef * resulti; })
 }
 
@@ -146,6 +169,7 @@ void awtcrdenspt(
   double *rmaxi,           /* maximum distance at which points contribute */
   double *detsigma,        /* determinant of variance matrix */
   double *sinv,            /* inverse variance matrix (2x2, flattened) */
+  int *squared,            /* whether to use the squared kernel */
   /* output */
   double *result           /* vector of weighted density values */
 ) {
@@ -153,20 +177,30 @@ void awtcrdenspt(
   double resulti, coef;	
   double detsig, s11, s12, s21, s22;
   STD_INITIALISE;
-  detsig = *detsigma;
-  coef = 1.0/(TWOPI * sqrt(detsig));
-  s11 = sinv[0];
-  s12 = sinv[1];
-  s21 = sinv[2];
-  s22 = sinv[3];
 
   if(n1 == 0 || n2 == 0) 
     return;
 
+  detsig = *detsigma;
+  coef = 1.0/(TWOPI * sqrt(detsig));
+
+  if(*squared) {
+    coef *= coef;
+    s11 = sinv[0];
+    s12 = sinv[1];
+    s21 = sinv[2];
+    s22 = sinv[3];
+  } else {
+    s11 = sinv[0]/2.0;
+    s12 = sinv[1]/2.0;
+    s21 = sinv[2]/2.0;
+    s22 = sinv[3]/2.0;
+  }
+
   CROSSLOOP( { resulti = 0.0; },
 	    { resulti += wd[j] * \
-		exp(-(dx * (dx * s11 + dy * s12)			\
-		      + dy * (dx * s21 + dy * s22))/2.0); },
+		exp(- dx * (dx * s11 + dy * s12)			\
+		    + dy * (dx * s21 + dy * s22)); },
 	    { result[i] = coef * resulti; })
  }
 

@@ -15,19 +15,19 @@
 */
 
 static const R_CMethodDef CEntries[] = {
-    {"acrdenspt",   (DL_FUNC) &acrdenspt,   10},
+    {"acrdenspt",   (DL_FUNC) &acrdenspt,   11},
     {"acrsmoopt",   (DL_FUNC) &acrsmoopt,   10},
-    {"adenspt",     (DL_FUNC) &adenspt,      7},
+    {"adenspt",     (DL_FUNC) &adenspt,      8},
     {"asmoopt",     (DL_FUNC) &asmoopt,      8},
-    {"awtcrdenspt", (DL_FUNC) &awtcrdenspt, 11},
+    {"awtcrdenspt", (DL_FUNC) &awtcrdenspt, 12},
     {"awtcrsmoopt", (DL_FUNC) &awtcrsmoopt, 11},
-    {"awtdenspt",   (DL_FUNC) &awtdenspt,    8},
+    {"awtdenspt",   (DL_FUNC) &awtdenspt,    9},
     {"awtsmoopt",   (DL_FUNC) &awtsmoopt,    9},
     {"Cidw",        (DL_FUNC) &Cidw,        14},
     {"Cidw2",       (DL_FUNC) &Cidw2,       16},
-    {"crdenspt",    (DL_FUNC) &crdenspt,     9},
+    {"crdenspt",    (DL_FUNC) &crdenspt,    10},
     {"crsmoopt",    (DL_FUNC) &crsmoopt,    10},
-    {"denspt",      (DL_FUNC) &denspt,       6},
+    {"denspt",      (DL_FUNC) &denspt,       7},
     {"digberJ",     (DL_FUNC) &digberJ,      6},
     {"Gdenspt",     (DL_FUNC) &Gdenspt,      5},
     {"Gsmoopt",     (DL_FUNC) &Gsmoopt,      7},
@@ -62,9 +62,9 @@ static const R_CMethodDef CEntries[] = {
     {"segdens",     (DL_FUNC) &segdens,     10},
     {"segwdens",    (DL_FUNC) &segwdens,    11},
     {"smoopt",      (DL_FUNC) &smoopt,       8},
-    {"wtcrdenspt",  (DL_FUNC) &wtcrdenspt,  10},
+    {"wtcrdenspt",  (DL_FUNC) &wtcrdenspt,  11},
     {"wtcrsmoopt",  (DL_FUNC) &wtcrsmoopt,  11},
-    {"wtdenspt",    (DL_FUNC) &wtdenspt,     7},
+    {"wtdenspt",    (DL_FUNC) &wtdenspt,     8},
     {"wtsmoopt",    (DL_FUNC) &wtsmoopt,     9},
     {NULL, NULL, 0}
 };

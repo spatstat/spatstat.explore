@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.1-0.014
+        CHANGES IN spatstat.explore VERSION 3.1-0.017
 
 OVERVIEW
 
@@ -48,7 +48,7 @@ SIGNIFICANT USER-VISIBLE CHANGES
 
     o relrisk.ppp
     Issues a warning if numerical underflow is detected.
-    
+
 BUG FIXES
 
     o density.ppp

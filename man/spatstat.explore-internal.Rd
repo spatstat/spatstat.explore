@@ -228,7 +228,8 @@ Deviation(x, ref, leaveout, n, xi)
 densitycrossEngine(Xdata, Xquery, sigma, \dots,
                     kernel, scalekernel,
                     weights, edge, varcov,
-                    diggle, sorted, cutoff)
+                    diggle, sorted, cutoff,
+                    se, kerpow)
 densitypointsEngine(x, sigma, \dots,
                     kernel, scalekernel, kerpow,
                     weights, edge, varcov,

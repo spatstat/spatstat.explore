@@ -62,7 +62,8 @@ Optimal thresholding of predictors in mineral prospectivity analysis.
   gold <- rescale(murchison$gold, 1000, "km")
   faults <- rescale(murchison$faults, 1000, "km")
   distfault <- distfun(faults)
-  thresholdCI(gold, distfault, nsim=100)
+  Nsim <- if(interactive()) 250 else 25
+  thresholdCI(gold, distfault, nsim=Nsim)
 }
 \keyword{spatial}
 \keyword{models}

@@ -10,7 +10,7 @@
 
   Calculation of density estimate at data points
 
-  $Revision: 1.22 $     $Date: 2022/10/23 05:55:01 $
+  $Revision: 1.26 $     $Date: 2023/04/02 00:17:21 $
 
   Assumes point pattern is sorted in increasing order of x coordinate
 
@@ -45,23 +45,29 @@ void denspt(
   double *x, double *y,    /* (x,y) coordinates */
   double *rmaxi,           /* maximum distance at which points contribute */
   double *sig,             /* Gaussian sd */
+  int *squared,            /* whether to use the squared kernel */
   /* output */
   double *result           /* vector of computed density values */
 ) {
   STD_DECLARATIONS;
   double resulti, coef;	
-  double sigma, twosig2; 
+  double sigma, a; 
   STD_INITIALISE;
-
-  sigma = *sig;				      
-  twosig2 = 2.0 * sigma * sigma;	
-  coef = 1.0/(TWOPI * sigma * sigma);  
 
   if(n == 0) 
     return;
 
+  sigma = *sig;				      
+  a = 1.0/(2.0 * sigma * sigma);	
+  coef = 1.0/(TWOPI * sigma * sigma);  
+
+  if(*squared) {
+    coef *= coef;
+    a *= 2.0;
+  }
+  
   PAIRLOOP( { resulti = 0.0; },
-            { resulti += exp(-d2/twosig2); } ,
+            { resulti += exp(-d2 * a); } ,
 	    { result[i] = coef * resulti; })
 
 }
@@ -74,23 +80,29 @@ void wtdenspt(
      double *rmaxi,           /* maximum distance */
      double *sig,             /* Gaussian sd */
      double *weight,          /* vector of weights */
+     int *squared,            /* whether to use the squared kernel */
      /* output */
      double *result           /* vector of weighted density values */
 ) {
   STD_DECLARATIONS;
   double resulti, coef;	
-  double sigma, twosig2; 
+  double sigma, a; 
   STD_INITIALISE;
-
-  sigma = *sig;				      
-  twosig2 = 2.0 * sigma * sigma;	
-  coef = 1.0/(TWOPI * sigma * sigma);  
 
   if(n == 0) 
     return;
 
+  sigma = *sig;				      
+  a = 1.0/(2.0 * sigma * sigma);	
+  coef = 1.0/(TWOPI * sigma * sigma);  
+
+  if(*squared) {
+    coef *= coef;
+    a *= 2.0;
+  }
+  
   PAIRLOOP( { resulti = 0.0; },
-	    { resulti += weight[j] * exp(-d2/twosig2); },
+	    { resulti += weight[j] * exp(-d2 * a); },
 	    { result[i] = coef * resulti; } )
 
  }
@@ -104,6 +116,7 @@ void adenspt(
      double *rmaxi,           /* maximum distance at which points contribute */
      double *detsigma,        /* determinant of variance matrix */
      double *sinv,            /* inverse variance matrix (2x2, flattened) */
+     int *squared,            /* whether to use the squared kernel */
      /* output */
      double *result           /* vector of density values */
 ) {
@@ -111,29 +124,43 @@ void adenspt(
   double resulti, coef;	
   double detsig, s11, s12, s21, s22;
   STD_INITIALISE;
+
+  if(n == 0)
+    return;
+  
   detsig = *detsigma;
   coef = 1.0/(TWOPI * sqrt(detsig));
-  s11 = sinv[0];
-  s12 = sinv[1];
-  s21 = sinv[2];
-  s22 = sinv[3];
+
+  if(*squared) {
+    coef *= coef;
+    s11 = sinv[0];
+    s12 = sinv[1];
+    s21 = sinv[2];
+    s22 = sinv[3];
+  } else {
+    s11 = sinv[0]/2.0;
+    s12 = sinv[1]/2.0;
+    s21 = sinv[2]/2.0;
+    s22 = sinv[3]/2.0;
+  }
 
   PAIRLOOP( { resulti = 0.0; },
-	    { resulti += exp(-(dx * (dx * s11 + dy * s12) \
-			       + dy * (dx * s21 + dy * s22))/2.0); },
+	    { resulti += exp(-dx * (dx * s11 + dy * s12) \
+			     + dy * (dx * s21 + dy * s22)); },
 	    { result[i] = coef * resulti; })
 }
 
 
 void awtdenspt(
      /* inputs */
-     int *nxy,         /* number of (x,y) points */
+     int *nxy,          /* number of (x,y) points */
      double *x,
-     double *y,    /* (x,y) coordinates */
-     double *rmaxi,    /* maximum distance at which points contribute */
+     double *y,         /* (x,y) coordinates */
+     double *rmaxi,     /* maximum distance at which points contribute */
      double *detsigma,  /* determinant of variance matrix */
      double *sinv,      /* inverse variance matrix (2x2, flattened) */
-     double *weight,      /* vector of weights */
+     double *weight,    /* vector of weights */
+     int *squared,      /* whether to use the squared kernel */
      /* output */
      double *result    /* vector of weighted density values */
 ) {
@@ -143,20 +170,29 @@ void awtdenspt(
   STD_INITIALISE;
   detsig = *detsigma;
   coef = 1.0/(TWOPI * sqrt(detsig));
-  s11 = sinv[0];
-  s12 = sinv[1];
-  s21 = sinv[2];
-  s22 = sinv[3];
 
   if(n == 0) 
     return;
 
+  if(*squared) {
+    coef *= coef;
+    s11 = sinv[0];
+    s12 = sinv[1];
+    s21 = sinv[2];
+    s22 = sinv[3];
+  } else {
+    s11 = sinv[0]/2.0;
+    s12 = sinv[1]/2.0;
+    s21 = sinv[2]/2.0;
+    s22 = sinv[3]/2.0;
+  }
+
   PAIRLOOP( { resulti = 0.0; },
 	    { resulti += weight[j] * \
 		exp(-(dx * (dx * s11 + dy * s12)			\
-		      + dy * (dx * s21 + dy * s22))/2.0); },
+		      + dy * (dx * s21 + dy * s22))); },
 	    { result[i] = coef * resulti; })
- }
+}
 
 
 /* --------------- smoothing --------------------------- */
