@@ -1,7 +1,7 @@
 #
 #	fasp.R
 #
-#	$Revision: 1.36 $	$Date: 2020/11/24 01:38:24 $
+#	$Revision: 1.37 $	$Date: 2023/04/05 07:06:22 $
 #
 #
 #-----------------------------------------------------------------------------
@@ -16,10 +16,10 @@ fasp <- function(fns, which, formulae=NULL,
   stopifnot(length(fns) == length(which))
   n   <- length(which)
 
-  if(checkfv)
-    for(i in seq_len(n))
-      if(!is.fv(fns[[i]]))
-        stop(paste("fns[[", i, "]] is not an fv object", sep=""))
+  if(checkfv && !all(sapply(fns, is.fv)))
+    stop("Some entries of 'fns' are not objects of class 'fv'", call.=FALSE)
+
+  fns <- as.anylist(fns)
 
   # set row and column labels
   if(!is.null(rowNames))

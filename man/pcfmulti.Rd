@@ -14,7 +14,8 @@ using kernel methods.
             correction = c("translate", "Ripley"),
             divisor = c("r", "d"),
             Iname = "points satisfying condition I",
-            Jname = "points satisfying condition J")
+            Jname = "points satisfying condition J",
+            ratio = FALSE)
 }
 \arguments{
   \item{X}{The observed point pattern, 
@@ -57,6 +58,12 @@ using kernel methods.
   \item{Iname,Jname}{
     Optional. Character strings describing the members of
     the subsets \code{I} and \code{J}.
+  }
+  \item{ratio}{
+    Logical. 
+    If \code{TRUE}, the numerator and denominator of
+    each edge-corrected estimate will also be saved,
+    for use in analysing replicated point patterns.
   }
 }
 \details{

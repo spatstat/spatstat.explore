@@ -1,7 +1,7 @@
 #
 #   pcfmulti.R
 #
-#   $Revision: 1.9 $   $Date: 2023/02/28 02:07:53 $
+#   $Revision: 1.11 $   $Date: 2023/04/05 06:41:18 $
 #
 #   multitype pair correlation functions
 #
@@ -10,7 +10,7 @@ pcfcross <-
   function(X, i, j, ...,
          r=NULL, kernel="epanechnikov", bw=NULL, stoyan=0.15,
          correction = c("isotropic", "Ripley", "translate"),
-         divisor=c("r","d"))
+         divisor=c("r","d"), ratio=FALSE)
 {
   verifyclass(X, "ppp")
   stopifnot(is.multitype(X))
@@ -33,7 +33,8 @@ pcfcross <-
                      kernel=kernel, bw=bw, stoyan=stoyan,
                      correction=correction,
                      divisor=divisor,
-                     Iname=Iname, Jname=Jname)
+                     Iname=Iname, Jname=Jname,
+                     ratio=ratio)
   ##
   iname <- make.parseable(paste(i))
   jname <- make.parseable(paste(j))
@@ -51,7 +52,8 @@ pcfdot <-
 function(X, i, ...,
          r=NULL, kernel="epanechnikov", bw=NULL, stoyan=0.15,
          correction = c("isotropic", "Ripley", "translate"),
-         divisor=c("r", "d"))
+         divisor=c("r", "d"),
+         ratio=FALSE)
 {
   verifyclass(X, "ppp")
   stopifnot(is.multitype(X))
@@ -72,7 +74,8 @@ function(X, i, ...,
                      r=r, kernel=kernel, bw=bw, stoyan=stoyan,
                      correction=correction,
                      divisor=divisor,
-                     Iname=Iname, Jname=Jname)
+                     Iname=Iname, Jname=Jname,
+                     ratio=ratio)
 
   iname <- make.parseable(paste(i))
   result <-
@@ -91,7 +94,8 @@ pcfmulti <- function(X, I, J, ...,
                      correction=c("translate", "Ripley"),
                      divisor=c("r","d"),
                      Iname="points satisfying condition I",
-                     Jname="points satisfying condition J")
+                     Jname="points satisfying condition J",
+                     ratio=FALSE)
 {
   verifyclass(X, "ppp")
 #  r.override <- !is.null(r)
@@ -127,6 +131,8 @@ pcfmulti <- function(X, I, J, ...,
   if(nI == 0) stop(paste("There are no", Iname))
   if(nJ == 0) stop(paste("There are no", Jname))
 
+  samplesize <- npairs <- nI * nJ
+  
   XI <- X[I]
   XJ <- X[J]
 
@@ -171,13 +177,16 @@ pcfmulti <- function(X, I, J, ...,
   df <- data.frame(r=r, theo=rep.int(1,length(r)))
   fname <- c("g", "list(I,J)")
   yexp <- quote(g[list(I,J)](r))
-  out <- fv(df, "r",
-            quote(g[I,J](r)), "theo", ,
-            alim,
-            c("r", makefvlabel(NULL, NULL, fname, "Pois")),
-            c("distance argument r", "theoretical Poisson %s"),
-            fname=fname,
-            yexp=yexp)
+  out <- ratfv(df=df, numer=NULL, denom=samplesize,
+               argu="r",
+               ylab=quote(g[I,J](r)),
+               valu="theo", ,
+               alim=alim,
+               labl=c("r", makefvlabel(NULL, NULL, fname, "Pois")),
+               desc=c("distance argument r", "theoretical Poisson %s"),
+               fname=fname,
+               yexp=yexp,
+               ratio=ratio)
   
   ########## smoothing parameters for pcf ############################  
   # arguments for 'density'
@@ -216,21 +225,25 @@ pcfmulti <- function(X, I, J, ...,
     # translation correction
     edgewt <- edge.Trans(dx=close$dx, dy=close$dy, W=win, paired=TRUE)
     gT <- sewpcf(dclose, edgewt, denargs, lambdaIJarea, divisor)$g
-    out <- bind.fv(out,
-                   data.frame(trans=gT),
-                   makefvlabel(NULL, "hat", fname, "Trans"),
-                   "translation-corrected estimate of %s",
-                   "trans")
+    out <- bind.ratfv(out,
+                      quotient=data.frame(trans=gT),
+                      denominator=samplesize,
+                      labl=makefvlabel(NULL, "hat", fname, "Trans"),
+                      desc="translation-corrected estimate of %s",
+                      preferred="trans",
+                      ratio=ratio)
   }
   if(any(correction=="isotropic")) {
     # Ripley isotropic correction
     edgewt <- edge.Ripley(XI[icloseI], matrix(dclose, ncol=1))
     gR <- sewpcf(dclose, edgewt, denargs, lambdaIJarea, divisor)$g
-    out <- bind.fv(out,
-                   data.frame(iso=gR),
-                   makefvlabel(NULL, "hat", fname, "Ripley"),
-                   "isotropic-corrected estimate of %s",
-                   "iso")
+    out <- bind.ratfv(out,
+                      quotient=data.frame(iso=gR),
+                      denominator=samplesize,
+                      labl=makefvlabel(NULL, "hat", fname, "Ripley"),
+                      desc="isotropic-corrected estimate of %s",
+                      preferred="iso",
+                      ratio=ratio)
   }
   
   ## sanity check

@@ -1,13 +1,15 @@
 
-        CHANGES IN spatstat.explore VERSION 3.1-0.017
+        CHANGES IN spatstat.explore VERSION 3.1-0.018
 
 OVERVIEW
 
     o Changed the calculation of standard errors in density.ppp and relrisk.ppp.
 
     o Inline arithmetic for function tables ('fv') and arrays ('fasp')
-    
+
     o Standard error calculation for Smooth.ppp (experimental)
+    
+    o multitype pair correlation functions can save numerator and denominator.
     
     o Bug fixes in calculation of standard errors.
 
@@ -39,6 +41,10 @@ SIGNIFICANT USER-VISIBLE CHANGES
     
     o Smooth.ppp
     Standard error calculation is now supported (Experimental).
+
+    o pcfcross, pcfdot, pcfmulti
+    New argument 'ratio' makes it possible to save the numerator and
+    denominator of the function estimates, so that estimates can be pooled.
     
     o bw.relrisk.ppp
     Additional arguments '...' are now passed to 'density.ppp'.

@@ -7,10 +7,11 @@
   for a multitype point pattern.
 }
 \usage{
-  pcfdot(X, i, ..., r = NULL,
+  pcfdot(X, i, \dots, r = NULL,
          kernel = "epanechnikov", bw = NULL, stoyan = 0.15,
          correction = c("isotropic", "Ripley", "translate"),
-         divisor = c("r", "d"))
+         divisor = c("r", "d"),
+         ratio=FALSE)
 }
 \arguments{
   \item{X}{The observed point pattern, 
@@ -49,6 +50,12 @@
   \item{divisor}{
     Choice of divisor in the estimation formula:
     either \code{"r"} (the default) or \code{"d"}. See Details.
+  }
+  \item{ratio}{
+    Logical. 
+    If \code{TRUE}, the numerator and denominator of
+    each edge-corrected estimate will also be saved,
+    for use in analysing replicated point patterns.
   }
 }
 \details{
