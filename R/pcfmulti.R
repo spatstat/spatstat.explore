@@ -1,7 +1,7 @@
 #
 #   pcfmulti.R
 #
-#   $Revision: 1.11 $   $Date: 2023/04/05 06:41:18 $
+#   $Revision: 1.12 $   $Date: 2023/04/06 00:03:01 $
 #
 #   multitype pair correlation functions
 #
@@ -131,16 +131,17 @@ pcfmulti <- function(X, I, J, ...,
   if(nI == 0) stop(paste("There are no", Iname))
   if(nJ == 0) stop(paste("There are no", Jname))
 
-  samplesize <- npairs <- nI * nJ
-  
   XI <- X[I]
   XJ <- X[J]
 
 #  lambdaI <- nI/areaW
   lambdaJ <- nJ/areaW
   nIJ <- sum(I & J)
-  lambdaIJarea <- (nI * nJ - nIJ)/areaW
+  samplesize <- npairs <- nI * nJ - nIJ
+  lambdaIJarea <- npairs/areaW
+
   
+
   ## ...........  kernel bandwidth and support .........................
   
   if(is.null(bw) && kernel=="epanechnikov") {

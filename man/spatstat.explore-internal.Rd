@@ -336,7 +336,7 @@ pcfmulti.inhom(X, I, J, lambdaI, lambdaJ, \dots,
 \method{plot}{bw.optim}(x, \dots, showopt, optargs)
 \method{plot}{localpcfmatrix}(x, \dots)
 \method{plot}{plotpairsim}(x, \dots)
-\method{plot}{spatialcdf}(x, \dots, xlab, ylab)
+\method{plot}{spatialcdf}(x, \dots, xlab, ylab, do.points)
 polyLaslett(X, \dots, oldX, verbose, plotit)
 \method{predict}{exactppm}(object, locations, \dots, eps, dimyx)
 prefixfv(x, tagprefix, descprefix, lablprefix, whichtags)

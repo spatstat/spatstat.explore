@@ -93,7 +93,7 @@ spatialcdf(Z, weights = NULL, normalise = FALSE, ..., W = NULL, Zname = NULL)
      if(require("spatstat.model")) {  
        fit <- ppm(bei ~ elev)
        plot(spatialcdf(grad, predict(fit)))
-       plot(A <- spatialcdf(grad, fit))
+       A <- spatialcdf(grad, fit)
        A(0.1)
      }
   })
