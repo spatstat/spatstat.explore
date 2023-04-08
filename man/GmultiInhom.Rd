@@ -1,5 +1,6 @@
 \name{GmultiInhom}
 \alias{GmultiInhom}
+\alias{Gmulti.inhom}
 \title{
   Inhomogeneous Marked G-Function
 }
@@ -11,6 +12,13 @@
   adjusted for spatially varying intensity.
 }
 \usage{
+  Gmulti.inhom(X, I, J,
+             lambda = NULL, lambdaI = NULL, lambdaJ = NULL,
+             lambdamin = NULL, \dots,
+             r = NULL,
+             ReferenceMeasureMarkSetI = NULL,
+             ratio = FALSE)
+
   GmultiInhom(X, I, J,
              lambda = NULL, lambdaI = NULL, lambdaJ = NULL,
              lambdamin = NULL, \dots,
@@ -68,6 +76,8 @@
 }
 \details{
   See Cronie and Van Lieshout (2015).
+
+  The functions \code{GmultiInhom} and \code{Gmulti.inhom} are identical.
 }
 \value{
   Object of class \code{"fv"} containing the estimate of the

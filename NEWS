@@ -1,8 +1,10 @@
 
-        CHANGES IN spatstat.explore VERSION 3.1-0.019
+        CHANGES IN spatstat.explore VERSION 3.1-0.020
 
 OVERVIEW
 
+    o We thank Jonatan Gonzalez for contributions.
+    
     o Changed the calculation of standard errors in density.ppp and relrisk.ppp.
 
     o Inline arithmetic for function tables ('fv') and arrays ('fasp')
@@ -10,6 +12,8 @@ OVERVIEW
     o Standard error calculation for Smooth.ppp (experimental)
     
     o multitype pair correlation functions can save numerator and denominator.
+
+    o multitype inhomogeneous J functions.
     
     o Bug fixes in calculation of standard errors.
 
@@ -20,6 +24,9 @@ NEW FUNCTIONS
     
     o Math.fasp, Complex.fasp, Summary.fasp, Ops.fasp
     Methods for arithmetic operations for function arrays (class 'fasp')
+
+    o Jcross.inhom, Jdot.inhom, Jmulti.inhom
+    Multitype J functions for inhomogeneous point processes.
     
 SIGNIFICANT USER-VISIBLE CHANGES
 

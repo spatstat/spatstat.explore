@@ -1,5 +1,6 @@
 \name{FmultiInhom}
 \alias{FmultiInhom}
+\alias{Fmulti.inhom}
 \title{
   Inhomogeneous Marked F-Function
 }
@@ -11,6 +12,11 @@
   adjusted for spatially varying intensity.
 }
 \usage{
+  Fmulti.inhom(X, J,
+              lambda = NULL, lambdaJ = NULL, lambdamin = NULL,
+              \dots,
+              r = NULL)
+
   FmultiInhom(X, J,
               lambda = NULL, lambdaJ = NULL, lambdamin = NULL,
               \dots,
@@ -51,6 +57,8 @@
 }
 \details{
   See Cronie and Van Lieshout (2015).
+
+  The functions \code{FmultiInhom} and \code{Fmulti.inhom} are identical.
 }
 \value{
   Object of class \code{"fv"} containing the estimate of the

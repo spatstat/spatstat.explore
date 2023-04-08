@@ -10,9 +10,9 @@
 #'     GmultiInhom
 #'     FmultiInhom
 #'
-#'      $Revision: 1.11 $ $Date: 2023/03/03 07:19:49 $
+#'      $Revision: 1.13 $ $Date: 2023/04/08 02:38:51 $
 
-GmultiInhom <- function(X, I, J, 
+Gmulti.inhom <- GmultiInhom <- function(X, I, J, 
                         lambda=NULL, lambdaI=NULL, lambdaJ=NULL,
                         lambdamin=NULL,
                         ...,
@@ -208,7 +208,7 @@ GmultiInhom <- function(X, I, J,
 
 #' marked inhomogeneous F
 
-FmultiInhom <- function(X, J,
+Fmulti.inhom <- FmultiInhom <- function(X, J,
                         lambda=NULL,lambdaJ=NULL,
                         lambdamin=NULL,
                         ...,
@@ -246,9 +246,11 @@ FmultiInhom <- function(X, J,
   }
 
   FJ <- Finhom(XJ, lambda=lambdaJ, lmin=lambdamin, r=r, ...)
+  conserve <- attr(FJ, "conserve")
   FJ <- rebadge.fv(FJ,
                    new.ylab  = quote(F[inhom, J](r)),
                    new.fname = c("F", "list(inhom,J)"),
                    new.yexp   = quote(F[list(inhom,J)](r)))
+  attr(FJ, "conserve") <- conserve
   return(FJ)
 }

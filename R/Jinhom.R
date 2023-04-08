@@ -1,7 +1,7 @@
 #
 # Jinhom.R
 #
-#  $Revision: 1.19 $ $Date: 2023/02/20 03:39:17 $
+#  $Revision: 1.22 $ $Date: 2023/04/08 04:07:04 $
 #
 
 Ginhom <- function(X, lambda=NULL, lmin=NULL,
@@ -195,15 +195,32 @@ Finhom <- function(X, lambda=NULL, lmin=NULL,
   areaW <- area(W)
   miss.update <- missing(update)
 
-  # determine 'r' values
+  dotargs <- list(...)
+  eps <- dotargs$eps
+  rorbgiven <- !is.null(r) || !is.null(breaks)
+  checkspacing <- !isFALSE(dotargs$checkspacing)
+  testme       <- isTRUE(dotargs$testme)
+
+  ## determine 'r' values
   rmaxdefault <- rmax.rule("F", W, npts/areaW)
-  breaks <- handle.r.b.args(r, breaks, W, rmaxdefault=rmaxdefault)
+  breaks <- handle.r.b.args(r, breaks, W, eps, rmaxdefault=rmaxdefault)
   if(!breaks$even)
     stop("r values must be evenly spaced")
   r <- breaks$r
   rmax <- breaks$max
   nr <- length(r)
 
+  ## check spacing of 'r' values?
+  if(testme || (rorbgiven && checkspacing))
+    check.finespacing(r,
+                      if(is.null(eps)) NULL else eps/4,
+                      as.mask(W, eps=eps),
+                      rmaxdefault=rmaxdefault,
+                      action="fatal",
+                      rname="r", 
+                      context="in Finhom(X, r)")
+
+  ## Determine intensity
   dangerous <- "lambda"
   danger <- TRUE
   
@@ -348,18 +365,24 @@ Finhom <- function(X, lambda=NULL, lmin=NULL,
                   "border estimate of %s",
                   "bord",
                   ratio=ratio)
-  # 
+  ## wrap up
   formula(FX) <- . ~ r
   fvnames(FX, ".") <- c("bord", "theo")
   unitname(FX) <- unitname(X)
   if(ratio)
     FX <- conform.ratfv(FX)
+
+  ## tack on additional information
   if(danger)
     attr(FX, "dangerous") <- dangerous
   if(savelambda) {
     attr(FX, "lambda") <- lambdaX
     attr(FX, "lmin") <- lmin
   }
+
+  ## arguments to be used in envelope, etc
+  attr(FX, "conserve") <- list(checkspacing=FALSE)
+
   return(FX)
 }
 
@@ -398,6 +421,7 @@ Jinhom <- function(X, lambda=NULL, lmin=NULL,
   attr(JX, "G") <- GX
   attr(JX, "F") <- FX
   attr(JX, "dangerous") <- attr(GX, "dangerous")
+  attr(JX, "conserve") <- append(attr(GX, "conserve"), attr(FX, "conserve"))
   if(savelambda) {
     attr(JX, "lmin") <- lmin
     attr(JX, "lambda") <- lambdaX

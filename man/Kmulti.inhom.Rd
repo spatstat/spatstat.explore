@@ -41,7 +41,7 @@
     a fitted point process model
     (object of class \code{"ppm"} or \code{"kppm"} or \code{"dppm"}),
     or a \code{function(x,y)} which
-    can be evaluated to give the intensity value at any location,
+    can be evaluated to give the intensity value at any location.
   }
  \item{lambdaJ}{
     Optional.
