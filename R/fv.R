@@ -4,7 +4,7 @@
 ##
 ##    class "fv" of function value objects
 ##
-##    $Revision: 1.178 $   $Date: 2023/03/18 07:05:18 $
+##    $Revision: 1.180 $   $Date: 2023/04/09 09:51:23 $
 ##
 ##
 ##    An "fv" object represents one or more related functions
@@ -821,8 +821,8 @@ rebadge.fv <- function(x, new.ylab, new.fname,
 
 ## common invocations to label a function like Kdot or Kcross
 rebadge.as.crossfun <- function(x, main, sub=NULL, i, j) {
-  i <- make.parseable(i)
-  j <- make.parseable(j)
+  i <- make.parseable(paste(i))
+  j <- make.parseable(paste(j))
   if(is.null(sub)) {
     ## single function name like "K"
     ylab <- substitute(main[i, j](r),
@@ -845,7 +845,7 @@ rebadge.as.crossfun <- function(x, main, sub=NULL, i, j) {
 }
 
 rebadge.as.dotfun <- function(x, main, sub=NULL, i) {
-  i <- make.parseable(i)
+  i <- make.parseable(paste(i))
   if(is.null(sub)) {
     ## single function name like "K"
     ylab <- substitute(main[i ~ dot](r),

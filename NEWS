@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.1-0.020
+        CHANGES IN spatstat.explore VERSION 3.1-0.021
 
 OVERVIEW
 
@@ -25,6 +25,9 @@ NEW FUNCTIONS
     o Math.fasp, Complex.fasp, Summary.fasp, Ops.fasp
     Methods for arithmetic operations for function arrays (class 'fasp')
 
+    o Gcross.inhom, Gdot.inhom
+    Multitype G functions for inhomogeneous point processes.
+    
     o Jcross.inhom, Jdot.inhom, Jmulti.inhom
     Multitype J functions for inhomogeneous point processes.
     

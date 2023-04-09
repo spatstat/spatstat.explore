@@ -81,7 +81,7 @@
   }
   \item{r}{
     vector of values for the argument \eqn{r} at which
-    the inhomogeneous \eqn{K} function
+    the inhomogeneous \eqn{J} function
     should be evaluated. Not normally given by the user;
     there is a sensible default.
   }

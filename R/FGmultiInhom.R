@@ -10,7 +10,13 @@
 #'     GmultiInhom
 #'     FmultiInhom
 #'
-#'      $Revision: 1.13 $ $Date: 2023/04/08 02:38:51 $
+#'     Gcross.inhom
+#'     Gdot.inhom
+#'
+#'     Copyright (c) 2016-2023 O. Cronie, M.N.M. van Lieshout, A.J. Baddeley
+#'     GNU Public Licence GPL >= 2.0
+#' 
+#'     $Revision: 1.14 $ $Date: 2023/04/09 10:08:30 $
 
 Gmulti.inhom <- GmultiInhom <- function(X, I, J, 
                         lambda=NULL, lambdaI=NULL, lambdaJ=NULL,
@@ -254,3 +260,60 @@ Fmulti.inhom <- FmultiInhom <- function(X, J,
   attr(FJ, "conserve") <- conserve
   return(FJ)
 }
+
+## derived functions Gcross.inhom, Gdot.inhom
+
+Gcross.inhom <- function(X, i, j,
+                         lambda=NULL, lambdaI=NULL, lambdaJ=NULL,
+                         lambdamin=NULL,
+                         ...,
+                         r=NULL,
+                         ReferenceMeasureMarkSetI=NULL,
+                         ratio=FALSE) {
+  verifyclass(X, "ppp")
+  if(!is.multitype(X, dfok=FALSE))
+	stop("Point pattern must be multitype")
+  marx <- marks(X)
+  if(missing(i))
+    i <- levels(marx)[1]
+  if(missing(j))
+    j <- levels(marx)[2]
+  I <- (marx == i)
+  J <- (marx == j)
+  if(!any(I)) stop(paste("There are no points of type", sQuote(i)))
+  if(!any(J)) stop(paste("There are no points of type", sQuote(j)))
+  G <- Gmulti.inhom(X, I, J,
+                    lambda, lambdaI, lambdaJ, lambdamin,
+                    ...,
+                    r=r,
+                    ReferenceMeasureMarkSetI=ReferenceMeasureMarkSetI,
+                    ratio=ratio)
+  G <- rebadge.as.crossfun(G, "G", "inhom", i, j)
+  return(G)
+}
+
+Gdot.inhom <- 
+  function(X, i, lambdaI=NULL, lambdadot=NULL, lambdamin=NULL,
+           ...,
+           r=NULL, 
+           ReferenceMeasureMarkSetI=NULL,
+           ratio=FALSE) {
+  verifyclass(X, "ppp")
+  if(!is.multitype(X, dfok=FALSE))
+	stop("Point pattern must be multitype")
+  marx <- marks(X)
+  if(missing(i))
+    i <- levels(marx)[1]
+  I <- (marx == i)
+  if(!any(I)) stop(paste("There are no points of type", sQuote(i)))
+  J <- rep.int(TRUE, npoints(X))
+  G <- Gmulti.inhom(X, I, J,
+                    lambdaI=lambdaI, lambdaJ=lambdadot, lambdamin=lambdamin,
+                    ...,
+                    r=r,
+                    ReferenceMeasureMarkSetI=ReferenceMeasureMarkSetI,
+                    ratio=ratio)
+  G <- rebadge.as.dotfun(G, "G", "inhom", i)
+  return(G)
+}
+

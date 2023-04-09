@@ -1,0 +1,165 @@
+\name{Gdot.inhom}
+\alias{Gdot.inhom}
+\title{
+  Inhomogeneous Multitype G Dot Function
+}
+\description{
+  For a multitype point pattern, 
+  estimate the inhomogeneous version of the dot \eqn{G} function,
+  which is the distribution of the distance
+  from a point of type \eqn{i}
+  to the nearest other point of any type,
+  adjusted for spatially varying intensity.
+}
+\usage{
+   Gdot.inhom(X, i,
+              lambdaI = NULL, lambdadot = NULL, lambdamin = NULL,
+              \dots,
+              r = NULL, ReferenceMeasureMarkSetI = NULL, ratio = FALSE)
+}
+\arguments{
+  \item{X}{The observed point pattern, 
+    from which an estimate of the inhomogeneous dot type \eqn{G} function
+    \eqn{G_{i\bullet}(r)}{Gi.(r)} will be computed.
+    It must be a multitype point pattern (a marked point pattern
+    whose marks are a factor). See under Details.
+  }
+  \item{i}{The type (mark value)
+    of the points in \code{X} from which distances are measured.
+    A character string (or something that will be converted to a
+    character string).
+    Defaults to the first level of \code{marks(X)}.
+  }
+  \item{lambdaI}{
+    Optional.
+    Values of the estimated intensity of the sub-process of
+    points of type \code{i}.
+    Either a pixel image (object of class \code{"im"}),
+    a numeric vector containing the intensity values
+    at each of the type \code{i} points in \code{X},
+    a fitted point process model
+    (object of class \code{"ppm"} or \code{"kppm"} or \code{"dppm"}),
+    or a \code{function(x,y)} which
+    can be evaluated to give the intensity value at any location.
+  }
+  \item{lambdadot}{
+    Optional.
+    Values of the estimated intensity of the entire point process,
+    Either a pixel image (object of class \code{"im"}),
+    a numeric vector containing the intensity values at each of the 
+    points in \code{X}, a fitted point process model
+    (object of class \code{"ppm"} or \code{"kppm"} or \code{"dppm"}),
+    or a \code{function(x,y)} which
+    can be evaluated to give the intensity value at any location.
+  }
+  \item{lambdamin}{
+    Optional. The minimum possible value of the intensity
+    over the spatial domain. A positive numerical value.
+  }
+  \item{\dots}{
+    Ignored.
+  }
+  \item{r}{
+    vector of values for the argument \eqn{r} at which
+    the inhomogeneous dot type \eqn{G} function
+    \eqn{G_{i\bullet}(r)}{Gi.(r)} should be evaluated.
+    Not normally given by the user;
+    there is a sensible default.
+  }
+  \item{ReferenceMeasureMarkSetI}{
+    Optional. The total measure of the mark set. A positive number.
+  }
+  \item{ratio}{
+    Logical value indicating whether to save ratio information.
+  }
+}
+\value{
+  An object of class \code{"fv"} (see \code{\link{fv.object}})
+  containing estimates of the inhomogeneous dot type \eqn{G} function.
+}
+\details{
+  This is a generalisation of the function \code{\link{Gdot}}
+  to include an adjustment for spatially inhomogeneous intensity,
+  in a manner similar to the function \code{\link{Ginhom}}.
+  
+  The argument \code{lambdaI} supplies the values
+  of the intensity of the sub-process of points of type \code{i}.
+  It may be either
+  \describe{
+    \item{a pixel image}{(object of class \code{"im"}) which
+      gives the values of the type \code{i} intensity
+      at all locations in the window containing \code{X};
+    }
+    \item{a numeric vector}{containing the values of the
+      type \code{i} intensity evaluated only
+      at the data points of type \code{i}. The length of this vector
+      must equal the number of type \code{i} points in \code{X}.
+    }
+    \item{a function}{
+      of the form \code{function(x,y)}
+      which can be evaluated to give values of the intensity at
+      any locations.
+    }
+     \item{a fitted point process model}{
+      (object of class \code{"ppm"}, \code{"kppm"} or \code{"dppm"})
+      whose fitted \emph{trend} can be used as the fitted intensity.
+      (If \code{update=TRUE} the model will first be refitted to the
+      data \code{X} before the trend is computed.)
+    }
+   \item{omitted:}{
+      if \code{lambdaI} is omitted then it will be estimated
+      using a leave-one-out kernel smoother. 
+    }
+  }
+  If \code{lambdaI} is omitted, then it will be estimated using
+  a `leave-one-out' kernel smoother.
+
+  Similarly the argument \code{lambdadot} should contain
+  estimated values of the intensity of the entire point process.
+  It may be either a pixel image, a numeric vector of length equal
+  to the number of points in \code{X}, a function, or omitted.
+
+  The argument \code{r} is the vector of values for the
+  distance \eqn{r} at which \eqn{G_{i\bullet}(r)}{Gi.(r)} should be evaluated. 
+  The values of \eqn{r} must be increasing nonnegative numbers
+  and the maximum \eqn{r} value must not exceed the radius of the
+  largest disc contained in the window.
+}
+\references{
+  Cronie, O. and Van Lieshout, M.N.M. (2015)
+  Summary statistics for inhomogeneous marked point processes.
+  \emph{Annals of the Institute of Statistical Mathematics}
+  DOI: 10.1007/s10463-015-0515-z
+}
+\section{Warnings}{
+  The argument \code{i} is interpreted as
+  a level of the factor \code{X$marks}. It is converted to a character
+  string if it is not already a character string.
+  The value \code{i=1} does \bold{not}
+  refer to the first level of the factor.
+}
+\seealso{
+ \code{\link{Gdot}},
+ \code{\link{Ginhom}},
+ \code{\link{Gcross.inhom}},
+ \code{\link{Gmulti.inhom}}.
+}
+\examples{
+  X <- rescale(amacrine)
+  if(require(spatstat.model)) {
+    mod <- ppm(X ~ marks * x)
+    lam <- fitted(mod, dataonly=TRUE)
+    lmin <- min(predict(mod)[["off"]]) * 0.9
+  } else {
+    lam <- intensity(X)[as.integer(marks(X))]
+    lmin <- intensity(X)[2] * 0.9
+  }
+  lamI <- lam[marks(X) == "on"]
+  GD <- Gdot.inhom(X, "on", lambdaI=lamI, lambdadot=lam, lambdamin=lmin)
+}
+\author{
+  \spatstatAuthors
+}
+\keyword{spatial}
+\keyword{nonparametric}
+

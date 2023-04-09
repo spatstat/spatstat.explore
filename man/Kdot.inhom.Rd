@@ -18,7 +18,7 @@ Kdot.inhom(X, i, lambdaI=NULL, lambdadot=NULL, \dots, r=NULL, breaks=NULL,
 }
 \arguments{
   \item{X}{The observed point pattern, 
-    from which an estimate of the inhomogeneous cross type \eqn{K} function
+    from which an estimate of the inhomogeneous dot type \eqn{K} function
     \eqn{K_{i\bullet}(r)}{Ki.(r)} will be computed.
     It must be a multitype point pattern (a marked point pattern
     whose marks are a factor). See under Details.
@@ -56,8 +56,8 @@ Kdot.inhom(X, i, lambdaI=NULL, lambdadot=NULL, \dots, r=NULL, breaks=NULL,
   }
   \item{r}{
       Optional. Numeric vector giving the values of the argument \eqn{r}
-      at which the cross K function
-      \eqn{K_{ij}(r)}{Kij(r)} should be evaluated.
+      at which the dot K function
+      \eqn{K_{i\bullet}(r)}{Ki.(r)} should be evaluated.
       There is a sensible default.
       First-time users are strongly advised not to specify this argument.
       See below for important conditions on \eqn{r}.
@@ -244,7 +244,7 @@ Kdot.inhom(X, i, lambdaI=NULL, lambdadot=NULL, \dots, r=NULL, breaks=NULL,
   as explained e.g. in \code{\link{Kest}}.
 
   The pair correlation function can also be applied to the
-  result of \code{Kcross.inhom}; see \code{\link{pcf}}.
+  result of \code{Kdot.inhom}; see \code{\link{pcf}}.
 }
 \references{
   \Moller, J. and Waagepetersen, R.

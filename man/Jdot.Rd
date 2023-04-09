@@ -13,7 +13,8 @@
 Jdot(X, i, eps=NULL, r=NULL, breaks=NULL, \dots, correction=NULL)
 }
 \arguments{
-  \item{X}{The observed point pattern, 
+  \item{X}{
+    The observed point pattern, 
     from which an estimate of the multitype \eqn{J} function
     \eqn{J_{i\bullet}(r)}{Ji.(r)} will be computed.
     It must be a multitype point pattern (a marked point pattern
