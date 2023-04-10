@@ -101,11 +101,13 @@
   X <- rescale(amacrine)
   I <- (marks(X) == "on")
   J <- (marks(X) == "off")
-  if(require(spatstat.model)) {
+  if(interactive() && require(spatstat.model)) {
+    ## how to do it normally
     mod <- ppm(X ~ marks * x)
     lam <- fitted(mod, dataonly=TRUE)
     lmin <- min(predict(mod)[["off"]]) * 0.9
   } else {
+    ## for package testing
     lam <- intensity(X)[as.integer(marks(X))]
     lmin <- intensity(X)[2] * 0.9
   }

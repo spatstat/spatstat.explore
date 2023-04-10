@@ -98,14 +98,19 @@
 }
 \examples{
   X <- rescale(amacrine)
-  if(require(spatstat.model)) {
+  if(interactive() && require(spatstat.model)) {
+    ## how to do it normally
     mod <- ppm(X ~ marks * x)
     lam <- fitted(mod, dataonly=TRUE)
     lmin <- min(predict(mod)[["off"]]) * 0.9
+    dd <- NULL
   } else {
+    ## for package testing 
     lam <- intensity(X)[as.integer(marks(X))]
     lmin <- intensity(X)[2] * 0.9
+    dd <- 32
   }
   lamI <- lam[marks(X) == "on"]
-  JD <- Jdot.inhom(X, "on", lambdaI=lamI, lambdadot=lam, lambdamin=lmin)
+  JD <- Jdot.inhom(X, "on", lambdaI=lamI, lambdadot=lam, lambdamin=lmin,
+                   dimyx=dd)
 }

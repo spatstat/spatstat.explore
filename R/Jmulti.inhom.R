@@ -10,7 +10,7 @@
 #'    Jdot.inhom
 #'    Jcross.inhom
 #'
-#'    $Revision: 1.6 $ $Date: 2023/04/08 04:13:53 $
+#'    $Revision: 1.7 $ $Date: 2023/04/10 03:11:50 $
 
 Jmulti.inhom <- function(X, I, J, 
                         lambda=NULL, lambdaI=NULL, lambdaJ=NULL,
@@ -89,7 +89,7 @@ Jdot.inhom <- function(X, i,
                          ReferenceMeasureMarkSetI = ReferenceMeasureMarkSetI,
                          ratio = ratio)
   conserve <- attr(result, "conserve")
-  result <- rebadge.as.dotfun(result, "Jinhom", NULL, i)
+  result <- rebadge.as.dotfun(result, "J", "inhom", i)
   attr(result, "conserve") <- conserve
   return(result)
 }
@@ -126,7 +126,7 @@ Jcross.inhom <- function(X, i, j,
                          ReferenceMeasureMarkSetI=ReferenceMeasureMarkSetI,
                          ratio=ratio)
   conserve <- attr(result, "conserve")
-  result <- rebadge.as.crossfun(result, "Jinhom", NULL, i, j)
+  result <- rebadge.as.crossfun(result, "J", "inhom", i, j)
   attr(result, "conserve") <- conserve
   return(result)
 }
