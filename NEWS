@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.1-0.022
+        CHANGES IN spatstat.explore VERSION 3.1-0.023
 
 OVERVIEW
 
@@ -30,6 +30,11 @@ NEW FUNCTIONS
     
     o Jcross.inhom, Jdot.inhom, Jmulti.inhom
     Multitype J functions for inhomogeneous point processes.
+
+    o summary.bw.optim, print.summary.bw.optim
+    Method for 'summary' of optimised bandwidth objects (class 'bw.optim').
+    These are the objects produced by the bandwidth selection functions
+    such as bw.diggle, bw.scott, bw.pcf
     
 SIGNIFICANT USER-VISIBLE CHANGES
 

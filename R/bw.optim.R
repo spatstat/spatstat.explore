@@ -46,6 +46,8 @@ bw.optim <- function(cv, h,
   attr(result, "labels") <- list(hname=hname, cvname=cvname)
   attr(result, "info") <- list(...)
   attr(result, "criterion") <- criterion
+  attr(result, "optimum") <- optimum
+  attr(result, "hargnames") <- hargnames
   attr(result, "units") <- unitname
   attr(result, "yexp") <- yexp
   class(result) <- "bw.optim"
@@ -56,6 +58,39 @@ print.bw.optim <- function(x, ...) {
   y <- as.numeric(x)
   names(y) <- attr(x, "labels")$hname
   print(y, ...)
+  return(invisible(NULL))
+}
+
+summary.bw.optim <- function(object, ...) {
+  z <- attributes(object)
+  z$hopt <- hopt <- as.numeric(object)
+  z$is.extreme <- is.infinite(hopt) || with(z, iopt == 1 || iopt == length(h))
+  structure(z, class="summary.bw.optim")
+}
+
+print.summary.bw.optim <- function(x, ..., digits=3) {
+  splat("Bandwidth value selected by", x$criterion)
+  su <- summary(x$units)
+  splat("Optimal value:",
+        x$labels$hname, "=",
+        signif(x$hopt, digits=digits),
+        if(x$hopt == 1) su$singular else su$plural,
+        su$explain)
+  splat("Search performed over", length(x$h),
+        "candidate bandwidths in the interval",
+        prange(signif(range(x$h), digits=digits)))
+  optname <- if(is.null(x$optimum)) "Optimum" else 
+             switch(x$optimum, min="Minimum", max="Maximum", x$optimum)
+  splat(optname, "value of criterion",
+        paste0(x$labels$cvname, ":"),
+        signif(x$cv[x$iopt], digits=digits))
+  if(isTRUE(x$is.extreme)) {
+    splat(optname, "achieved at",
+          if(is.infinite(x$hopt)) "infinity" else
+          if(x$iopt == 1) "lower limit of range" else "upper limit of range")
+  }
+  if(!is.null(creator <- x$info$creator)) 
+    splat("Computed by the function", sQuote(creator))
   return(invisible(NULL))
 }
 

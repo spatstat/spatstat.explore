@@ -120,6 +120,7 @@
 \alias{print.quadrattest}
 \alias{print.rat}
 \alias{print.Smoothfun}       
+\alias{print.summary.bw.optim}
 \alias{print.summary.ssf}
 \alias{quadrat.testEngine}
 \alias{ratfv}
@@ -168,6 +169,7 @@
 \alias{spatialCovariateEvidence.ppp}
 \alias{sphere.volume}
 \alias{summary.envelope}
+\alias{summary.bw.optim}
 \alias{tweak.fv.entry}
 \alias{tweak.ratfv.entry}
 \alias{twostage.test}
@@ -355,6 +357,7 @@ prefixfv(x, tagprefix, descprefix, lablprefix, whichtags)
 \method{print}{quadrattest}(x, \dots)
 \method{print}{rat}(x, \dots)
 \method{print}{Smoothfun}(x, \dots)
+\method{print}{summary.bw.optim}(x, \dots, digits)
 \method{print}{summary.ssf}(x, \dots)
 quadrat.testEngine(X, nx, ny, alternative, method, conditional, CR, 
      \dots, nsim, Xcount, xbreaks, ybreaks, tess, fit, df.est, Xname, fitname)
@@ -435,6 +438,7 @@ spatialCovariateEvidence(model, covariate, \dots)
           dimyx, eps, interpolate, jitter, jitterfactor,
           modelname, covname, dataname, subset, clip.predict)
 sphere.volume(range, nval = 10)
+\method{summary}{bw.optim}(object, \dots)
 \method{summary}{envelope}(object,\dots)
 tweak.fv.entry(x, current.tag, new.labl, new.desc, new.tag)
 tweak.ratfv.entry(x, \dots)
