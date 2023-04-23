@@ -3,7 +3,7 @@
 #
 #   computes simulation envelopes 
 #
-#   $Revision: 2.115 $  $Date: 2023/02/28 01:56:55 $
+#   $Revision: 2.116 $  $Date: 2023/04/23 09:01:15 $
 #
 
 
@@ -277,10 +277,12 @@ envelopeEngine <-
   # Undocumented option to generate patterns only.
   patterns.only <- identical(internal$eject, "patterns")
 
-  # Undocumented option to evaluate 'something' for each pattern
+  # Undocumented option to evaluate 'something' for each simulation
   if(savevalues <- !is.null(saveresultof)) {
     stopifnot(is.function(saveresultof))
     SavedValues <- list()
+    ## might be a function of the pattern only, or both pattern and summary fun
+    result.depends.both <- (length(formals(saveresultof)) >= 2)
   }
 
   # Identify type of simulation from argument 'simul'
@@ -710,7 +712,7 @@ envelopeEngine <-
                )
       if(catchpatterns)
         Caughtpatterns[[i]] <- Xsim
-      if(savevalues)
+      if(savevalues && !result.depends.both)
         SavedValues[[i]] <- saveresultof(Xsim)
       if(compute.weights) {
         wti <- weightfun(Xsim)
@@ -789,6 +791,9 @@ envelopeEngine <-
                    "the values of the argument", sQuote(argname.sim),
                    "are different from those used for the data."))
     }
+
+    if(savevalues && result.depends.both)
+      SavedValues[[i]] <- saveresultof(Xsim, funXsim)
 
     if(tran) {
       # extract only the recommended value
@@ -883,7 +888,8 @@ envelopeEngine <-
     ## undocumented - tack on values of some other quantity
     if(savevalues) {
       attr(result, "simvalues") <- SavedValues
-      attr(result, "datavalue") <- saveresultof(X)
+      attr(result, "datavalue") <-
+        if(result.depends.both) saveresultof(X, funX) else saveresultof(X)
     }
   }
 
