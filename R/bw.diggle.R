@@ -73,6 +73,7 @@ bw.diggle <- local({
     ## Convert to standard deviation of (one-dimensional marginal) kernel
     sigma <- rvals/2
     result <- bw.optim(M, sigma,
+                       optimum="min",
                        creator="bw.diggle",
                        criterion="Berman-Diggle Cross-Validation",
                        J=J,

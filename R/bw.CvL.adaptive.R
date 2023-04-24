@@ -56,6 +56,7 @@ bw.CvL.adaptive <- function(X, ...,
      lp2[i] <- (cv[i] - lW)^2
    }
    result <- bw.optim(lp2, h,
+                      optimum="min",
                       cvname="lp2", hname="h",
                       criterion="Cronie-Van Lieshout",
                       unitname=unitname(X),

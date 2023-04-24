@@ -110,6 +110,7 @@ bw.pcf <- function(X, rmax=NULL, lambda=NULL, divisor="r",
                       compLik = "composite likelihood cross-validation",
                       leastSQ = "least squares cross-validation")
   result <- bw.optim(cv, sigma, which.max(cv),
+                     optimum="max",
                      criterion = criterion,
                      warnextreme=warn, hargnames=c("rmax", "srange"),
                      unitname=unitname(X))

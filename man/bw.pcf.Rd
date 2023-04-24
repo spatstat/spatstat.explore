@@ -113,13 +113,16 @@
   of the kernel, and \code{bw=h/sqrt(5)}.
 }
 \value{
-  A numerical value giving the selected bandwidth.
+  A single numerical value giving the selected bandwidth.
   The result also belongs to the class \code{"bw.optim"}
-  which can be plotted.
+  (see \code{\link[spatstat.explore]{bw.optim.object}})
+  which can be plotted to show the bandwidth selection criterion
+  as a function of \code{sigma}.
 }
 \seealso{
   \code{\link{pcf.ppp}},
-  \code{\link{pcfinhom}}
+  \code{\link{pcfinhom}},
+  \code{\link[spatstat.explore]{bw.optim.object}}
 }
 \examples{
   b <- bw.pcf(redwood)

@@ -85,7 +85,9 @@ bw.CvL.adaptive(X, \dots,
 \value{
   A single numerical value giving the selected global bandwidth.
   The result also belongs to the class \code{"bw.optim"}
-  which can be plotted.
+  (see \code{\link[spatstat.explore]{bw.optim.object}})
+  which can be plotted to show the bandwidth selection criterion
+  as a function of \code{sigma}.
 }
 \references{
   Abramson, I. (1982)
@@ -106,11 +108,13 @@ bw.CvL.adaptive(X, \dots,
   Modified by \adrian.
 }
 \seealso{
+  \code{\link[spatstat.explore]{bw.optim.object}}.
+  
   \code{\link{adaptive.density}},
   \code{\link{densityAdaptiveKernel}},
   \code{\link{bw.abram}},
   \code{\link{density.ppp}}.
-
+  
   To select a \emph{fixed} smoothing bandwidth
   using the Cronie-Van Lieshout criterion, use \code{\link{bw.CvL}}.
 }

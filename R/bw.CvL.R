@@ -24,7 +24,8 @@ bw.CvL <- function(X, ..., srange=NULL, ns=16, sigma=NULL, warn=TRUE){
                     leaveoneout = FALSE, edge = FALSE)
     cv[i] <- ( sum(1/lamx) - areaW )^2
   }
-  result <- bw.optim(cv, sigma, iopt=which.min(cv), 
+  result <- bw.optim(cv, sigma, iopt=which.min(cv),
+                     optimum="min",
                      creator="bw.CvL",
                      criterion="Cronie and van Lieshout",
                      warnextreme=warn, hargnames="srange",

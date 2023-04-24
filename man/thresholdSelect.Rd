@@ -51,10 +51,11 @@ thresholdSelect(X, Z, method = c("Y", "LL", "AR", "t", "C"), Zname)
   These criteria are explained in Baddeley et al (2021).
 }
 \value{
-  A numerical value giving the selected threshold.
+  A single numerical value giving the selected bandwidth.
   The result also belongs to the class \code{"bw.optim"}
-  which can be plotted (the plot shows the criterion used to select
-  the threshold).
+  (see \code{\link[spatstat.explore]{bw.optim.object}})
+  which can be plotted to show the criterion used to select
+  the threshold.
 }
 \references{
 Baddeley, A., Brown, W., Milne, R.K., Nair, G.,

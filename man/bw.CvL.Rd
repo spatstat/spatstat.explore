@@ -55,19 +55,19 @@
   directly, using \code{\link{density.ppp}}, 
   for \code{ns} different values of \eqn{\sigma}{\sigma}
   between \code{srange[1]} and \code{srange[2]}.
-
-  The result is a numerical value giving the selected bandwidth.
+}
+\value{
+  A single numerical value giving the selected bandwidth.
   The result also belongs to the class \code{"bw.optim"}
+  (see \code{\link[spatstat.explore]{bw.optim.object}})
   which can be plotted to show the bandwidth selection criterion
   as a function of \code{sigma}.
 }
-\value{
-  A numerical value giving the selected bandwidth.
-  The result also belongs to the class \code{"bw.optim"}
-  which can be plotted.
-}
 \seealso{
   \code{\link{density.ppp}},
+  \code{\link[spatstat.explore]{bw.optim.object}}.
+
+  Alternative methods:
   \code{\link{bw.diggle}},
   \code{\link{bw.scott}},
   \code{\link{bw.ppl}},

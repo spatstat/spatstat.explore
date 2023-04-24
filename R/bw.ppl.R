@@ -3,7 +3,7 @@
 #'
 #'   Likelihood cross-validation for kernel smoother of point pattern
 #'
-#'   $Revision: 1.12 $ $Date: 2020/04/08 04:27:12 $
+#'   $Revision: 1.13 $ $Date: 2023/04/24 02:12:53 $
 #'
 
 bw.ppl <- function(X, ..., srange=NULL, ns=16, sigma=NULL,
@@ -37,7 +37,8 @@ bw.ppl <- function(X, ..., srange=NULL, ns=16, sigma=NULL,
       cv[i] <- sum(log(lamx)) - integral.im(lam)
     }
   }
-  result <- bw.optim(cv, sigma, iopt=which.max(cv), 
+  result <- bw.optim(cv, sigma, iopt=which.max(cv),
+                     optimum="max",
                      creator="bw.ppl",
                      criterion="Likelihood Cross-Validation",
                      warnextreme=warn,
