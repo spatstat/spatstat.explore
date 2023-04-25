@@ -51,8 +51,8 @@
   \code{\link[spatstat.linnet]{bw.voronoi}}
 }
 \examples{
-  X <- subset(lansing, marks == "hickory")
-  b <- bw.diggle(X)
+  Ns <- if(interactive()) 32 else 3
+  b <- bw.ppl(redwood, srange=c(0.02, 0.07), ns=Ns)
   b
   summary(b)
   plot(b)
