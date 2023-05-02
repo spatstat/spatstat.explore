@@ -62,13 +62,16 @@ cdf.test.ppp <-
 spatialCDFtest <- function(model, covariate, test=c("ks", "cvm", "ad"),
                            ...,
                            dimyx=NULL, eps=NULL,
+                           rule.eps=c("adjust.eps",
+                                      "grow.frame", "shrink.frame"),
                            interpolate=TRUE, jitter=TRUE, nsim=99, verbose=TRUE,
                            modelname=NULL, covname=NULL, dataname=NULL) {
   ## conduct test based on comparison of CDF's of covariate values
   test <- match.arg(test)
+  rule.eps <- match.arg(rule.eps)
   ## compute the essential data
   fra <- spatialCDFframe(model, covariate,
-                         dimyx=dimyx, eps=eps,
+                         dimyx=dimyx, eps=eps, rule.eps=rule.eps,
                          interpolate=interpolate, jitter=jitter,
                          modelname=modelname,
                          covname=covname, dataname=dataname)
@@ -90,7 +93,7 @@ spatialCDFtest <- function(model, covariate, test=c("ks", "cvm", "ad"),
   for(i in seq_len(nsim)) {
     model.i <- update(model, Xsim[[i]])
     fra.i <- spatialCDFframe(model.i, covariate,
-                             dimyx=dimyx, eps=eps,
+                             dimyx=dimyx, eps=eps, rule.eps=rule.eps,
                              interpolate=interpolate, jitter=jitter,
                              modelname=modelname,
                              covname=covname, dataname=dataname)

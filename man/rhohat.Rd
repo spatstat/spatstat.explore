@@ -24,6 +24,7 @@ rhohat(object, covariate, ...)
        do.CI=TRUE, 
        jitter=TRUE, jitterfactor=1, interpolate=TRUE,
        dimyx=NULL, eps=NULL,
+       rule.eps = c("adjust.eps", "grow.frame", "shrink.frame"),
        n = 512, bw = "nrd0", adjust=1, from = NULL, to = NULL,
        bwref=bw,
        covname, confidence=0.95, positiveCI, breaks=NULL)
@@ -38,6 +39,7 @@ rhohat(object, covariate, ...)
        do.CI=TRUE, 
        jitter=TRUE, jitterfactor=1, interpolate=TRUE,
        dimyx=NULL, eps=NULL,
+       rule.eps = c("adjust.eps", "grow.frame", "shrink.frame"),
        n = 512, bw = "nrd0", adjust=1, from = NULL, to = NULL,
        bwref=bw,
        covname, confidence=0.95, positiveCI, breaks=NULL)
@@ -115,7 +117,7 @@ rhohat(object, covariate, ...)
     covariate value for each data point is obtained by interpolating the
     nearest pixel values using \code{\link[spatstat.geom]{interp.im}}.
   }
-  \item{dimyx,eps}{
+  \item{dimyx,eps,rule.eps}{
     Arguments controlling the pixel
     resolution at which the covariate will be evaluated.
     See Details.
@@ -307,7 +309,7 @@ rhohat(object, covariate, ...)
   or one of the strings \code{"x"} or \code{"y"} signifying the
   cartesian coordinates. It will be evaluated on a fine grid of locations,
   with spatial resolution controlled by the arguments
-  \code{dimyx,eps} which are passed to \code{\link{as.mask}}.
+  \code{dimyx,eps,rule.eps} which are passed to \code{\link{as.mask}}.
 }
 \section{Smooth estimates}{
   Smooth estimators of \eqn{\rho(z)}{rho(z)}

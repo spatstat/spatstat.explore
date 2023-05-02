@@ -8,13 +8,16 @@
 #'  in nonparametric methods such as 'rhohat' to represent the null/reference model,
 #'  so that the code for nonparametric methods does not depend on 'ppm'
 #'
-#'  $Revision: 1.5 $ $Date: 2022/05/23 02:33:06 $
+#'  $Revision: 1.6 $ $Date: 2023/05/02 07:01:00 $
 
-exactppm <- function(X, baseline=NULL, ..., subset=NULL, eps=NULL, dimyx=NULL) {
+exactppm <- function(X, baseline=NULL, ..., subset=NULL,
+                     eps=NULL, dimyx=NULL,
+                     rule.eps=c("adjust.eps", "grow.frame", "shrink.frame")) {
   stopifnot(inherits(X, c("ppp", "quad")))
   if(is.quad(X)) X <- X$data
   marx <- marks(X) # may be null
   lev <- levels(marx) # may be null
+  rule.eps <- match.arg(rule.eps)
   if(is.null(subset)) {
     Xfit <- X
   } else {
@@ -34,18 +37,24 @@ exactppm <- function(X, baseline=NULL, ..., subset=NULL, eps=NULL, dimyx=NULL) {
       denom <- sapply(baseline, integral, domain=subset)
     } else if(is.function(baseline)) {
       if(!is.multitype(X) || length(formals(baseline)) == 2) {
-        ba <- as.im(baseline, W=Window(X), eps=eps, dimyx=dimyx)
+        ba <- as.im(baseline, W=Window(X),
+                    eps=eps, dimyx=dimyx, rule.eps=rule.eps)
         denom <- integral(ba, domain=subset)
       } else {
         ba <- lapply(lev,
-                     function(z) { as.im(baseline, W=Window(X), z, eps=eps, dimyx=dimyx)})
+                     function(z) { as.im(baseline, W=Window(X),
+                                         z,
+                                         eps=eps, dimyx=dimyx,
+                                         rule.eps=rule.eps)})
         denom <- sapply(ba, integral, domain=subset)
       }
     } else if(identical(baseline, "x")) {
-      ba <- as.im(function(x,y){x}, W=Window(X), eps=eps, dimyx=dimyx)
+      ba <- as.im(function(x,y){x}, W=Window(X),
+                  eps=eps, dimyx=dimyx, rule.eps=rule.eps)
       denom <- integral(ba, domain=subset)
     } else if(identical(baseline, "y")) {
-      ba <- as.im(function(x,y){y}, W=Window(X), eps=eps, dimyx=dimyx)
+      ba <- as.im(function(x,y){y}, W=Window(X),
+                  eps=eps, dimyx=dimyx, rule.eps=rule.eps)
       denom <- integral(ba, domain=subset)
     } else if(is.numeric(baseline) &&
               (length(baseline) == 1 ||
@@ -91,7 +100,10 @@ is.stationary.exactppm <- function(x) {
   is.null(x$baseline) || is.numeric(x$baseline)
 }
 
-predict.exactppm <- function(object, locations=NULL, ..., eps=NULL, dimyx=NULL) {
+predict.exactppm <- function(object, locations=NULL, ...,
+                             eps=NULL, dimyx=NULL,
+                             rule.eps=c("adjust.eps",
+                                        "grow.frame", "shrink.frame")) {
   X        <- object$X
   beta     <- object$beta # numeric
   baseline <- object$baseline # covariate or NULL
@@ -103,11 +115,14 @@ predict.exactppm <- function(object, locations=NULL, ..., eps=NULL, dimyx=NULL) 
     beta <- as.list(beta)
   }
   ## evaluate at desired locations
-  Beta <- evaluateCovariate(beta, locations, eps=eps, dimyx=dimyx)
+  rule.eps <- match.arg(rule.eps)
+  Beta <- evaluateCovariate(beta, locations,
+                            eps=eps, dimyx=dimyx, rule.eps=rule.eps)
   if(is.null(baseline)) {
     Lambda <- Beta
   } else {
-    Baseline <- evaluateCovariate(baseline, locations, eps=eps, dimyx=dimyx)
+    Baseline <- evaluateCovariate(baseline, locations,
+                                  eps=eps, dimyx=dimyx, rule.eps=rule.eps)
     if(is.im(Beta) || is.imlist(Beta) || is.im(Baseline) || is.imlist(Baseline)) {
       Lambda <- imagelistOp(Beta, Baseline, "*")
     } else {

@@ -49,10 +49,12 @@ maskLaslett <- local({
   sumtoright <- function(x) { rev(cumsum(rev(x))) - x }
 
   maskLaslett <- function(X, ...,
-                          eps=NULL, dimyx=NULL, xy=NULL, 
+                          eps=NULL, dimyx=NULL, xy=NULL,
+                          rule.eps=c("adjust.eps","grow.frame","shrink.frame"),
                           oldX=X, verbose=FALSE, plotit=TRUE) {
     if(is.null(oldX)) oldX <- X
-    X <- as.mask(X, eps=eps, dimyx=dimyx, xy=xy)
+    rule.eps <- match.arg(rule.eps)
+    X <- as.mask(X, eps=eps, dimyx=dimyx, xy=xy, rule.eps=rule.eps)
     unitX <- unitname(X)
     if(is.empty(X))
       stop("Empty window!")
@@ -203,7 +205,7 @@ plot.laslett <- function(x, ...,
 
   #' ignore arguments intended for as.mask
   argh <- list(...)
-  if(any(bad <- names(argh) %in% c("eps", "dimyx", "xy")))
+  if(any(bad <- names(argh) %in% c("eps", "dimyx", "xy", "rule.eps")))
     argh <- argh[!bad]
 
   dont.complain.about(Display)

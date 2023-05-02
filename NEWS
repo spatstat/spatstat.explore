@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.1-0.026
+        CHANGES IN spatstat.explore VERSION 3.1-0.027
 
 OVERVIEW
 
@@ -72,6 +72,9 @@ SIGNIFICANT USER-VISIBLE CHANGES
     o relrisk.ppp
     Issues a warning if numerical underflow is detected.
 
+    o rhohat.ppp, rhohat.quad
+    New argument 'rule.eps' passed to 'as.mask'.
+    
 BUG FIXES
 
     o density.ppp

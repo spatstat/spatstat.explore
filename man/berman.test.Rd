@@ -32,8 +32,8 @@ berman.test(...)
   }
   \item{\dots}{
     Additional arguments controlling the pixel resolution
-    (arguments \code{dimyx} and \code{eps} passed to
-    \code{\link{as.mask}})
+    (arguments \code{dimyx}, \code{eps} and \code{rule.eps}
+    passed to \code{\link{as.mask}})
     or other undocumented features.
   }
 }

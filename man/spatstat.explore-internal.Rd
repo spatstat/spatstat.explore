@@ -271,11 +271,12 @@ envelopeTest(X, \dots, exponent, alternative,
   type, alternative, scale, clamp, csr, use.theory, nrank, ginterval, nSD,
   savefuns, check, Yname, do.pwrong, weights, precomputed, gaveup)
 evaluateCovariate(covariate, locations, \dots)
-evaluateCovariateAtPixels(covariate, locations, \dots, types, eps, dimyx)
+evaluateCovariateAtPixels(covariate, locations, \dots,
+                          types, eps, dimyx, rule.eps)
 evaluateCovariateAtPoints(covariate, locations, \dots, allow.column)
 evaluate2Dkernel(kernel, x, y, sigma, varcov, \dots, scalekernel)
 ExpSmoothLog(X, \dots, at, weights, se)
-exactppm(X, baseline, \dots, subset, eps, dimyx)
+exactppm(X, baseline, \dots, subset, eps, dimyx, rule.eps)
 extractAtomicQtests(x)
 fasp(fns, which, formulae, dataname, title, rowNames, colNames, checkfv)
 f3engine(x, y, z, box, vside, range, nval, correction)
@@ -317,7 +318,7 @@ localpcfengine(X, \dots, delta, rmax, nr, stoyan, lambda, rvalue)
 localpcfmatrix(X, i, \dots, lambda, delta, rmax, nr, stoyan)
 lookup2DkernelInfo(kernel)
 makefvlabel(op, accent, fname, sub, argname)
-maskLaslett(X, \dots, eps, dimyx, xy, oldX, verbose, plotit)
+maskLaslett(X, \dots, eps, dimyx, xy, rule.eps, oldX, verbose, plotit)
 match.kernel(kernel)
 match2DkernelName(kernel)
 mctestSigtraceEngine(R, devdata, devsim, \dots,
@@ -340,7 +341,7 @@ pcfmulti.inhom(X, I, J, lambdaI, lambdaJ, \dots,
 \method{plot}{plotpairsim}(x, \dots)
 \method{plot}{spatialcdf}(x, \dots, xlab, ylab, do.points)
 polyLaslett(X, \dots, oldX, verbose, plotit)
-\method{predict}{exactppm}(object, locations, \dots, eps, dimyx)
+\method{predict}{exactppm}(object, locations, \dots, eps, dimyx, rule.eps)
 prefixfv(x, tagprefix, descprefix, lablprefix, whichtags)
 \method{print}{bw.frac}(x, \dots)
 \method{print}{bw.optim}(x, \dots)
@@ -427,15 +428,15 @@ smoothpointsEngine(x, values, sigma, \dots,
 spatialCDFframe(model, covariate, \dots, jitter, covariateAtPoints,
                 make.quantile.function)
 spatialCDFtest(model, covariate, test, \dots,
-         dimyx, eps, interpolate, jitter,
+         dimyx, eps, rule.eps, interpolate, jitter,
          nsim, verbose, modelname, covname, dataname)
 spatialCDFtestCalc(fra, test, \dots, details)
 spatialCovariateEvidence(model, covariate, \dots)
 \method{spatialCovariateEvidence}{exactppm}(model, covariate, \dots, lambdatype,
-          dimyx, eps, interpolate, jitter, jitterfactor,
+          dimyx, eps, rule.eps, interpolate, jitter, jitterfactor,
           modelname, covname, dataname, subset, clip.predict) 
 \method{spatialCovariateEvidence}{ppp}(model, covariate, \dots, lambdatype,
-          dimyx, eps, interpolate, jitter, jitterfactor,
+          dimyx, eps, rule.eps, interpolate, jitter, jitterfactor,
           modelname, covname, dataname, subset, clip.predict)
 sphere.volume(range, nval = 10)
 \method{summary}{bw.optim}(object, \dots)

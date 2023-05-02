@@ -1,7 +1,7 @@
 #'
 #'  rhohat.R
 #'
-#'  $Revision: 1.114 $  $Date: 2023/03/02 06:12:28 $
+#'  $Revision: 1.115 $  $Date: 2023/05/02 07:16:41 $
 #'
 #'  Non-parametric estimation of a function rho(z) determining
 #'  the intensity function lambda(u) of a point process in terms of a
@@ -29,11 +29,13 @@ rhohat.ppp <- rhohat.quad <-
            do.CI=TRUE,
            jitter=TRUE, jitterfactor=1, interpolate=TRUE,
            dimyx=NULL, eps=NULL,
+           rule.eps = c("adjust.eps", "grow.frame", "shrink.frame"), 
            n=512, bw="nrd0", adjust=1, from=NULL, to=NULL, 
            bwref=bw, covname, confidence=0.95, positiveCI, breaks=NULL) {
   callstring <- short.deparse(sys.call())
   smoother <- match.arg(smoother)
   method <- match.arg(method)
+  rule.eps <- match.arg(rule.eps)
   X <- if(is.ppp(object)) object else object$data
   if(is.marked(X) && !is.multitype(X)) {
     warning(paste("rhohat does not handle marked point pattern data",
@@ -56,7 +58,8 @@ rhohat.ppp <- rhohat.quad <-
   } else {
     ## Intensity proportional to baseline
     ## WAS: model <- ppm(object ~ offset(log(baseline)), subset=subset)
-    model <- exactppm(X, baseline=baseline, subset=subset, eps=eps, dimyx=dimyx)
+    model <- exactppm(X, baseline=baseline, subset=subset,
+                      eps=eps, dimyx=dimyx, rule.eps=rule.eps)
     reference <- "baseline"
   }
   modelcall <- NULL
@@ -90,7 +93,7 @@ rhohat.ppp <- rhohat.quad <-
                method=method,
                horvitz=horvitz,
                smoother=smoother,
-               resolution=list(dimyx=dimyx, eps=eps),
+               resolution=list(dimyx=dimyx, eps=eps, rule.eps=rule.eps),
                spatCovarArgs=list(clip.predict=FALSE,
                                   jitter=jitter,
                                   jitterfactor=jitterfactor,

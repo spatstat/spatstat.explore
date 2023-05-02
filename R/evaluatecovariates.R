@@ -3,7 +3,7 @@
 #'
 #' Evaluate covariates at specified locations
 #'
-#'   $Revision: 1.8 $  $Date: 2022/05/20 06:25:05 $
+#'   $Revision: 1.9 $  $Date: 2023/05/02 06:53:46 $
 #'
 
 evaluateCovariate <- function(covariate, locations, ...) {
@@ -16,7 +16,7 @@ evaluateCovariate <- function(covariate, locations, ...) {
 
 evaluateCovariateAtPoints <- function(covariate, locations, ...,
                                       allow.column=TRUE) {
-  AvoidNames <- c("eps", "dimyx", "types")
+  AvoidNames <- c("eps", "dimyx", "rule.eps", "types")
   stopifnot(is.ppp(locations))
   n <- npoints(locations)
   marx <- marks(locations) # may be null
@@ -93,9 +93,11 @@ evaluateCovariateAtPoints <- function(covariate, locations, ...,
 }
 
 evaluateCovariateAtPixels <- function(covariate, locations, ...,
-                                  types=NULL, eps=NULL, dimyx=NULL) {
+           types=NULL, eps=NULL, dimyx=NULL,
+           rule.eps=c("adjust.eps", "grow.frame", "shrink.frame")) {
   stopifnot(is.owin(locations))
-  M <- as.mask(locations, eps=eps, dimyx=dimyx)
+  rule.eps <- match.arg(rule.eps)
+  M <- as.mask(locations, eps=eps, dimyx=dimyx, rule.eps=rule.eps)
   if(is.im(covariate)) {
     value <- covariate[M, raster=M, drop=FALSE]
   } else if(is.imlist(covariate)) {
