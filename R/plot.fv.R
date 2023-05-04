@@ -1,7 +1,7 @@
 #
 #       plot.fv.R   (was: conspire.S)
 #
-#  $Revision: 1.138 $    $Date: 2023/03/04 03:58:56 $
+#  $Revision: 1.139 $    $Date: 2023/05/04 01:30:14 $
 #
 #
 
@@ -783,7 +783,7 @@ findbestlegendpos <- local({
   }
 
   asma <- function(z) { if(is.owin(z)) as.mask(z) else
-                        if(is.psp(z)) as.mask.psp(z) else NULL }
+                        if(is.psp(z)) psp2mask(z) else NULL }
   
   callit <- function(...) {
     rslt <- try(bestlegendpos(...))
