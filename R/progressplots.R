@@ -1,10 +1,10 @@
-#
-#   progress.R
-#
-#   $Revision: 1.21 $  $Date: 2016/04/25 02:34:40 $
-#
-#   progress plots (envelope representations)
-#
+##
+##   progressplots.R
+##
+##   $Revision: 1.22 $  $Date: 2023/05/09 02:13:41 $
+##
+##   progress plots (envelope representations)
+##
 
 dclf.progress <- function(X, ...)
   mctest.progress(X, ..., exponent=2)
