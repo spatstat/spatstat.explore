@@ -3,7 +3,7 @@
 ##
 ##   Inline arithmetic for 'fasp'
 ##
-##   $Revision: 1.3 $ $Date: 2023/03/18 10:14:35 $
+##   $Revision: 1.4 $ $Date: 2023/05/13 01:11:06 $
 
 
 Math.fasp <- function(x, ...){
@@ -22,21 +22,31 @@ Complex.fasp <- function(z){
 
 Ops.fasp <- function(e1,e2=NULL) {
   m <- match.call()
+  objects <- list()
   if(is.name(m$e1) || (is.atomic(m$e1) && length(m$e1) == 1)) {
+    ## e1 is the name of a fasp object, or is a single value.
+    ## It will appear directly in the resulting function names
     e1use <- substitute(e1)
   } else {
-    force(e1)
+    ## e1 is an expression that should first be evaluated
+    ## It will appear as 'e1' in the resulting function names
     e1use <- quote(e1)
+    objects$e1 <- eval(e1)
   }
   if(is.name(m$e2) || (is.atomic(m$e2) && length(m$e2) == 1)) {
     e2use <- substitute(e2)
   } else {
-    force(e2)
     e2use <- quote(e2)
+    objects$e2 <- eval(e2)
   }
-  eval(substitute(eval.fasp(G(e1,e2)), list(G=as.name(.Generic),
-                                            e1=e1use,
-                                            e2=e2use)))
+  callframe <- parent.frame()
+  evalframe <-
+    if(length(objects)) list2env(objects, parent=callframe) else callframe
+  eval(substitute(eval.fasp(G(e1,e2),
+                            envir=evalframe),
+                  list(G=as.name(.Generic),
+                       e1=e1use,
+                       e2=e2use)))
 }
 
 Summary.fasp <- local({
