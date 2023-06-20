@@ -3,7 +3,7 @@
 #
 # Test statistics from Berman (1986)
 #
-#  $Revision: 1.25 $  $Date: 2022/11/03 11:08:33 $
+#  $Revision: 1.26 $  $Date: 2023/06/20 02:43:35 $
 #
 #
 
@@ -228,7 +228,7 @@ plot.bermantest <-
                                     list(quote(cdfU)),
                                     list(...),
                                     list(do.points=FALSE, asp=1),
-                                    list(xlim=c(0,1), ylim=c(0,1)),
+                                    list(xlim=c(0,1), ylim=c(0,1), pty="s"),
                                     list(lwd=lwd, col=col, lty=lty),
                                     list(xlab="U", ylab="relative frequency"),
                                     list(main=main)))

@@ -1,4 +1,15 @@
 
+        CHANGES IN spatstat.explore VERSION 3.2-1.001
+
+OVERVIEW
+
+    o Minor improvements.
+
+SIGNIFICANT USER-VISIBLE CHANGES
+
+    o plot.bermantest
+    Improved layout for plots of Berman's Z2 test.
+
         CHANGES IN spatstat.explore VERSION 3.2-1
 
 OVERVIEW
