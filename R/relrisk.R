@@ -3,7 +3,7 @@
 #
 #   Estimation of relative risk
 #
-#  $Revision: 1.67 $  $Date: 2023/03/21 07:06:28 $
+#  $Revision: 1.68 $  $Date: 2023/06/25 02:23:43 $
 #
 
 relrisk <- function(X, ...) UseMethod("relrisk")
@@ -234,7 +234,8 @@ relrisk.ppp <- local({
           stopifnot(control %in% 1:2)
         } else if(is.character(control)) {
           icontrol <- match(control, types)
-          if(is.na(icontrol)) stop(paste("No points have mark =", control))
+          if(is.na(icontrol))
+            stop(paste("No points have mark =", sQuote(control)))
         } else
           stop(paste("Unrecognised format for argument", sQuote("control")))
         if(!case.given)
@@ -247,7 +248,8 @@ relrisk.ppp <- local({
           stopifnot(case %in% 1:2)
         } else if(is.character(case)) {
           icase <- match(case, types)
-          if(is.na(icase)) stop(paste("No points have mark =", case))
+          if(is.na(icase))
+            stop(paste("No points have mark =", sQuote(case)))
         } else stop(paste("Unrecognised format for argument", sQuote("case")))
         if(!control.given) 
           icontrol <- 3 - icase
@@ -343,7 +345,8 @@ relrisk.ppp <- local({
           stopifnot(control %in% 1:ntypes)
         } else if(is.character(control)) {
           icontrol <- match(control, types)
-          if(is.na(icontrol)) stop(paste("No points have mark =", control))
+          if(is.na(icontrol))
+            stop(paste("No points have mark =", sQuote(control)))
         } else
           stop(paste("Unrecognised format for argument", sQuote("control")))
       }
