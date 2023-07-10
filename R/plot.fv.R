@@ -1,7 +1,7 @@
 #
 #       plot.fv.R   (was: conspire.S)
 #
-#  $Revision: 1.139 $    $Date: 2023/05/04 01:30:14 $
+#  $Revision: 1.142 $    $Date: 2023/07/09 09:40:40 $
 #
 #
 
@@ -50,6 +50,7 @@ plot.fv <- local({
   
   plot.fv <- function(x, fmla, ..., subset=NULL, lty=NULL, col=NULL, lwd=NULL,
                       xlim=NULL, ylim=NULL, xlab=NULL, ylab=NULL,
+                      clip.xlim=TRUE,
                       ylim.covers=NULL, legend=!add, legendpos="topleft",
                       legendavoid=missing(legendpos),
                       legendmath=TRUE, legendargs=list(),
@@ -279,20 +280,29 @@ plot.fv <- local({
       xlim <- par("usr")[1:2]
     }
     if(!is.null(xlim)) {
+      check.range(xlim)
       ok <- !is.finite(rhsdata) | (xlim[1] <= rhsdata & rhsdata <= xlim[2])
       rhsdata <- rhsdata[ok]
       lhsdata <- lhsdata[ok, , drop=FALSE]
     } else {
-      ## if we're using the default argument, use its recommended range
+      ## determine the default xlim
       if(rhs == fvnames(x, ".x")) {
-        xlim <- attr(x, "alim") %orifnull% range(as.vector(rhsdata),
-                                                 finite=TRUE)
+        ## this is a default plot of f(r) against r
+        if(isFALSE(clip.xlim) || is.null(alim <- attr(x, "alim"))) {
+          ## use the full range available
+          xlim <- range(as.vector(rhsdata), finite=TRUE)
+        } else {
+          ## use the recommended range by default
+          xlim <- alim
+        }
         if(xlogscale && xlim[1] <= 0) 
           xlim[1] <- min(rhsdata[is.finite(rhsdata) & rhsdata > 0], na.rm=TRUE)
         ok <- !is.finite(rhsdata) | (rhsdata >= xlim[1] & rhsdata <= xlim[2])
         rhsdata <- rhsdata[ok]
         lhsdata <- lhsdata[ok, , drop=FALSE]
-      } else { ## actual range of values to be plotted
+      } else {
+        ## this is a non-default plot
+        ## actual range of values to be plotted
         if(xlogscale) {
           ok <- is.finite(rhsdata) & (rhsdata > 0) & matrowany(lhsdata > 0)
           xlim <- range(rhsdata[ok])
@@ -560,10 +570,14 @@ plot.fv <- local({
                                           inset=0.05,
                                           y.intersp=if(legendmath) 1.3 else 1),
                                      .StripNull=TRUE)
-      tB <- dev.capabilities()$transparentBackground
-      if(!any(names(legendspec) == "bg") &&
-         !is.na(tB) && !identical(tB, "no"))
-        legendspec$bg <- "transparent"
+
+      if(!any(names(legendspec) == "bg")) {
+        ## background colour unspecified: default is transparent if available
+        tB <- safeDevCapabilities()$transparentBackground
+        tBok <- (length(tB) > 0) && !anyNA(tB) && !identical(tB, "no")
+        if(tBok)
+          legendspec$bg <- "transparent"
+      }
       
       if(legendavoid || identical(legendpos, "float")) {
         ## Automatic determination of legend position

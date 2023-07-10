@@ -1,15 +1,30 @@
 
-        CHANGES IN spatstat.explore VERSION 3.2-1.002
+        CHANGES IN spatstat.explore VERSION 3.2-1.004
 
 OVERVIEW
 
     o Minor improvements.
 
+    o Workaround for bug in dev.capabilities()
+    
 SIGNIFICANT USER-VISIBLE CHANGES
 
+    o circdensity
+    Improved output of 'print' method
+    
     o plot.bermantest
     Improved layout for plots of Berman's Z2 test.
 
+    o plot.fv
+    New argument 'clip.xlim'.
+    
+BUG FIXES
+
+    o plot.fv
+    A hard crash (segmentation fault) could occur
+    due to a bug in grDevices::dev.capabilities().
+    Fixed.
+    
         CHANGES IN spatstat.explore VERSION 3.2-1
 
 OVERVIEW
