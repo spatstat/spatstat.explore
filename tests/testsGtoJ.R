@@ -29,7 +29,7 @@ local({
 #'     tests/hypotests.R
 #'     Hypothesis tests
 #' 
-#'  $Revision: 1.9 $ $Date: 2020/11/02 06:39:23 $
+#'  $Revision: 1.10 $ $Date: 2023/07/17 07:30:48 $
 
 if(FULLTEST) {
 local({
@@ -41,6 +41,24 @@ local({
   domain(a)
   shift(a, c(1,1))
 
+  #' quadrat test - correctness of mapping from table to quadrats
+  Q2 <- quadratcount(humberside, 2, 3)
+  T2 <- suppressWarnings(quadrat.test(Q2))
+  R2 <- cbind(as.numeric(t(Q2)), round(10 * residuals(T2)))
+  R2correct <- cbind(c(2, 20, 13, 11, 34, 123),
+                     c(-46, -12, -62, -41, 50, 134))
+  if(!all(R2 == R2correct))
+    stop("Incorrect count-residual map for quadrat.test(2,3)")
+
+  Q5 <- quadratcount(humberside, 5, 3)
+  T5 <- suppressWarnings(quadrat.test(Q5))
+  R5 <- cbind(as.numeric(t(Q5)), round(10 * residuals(T5)))
+  R5correct <- cbind(
+    c(  0,   0,   3, 19,   3,   2,  14,   5,  0,   2, 117, 35,   3),
+    c(-19, -33, -42, 16, -37, -49, -28, -35, -5, -21, 295, 40, -32))
+  if(!all(R5 == R5correct))
+    stop("Incorrect count-residual map for quadrat.test(5,3)")
+    
   #' cases of studpermu.test
   #' X is a hyperframe
   b <- studpermu.test(pyramidal, nperm=9)
@@ -65,7 +83,7 @@ local({
 #
 #  tests/imageops.R
 #
-#   $Revision: 1.40 $   $Date: 2022/10/23 01:57:03 $
+#   $Revision: 1.42 $   $Date: 2023/07/17 06:34:00 $
 #
 
 
