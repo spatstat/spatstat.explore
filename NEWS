@@ -1,10 +1,12 @@
 
-        CHANGES IN spatstat.explore VERSION 3.2-1.006
+        CHANGES IN spatstat.explore VERSION 3.2-1.007
 
 OVERVIEW
 
     o Minor improvements.
 
+    o Suppress annoying warning messages.
+    
     o Workaround for bug in dev.capabilities()
     
 SIGNIFICANT USER-VISIBLE CHANGES
@@ -17,6 +19,12 @@ SIGNIFICANT USER-VISIBLE CHANGES
 
     o plot.fv
     New argument 'clip.xlim'.
+
+    o rhohat
+    Suppress annoying warning messages from density.default.
+    
+    o circdensity
+    Suppress annoying warning messages from density.default.
     
 BUG FIXES
 

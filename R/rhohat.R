@@ -1,7 +1,7 @@
 #'
 #'  rhohat.R
 #'
-#'  $Revision: 1.115 $  $Date: 2023/05/02 07:16:41 $
+#'  $Revision: 1.116 $  $Date: 2023/08/14 06:33:10 $
 #'
 #'  Non-parametric estimation of a function rho(z) determining
 #'  the intensity function lambda(u) of a point process in terms of a
@@ -341,7 +341,8 @@ rhohatCalc <- local({
       ## ............... kernel smoothing ......................
       ## reference density (normalised) for calculation
       ghat <- density(Zvalues,weights=if(horvitz) NULL else lambda/sum(lambda),
-                      bw=bwref,adjust=adjust,n=n,from=from,to=to, ...)
+                      bw=bwref,adjust=adjust,n=n,from=from,to=to, ...,
+                      warnWbw=FALSE)
       xxx <- ghat$x
       ghatfun <- interpolate(ghat)
       ## relative density
