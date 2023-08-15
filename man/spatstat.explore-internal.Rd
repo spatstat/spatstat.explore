@@ -266,10 +266,11 @@ envelopeTest(X, \dots, exponent, alternative,
             save.envelope, savefuns, savepatterns,
             Xname, badXfatal, verbose)
 \method{envelope}{hasenvelope}(Y, \dots, Yname)
-\method{envelope}{matrix}(Y, \dots, rvals, observed, theory, funX,
-  nsim, nsim2, jsim, jsim.mean,
+\method{envelope}{matrix}(Y, \dots, argvals, rvals,
+  observed, theory, funX, nsim, nsim2, jsim, jsim.mean,
   type, alternative, scale, clamp, csr, use.theory, nrank, ginterval, nSD,
-  savefuns, check, Yname, do.pwrong, weights, precomputed, gaveup)
+  savefuns, check, Yname, argname, arg.desc,
+  do.pwrong, weights, precomputed, gaveup)
 evaluateCovariate(covariate, locations, \dots)
 evaluateCovariateAtPixels(covariate, locations, \dots,
                           types, eps, dimyx, rule.eps)
@@ -400,8 +401,8 @@ rhohatCalc(ZX, Zvalues, lambda, denom, \dots,
            covunits, modelcall, callstring, savestuff)
 rmax.Rigid(X, g)
 rmax.rule(fun, W, lambda)
-rocData(covariate, nullmodel, \dots, high)
-rocModel(lambda, nullmodel, \dots, high)
+rocData(covariate, nullmodel, \dots, high, p)
+rocModel(lambda, nullmodel, \dots, high, p)
 roseContinuous(ang, rad, unit, \dots,
                start, clockwise, main, labels, at, do.plot)
 scanmeasure(X, \dots)

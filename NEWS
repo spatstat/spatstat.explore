@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.2-1.007
+        CHANGES IN spatstat.explore VERSION 3.2-1.008
 
 OVERVIEW
 
@@ -31,6 +31,10 @@ BUG FIXES
     o plot.fv
     A hard crash (segmentation fault) could occur
     due to a bug in grDevices::dev.capabilities().
+    Fixed.
+
+    o envelope methods
+    Results were malformed if the name of the function argument was not "r". 
     Fixed.
     
         CHANGES IN spatstat.explore VERSION 3.2-1

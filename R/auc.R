@@ -3,7 +3,7 @@
 ##
 ##  Calculate ROC curve or area under it
 ##
-## $Revision: 1.16 $ $Date: 2023/01/15 02:21:19 $
+## $Revision: 1.17 $ $Date: 2023/08/15 07:44:11 $
 
 roc <- function(X, ...) { UseMethod("roc") }
 
@@ -13,11 +13,18 @@ roc.ppp <- function(X, covariate, ..., high=TRUE) {
   return(result)
 }
 
-rocData <- function(covariate, nullmodel, ..., high=TRUE) {
+rocData <- function(covariate, nullmodel, ...,
+                    high=TRUE,
+                    p=seq(0, 1, length=1024)) {
   d <- spatialCDFframe(nullmodel, covariate, ...)
   U <- d$values$U
   ec <- if(high) ecdf(1-U) else ecdf(U)
-  p <- seq(0,1,length=1024)
+  if(!missing(p)) {
+    check.nvector(p)
+    stopifnot(min(p) >= 0)
+    stopifnot(max(p) <= 1)
+    if(prod(range(diff(p))) < 0) stop("p should be a monotone sequence")
+  }
   df <- data.frame(p=p, fobs=ec(p), fnull=p)
   result <- fv(df,
                argu="p",
@@ -32,13 +39,19 @@ rocData <- function(covariate, nullmodel, ..., high=TRUE) {
   return(result)
 }
 
-rocModel <- function(lambda, nullmodel, ..., high) {
+rocModel <- function(lambda, nullmodel, ..., high,
+                     p=seq(0, 1, length=1024)) {
   if(!missing(high))
     warning("Argument 'high' is ignored when computing ROC for a fitted model")
   d<- spatialCDFframe(nullmodel, lambda, ...) 
   U <- d$values$U
   ec <- ecdf(1-U) 
-  p <- seq(0,1,length=1024)
+  if(!missing(p)) {
+    check.nvector(p)
+    stopifnot(min(p) >= 0)
+    stopifnot(max(p) <= 1)
+    if(prod(range(diff(p))) < 0) stop("p should be a monotone sequence")
+  }
   fobs <- ec(p)
   FZ <- d$values$FZ
   FZinverse <- quantilefun.ewcdf(FZ)
