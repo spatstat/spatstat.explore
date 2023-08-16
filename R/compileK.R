@@ -3,7 +3,7 @@
 # Function to take a matrix of pairwise distances
 # and compile a 'K' function in the format required by spatstat.
 #
-#   $Revision: 1.15 $  $Date: 2022/06/27 02:30:28 $
+#   $Revision: 1.16 $  $Date: 2023/08/16 02:07:59 $
 # -------------------------------------------------------------------
 
 compileK <- function(D, r, weights=NULL, denom=1, check=TRUE, ratio=FALSE,
@@ -91,19 +91,27 @@ compilepcf <- function(D, r, weights=NULL, denom=1, check=TRUE,
   rmin <- min(r)
   rmax <- max(r)
   nr   <- length(r)
-  Ddens <- density(Dvalues, weights=normwvalues,
-                   from=rmin, to=rmax, n=nr, ...)
+  Ddens <- do.call.matched(density.default,
+                           resolve.defaults(
+                             list(x=Dvalues,
+                                  weights=normwvalues,
+                                  from=rmin, to=rmax, n=nr),
+                             list(...),
+                             list(warnWbw=FALSE)))
   gval <- Ddens$y * totwt
   # normalise
   gval <- gval/denom
   # edge effect correction at r = 0
   if(endcorrect) {
-    one <- do.call(density,
-                   resolve.defaults(
-                                    list(seq(rmin,rmax,length=512)),
-                                    list(bw=Ddens$bw, adjust=1),
-                                    list(from=rmin, to=rmax, n=nr),
-                                    list(...)))
+    one <- do.call.matched(density.default,
+                           resolve.defaults(
+                             list(x=seq(rmin,rmax,length=512),
+                                  bw=Ddens$bw,
+                                  adjust=1,
+                                  from=rmin, to=rmax, n=nr),
+                             list(...),
+                             list(warnWbw=FALSE)
+                           ))
     onefun <- approxfun(one$x, one$y, rule=2)
     gval <- gval /((rmax-rmin) * onefun(Ddens$x))
   }
