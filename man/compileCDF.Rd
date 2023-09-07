@@ -24,6 +24,7 @@ compileCDF(D, B, r, \dots, han.denom=NULL, check=TRUE)
     at which the CDF should be estimated.
   }
   \item{\dots}{
+    Ignored.
   }
   \item{han.denom}{
     Denominator for the Hanisch-Chiu-Stoyan estimator.
