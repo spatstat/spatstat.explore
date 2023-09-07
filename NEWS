@@ -1,18 +1,29 @@
 
-        CHANGES IN spatstat.explore VERSION 3.2-1.009
+        CHANGES IN spatstat.explore VERSION 3.2-2
 
 OVERVIEW
 
-    o Minor improvements.
+    o Improvements to envelope methods.
+    
+    o Suppress warning messages from density.default.
+    
+    o Minor improvements and bug fixes.
 
-    o Suppress annoying warning messages from density.default.
-    
-    o Workaround for bug in dev.capabilities()
-    
+NEW FUNCTIONS
+
+    o compileCDF
+    Low level utility for calculating cumulative distribution function
+    of distance variable. 
+
 SIGNIFICANT USER-VISIBLE CHANGES
 
     o circdensity
     Improved output of 'print' method
+
+    o envelope
+    All methods for `envelope' now accept a summary function 
+    in which the function argument is not named 'r'.
+    This includes functions such as `transect.im' and `roc'.
     
     o plot.bermantest
     Improved layout for plots of Berman's Z2 test.
@@ -30,11 +41,6 @@ SIGNIFICANT USER-VISIBLE CHANGES
     Suppress annoying warning messages from density.default.
     
 BUG FIXES
-
-    o plot.fv
-    A hard crash (segmentation fault) could occur
-    due to a bug in grDevices::dev.capabilities().
-    Fixed.
 
     o envelope methods
     Results were malformed if the name of the function argument was not "r". 

@@ -23,7 +23,6 @@
 \alias{circticks}
 \alias{clarkevansCalc}
 \alias{compatible.rat}
-\alias{compileCDF}
 \alias{conform.ratfv}
 \alias{CressieReadStatistic}
 \alias{CressieReadSymbol}
@@ -219,7 +218,6 @@ check.testfun(f, f1, X)
 circticks(R, at, unit, start, clockwise, labels)
 clarkevansCalc(X, correction, clipregion, working)
 \method{compatible}{rat}(A, B, \dots)
-compileCDF(D, B, r, \dots, han.denom, check)
 conform.ratfv(x)
 CressieReadStatistic(OBS,EXP,lambda,normalise,named)
 CressieReadSymbol(lambda)

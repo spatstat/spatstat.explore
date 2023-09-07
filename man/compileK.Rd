@@ -122,8 +122,12 @@ compilepcf(D, r, weights = NULL, denom = 1,
   and pair correlation function.
   
   \code{\link{bind.fv}} to add more columns.
+
+  \code{\link{compileCDF}} for the corresponding low-level utility
+  for estimating a cumulative distribution function.
 }
 \examples{
+  ## Equivalent to Kest(japanesepines) and pcf(japanesepines)
   X <- japanesepines
   D <- pairdist(X)
   Wt <- edge.Ripley(X, D)

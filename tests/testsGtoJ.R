@@ -83,7 +83,7 @@ local({
 #
 #  tests/imageops.R
 #
-#   $Revision: 1.42 $   $Date: 2023/07/17 06:34:00 $
+#   $Revision: 1.43 $   $Date: 2023/08/29 01:03:59 $
 #
 
 

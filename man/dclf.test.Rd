@@ -198,10 +198,8 @@ mad.test(X, \dots,  alternative=c("two.sided", "less", "greater"),
   R.K. and Nair, G. (2014) On tests of spatial pattern based on
   simulation envelopes. 
   \emph{Ecological Monographs} \bold{84}(3) 477--489.
-  
-  Baddeley, A., Rubak, E. and Turner, R. (2015)
-  \emph{Spatial Point Patterns: Methodology and Applications with R}.
-  Chapman and Hall/CRC Press.
+
+  \baddrubaturnbook
   
   Besag, J. (1977) 
   Discussion of Dr Ripley's paper.
