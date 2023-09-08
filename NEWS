@@ -1,4 +1,16 @@
 
+        CHANGES IN spatstat.explore VERSION 3.2-3.001
+
+OVERVIEW
+
+    o Integration of functions.
+    
+NEW FUNCTIONS
+
+    o integral.fv
+    Compute the integral of a function.
+
+
         CHANGES IN spatstat.explore VERSION 3.2-3
 
 OVERVIEW

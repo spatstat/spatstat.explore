@@ -49,8 +49,10 @@ stieltjes(f, M, ...)
   computed using each of the versions of the function \code{M}.
 }
 \seealso{
-  \code{\link{fv.object}},
-  \code{\link[spatstat.explore]{Gest}}
+  \code{\link[spatstat.explore]{fv.object}}.
+
+  Use \code{\link[spatstat.explore]{integral.fv}} to integrate a function
+  object of class \code{"fv"}.
 }
 \examples{
   # estimate cdf of nearest neighbour distance in redwood data

@@ -4,7 +4,7 @@
 ##
 ##    class "fv" of function value objects
 ##
-##    $Revision: 1.180 $   $Date: 2023/04/09 09:51:23 $
+##    $Revision: 1.181 $   $Date: 2023/09/08 07:32:16 $
 ##
 ##
 ##    An "fv" object represents one or more related functions
@@ -1154,6 +1154,31 @@ with.fv <- function(data, expr, ..., fun=NULL, enclos=NULL) {
             unitname=unitname(data), fname=fname, yexp=yexp, ylab=yexp)
   fvnames(out, ".") <- dotnames
   return(out)
+}
+
+## integral of fv object
+integral.fv <- function(f, domain=NULL, ...) {
+  verifyclass(f, "fv")
+  df <- as.data.frame(f)
+  xname <- fvnames(f, ".x")
+  x <- df[,xname]
+  if(!is.null(domain)) {
+    check.range(domain)
+    xr <- range(x)
+    if(!all(inside.range(domain, xr)))
+      warning(paste("domain of integration", prange(domain),
+                    "was clipped to the available range of function values",
+                    prange(xr)), call.=FALSE)
+    ok <- inside.range(x, domain)
+    df <- df[ok, , drop=FALSE]
+    x <- x[ok]
+  }
+  integrands <- as.matrix(df[, colnames(df) != xname, drop=FALSE])
+  dx <- diff(x)
+  #' trapezoidal rule
+  wx <- (c(dx, 0) + c(0, dx))/2
+  ans <- wx %*% integrands
+  return(ans[1,])
 }
 
   
