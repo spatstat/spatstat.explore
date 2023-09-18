@@ -5,7 +5,7 @@
 #'
 #'  Also a CDF from a 'density'
 #' 
-#'  $Revision: 1.3 $ $Date: 2015/09/01 11:53:15 $
+#'  $Revision: 1.4 $ $Date: 2023/09/18 06:34:53 $
 
 quantile.density <- local({
 
@@ -48,8 +48,10 @@ quantile.density <- local({
     }
     if (na.p) {
       o.pr[p.ok] <- qs
-      names(o.pr) <- rep("", length(o.pr))
-      names(o.pr)[p.ok] <- names(qs)
+      if(names) {
+        names(o.pr) <- rep("", length(o.pr))
+        names(o.pr)[p.ok] <- names(qs)
+      }
       return(o.pr)
     } else return(qs)
   }

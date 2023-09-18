@@ -3,7 +3,7 @@
 #
 #  Smooth the marks of a point pattern
 # 
-#  $Revision: 1.85 $  $Date: 2023/03/31 06:42:53 $
+#  $Revision: 1.86 $  $Date: 2023/09/18 08:23:00 $
 #
 
 Smooth <- function(X, ...) {
@@ -898,8 +898,12 @@ bw.smoothppp <- function(X, nh=spatstat.options("n.bandwidth"),
     # Stoyan's rule of thumb 
     stoyan <- bw.stoyan(X)
     # rule of thumb based on nearest-neighbour distances
-    nnd <- nndist(X)
-    nnd <- nnd[nnd > 0]
+    nnd <- nndist(unique(X))
+    if(any(ok <- is.finite(nnd) & (nnd > 0))) {
+      nnd <- nnd[ok]
+    } else {
+      nnd <- d/16
+    }
     if(is.null(hmin)) {
       hmin <- max(1.1 * min(nnd), stoyan/5)
       hmin <- min(d/8, hmin)

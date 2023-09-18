@@ -1,15 +1,26 @@
 
-        CHANGES IN spatstat.explore VERSION 3.2-3.001
+        CHANGES IN spatstat.explore VERSION 3.2-3.004
 
 OVERVIEW
 
     o Integration of functions.
+
+    o Bug fixes.
     
 NEW FUNCTIONS
 
     o integral.fv
     Compute the integral of a function.
 
+BUG FIXES
+
+    o quantile.density
+    Crashed if `probs` contained NA values and `names=FALSE`.
+    Fixed.
+
+    o bw.smoothppp
+    Crashed if every point in 'X' was duplicated.
+    Fixed.
 
         CHANGES IN spatstat.explore VERSION 3.2-3
 

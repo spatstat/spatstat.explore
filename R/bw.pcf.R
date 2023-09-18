@@ -137,8 +137,9 @@ CVforPCF <- function(bw, stuff) {
       grs[1] <- grs[2]
     #' approximate the pair correlation values at closepairs distances
     gds <- grs[idx]
-    wt <- edgewt / (2 * pi * ds * lambda2area * dcorrec) * renorm.factor
+    if(show) gds.save <- gds
     #' remove pairs to approximate the cross-validation term: g^{-(u, v)}
+    wt <- edgewt / (2 * pi * ds * lambda2area * dcorrec) * renorm.factor
     if (simple) {
       gds <- gds - 2 * wt * dkernel(0, kernel, 0, bw)
     } else {
@@ -153,18 +154,28 @@ CVforPCF <- function(bw, stuff) {
     }
     #' remove negative and zero values
     gds <- pmax.int(.Machine$double.eps, gds)
+    if(show) {
+      plot(gds.save, gds, xlab="g(d_[ij])", ylab="g(d_[ij])^{-ij}")
+      abline(0,1)
+      splat("range g_after/g_before = ", prange(range(gds/gds.save)))
+    }
+    #' compute value of objective function
     switch(cv.method,
            compLik={
              #' composite likelihood cross-validation
              #' the integral term: 2 \pi \int_{0}^{rmax} \hat g(r) r dr
              normconst <- 2 * pi * sum(grs * rs) * discr
              value <- mean(log(gds)) - log(normconst)
+             if(show)
+               splat("normconst = ", normconst)
            },
            leastSQ={
              #' least squares cross-validation
              #' the integral term: 2 \pi \int_{0}^{rmax} \hat g^2(r) r dr
              normconst <- 2 * pi * sum(grs^2 * rs) * discr
              value <- 2 * sum(gds * edgewt / (lambda2area)) - normconst
+             if(show)
+               splat("normconst = ", normconst)
            },
            stop("Unrecognised cross-validation method"))
     if(show) splat("value=", value)
