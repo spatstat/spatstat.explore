@@ -50,7 +50,7 @@
    bw <- h/kernel.factor("epa")
 }
 \author{\adrian
-  and Martin Hazelton
+  and \martinH.
 }
 \keyword{methods}
 \keyword{nonparametric}

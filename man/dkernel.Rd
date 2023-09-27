@@ -85,7 +85,7 @@ rkernel(n, kernel = "gaussian", mean = 0, sd = 1)
   \code{\link{kernel.factor}}
 }
 \author{\adrian
-  and Martin Hazelton
+  and \martinH.
 }
 \keyword{methods}
 \keyword{nonparametric}

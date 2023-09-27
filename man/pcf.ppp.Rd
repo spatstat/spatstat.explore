@@ -281,7 +281,7 @@
 }
 \author{
   \spatstatAuthors
-  and Martin Hazelton.
+  and \martinH.
 }
 \keyword{spatial}
 \keyword{nonparametric}
