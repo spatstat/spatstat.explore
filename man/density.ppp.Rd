@@ -12,7 +12,7 @@
         se=FALSE, wtype=c("value", "multiplicity"),
         kernel="gaussian",
         scalekernel=is.character(kernel), 
-        positive=FALSE, verbose=TRUE) 
+        positive=FALSE, verbose=TRUE, sameas) 
 }
 \arguments{
   \item{x}{
@@ -91,6 +91,14 @@
   \item{verbose}{
     Logical value indicating whether to issue warnings
     about numerical problems and conditions.
+  }
+  \item{sameas}{
+    Optional. The result of a previous evaluation of \code{density.ppp}.
+    Smoothing will be performed using the same kernel and bandwidth that
+    were used to produce \code{sameas}. Namely the values of the
+    arguments \code{kernel}, \code{sigma}, \code{varcov},
+    \code{scalekernel} and \code{adjust} will be overwritten by the
+    values that were used to produce \code{sameas}.
   }
 }
 \value{

@@ -3,7 +3,7 @@
 #
 #  Method for 'density' for point patterns
 #
-#  $Revision: 1.132 $    $Date: 2023/04/02 00:56:06 $
+#  $Revision: 1.133 $    $Date: 2023/09/27 02:47:39 $
 #
 
 # ksmooth.ppp <- function(x, sigma, ..., edge=TRUE) {
@@ -21,30 +21,58 @@ density.ppp <- function(x, sigma=NULL, ...,
                         se=FALSE, wtype=c("value", "multiplicity"),
                         kernel="gaussian",
                         scalekernel=is.character(kernel),
-                        positive=FALSE, verbose=TRUE) {
+                        positive=FALSE, verbose=TRUE, sameas) {
   verifyclass(x, "ppp")
 
   output <- pickoption("output location type", at,
                        c(pixels="pixels",
                          points="points"))
 
+  ## .............. bandwidth .........................................
+  
+  if(!missing(sameas) && !is.null(kerdata <- attr(sameas, "kerdata"))) {
+    ## copy smoothing parameters from 'sameas'
+    kernel      <- kerdata$kernel %orifnull% kernel
+    sigma       <- kerdata$sigma
+    varcov      <- kerdata$varcov
+    cutoff      <- kerdata$cutoff
+    scalekernel <- kerdata$scalekernel %orifnull% is.character(kernel)
+    adjust      <- 1
+  } else {
+    ## usual case: determine the smoothing parameters from the call
+    if(!identical(kernel, "gaussian")) {
+      validate2Dkernel(kernel)
+      if(verbose && scalekernel &&
+         (is.function(sigma) || (is.null(sigma) && is.null(varcov))))
+        warning("Bandwidth selection will be based on Gaussian kernel")
+    }
+    kerdata <- resolve.2D.kernel(...,
+                                 sigma=sigma, varcov=varcov, x=x, adjust=adjust)
+    sigma <- kerdata$sigma
+    varcov <- kerdata$varcov
+    kerdata$kernel <- kernel
+  }
+
+  ## Full set of smoothing attributes to be saved in the result
+  ## using the idiom
+  ##    attributes(result)[names(remember)] <- remember
+
+  remember <- list(sigma=sigma,
+                   varcov=varcov,
+                   kernel=kernel,
+                   kerdata=kerdata)
+  
+
+  ## ............. weird trivial case ..............................
+  
   if(any(sidelengths(Frame(x)) == 0)) { ## pixels will have zero area
     val <- npoints(x)/0 # Inf or NaN
-    return(as.im(val, W=Frame(x), ...)) 
+    result <- as.im(val, W=Frame(x), ...)
+    attributes(result)[names(remember)] <- remember
+    return(result)
   }
-  
-  if(!identical(kernel, "gaussian")) {
-    validate2Dkernel(kernel)
-    if(verbose && scalekernel &&
-       (is.function(sigma) || (is.null(sigma) && is.null(varcov))))
-      warning("Bandwidth selection will be based on Gaussian kernel")
-  }
-  
-  ker <- resolve.2D.kernel(..., sigma=sigma, varcov=varcov, x=x, adjust=adjust)
-  sigma <- ker$sigma
-  varcov <- ker$varcov
-  ## sigma.is.infinite <- ker$infinite
-  
+
+  ## ............... weights ...........................................
   if(is.im(weights)) {
     weights <- safelookup(weights, x) # includes warning if NA
   } else if(is.expression(weights)) 
@@ -52,6 +80,7 @@ density.ppp <- function(x, sigma=NULL, ...,
   if(length(weights) == 0 || (!is.null(dim(weights)) && nrow(weights) == 0))
     weights <- NULL 
 
+  ## ............... standard error ....................................
   if(se) {
     ## compute standard error
     wtype <- match.arg(wtype)
@@ -63,8 +92,7 @@ density.ppp <- function(x, sigma=NULL, ...,
                         diggle=diggle)
     if(positive) SE <- posify(SE)
   }
-
-  ## infinite bandwidth
+  ## ............... infinite bandwidth ....................................
   if(bandwidth.is.infinite(sigma)) {
     #' uniform estimate
     nx <- npoints(x)
@@ -90,6 +118,7 @@ density.ppp <- function(x, sigma=NULL, ...,
                colnames(E) <- colnames(weights)
            })
     result <- if(se) list(estimate=E, SE=SE) else E
+    attributes(result)[names(remember)] <- remember
     return(result)
   }
   
@@ -112,6 +141,7 @@ density.ppp <- function(x, sigma=NULL, ...,
       result <- posify(result)
     if(se) 
       result <- list(estimate=result, SE=SE)
+    attributes(result)[names(remember)] <- remember
     return(result)
   }
   
@@ -166,18 +196,19 @@ density.ppp <- function(x, sigma=NULL, ...,
   # internal use only
   spill <- resolve.1.default(list(spill=FALSE), list(...))
   if(spill)
-    return(list(result=result, sigma=sigma, varcov=varcov, raw = raw, edg=edg))
+    return(list(result=result, sigma=sigma, varcov=varcov, raw = raw, edg=edg,
+                remember=remember))
 
   # constrain values to be positive
   if(positive) 
     result <- posify(result)
 
   # normal return
-  attr(result, "sigma") <- sigma
-  attr(result, "varcov") <- varcov
-  attr(result, "kernel") <- kernel
-  if(se)
+  attributes(result)[names(remember)] <- remember
+  if(se) {
     result <- list(estimate=result, SE=SE)
+    attributes(result)[names(remember)] <- remember
+  }
   return(result)
 }
 

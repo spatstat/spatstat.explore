@@ -1,16 +1,21 @@
 
-        CHANGES IN spatstat.explore VERSION 3.2-3.004
+        CHANGES IN spatstat.explore VERSION 3.2-3.005
 
 OVERVIEW
 
     o Integration of functions.
 
-    o Bug fixes.
+    o Minor improvements and bug fixes.
     
 NEW FUNCTIONS
 
     o integral.fv
     Compute the integral of a function.
+
+SIGNIFICANT USER-VISIBLE CHANGES
+
+    o density.ppp
+    New argument 'sameas'.
 
 BUG FIXES
 
