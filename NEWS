@@ -1,11 +1,13 @@
 
-        CHANGES IN spatstat.explore VERSION 3.2-3.005
+        CHANGES IN spatstat.explore VERSION 3.2-3.006
 
 OVERVIEW
 
     o Integration of functions.
 
     o Minor improvements and bug fixes.
+
+    o spatstat.explore no longer suggests package 'maptools'.
     
 NEW FUNCTIONS
 

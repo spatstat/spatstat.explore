@@ -186,4 +186,5 @@ hvo <- bw.abram(ch, h0=1, smoother=densityVoronoi)
 }
 \keyword{spatial}
 \keyword{nonparametric}
-
+\concept{Adaptive smoothing}
+\concept{Bandwidth selection}

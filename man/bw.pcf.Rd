@@ -155,3 +155,4 @@
 \keyword{spatial}
 \keyword{methods}
 \keyword{smooth}
+\concept{Bandwidth selection}

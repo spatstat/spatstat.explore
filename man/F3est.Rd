@@ -167,3 +167,4 @@ F3est(X, ..., rmax = NULL, nrval = 128, vside = NULL,
 }
 \keyword{spatial}
 \keyword{nonparametric}
+\concept{Three-dimensional}

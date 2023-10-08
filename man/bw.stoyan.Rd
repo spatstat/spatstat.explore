@@ -66,3 +66,4 @@ bw.stoyan(X, co=0.15)
 \keyword{spatial}
 \keyword{methods}
 \keyword{smooth}
+\concept{Bandwidth selection}

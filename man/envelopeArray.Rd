@@ -90,3 +90,6 @@ envelopeArray(X, fun, \dots, dataname = NULL, verb = FALSE, reuse = TRUE)
 \keyword{spatial}
 \keyword{nonparametric}
 \keyword{iteration}
+\concept{Goodness-of-fit}
+\concept{Test of randomness}
+\concept{Envelope of simulations}

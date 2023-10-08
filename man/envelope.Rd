@@ -751,3 +751,6 @@ nsim=Nsim, global=TRUE))
 \keyword{iteration}
  
  
+\concept{Goodness-of-fit}
+\concept{Test of randomness}
+\concept{Envelope of simulations}

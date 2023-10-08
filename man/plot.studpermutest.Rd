@@ -115,3 +115,4 @@ Null.
 }
 \keyword{hplot}
 \keyword{htest}
+\concept{Goodness-of-fit}

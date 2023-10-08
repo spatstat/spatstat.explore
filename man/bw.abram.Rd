@@ -54,4 +54,5 @@ bw.abram(X, h0, \dots)
   \adrian.
 }
 \keyword{nonparametric}
-
+\concept{Adaptive smoothing}
+\concept{Bandwidth selection}

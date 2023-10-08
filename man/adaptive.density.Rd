@@ -56,5 +56,4 @@ adaptive.density(X, \dots, method=c("voronoi","kernel", "nearest"))
 \keyword{spatial}
 \keyword{methods}
 \keyword{smooth}
-
-    
+\concept{Adaptive smoothing} 

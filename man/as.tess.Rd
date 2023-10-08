@@ -70,3 +70,4 @@ in any of several formats, into an object of class \code{"tess"}.
 \keyword{manip}
  
  
+\concept{Tessellation}

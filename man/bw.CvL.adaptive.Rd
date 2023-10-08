@@ -137,3 +137,6 @@ bw.CvL.adaptive(X, \dots,
 \keyword{spatial}
 \keyword{methods}
 \keyword{smooth}
+\concept{Adaptive smoothing}
+
+\concept{Bandwidth selection}

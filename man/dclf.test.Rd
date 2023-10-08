@@ -267,3 +267,4 @@ mad.test(X, \dots,  alternative=c("two.sided", "less", "greater"),
 \keyword{spatial}
 \keyword{htest}
 
+\concept{Goodness-of-fit}

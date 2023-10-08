@@ -80,3 +80,4 @@ bw.CvLHeat(X, \dots, srange=NULL, ns=16, sigma=NULL,
 }
 \keyword{spatial}
 \keyword{smooth}
+\concept{Bandwidth selection}

@@ -60,3 +60,4 @@
 \keyword{spatial}
 \keyword{htest}
 \keyword{hplot}
+\concept{Goodness-of-fit}

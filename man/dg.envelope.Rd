@@ -128,3 +128,6 @@ dg.envelope(X, \dots,
 \keyword{htest}
 \keyword{hplot}
 \keyword{iteration}
+\concept{Goodness-of-fit}
+\concept{Test of randomness}
+\concept{Envelope of simulations}

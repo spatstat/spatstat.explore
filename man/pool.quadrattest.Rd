@@ -88,4 +88,3 @@
 }
 \keyword{spatial}
 \keyword{htest}
-

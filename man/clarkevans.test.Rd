@@ -105,3 +105,4 @@ clarkevans.test(X, ...,
 \keyword{spatial}
 \keyword{nonparametric}
 \keyword{htest}
+\concept{Test of randomness}

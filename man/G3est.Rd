@@ -121,3 +121,4 @@ G3est(X, ..., rmax = NULL, nrval = 128, correction = c("rs", "km", "Hanisch"))
 }
 \keyword{spatial}
 \keyword{nonparametric}
+\concept{Three-dimensional}

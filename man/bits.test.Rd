@@ -139,3 +139,4 @@ bits.test(X, \dots,
 }
 \keyword{spatial}
 \keyword{htest}
+\concept{Goodness-of-fit}

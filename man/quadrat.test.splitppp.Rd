@@ -60,3 +60,5 @@
 }
 \keyword{spatial}
 \keyword{htest}
+\concept{Test of randomness}
+\concept{Test of clustering}

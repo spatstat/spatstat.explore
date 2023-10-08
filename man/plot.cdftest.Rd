@@ -113,3 +113,4 @@
 }
 \keyword{spatial}
 \keyword{hplot}
+\concept{Goodness-of-fit}

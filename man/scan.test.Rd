@@ -156,3 +156,5 @@ scan.test(X, r, ...,
 }
 \keyword{htest}
 \keyword{spatial}
+\concept{Test of randomness}
+\concept{Test of clustering}
