@@ -156,3 +156,4 @@ densityVoronoi(X, \dots)
 \keyword{spatial}
 \keyword{methods}
 \keyword{smooth}
+\concept{Adaptive smoothing}

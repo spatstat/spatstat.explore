@@ -82,7 +82,9 @@ rkernel(n, kernel = "gaussian", mean = 0, sd = 1)
 }
 \seealso{
   \code{\link[stats]{density.default}},
-  \code{\link{kernel.factor}}
+  \code{\link{kernel.factor}},
+  \code{\link{kernel.moment}},
+  \code{\link{kernel.squint}}.
 }
 \author{\adrian
   and \martinH.

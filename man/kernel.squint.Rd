@@ -55,8 +55,7 @@
    kernel.squint("epa", bw)
 }
 \author{
-  \spatstatAuthors
-  and \martinH.
+  \adrian and \martinH.
 }
 \keyword{methods}
 \keyword{nonparametric}
