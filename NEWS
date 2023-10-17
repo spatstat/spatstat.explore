@@ -1,11 +1,13 @@
 
-        CHANGES IN spatstat.explore VERSION 3.2-3.007
+        CHANGES IN spatstat.explore VERSION 3.2-3.008
 
 OVERVIEW
 
     o Integration of functions.
 
     o Minor improvements and bug fixes.
+
+    o clarkevans.test modified
 
     o spatstat.explore no longer suggests package 'maptools'.
     
@@ -18,6 +20,13 @@ SIGNIFICANT USER-VISIBLE CHANGES
 
     o density.ppp
     New argument 'sameas'.
+
+    o clarkevans.test
+    New argument 'method'.
+
+    o clarkevans.test
+    Default behaviour has changed; the asymptotic test is used 
+    unless method="MonteCarlo" is given explicitly.
 
 BUG FIXES
 

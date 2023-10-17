@@ -1,6 +1,6 @@
 ## clarkevans.R
 ## Clark-Evans statistic and test
-## $Revision: 1.19 $ $Date: 2022/05/23 02:33:06 $
+## $Revision: 1.20 $ $Date: 2023/10/17 03:23:50 $
 
 clarkevans <- function(X, correction=c("none", "Donnelly", "cdf"),
                        clipregion=NULL)
@@ -46,11 +46,13 @@ clarkevans.test <- function(X, ...,
                             clipregion=NULL,
                             alternative=c("two.sided", "less", "greater",
                                           "clustered", "regular"),
+                            method = c("asymptotic", "MonteCarlo"),
                             nsim=999
                             ) {
   Xname <- short.deparse(substitute(X))
   miss.nsim <- missing(nsim)
-
+  method <- match.arg(method)
+  
   verifyclass(X, "ppp")
   W <- Window(X)
   nX <- npoints(X)
@@ -102,33 +104,34 @@ clarkevans.test <- function(X, ...,
                               working=TRUE)
   working <- attr(statistic, "working")
   #
-  if(correction == "none" && miss.nsim) {
-    # standard Normal p-value
-    SE <- with(working, sqrt(((4-pi)*areaW)/(4 * pi))/npts)
-    Z <- with(working, (Dobs - Dpois)/SE)
-    p.value <- switch(alternative,
-                      less=pnorm(Z),
-                      greater=1 - pnorm(Z),
-                      two.sided= 2*(1-pnorm(abs(Z))))
-    pvblurb <- "Z-test"
-  } else {
-    # Monte Carlo p-value
-    sims <- numeric(nsim)
-    for(i in seq_len(nsim)) {
-      Xsim <- runifpoint(nX, win=W)
-      sims[i] <- clarkevansCalc(Xsim, correction=correction,
-                                clipregion=clipregion)
-    }
-    p.upper <- (1 + sum(sims >= statistic))/(1.0 + nsim)
-    p.lower <- (1 + sum(sims <= statistic))/(1.0 + nsim)
-    p.value <- switch(alternative,
-                      less=p.lower,
-                      greater=p.upper,
-                      two.sided=min(1, 2*min(p.lower, p.upper)))
-    
-    pvblurb <- paste("Monte Carlo test based on",
-                     nsim, "simulations of CSR with fixed n")
-  }
+  switch(method,
+         asymptotic = {
+           #' standard Normal p-value
+           SE <- with(working, sqrt(((4-pi)*areaW)/(4 * pi))/npts)
+           Z <- with(working, (Dobs - Dpois)/SE)
+           p.value <- switch(alternative,
+                             less=pnorm(Z),
+                             greater=1 - pnorm(Z),
+                             two.sided= 2*(1-pnorm(abs(Z))))
+           pvblurb <- "Z-test"
+         },
+         MonteCarlo = {
+           #' Monte Carlo p-value
+           sims <- numeric(nsim)
+           for(i in seq_len(nsim)) {
+             Xsim <- runifpoint(nX, win=W)
+             sims[i] <- clarkevansCalc(Xsim, correction=correction,
+                                       clipregion=clipregion)
+           }
+           p.upper <- (1 + sum(sims >= statistic))/(1.0 + nsim)
+           p.lower <- (1 + sum(sims <= statistic))/(1.0 + nsim)
+           p.value <- switch(alternative,
+                             less=p.lower,
+                             greater=p.upper,
+                             two.sided=min(1, 2*min(p.lower, p.upper)))
+           pvblurb <- paste("Monte Carlo test based on",
+                            nsim, "simulations of CSR with fixed n")
+         })
 
   statistic <- as.numeric(statistic)
   names(statistic) <- "R"

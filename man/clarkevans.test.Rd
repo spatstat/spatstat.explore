@@ -11,6 +11,7 @@ clarkevans.test(X, ...,
                clipregion=NULL,
                alternative=c("two.sided", "less", "greater",
                              "clustered", "regular"),
+               method=c("asymptotic", "MonteCarlo"),
                nsim=999)
 }
 \arguments{
@@ -32,9 +33,13 @@ clarkevans.test(X, ...,
     String indicating the type of alternative for the
     hypothesis test. Partially matched.
   }
+  \item{method}{
+    Character string (partially matched) specifying how to calculate
+    the \eqn{p}-value of the test. See Details.
+  }
   \item{nsim}{
     Number of Monte Carlo simulations to perform, if a Monte Carlo
-    p-value is required.
+    \eqn{p}-value is required.
   }
 }
 \details{
@@ -65,15 +70,16 @@ clarkevans.test(X, ...,
   The Clark-Evans index \eqn{R} is computed for the data
   as described in \code{\link{clarkevans}}.
 
-  If \code{correction="none"} and \code{nsim} is missing,
+  If \code{method="asymptotic"} (the default),
   the \eqn{p}-value for the test is computed by standardising
   \eqn{R} as proposed by Clark and Evans (1954) and referring the
-  statistic to the standard Normal distribution.
+  statistic to the standard Normal distribution. This test is not exact.
 
-  Otherwise, the \eqn{p}-value for the test is computed
+  If \code{method="MonteCarlo"}, the \eqn{p}-value for the test is computed
   by Monte Carlo simulation of \code{nsim} realisations of
   Complete Spatial Randomness conditional on the
-  observed number of points.
+  observed number of points. This test is theoretically exact but may
+  have lower power than the asymptotic test.
 }
 \value{
   An object of class \code{"htest"} representing the result of the test.
@@ -100,7 +106,7 @@ clarkevans.test(X, ...,
   # Redwood data - clustered
   clarkevans.test(redwood)
   clarkevans.test(redwood, alternative="clustered")
-  clarkevans.test(redwood, correction="cdf", nsim=39)
+  clarkevans.test(redwood, correction="cdf", method="MonteCarlo", nsim=39)
 }
 \keyword{spatial}
 \keyword{nonparametric}
