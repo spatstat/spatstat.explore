@@ -1,6 +1,6 @@
 ## clarkevans.R
 ## Clark-Evans statistic and test
-## $Revision: 1.20 $ $Date: 2023/10/17 03:23:50 $
+## $Revision: 1.21 $ $Date: 2023/10/17 05:13:03 $
 
 clarkevans <- function(X, correction=c("none", "Donnelly", "cdf"),
                        clipregion=NULL)
@@ -42,7 +42,7 @@ clarkevans <- function(X, correction=c("none", "Donnelly", "cdf"),
 }
 
 clarkevans.test <- function(X, ..., 
-                            correction="none",
+                            correction,
                             clipregion=NULL,
                             alternative=c("two.sided", "less", "greater",
                                           "clustered", "regular"),
@@ -56,14 +56,21 @@ clarkevans.test <- function(X, ...,
   verifyclass(X, "ppp")
   W <- Window(X)
   nX <- npoints(X)
+
+  if(missing(correction) || is.null(correction)) {
+    correction <- switch(method,
+                         MonteCarlo = "none",
+                         asymptotic = if(is.rectangle(W)) "Donnelly" else "cdf")
+  } else {
+    #' validate SINGLE correction
+    correction <- pickoption("correction", correction,
+                             c(none="none",
+                               Donnelly="Donnelly",
+                               donnelly="Donnelly",
+                               guard="guard",
+                               cdf="cdf"))
+  }
   
-  # validate SINGLE correction
-  correction <- pickoption("correction", correction,
-                           c(none="none",
-                             Donnelly="Donnelly",
-                             donnelly="Donnelly",
-                             guard="guard",
-                             cdf="cdf"))
   switch(correction,
          none={
            corrblurb <- "No edge correction"
@@ -106,9 +113,15 @@ clarkevans.test <- function(X, ...,
   #
   switch(method,
          asymptotic = {
-           #' standard Normal p-value
-           SE <- with(working, sqrt(((4-pi)*areaW)/(4 * pi))/npts)
-           Z <- with(working, (Dobs - Dpois)/SE)
+           #' use asymptotic standard Normal reference
+           #' get appropriate standard error
+           SE.R <- switch(correction,
+                          none     = working[["SEnaive"]],
+                          guard    = working[["SEguard"]],
+                          Donnelly = working[["SEkevin"]],
+                          cdf      = working[["SEcdf"]])
+           #' standardised test statistic
+           Z <- as.numeric((statistic - 1)/SE.R)
            p.value <- switch(alternative,
                              less=pnorm(Z),
                              greater=1 - pnorm(Z),
@@ -161,36 +174,69 @@ clarkevansCalc <- function(X, correction="none", clipregion=NULL,
   # Dpois = Expected mean nearest neighbour distance for Poisson process
   Dpois <- 1/(2*sqrt(intensity))
 
+  ## initialise
   statistic <- NULL
-  if(working) 
+  SE.Dobs <- NULL
+  if(working) {
     work <- list(areaW=areaW, npts=npts, intensity=intensity,
                  Dobs=Dobs, Dpois=Dpois)
+    #' null standard error of Dobs = mean(nndist(X)) 
+    SE.Dobs <- sqrt(((4-pi)*areaW)/(4 * pi))/npts  # sic
+  }
+
+  ## start computing results
   
   # Naive uncorrected value
   if("none" %in% correction) {
     Rnaive <- Dobs/Dpois
     statistic <- c(statistic, naive=Rnaive)
+    if(working) {
+      #' null standard error of Clark-Evans statistic Rnaive
+      SE.Rnaive <- SE.Dobs / Dpois
+      work <- append(work, list(SEnaive=SE.Rnaive))
+    }
   }
-  # Donnelly edge correction
+  #' Donnelly edge correction
   if("Donnelly" %in% correction) {
-     # Dedge = Edge corrected mean nearest neighbour distance, Donnelly 1978
+     #' Edge corrected mean nearest neighbour distance, Donnelly 1978
     if(W$type == "rectangle") {
       perim <- perimeter(W)
       Dkevin  <- Dpois + (0.0514+0.0412/sqrt(npts))*perim/npts
       Rkevin <- Dobs/Dkevin
-      if(working) work <- append(work, list(perim=perim, Dkevin=Dkevin))
-    } else 
+      if(working) {
+        #' null standard error of adjusted Clark-Evans statistic Rkevin
+        SE.Rkevin <- SE.Dobs / Dkevin
+        work <- append(work,
+                       list(perim=perim,
+                            Dkevin=Dkevin,
+                            SEkevin=SE.Rkevin))
+      }
+    } else {
       Rkevin <- NA
+    }
     statistic <- c(statistic, Donnelly=Rkevin)
   }
   # guard area method
   if("guard" %in% correction && !is.null(clipregion)) {
-    # use nn distances from points inside `clipregion'
+    #' use nn distances from points inside `clipregion'
     ok <- inside.owin(X, , clipregion)
     Dguard <- mean(nndistX[ok])
     Rguard <- Dguard/Dpois
-    if(working) work <- append(work, list(Dguard=Dguard))
     statistic <- c(statistic, guard=Rguard)
+    ## additional info
+    if(working) {
+      npts.guard <- sum(ok)
+      areaWclip <- area(clipregion)
+      #' null standard error of Dguard = mean(nndist(X[clipregion])) 
+      SE.Dguard <- sqrt((4-pi)/(4 * pi * npts.guard * intensity))
+      #' null standard error of adjusted Clark-Evans statistic Rguard
+      SE.Rguard <- SE.Dguard / Dpois
+      work <- append(work,
+                     list(Dguard=Dguard,
+                          npts.guard=npts.guard,
+                          SEguard=SE.Rguard))
+
+    }
   }
   if("cdf" %in% correction) {
     # compute mean of estimated nearest-neighbour distance distribution G
@@ -199,9 +245,17 @@ clarkevansCalc <- function(X, correction="none", clipregion=NULL,
     denom <- stieltjes(function(x){rep.int(1, length(x))}, G)$km
     Dcdf <- numer/denom
     Rcdf <- Dcdf/Dpois
-    if(working) work <- append(work, list(Dcdf=Dcdf))
     statistic <- c(statistic, cdf=Rcdf)
+    if(working) {
+      #' approximate null standard error of Dobs = mean(Gest(X)) 
+      SE.Dcdf <- SE.Dobs
+      #' null standard error of Clark-Evans statistic Rcdf
+      SE.Rcdf <- SE.Dcdf/Dpois
+      work <- append(work, list(Dcdf=Dcdf,
+                                SEcdf=SE.Rcdf))
+    }
   }
+
   if(working) attr(statistic, "working") <- work
 
   return(statistic)

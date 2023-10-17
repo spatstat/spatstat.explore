@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.2-3.008
+        CHANGES IN spatstat.explore VERSION 3.2-3.009
 
 OVERVIEW
 
@@ -22,11 +22,14 @@ SIGNIFICANT USER-VISIBLE CHANGES
     New argument 'sameas'.
 
     o clarkevans.test
-    New argument 'method'.
+    The asymptotic test is now available for any choice of edge correction.
 
     o clarkevans.test
-    Default behaviour has changed; the asymptotic test is used 
-    unless method="MonteCarlo" is given explicitly.
+    New argument 'method' determines whether to use the asymptotic test
+    or Monte Carlo test. The default has changed to method='asymptotic'.
+
+    o clarkevans.test
+    Default edge correction has changed, to avoid bias.
 
 BUG FIXES
 

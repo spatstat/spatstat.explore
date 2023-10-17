@@ -7,7 +7,7 @@
 }
 \usage{
 clarkevans.test(X, ...,
-               correction="none",
+               correction,
                clipregion=NULL,
                alternative=c("two.sided", "less", "greater",
                              "clustered", "regular"),
@@ -22,7 +22,7 @@ clarkevans.test(X, ...,
   \item{correction}{
     Character string.
     The type of edge correction to be applied.
-    See \code{\link{clarkevans}}
+    See \code{\link{clarkevans}} and Details below.
   }
   \item{clipregion}{
     Clipping region for the guard area correction.
@@ -46,13 +46,13 @@ clarkevans.test(X, ...,
   This command uses the Clark and Evans (1954) aggregation index \eqn{R}
   as the basis for a crude test of clustering or ordering of a point pattern.
   
-  The Clark-Evans index is computed by the function
-  \code{\link{clarkevans}}. See the help for \code{\link{clarkevans}}
-  for information about the Clark-Evans index \eqn{R} and about
-  the arguments \code{correction} and \code{clipregion}.
+  The Clark-Evans \emph{aggregation index} \eqn{R} is computed by the separate
+  function \code{\link{clarkevans}}.
 
-  This command performs a hypothesis test of clustering or ordering of
-  the point pattern \code{X}. The null hypothesis is Complete
+  This command \code{clarkevans.text}
+  performs a hypothesis test of clustering or ordering of
+  the point pattern \code{X} based on the Clark-Evans index \eqn{R}.
+  The null hypothesis is Complete
   Spatial Randomness, i.e.\ a uniform Poisson process. The alternative
   hypothesis is specified by the argument \code{alternative}:
   \itemize{
@@ -66,20 +66,31 @@ clarkevans.test(X, ...,
     the alternative hypothesis is that \eqn{R \neq 1}{R != 1}
     corresponding to a clustered or regular pattern.
   }
-  
-  The Clark-Evans index \eqn{R} is computed for the data
-  as described in \code{\link{clarkevans}}.
+
+  The Clark-Evans index \eqn{R} is first computed for the point pattern
+  dataset \code{X} using the edge correction determined by
+  the arguments \code{correction} and \code{clipregion}. These arguments
+  are documented in the help file for \code{\link{clarkevans}}.
 
   If \code{method="asymptotic"} (the default),
   the \eqn{p}-value for the test is computed by standardising
   \eqn{R} as proposed by Clark and Evans (1954) and referring the
-  statistic to the standard Normal distribution. This test is not exact.
+  standardised statistic to the standard Normal distribution. 
+  For this asymptotic test, the default edge correction is
+  \code{correction="Donnelly"} if the window of \code{X} is a rectangle,
+  and \code{correction="cdf"} otherwise. It is strongly recommended
+  to avoid using \code{correction="none"} which would lead to a severely
+  biased test.
 
   If \code{method="MonteCarlo"}, the \eqn{p}-value for the test is computed
-  by Monte Carlo simulation of \code{nsim} realisations of
+  by comparing the observed value of \eqn{R} to the
+  results obtained from \code{nsim} simulated realisations of
   Complete Spatial Randomness conditional on the
-  observed number of points. This test is theoretically exact but may
-  have lower power than the asymptotic test.
+  observed number of points. This test is theoretically exact
+  for any choice of edge correction, but may have lower power
+  than the asymptotic test.
+  For this Monte Carlo test, the default edge correction
+  is \code{correction="none"} for computational efficiency.
 }
 \value{
   An object of class \code{"htest"} representing the result of the test.
