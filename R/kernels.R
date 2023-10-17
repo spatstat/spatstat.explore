@@ -3,7 +3,7 @@
 #
 #  rXXX, dXXX, pXXX and qXXX for kernels
 #
-#  $Revision: 1.22 $  $Date: 2023/02/18 03:56:55 $
+#  $Revision: 1.23 $  $Date: 2023/10/10 01:49:35 $
 #
 
 match.kernel <- function(kernel) {
@@ -19,7 +19,8 @@ match.kernel <- function(kernel) {
                   cosine      ="cosine",
                   optcosine   ="optcosine"
                   )
-  ker <- pickoption("kernel", kernel, kernel.map)
+  kernel <- match.arg(kernel, names(kernel.map))
+  ker <- kernel.map[kernel]
   return(ker)
 }
 

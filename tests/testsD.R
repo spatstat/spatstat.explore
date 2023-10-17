@@ -498,6 +498,7 @@ local({
 
 local({
   if(FULLTEST) {
+    ## FOR EXCISION
     #' code in kernels.R
     kernames <- c("gaussian", "rectangular", "triangular",
                   "epanechnikov", "biweight", "cosine", "optcosine")
@@ -548,6 +549,7 @@ local({
 
 local({
   if(ALWAYS) {
+    ## FOR EXCISION
     ## unnormdensity
     x <- rnorm(20) 
     d0 <- unnormdensity(x, weights=rep(0, 20))
