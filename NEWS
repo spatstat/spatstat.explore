@@ -1,13 +1,13 @@
 
-        CHANGES IN spatstat.explore VERSION 3.2-3.009
+        CHANGES IN spatstat.explore VERSION 3.2-3.010
 
 OVERVIEW
 
     o Integration of functions.
 
-    o Minor improvements and bug fixes.
-
     o clarkevans.test modified
+
+    o Minor improvements and bug fixes.
 
     o spatstat.explore no longer suggests package 'maptools'.
     
@@ -33,6 +33,15 @@ SIGNIFICANT USER-VISIBLE CHANGES
 
 BUG FIXES
 
+    o kernel.squint
+    The return value was incorrect if the argument 'bw' was given.
+    Fixed.
+    
+    o pcf
+    The variance approximation was calculated incorrectly
+    (due to the bug in kernel.squint).
+    Fixed.
+    
     o quantile.density
     Crashed if `probs` contained NA values and `names=FALSE`.
     Fixed.

@@ -3,7 +3,7 @@
 #
 #  rXXX, dXXX, pXXX and qXXX for kernels
 #
-#  $Revision: 1.23 $  $Date: 2023/10/10 01:49:35 $
+#  $Revision: 1.24 $  $Date: 2023/10/20 01:27:47 $
 #
 
 match.kernel <- function(kernel) {
@@ -313,5 +313,5 @@ kernel.squint <- function(kernel="gaussian", bw=1) {
                biweight = 5 * sqrt(7)/49,
                cosine = (3/4) * sqrt(1/3 - 2/pi^2),
                optcosine = sqrt(1 - 8/pi^2) * pi^2/16)
-  return(RK/bw^2)
+  return(RK/bw)
 }
