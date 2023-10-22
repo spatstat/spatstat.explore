@@ -64,7 +64,7 @@ transect.im(X, ..., from="bottomleft", to="topright",
     \item{f}{A function in the \R language with one argument \code{t}.}
     \item{tlim}{A numeric vector of length 2 giving the range of values
       of the argument \code{t}.}
-    \code{tname}{(Optional) a character string giving the symbolic name
+    \item{tname}{(Optional) a character string giving the symbolic name
       of the function argument \code{t}; defaults to \code{"t"}.}
     \item{tdescrip}{(Optional) a character string giving a short
       description of the function argument \code{t}; defaults to

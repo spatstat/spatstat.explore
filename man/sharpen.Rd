@@ -58,7 +58,7 @@ sharpen(X, \dots)
   
   The data sharpening procedure tends to cause the point pattern
   to contract away from the boundary of the window. That is,
-  points \code{X_i}{X[i]} that lie `quite close to the edge of the window
+  points \eqn{X_i}{X[i]} that lie `quite close to the edge of the window
   of the point pattern tend to be displaced inward. 
   If \code{edgecorrect=TRUE} then the algorithm is modified to
   correct this vector bias. 

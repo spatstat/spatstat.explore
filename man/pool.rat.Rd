@@ -60,7 +60,7 @@
   }{
     R = (w[1] * Y[1]+\dots+ w[n] * Y[n])/(w[1] * X[1]+\dots+w[n] * X[n])
   }
-  where \code{w_i}{w[i]} is the \code{i}th weight.
+  where \eqn{w_i}{w[i]} is the \code{i}th weight.
 
   This calculation is implemented only for certain classes of objects
   where the arithmetic can be performed.
