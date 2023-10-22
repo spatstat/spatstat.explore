@@ -1,16 +1,16 @@
 
-        CHANGES IN spatstat.explore VERSION 3.2-3.010
+        CHANGES IN spatstat.explore VERSION 3.2-4
 
 OVERVIEW
 
     o Integration of functions.
 
-    o clarkevans.test modified
-
-    o Minor improvements and bug fixes.
+    o Changed defaults for Clark-Evans Test.
 
     o spatstat.explore no longer suggests package 'maptools'.
     
+    o Minor improvements and bug fixes.
+
 NEW FUNCTIONS
 
     o integral.fv
