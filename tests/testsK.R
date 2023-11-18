@@ -13,6 +13,30 @@ cat(paste("--------- Executing",
           if(FULLTEST) "** ALL **" else "**RESTRICTED** subset of",
           "test code -----------\n"))
 #'
+#'  tests/kernelstuff.R
+#'
+#'  $Revision: 1.2 $  $Date: 2023/11/05 01:49:45 $
+
+local({
+  if(FULLTEST) {
+    #' test all cases in kernels.R
+    kernames <- c("gaussian", "rectangular", "triangular",
+                  "epanechnikov", "biweight", "cosine", "optcosine")
+    X <- rnorm(20)
+    U <- runif(20)
+    for(ker in kernames) {
+      dX <- dkernel(X, ker)
+      fX <- pkernel(X, ker)
+      qU <- qkernel(U, ker)
+      m0 <- kernel.moment(0, 0, ker)
+      m1 <- kernel.moment(1, 0, ker)
+      m2 <- kernel.moment(2, 0, ker)
+      m3 <- kernel.moment(3, 0, ker)
+    }
+  }
+})
+
+#'
 #'   tests/Kfuns.R
 #'
 #'   Various K and L functions and pcf

@@ -20,7 +20,7 @@ cat(paste("--------- Executing",
 #'                    and inhomogeneous summary functions
 #'                    and idw, adaptive.density, intensity
 #'
-#'  $Revision: 1.62 $  $Date: 2022/05/22 11:14:51 $
+#'  $Revision: 1.63 $  $Date: 2023/11/05 01:47:37 $
 #'
 
 if(!FULLTEST)
@@ -498,26 +498,6 @@ local({
 
 local({
   if(FULLTEST) {
-    ## FOR EXCISION
-    #' code in kernels.R
-    kernames <- c("gaussian", "rectangular", "triangular",
-                  "epanechnikov", "biweight", "cosine", "optcosine")
-    X <- rnorm(20)
-    U <- runif(20)
-    for(ker in kernames) {
-      dX <- dkernel(X, ker)
-      fX <- pkernel(X, ker)
-      qU <- qkernel(U, ker)
-      m0 <- kernel.moment(0, 0, ker)
-      m1 <- kernel.moment(1, 0, ker)
-      m2 <- kernel.moment(2, 0, ker)
-      m3 <- kernel.moment(3, 0, ker)
-    }
-  }
-})
-
-local({
-  if(FULLTEST) {
     ## idw
     Z <- idw(longleaf, power=4)
     Z <- idw(longleaf, power=4, se=TRUE)
@@ -548,13 +528,6 @@ local({
 })
 
 local({
-  if(ALWAYS) {
-    ## FOR EXCISION
-    ## unnormdensity
-    x <- rnorm(20) 
-    d0 <- unnormdensity(x, weights=rep(0, 20))
-    dneg <- unnormdensity(x, weights=c(-runif(19), 0))
-  }
   if(FULLTEST) {
     ## cases of 'intensity' etc
     a <- intensity(amacrine, weights=expression(x))
