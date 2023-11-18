@@ -37,34 +37,41 @@ stieltjes(f, M, ...)
 
   The argument \code{M} should be either a step function
   (object of class \code{"stepfun"}) or a function value table
-  (object of class \code{"fv"}, see \code{\link{fv.object}}).
+  (object of class \code{"fv"} %, see \code{\link{fv.object}}).
+  ).
   Objects of class \code{"stepfun"} are returned by
   \code{\link[stats]{ecdf}}, \code{\link{ewcdf}},
-  \code{\link[spatstat.explore]{spatialcdf}} and other utilities.
-  Objects of class \code{"fv"} are returned
-  by the commands \code{\link[spatstat.explore]{Kest}}, \code{\link[spatstat.explore]{Gest}}, etc.
+  % \code{\link[spatstat.explore]{spatialcdf}}
+  and other utilities.
+  % Objects of class \code{"fv"} are returned
+  % by the commands \code{\link[spatstat.explore]{Kest}}, \code{\link[spatstat.explore]{Gest}}, etc.
 }
 \value{
   A list containing the value of the Stieltjes integral
   computed using each of the versions of the function \code{M}.
 }
-\seealso{
-  \code{\link[spatstat.explore]{fv.object}}.
+%\seealso{
+%  \code{\link[spatstat.explore]{fv.object}}.
 
-  Use \code{\link[spatstat.explore]{integral.fv}} to integrate a function
-  object of class \code{"fv"}.
-}
+%  Use \code{\link[spatstat.explore]{integral.fv}} to integrate a function
+%  object of class \code{"fv"}.
+%}
 \examples{
-  # estimate cdf of nearest neighbour distance in redwood data
-  G <- Gest(redwood)
-  # compute estimate of mean nearest neighbour distance
-  stieltjes(function(x){x}, G)
-  # estimated probability of a distance in the interval [0.1,0.2]
-  stieltjes(function(x,a,b){ (x >= a) & (x <= b)}, G, a=0.1, b=0.2)
+  x <- runif(100)
+  w <- runif(100)
+  H <- ewcdf(x, w)
+  stieltjes(function(x) { x^2 }, H)
 
-  # stepfun example
-  H <- spatialcdf(bei.extra$elev, normalise=TRUE)
-  stieltjes(function(x){x}, H)
+%  # estimate cdf of nearest neighbour distance in redwood data
+%  G <- Gest(redwood)
+%  # compute estimate of mean nearest neighbour distance
+%  stieltjes(function(x){x}, G)
+%  # estimated probability of a distance in the interval [0.1,0.2]
+%  stieltjes(function(x,a,b){ (x >= a) & (x <= b)}, G, a=0.1, b=0.2)
+
+%  # stepfun example
+%  H <- spatialcdf(bei.extra$elev, normalise=TRUE)
+%  stieltjes(function(x){x}, H)
 }
 \author{
   \spatstatAuthors.

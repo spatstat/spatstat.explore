@@ -4,7 +4,7 @@
 ##
 ##    class "fv" of function value objects
 ##
-##    $Revision: 1.181 $   $Date: 2023/09/08 07:32:16 $
+##    $Revision: 1.182 $   $Date: 2023/11/04 04:53:51 $
 ##
 ##
 ##    An "fv" object represents one or more related functions
@@ -1181,46 +1181,29 @@ integral.fv <- function(f, domain=NULL, ...) {
   return(ans[1,])
 }
 
-  
-## stieltjes integration for fv objects
+## Stieltjes integration for fv objects
 
-stieltjes <- function(f, M, ...) {
-  ## stieltjes integral of f(x) dM(x)
-  stopifnot(is.function(f))
-  if(is.stepfun(M)) {
-    envM <- environment(M)
-    #' jump locations
-    x <- get("x", envir=envM)
-    #' values of integrand
-    fx <- f(x, ...)
-    #' jump amounts
-    xx <- c(-Inf, (x[-1L] + x[-length(x)])/2, Inf)
-    dM <- diff(M(xx))
-    #' integrate f(x) dM(x)
-    f.dM <- fx * dM
-    result <- sum(f.dM[is.finite(f.dM)])
-    return(list(result))
-  } else if(is.fv(M)) {
-    ## integration variable
-    argu <- attr(M, "argu")
-    x <- M[[argu]]
-    ## values of integrand
-    fx <- f(x, ...)
-    ## estimates of measure
-    valuenames <- names(M) [names(M) != argu]
-    Mother <- as.data.frame(M)[, valuenames]
-    Mother <- as.matrix(Mother, nrow=nrow(M))
-    ## increments of measure
-    dM <- apply(Mother, 2, diff)
-    dM <- rbind(dM, 0)
-    ## integrate f(x) dM(x)
-    f.dM <- fx * dM
-    f.dM[!is.finite(f.dM)] <- 0
-    results <- colSums(f.dM)
-    results <- as.list(results)
-    names(results) <- valuenames
-    return(results)
-  } else stop("M must be an object of class fv or stepfun")
+StieltjesCalc.fv <- function(M, f, ...) {
+  verifyclass(M, "fv")
+  ## integration variable
+  argu <- attr(M, "argu")
+  x <- M[[argu]]
+  ## values of integrand
+  fx <- f(x, ...)
+  ## estimates of measure
+  valuenames <- names(M) [names(M) != argu]
+  Mother <- as.data.frame(M)[, valuenames]
+  Mother <- as.matrix(Mother, nrow=nrow(M))
+  ## increments of measure
+  dM <- apply(Mother, 2, diff)
+  dM <- rbind(dM, 0)
+  ## integrate f(x) dM(x)
+  f.dM <- fx * dM
+  f.dM[!is.finite(f.dM)] <- 0
+  results <- colSums(f.dM)
+  results <- as.list(results)
+  names(results) <- valuenames
+  return(results)
 }
 
 prefixfv <- function(x, tagprefix="", descprefix="", lablprefix=tagprefix,
