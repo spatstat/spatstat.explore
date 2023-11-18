@@ -60,18 +60,12 @@
   A numeric vector containing the quantiles.
 }
 \author{
-  \adrian
-  
-  
-  \rolf
-  
-  and \ege
-  
+  \spatstatAuthors.  
 }
 \seealso{
   \code{\link[stats]{quantile}}, 
   \code{\link{quantile.ewcdf}}, 
-  \code{\link{quantile.im}},
+%  \code{\link{quantile.im}},
   \code{\link{CDF}}.
 }
 \examples{
