@@ -1,4 +1,17 @@
 
+        CHANGES IN spatstat.explore VERSION 3.2-5.001
+
+OVERVIEW
+
+    o Bug fix.
+
+BUG FIXES
+
+    o studpermu.test
+    The code required each group to consist of at least 3 point patterns,
+    rather than 2 point patterns as intended (and as documented).
+    Fixed.
+
         CHANGES IN spatstat.explore VERSION 3.2-5
 
 OVERVIEW

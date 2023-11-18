@@ -3,7 +3,7 @@
 #' 
 #'  Original by Ute Hahn 2014
 #'
-#' $Revision: 1.10 $ $Date: 2019/10/16 02:36:54 $
+#' $Revision: 1.11 $ $Date: 2023/11/18 04:41:42 $
 #' 
 #' Studentized permutation test for comparison of grouped point patterns;
 #' functions to generate these grouped point patterns;
@@ -175,7 +175,7 @@ studpermu.test <-
  
     lev <- 1:ngroups
     m <- as.vector(table(groupi))
-    if (any(m < 3))
+    if (any(m < 2))
       stop(paste("Data groups need to contain at least two patterns;",
                  "\nafter discarding those with fewer than",
                  minpoints,
