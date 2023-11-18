@@ -157,6 +157,9 @@
 \alias{sewsmod}
 \alias{shift.quadrattest}              
 \alias{simulrecipe}              
+\alias{StieltjesCalc}
+\alias{StieltjesCalc.stepfun}
+\alias{StieltjesCalc.fv}
 \alias{Smooth.solist}
 \alias{smoothcrossEngine}              
 \alias{smoothpointsEngine}
@@ -417,6 +420,9 @@ sewpcf(d, w, denargs, lambda2area, divisor)
 sewsmod(d, ff, wt, Ef, rvals, method="smrep", \dots, nwtsteps=500)
 \method{shift}{quadrattest}(X, \dots)
 simulrecipe(type, expr, envir, csr, pois, constraints)
+StieltjesCalc(M, f, \dots)
+\method{StieltjesCalc}{stepfun}(M, f, \dots)
+\method{StieltjesCalc}{fv}(M, f, \dots)
 \method{Smooth}{solist}(X, \dots)
 smoothcrossEngine(Xdata, Xquery, values, sigma, \dots,
                     weights, varcov,
