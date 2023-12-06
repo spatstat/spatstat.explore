@@ -14,7 +14,7 @@ Jest <- function(X, ..., eps=NULL, r=NULL, breaks=NULL, correction=NULL) {
                           rmaxdefault=rmax.rule("J", W, intensity(X)))
   checkspacing <- !isFALSE(list(...)$checkspacing)
   #' compute F and G 
-  FF <- Fest(X, eps, breaks=brks, correction=correction,
+  FF <- Fest(X, eps=eps, breaks=brks, correction=correction,
              checkspacing=checkspacing)
   G <- Gest(X, breaks=brks, correction=correction)
   # initialise fv object
