@@ -1,9 +1,9 @@
 
-        CHANGES IN spatstat.explore VERSION 3.2-5.001
+        CHANGES IN spatstat.explore VERSION 3.2-5.002
 
 OVERVIEW
 
-    o Bug fix.
+    o Bug fixes.
 
 BUG FIXES
 
@@ -12,6 +12,10 @@ BUG FIXES
     rather than 2 point patterns as intended (and as documented).
     Fixed.
 
+    o Jest
+    Ignored argument 'eps'.
+    Fixed.
+    
         CHANGES IN spatstat.explore VERSION 3.2-5
 
 OVERVIEW
