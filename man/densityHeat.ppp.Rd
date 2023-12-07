@@ -92,11 +92,11 @@
 
   Diffusion kernel estimates were developed
   by Botev et al (2010), Barry and McIntyre (2011) and
-  Baddeley et al (2021). 
+  Baddeley et al (2022). 
   
   Barry and McIntyre (2011) proposed an estimator for point process
   intensity based on a random walk on the pixel grid inside the
-  observation window. Baddeley et al (2021) showed that the
+  observation window. Baddeley et al (2022) showed that the
   Barry-McIntyre method is a special case of the \emph{diffusion estimator} 
   proposed by Botev et al (2010).
 
@@ -108,7 +108,7 @@
   arguments to ensure a square grid: for example, the argument
   \code{eps} specifies a square grid with spacing \code{eps} units.
 
-  The more general algorithm used here (Baddeley et al, 2021)
+  The more general algorithm used here (Baddeley et al, 2022)
   does not require a square grid of pixels.
   If the pixel grid is not square, and if \code{symmetric=FALSE}
   (the default), then the random walk is not symmetric,
@@ -116,7 +116,7 @@
   different, in order to ensure that the smoothing is isotropic.
 
   This implementation also includes two generalizations to
-  the case of adaptive smoothing (Baddeley et al, 2021).
+  the case of adaptive smoothing (Baddeley et al, 2022).
 
   In the first version of adaptive smoothing, the bandwidth is
   spatially-varying.
@@ -135,7 +135,7 @@
   If \code{extrapolate=FALSE} (the default), calculations are performed
   using the Euler scheme for the heat equation. 
   If \code{extrapolate=TRUE}, the accuracy of the result will be
-  improved by applying Richardson extrapolation (Baddeley et al, 2021, Section
+  improved by applying Richardson extrapolation (Baddeley et al, 2022, Section
   4). After computing the intensity estimate using the Euler scheme
   on the desired pixel grid, another estimate is computed using the same
   method on another pixel grid, and the two estimates are combined by
@@ -162,9 +162,9 @@
   tessellation-based estimator.
 }
 \references{
-  Baddeley, A., Davies, T., Rakshit, S., Nair, G. and McSwiggan, G. (2021)
+  Baddeley, A., Davies, T., Rakshit, S., Nair, G. and McSwiggan, G. (2022)
   Diffusion smoothing for spatial point patterns.
-  \emph{Statistical Science}, in press.
+  \emph{Statistical Science} \bold{37} (1) 123--142.
   
   Barry, R.P. and McIntyre, J. (2011)
   Estimating animal densities and home range in regions with irregular
