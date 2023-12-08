@@ -1,10 +1,17 @@
 
-        CHANGES IN spatstat.explore VERSION 3.2-5.002
+        CHANGES IN spatstat.explore VERSION 3.2-5.003
 
 OVERVIEW
 
+    o Adaptive estimation of intensity for split point patterns.
+    
     o Bug fixes.
 
+NEW FUNCTIONS
+
+    o densityAdaptiveKernel.splitppp
+    A method for 'densityAdaptiveKernel' for split point patterns.
+    
 BUG FIXES
 
     o studpermu.test

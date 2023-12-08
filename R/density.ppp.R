@@ -3,7 +3,7 @@
 #
 #  Method for 'density' for point patterns
 #
-#  $Revision: 1.133 $    $Date: 2023/09/27 02:47:39 $
+#  $Revision: 1.134 $    $Date: 2023/12/08 06:51:04 $
 #
 
 # ksmooth.ppp <- function(x, sigma, ..., edge=TRUE) {
@@ -73,12 +73,7 @@ density.ppp <- function(x, sigma=NULL, ...,
   }
 
   ## ............... weights ...........................................
-  if(is.im(weights)) {
-    weights <- safelookup(weights, x) # includes warning if NA
-  } else if(is.expression(weights)) 
-    weights <- eval(weights, envir=as.data.frame(x), enclos=parent.frame())
-  if(length(weights) == 0 || (!is.null(dim(weights)) && nrow(weights) == 0))
-    weights <- NULL 
+  weights <- pointweights(x, weights=weights, parent=parent.frame(), dfok=TRUE)
 
   ## ............... standard error ....................................
   if(se) {
@@ -1096,7 +1091,7 @@ bandwidth.is.infinite <- function(sigma) {
 
 density.ppplist <- 
 density.splitppp <- function(x, ..., weights=NULL, se=FALSE) {
-  if(is.null(weights) || is.im(weights) || is.expression(weights))
+  if(is.null(weights) || inherits(weights, c("im", "funxy", "expression")))
     weights <- rep(list(weights), length(x))
   y <- mapply(density.ppp, x=x, weights=weights,
               MoreArgs=list(se=se, ...),

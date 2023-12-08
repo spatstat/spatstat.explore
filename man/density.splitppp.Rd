@@ -74,10 +74,11 @@
   a numeric vector of length equal to \code{npoints(x[[i]])},
   a single numeric value, a numeric matrix,
   a pixel image (object of class \code{"im"}),
-  or an \code{expression}.
+  an \code{expression}, or a function of class \code{"funxy"}.
 
-  For convenience, \code{weights} can also be a single \code{expression}
-  or a single pixel image (object of class \code{"im"}). 
+  For convenience, \code{weights} can also be a single \code{expression},
+  or a single pixel image (object of class \code{"im"}),
+  or a single function of class \code{"funxy"}.
 }
 \seealso{
   \code{\link{ppp.object}},

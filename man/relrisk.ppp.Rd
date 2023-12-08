@@ -109,7 +109,8 @@
   
   This function \code{relrisk.ppp} is the method for point pattern
   datasets. It computes \emph{nonparametric} estimates of relative risk
-  by kernel smoothing.
+  by kernel smoothing (Bithell, 1990, 1991; Diggle, 2003; Baddeley,
+  Rubak and Turner, 2015).
 
   If \code{X}  is a bivariate point pattern
   (a multitype point pattern consisting of two types of points)
@@ -164,7 +165,8 @@
   probability of a control is zero) will be returned as \code{Inf}.
 
   Estimation is performed by a simple Nadaraja-Watson type kernel
-  smoother (Diggle, 2003).
+  smoother (Bithell, 1990, 1991; Diggle, 2003; Baddeley, Rubak and
+  Turner, 2015, section 14.4).
   The smoothing bandwidth can be specified in any of the following ways:
   \itemize{
     \item \code{sigma} is a single numeric value, giving the standard
@@ -296,6 +298,16 @@
    }
 }
 \references{
+  \baddrubaturnbook
+  
+  Bithell, J.F. (1990)
+  An application of density estimation to geographical epidemiology.
+  \emph{Statistics in Medicine} \bold{9}, 691--701.
+  
+  Bithell, J.F. (1991)
+  Estimation of relative risk functions.
+  \emph{Statistics in Medicine} \bold{10}, 1745--1751.
+
   Diggle, P.J. (2003)
   \emph{Statistical analysis of spatial point patterns},
   Second edition. Arnold.
