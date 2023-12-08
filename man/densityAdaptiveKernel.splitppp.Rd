@@ -87,7 +87,9 @@
   \code{\link{bw.abram.ppp}}.
 }
 \examples{
-  Z <- densityAdaptiveKernel(split(amacrine), h0=0.1)
+  X <- amacrine
+  if(!interactive()) X <- X[c(TRUE,FALSE,FALSE,FALSE)]
+  Z <- densityAdaptiveKernel(split(X), h0=0.15)
   plot(Z, main="Adaptive kernel estimate")
 }
 \keyword{spatial}

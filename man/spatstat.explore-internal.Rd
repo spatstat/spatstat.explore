@@ -38,6 +38,7 @@
 \alias{dimnames.fasp}               
 \alias{dimnames<-.fasp}
 \alias{distributecbind}
+\alias{ensure.listarg}
 \alias{envelopeEngine}
 \alias{envelopeProgressData}
 \alias{envelopeTest}
@@ -244,6 +245,7 @@ digital.volume(range, nval, vside)
 \method{dimnames}{fasp}(x)
 \method{dimnames}{fasp}(x) <- value
 distributecbind(x)
+ensure.listarg(x, n, singletypes, xtitle, things)
 envelopeEngine(X, fun, simul,
            nsim, nrank, \dots, funargs, funYargs,
            verbose, clipdata, 

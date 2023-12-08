@@ -1,9 +1,11 @@
 
-        CHANGES IN spatstat.explore VERSION 3.2-5.004
+        CHANGES IN spatstat.explore VERSION 3.2-5.005
 
 OVERVIEW
 
     o Adaptive estimation of intensity for split point patterns.
+
+    o Internal improvements.
     
     o Bug fixes.
 

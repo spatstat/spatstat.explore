@@ -1,7 +1,7 @@
 #'
 #'   densityAdaptiveKernel.R
 #'
-#'   $Revision: 1.11 $  $Date: 2023/12/08 07:53:53 $
+#'   $Revision: 1.12 $  $Date: 2023/12/08 08:05:17 $
 #'
 #'
 #'  Adaptive kernel smoothing via 3D FFT
@@ -98,15 +98,47 @@ densityAdaptiveKernel.ppplist <-
 densityAdaptiveKernel.splitppp <- function(X, bw=NULL, ...,
                                            weights=NULL) {
   n <- length(X)
-  if(is.null(bw) || inherits(bw, c("im", "funxy"))) {
-    bw <- rep(list(bw), n)
-  } else {
-    stopifnot(is.list(bw) && length(bw) == length(X))
-  }
-  if(is.null(weights) || inherits(weights, c("im", "funxy", "expression")))
-    weights <- rep(list(weights), n)
+  bw      <- ensure.listarg(bw,
+                            n=n,
+                            singletypes=c("NULL", "im", "funxy"),
+                            xtitle="bw")
+  weights <- ensure.listarg(weights,
+                            n=n,
+                            singletypes=c("NULL", "im", "funxy", "expression"),
+                            xtitle="weights")
   y <- mapply(densityAdaptiveKernel.ppp, X=X, bw=bw, weights=weights,
               MoreArgs=list(...),
               SIMPLIFY=FALSE)
   return(as.solist(y, demote=TRUE))
 }
+
+
+## move this to spatstat.data when stable
+
+ensure.listarg <- function(x, n, singletypes=character(0), 
+                           xtitle=NULL, things="point patterns") {
+  if(!is.list(x)) {
+    if(inherits(x, singletypes)) {
+      ## replicate single object to make a list
+      x <- rep(list(x), n)
+      return(x)
+    } else {
+      ## error 
+      if(is.null(xtitle)) xtitle <- short.deparse(substitute(x))
+      whinge <- paste(xtitle, "should be a list")
+      if(length(singletypes))
+        whinge <- paste(whinge,
+                        "or an object of class",
+                        commasep(dQuote(singletypes), "or"))
+      stop(whinge, call.=FALSE)
+    }
+  }
+  if(length(x) != n) {
+    if(is.null(xtitle)) xtitle <- short.deparse(substitute(x))
+    whinge <- paste("The length of", sQuote(xtitle),
+                    "should equal the number of", things)
+    stop(whinge, call.=FALSE)
+  }
+  return(x)
+}
+  
