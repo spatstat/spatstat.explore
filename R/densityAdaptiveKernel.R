@@ -1,7 +1,7 @@
 #'
 #'   densityAdaptiveKernel.R
 #'
-#'   $Revision: 1.10 $  $Date: 2023/12/08 07:30:16 $
+#'   $Revision: 1.11 $  $Date: 2023/12/08 07:53:53 $
 #'
 #'
 #'  Adaptive kernel smoothing via 3D FFT
@@ -95,12 +95,16 @@ densityAdaptiveKernel.ppp <- function(X, bw, ...,
 
 
 densityAdaptiveKernel.ppplist <- 
-densityAdaptiveKernel.splitppp <- function(X, bw, ...,
+densityAdaptiveKernel.splitppp <- function(X, bw=NULL, ...,
                                            weights=NULL) {
   n <- length(X)
+  if(is.null(bw) || inherits(bw, c("im", "funxy"))) {
+    bw <- rep(list(bw), n)
+  } else {
+    stopifnot(is.list(bw) && length(bw) == length(X))
+  }
   if(is.null(weights) || inherits(weights, c("im", "funxy", "expression")))
     weights <- rep(list(weights), n)
-  if(missing(bw)) bw <- rep(list(NULL), n)
   y <- mapply(densityAdaptiveKernel.ppp, X=X, bw=bw, weights=weights,
               MoreArgs=list(...),
               SIMPLIFY=FALSE)

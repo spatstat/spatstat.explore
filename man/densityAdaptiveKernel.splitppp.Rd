@@ -9,9 +9,9 @@
   or each of the point patterns in a list.
 }
 \usage{
-\method{densityAdaptiveKernel}{splitppp}(X, bw, \dots, weights=NULL)
+\method{densityAdaptiveKernel}{splitppp}(X, bw=NULL, \dots, weights=NULL)
 
-\method{densityAdaptiveKernel}{ppplist}(X, bw, \dots, weights=NULL)
+\method{densityAdaptiveKernel}{ppplist}(X, bw=NULL, \dots, weights=NULL)
 }
 \arguments{
   \item{X}{
