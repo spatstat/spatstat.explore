@@ -1,7 +1,7 @@
 #'
 #'   densityAdaptiveKernel.R
 #'
-#'   $Revision: 1.12 $  $Date: 2023/12/08 08:05:17 $
+#'   $Revision: 1.14 $  $Date: 2023/12/08 13:15:54 $
 #'
 #'
 #'  Adaptive kernel smoothing via 3D FFT
@@ -117,26 +117,34 @@ densityAdaptiveKernel.splitppp <- function(X, bw=NULL, ...,
 
 ensure.listarg <- function(x, n, singletypes=character(0), 
                            xtitle=NULL, things="point patterns") {
+  if(inherits(x, singletypes)) {
+    ## single object: replicate it
+    x <- rep(list(x), n)
+    return(x)
+  } 
   if(!is.list(x)) {
-    if(inherits(x, singletypes)) {
-      ## replicate single object to make a list
-      x <- rep(list(x), n)
-      return(x)
-    } else {
-      ## error 
-      if(is.null(xtitle)) xtitle <- short.deparse(substitute(x))
-      whinge <- paste(xtitle, "should be a list")
-      if(length(singletypes))
+    ## error 
+    if(is.null(xtitle)) xtitle <- short.deparse(substitute(x))
+    whinge <- paste(xtitle, "should be a list")
+    if(length(singletypes)) {
+      otypes <- setdiff(singletypes, "NULL")
+      if(length(otypes))
         whinge <- paste(whinge,
                         "or an object of class",
-                        commasep(dQuote(singletypes), "or"))
-      stop(whinge, call.=FALSE)
+                        commasep(dQuote(otypes), "or"))
+      if("NULL" %in% singletypes)
+        whinge <- paste(whinge, "or NULL")
     }
+    stop(whinge, call.=FALSE)
   }
-  if(length(x) != n) {
+  nx <- length(x)
+  if(nx != n) {
     if(is.null(xtitle)) xtitle <- short.deparse(substitute(x))
-    whinge <- paste("The length of", sQuote(xtitle),
-                    "should equal the number of", things)
+    whinge <- paste("The length of",
+                    sQuote(xtitle), 
+                    "should equal the number of",
+                    things,
+                    paren(paste(nx, "!=", n)))
     stop(whinge, call.=FALSE)
   }
   return(x)
