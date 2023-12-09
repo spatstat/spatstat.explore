@@ -3,7 +3,7 @@
 ##
 ##  Spatial scan statistics
 ##
-##  $Revision: 1.23 $  $Date: 2022/05/23 02:33:06 $
+##  $Revision: 1.24 $  $Date: 2023/12/09 02:08:03 $
 ##
 
 scanmeasure <- function(X, ...){
@@ -152,15 +152,12 @@ scanLRTS <- function(X, r, ...,
            nG <- npoints(Y)
            mu <- unmark(X)
          })
-  ## The following line ensures that the same pixel resolution information
-  ## is passed to the two calls to 'scanmeasure' below
-  Y$window <- Xmask
   ## 
   nr <- length(r)
   lrts <- vector(mode="list", length=nr)
   for(i in 1:nr) {
     ri <- r[i]
-    nZ <- scanmeasure(Y, ri)
+    nZ <- scanmeasure(Y, ri, xy=Xmask)
     muZ <- scanmeasure(mu, ri)
     if(!compatible.im(nZ, muZ)) {
       ha <- harmonise.im(nZ, muZ)

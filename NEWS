@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.2-5.006
+        CHANGES IN spatstat.explore VERSION 3.2-5.007
 
 OVERVIEW
 
@@ -18,11 +18,15 @@ BUG FIXES
 
     o studpermu.test
     The code required each group to consist of at least 3 point patterns,
-    rather than 2 point patterns as intended (and as documented).
+    rather than 2 point patterns (as stated in the documentation).
     Fixed.
 
     o Jest
-    Ignored argument 'eps'.
+    Ignored pixel resolution argument 'eps'.
+    Fixed.
+
+    o scanLRTS
+    Pixel resolution arguments 'dimyx', 'eps', 'xy' were not correctly handled.
     Fixed.
     
         CHANGES IN spatstat.explore VERSION 3.2-5
