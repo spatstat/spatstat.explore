@@ -9,7 +9,7 @@
 #'    validate.weights
 #'    updateData (generic) (soon to be deprecated)
 #'
-#' $Revision: 1.20 $ $Date: 2023/02/16 02:53:01 $
+#' $Revision: 1.21 $ $Date: 2024/01/10 10:58:02 $
 
 resolve.lambda <- function(X, lambda=NULL, ...) {
   UseMethod("resolve.lambda")
@@ -120,7 +120,9 @@ resolve.reciplambda.ppp <- function(X, lambda=NULL, reciplambda=NULL,
       ## model provides intensity
       model <- lambda
       if(update) {
-        model <- update(model, X)
+        force(X)
+        env.here <- sys.frame(sys.nframe())
+        model <- update(model, X, envir=env.here)
         danger <- FALSE
       }
       if(inherits(model, "slrm")) {
@@ -221,7 +223,9 @@ resolve.lambdacross.ppp <- function(X, I, J,
       ## point process model provides intensity
       model <- lambdaX
       if(update) {
-        model <- update(model, X)
+        force(X)
+        env.here <- sys.frame(sys.nframe())
+        model <- update(model, X, envir=env.here)
         dangerI <- dangerJ <- FALSE
         dangerous <- "lambdaIJ"
       }
@@ -265,7 +269,9 @@ resolve.lambdacross.ppp <- function(X, I, J,
       ## point process model provides intensity
       model <- lambdaI
       if(update) {
-        model <- update(model, X)
+        force(X)
+        env.here <- sys.frame(sys.nframe())
+        model <- update(model, X, envir=env.here)
         dangerI <- FALSE
         dangerous <- setdiff(dangerous, "lambdaI")
       }
@@ -301,7 +307,9 @@ resolve.lambdacross.ppp <- function(X, I, J,
       ## point process model provides intensity
       model <- lambdaJ
       if(update) {
-        model <- update(model, X)
+        force(X)
+        env.here <- sys.frame(sys.nframe())
+        model <- update(model, X, envir=env.here)
         dangerJ <- FALSE
         dangerous <- setdiff(dangerous, "lambdaJ")
       }
