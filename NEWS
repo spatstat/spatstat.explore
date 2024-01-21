@@ -1,8 +1,12 @@
 
-        CHANGES IN spatstat.explore VERSION 3.2-5.008
+        CHANGES IN spatstat.explore VERSION 3.2-5.009
 
 OVERVIEW
 
+    o We thank Marcelino de la Cruz for contributions.
+    
+    o Spatially weighted median and quantile of mark values.
+    
     o Adaptive estimation of intensity for split point patterns.
 
     o Internal improvements.
@@ -11,6 +15,9 @@ OVERVIEW
 
 NEW FUNCTIONS
 
+    o SpatialMedian.ppp, SpatialQuantile.ppp
+    Spatially weighted median and quantile of mark values of a point pattern.
+    
     o densityAdaptiveKernel.splitppp
     A method for 'densityAdaptiveKernel' for split point patterns.
     

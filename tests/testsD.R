@@ -19,8 +19,9 @@ cat(paste("--------- Executing",
 #'                    relrisk(), Smooth()
 #'                    and inhomogeneous summary functions
 #'                    and idw, adaptive.density, intensity
+#'                    and SpatialMedian, SpatialQuantile
 #'
-#'  $Revision: 1.63 $  $Date: 2023/11/05 01:47:37 $
+#'  $Revision: 1.65 $  $Date: 2024/01/21 04:01:57 $
 #'
 
 if(!FULLTEST)
@@ -541,6 +542,18 @@ local({
     Z <- as.im(f, W=square(0.5))
   }
 })
+
+local({
+  if(FULLTEST) {
+    ## other cases of SpatialQuantile.ppp
+    X <- longleaf
+    marks(X) <- round(marks(X), -1)
+    Z <- SpatialMedian(X, 30, type=4)
+    ZX <- SpatialMedian(X, 30, type=4, at="points")
+    ZXP <- SpatialMedian(X, 30, at="points", leaveoneout=FALSE)
+  }
+})
+
 
 
 reset.spatstat.options()
