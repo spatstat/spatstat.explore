@@ -30,9 +30,10 @@
     spatial smoothing.
   }
   \item{type}{
-    Type of quantile (see \code{\link[stats]{quantile.default}}.
+    Integer specifying the type of median
+    (using the convention of \code{\link[stats]{quantile.default}};
+    see Details).
     Only types 1 and 4 are currently implemented.
-    See Details.
   }
   \item{at}{
     Character string indicating whether to compute the quantile
@@ -70,14 +71,14 @@
   For a query location \eqn{u}, the smoothed quantile is defined
   as the weighted quantile of the mark values
   \eqn{y_1,\ldots,y_n}{y[1], ..., y[n]} with weights
-  \eqn{w_1,\ldots,w_n}{w[1], ..., w[n]},
+  \eqn{w_1(u),\ldots,w_n(u)}{w[1](u), ..., w[n](u)},
   where
   \deqn{
-    w_i = \frac{k(u,x_i)}{\sum_{j=1}^n k(u,x_j)}
+    w_i(u) = \frac{k(u,x_i)}{\sum_{j=1}^n k(u,x_j)}
   }{
-    w[i] = k(u,x[i])/(k(u, x[1]) + ... + k(u, x[n]))
+    w[i](u) = k(u,x[i])/(k(u, x[1]) + ... + k(u, x[n]))
   }
-  where \eqn{k(u,v)} is the smoothing kernel with bandwidth \code{sigma}
+  where \eqn{k(u,v)} is the smoothing kernel with bandwidth \code{sigma}.
 
   If \code{at="points"} and \code{leaveoneout=TRUE}, then
   a leave-one-out calculation is performed, which means that
@@ -85,6 +86,18 @@
   the value at the data point is ignored, and 
   the weighted quantile is computed from the values \eqn{y_j}{y[j]}
   for all \eqn{j} not equal to \eqn{i}.
+
+  The calculation of the quantile value depends on the argument
+  \code{type} which is interpreted in the same way as for
+  \code{\link[stats]{quantile.default}}. Currently, only types 1 and 4
+  are implemented. 
+  If \code{type=1} (the default), the quantile value is
+  one of the mark values (one of the values in \code{marks(x)}).
+  If \code{type=4}, the quantile value is obtained by linearly interpolating
+  between mark values.
+  Note that the default values of \code{type}
+  in \code{SpatialQuantile.ppp} and \code{\link{SpatialMedian.ppp}}
+  are different.
 }
 \value{
   \emph{If \code{X} has a single column of marks:}
@@ -117,7 +130,7 @@
   \adrian.
 }
 \seealso{
-  \code{\link{Smooth.ppp}}
+  \code{\link{SpatialMedian.ppp}}, \code{\link{SpatialMedian}}.
 }
 \examples{
    X <- longleaf

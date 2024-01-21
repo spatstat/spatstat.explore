@@ -10,7 +10,7 @@
 }
 \usage{
  \method{SpatialMedian}{ppp}(X, sigma = NULL, \dots,
-        type = 1, at = c("pixels", "points"), leaveoneout = TRUE,
+        type = 4, at = c("pixels", "points"), leaveoneout = TRUE,
         weights = NULL, edge = TRUE, diggle = FALSE, verbose = FALSE)
 }
 \arguments{
@@ -26,7 +26,9 @@
     spatial smoothing.
   }
   \item{type}{
-    Type of median (see \code{\link[stats]{quantile.default}}.
+    Integer specifying the type of median
+    (using the convention of \code{\link[stats]{quantile.default}};
+    see Details).
     Only types 1 and 4 are currently implemented.
   }
   \item{at}{
@@ -107,14 +109,30 @@
   The return value has attributes
   \code{"sigma"} and \code{"varcov"} which report the smoothing
   bandwidth that was used.
+
+  The calculation of the median value depends on the argument
+  \code{type} which is interpreted in the same way as for
+  \code{\link[stats]{quantile.default}}. Currently, only types 1 and 4
+  are implemented. 
+  If \code{type=1}, the median is always
+  one of the mark values (one of the values in \code{marks(x)}).
+  If \code{type=4} (the default),
+  the median value is obtained by linearly interpolating
+  between mark values.
+  Note that the default values of \code{type}
+  in \code{SpatialMedian.ppp} and \code{\link{SpatialQuantile.ppp}}
+  are different.
 }
 \author{
   \adrian.
 }
 \seealso{
-  \code{\link{SpatialQuantile.ppp}}
+  Generic function \code{\link{SpatialMedian}}.
+
+  \code{\link{SpatialQuantile}} and \code{\link{SpatialQuantile.ppp}}
+  for other quantiles.
   
-  \code{\link{Smooth.ppp}}
+  \code{\link{Smooth.ppp}} for the spatially weighted average.
 }
 \examples{
    X <- longleaf

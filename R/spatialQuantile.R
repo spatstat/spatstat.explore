@@ -13,7 +13,7 @@ SpatialQuantile <- function(X, prob=0.5, ...) {
 #' methods for 'ppp' class
 
 SpatialMedian.ppp <- function(X, sigma=NULL, ...,
-                             type=1,
+                             type=4,
                              at=c("pixels", "points"), leaveoneout=TRUE,
                              weights=NULL, 
                              edge=TRUE, diggle=FALSE, verbose=FALSE) {

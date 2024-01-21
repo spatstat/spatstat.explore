@@ -19,6 +19,7 @@
   \item{prob}{
     Probability for which the quantile is required.
     A single numeric value between 0 and 1.
+    Default is to calculate the median.
   }
   \item{\dots}{
     Further arguments passed to methods.
@@ -37,7 +38,9 @@
   \adrian.
 }
 \seealso{
-  \code{\link{SpatialMedian.ppp}}, \code{\link{SpatialQuantile.ppp}}.
+  Methods \code{\link{SpatialMedian.ppp}}, \code{\link{SpatialQuantile.ppp}}.
+  
+  \code{\link{Smooth}} for the spatially weighted average.
 }
 \keyword{spatial}
 \keyword{smooth}
