@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.2-5.012
+        CHANGES IN spatstat.explore VERSION 3.2-5.013
 
 OVERVIEW
 
@@ -25,6 +25,9 @@ NEW FUNCTIONS
     A method for 'densityAdaptiveKernel' for split point patterns.
     
 SIGNIFICANT USER-VISIBLE CHANGES
+
+    o bw.ppl
+    New argument `varcov1' for anisotropic bandwidth selection.
 
     o bw.smoothppp
     New argument `varcov1' for anisotropic bandwidth selection.

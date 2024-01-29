@@ -947,7 +947,7 @@ bw.smoothppp <- function(X, nh=spatstat.options("n.bandwidth"),
                      warnextreme=warn,
                      hargnames=c("hmin", "hmax"),
                      unitname=if(is.null(varcov1)) unitname(X) else NULL,
-                     template=varcov1, scalepower=2)
+                     template=varcov1, exponent=2)
   return(result)
 }
 

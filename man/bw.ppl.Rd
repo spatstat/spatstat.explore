@@ -8,8 +8,8 @@
   for the kernel estimation of point process intensity.
 }
 \usage{
-   bw.ppl(X, \dots, srange=NULL, ns=16, sigma=NULL, weights=NULL,
-          shortcut=FALSE, warn=TRUE)
+   bw.ppl(X, \dots, srange=NULL, ns=16, sigma=NULL, varcov1=NULL,
+          weights=NULL, shortcut=FALSE, warn=TRUE)
 }
 \arguments{
   \item{X}{
@@ -26,6 +26,10 @@
   \item{sigma}{
     Optional. Vector of values of the bandwidth to be searched.
     Overrides the values of \code{ns} and \code{srange}.
+  }
+  \item{varcov1}{
+    Optional. Variance-covariance matrix matrix of the kernel with
+    bandwidth \eqn{h=1}. See section on Anisotropic Smoothing.
   }
   \item{weights}{
     Optional. Numeric vector of weights for the points of \code{X}.
@@ -80,6 +84,19 @@
   If \code{shortcut=TRUE}, the computation is accelerated by
   omitting the integral term in the equation above. This is valid
   because the integral is approximately constant.
+}
+\section{Anisotropic Smoothing}{
+  Anisotropic kernel smoothing is available in \code{\link{density.ppp}} using
+  the argument \code{varcov} to specify the variance-covariance
+  matrix of the anisotropic kernel. In order to choose the matrix
+  \code{varcov}, the user can call \code{bw.ppl} 
+  using the argument \code{varcov1} to specify a \sQuote{template}
+  matrix. Scalar multiples of \code{varcov1} will be
+  considered and the optimal scale factor will be determined.
+  That is, \code{bw.ppl} will try 
+  smoothing the data using \code{varcov = h^2 * varcov1} for different
+  values of \code{h}.
+  The result of \code{bw.ppl} will be the optimal value of \code{h}.
 }
 \value{
   A numerical value giving the selected bandwidth.
