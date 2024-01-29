@@ -3,7 +3,7 @@
 #
 #  Smooth the marks of a point pattern
 # 
-#  $Revision: 1.86 $  $Date: 2023/09/18 08:23:00 $
+#  $Revision: 1.89 $  $Date: 2024/01/29 06:32:45 $
 #
 
 Smooth <- function(X, ...) {
@@ -876,9 +876,10 @@ markvar  <- function(X, sigma=NULL, ..., weights=NULL, varcov=NULL) {
 
 bw.smoothppp <- function(X, nh=spatstat.options("n.bandwidth"),
                          hmin=NULL, hmax=NULL, warn=TRUE,
-                         kernel="gaussian") {
+                         kernel="gaussian", varcov1=NULL) {
   stopifnot(is.ppp(X))
   stopifnot(is.marked(X))
+  if(!is.null(varcov1)) check.nmatrix(varcov1, 2, things="spatial dimensions")
   if(is.function(kernel))
     stop("Custom kernel functions are not yet supported in bw.smoothppp")
   X <- coerce.marks.numeric(X)
@@ -893,7 +894,6 @@ bw.smoothppp <- function(X, nh=spatstat.options("n.bandwidth"),
 #  n <- npoints(X)
   if(is.null(hmin) || is.null(hmax)) {
     W <- Window(X)
-#    a <- area(W)
     d <- diameter(as.rectangle(W))
     # Stoyan's rule of thumb 
     stoyan <- bw.stoyan(X)
@@ -903,6 +903,12 @@ bw.smoothppp <- function(X, nh=spatstat.options("n.bandwidth"),
       nnd <- nnd[ok]
     } else {
       nnd <- d/16
+    }
+    if(!is.null(varcov1)) {
+      dref <- (det(varcov1))^(1/4)
+      d      <- d/dref
+      stoyan <- stoyan/dref
+      nnd    <- nnd/dref
     }
     if(is.null(hmin)) {
       hmin <- max(1.1 * min(nnd), stoyan/5)
@@ -919,8 +925,15 @@ bw.smoothppp <- function(X, nh=spatstat.options("n.bandwidth"),
   # 
   # compute cross-validation criterion
   for(i in seq_len(nh)) {
-    yhat <- Smooth(X, sigma=h[i], at="points", leaveoneout=TRUE,
-                   kernel=kernel, sorted=TRUE)
+    if(is.null(varcov1)) {
+      yhat <- Smooth(X, sigma = h[i],
+                     at="points", leaveoneout=TRUE,
+                     kernel=kernel, sorted=TRUE)
+    } else {
+      yhat <- Smooth(X, varcov = (h[i]^2)  * varcov1,
+                     at="points", leaveoneout=TRUE,
+                     kernel=kernel, sorted=TRUE)
+    }
     if(!is.null(dimmarx))
       yhat <- as.matrix(as.data.frame(yhat))
     cv[i] <- mean((marx - yhat)^2)
@@ -933,7 +946,8 @@ bw.smoothppp <- function(X, nh=spatstat.options("n.bandwidth"),
                      criterion="Least Squares Cross-Validation",
                      warnextreme=warn,
                      hargnames=c("hmin", "hmax"),
-                     unitname=unitname(X))
+                     unitname=if(is.null(varcov1)) unitname(X) else NULL,
+                     template=varcov1, scalepower=2)
   return(result)
 }
 

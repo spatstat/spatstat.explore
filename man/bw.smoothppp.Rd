@@ -9,7 +9,8 @@
 }
 \usage{
    bw.smoothppp(X, nh = spatstat.options("n.bandwidth"),
-   hmin=NULL, hmax=NULL, warn=TRUE, kernel="gaussian")
+                hmin=NULL, hmax=NULL, warn=TRUE, kernel="gaussian",
+                varcov1=NULL)
 }
 
 \arguments{
@@ -35,6 +36,10 @@
     A character string specifying the smoothing kernel
     (current options are \code{"gaussian"}, \code{"epanechnikov"},
     \code{"quartic"} or \code{"disc"}).
+  }
+  \item{varcov1}{
+    Optional. Variance-covariance matrix matrix of the kernel with
+    bandwidth \eqn{h=1}. See section on Anisotropic Smoothing.
   }
 }
 \details{
@@ -71,6 +76,20 @@
   considered, and also on the range \code{[hmin, hmax]} of values
   considered, because larger values of \code{sigma} require
   calculations involving more pairs of data points.
+}
+\section{Anisotropic Smoothing}{
+  Anisotropic smoothing is available in \code{\link{Smooth.ppp}} using
+  the argument \code{varcov} to specify the variance-covariance
+  matrix of the anisotropic kernel. In order to choose the matrix
+  \code{varcov}, the user can call \code{bw.smoothppp} 
+  using the argument \code{varcov1} to specify a \sQuote{template}
+  matrix. Scalar multiples of \code{varcov1} will be
+  considered and the optimal scale factor will be determined.
+  That is, \code{bw.smoothppp} will try 
+  smoothing the data using \code{varcov = h^2 * varcov1} for different
+  values of \code{h} ranging from \code{hmin} to \code{hmax}. 
+  The result of \code{bw.smoothppp} will be the optimal value
+  of the standard deviation scale factor \code{h}.
 }
 \value{
   A single numerical value giving the selected bandwidth.

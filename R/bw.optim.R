@@ -4,7 +4,7 @@
 #  Class of optimised bandwidths
 #  Plotting the object displays the optimisation criterion
 #
-#  $Revision: 1.35 $  $Date: 2023/02/28 01:57:16 $
+#  $Revision: 1.37 $  $Date: 2024/01/29 07:09:03 $
 #
 
 bw.optim <- function(cv, h,
@@ -15,7 +15,10 @@ bw.optim <- function(cv, h,
                      optimum = c("min", "max"), 
                      warnextreme=TRUE, hargnames=NULL,
                      yexp=NULL,
-                     unitname=NULL) {
+                     unitname=NULL,
+                     template=NULL,
+                     exponent=1,
+                     hword) {
   if(missing(cvname) || is.null(cvname)) cvname <- short.deparse(substitute(cv))
   if(missing(hname) || is.null(hname)) hname <- short.deparse(substitute(h))
   stopifnot(is.numeric(cv))
@@ -40,6 +43,8 @@ bw.optim <- function(cv, h,
               call.=FALSE)
     }
   }
+  if(missing(hword))
+    hword <- if(is.null(template)) "bandwidth" else "scale factor"
   attr(result, "cv") <- cv
   attr(result, "h") <- h
   attr(result, "iopt") <- iopt
@@ -48,16 +53,26 @@ bw.optim <- function(cv, h,
   attr(result, "criterion") <- criterion
   attr(result, "optimum") <- optimum
   attr(result, "hargnames") <- hargnames
-  attr(result, "units") <- unitname
+  attr(result, "units") <- as.unitname(unitname)
   attr(result, "yexp") <- yexp
+  attr(result, "template") <- template
+  attr(result, "exponent") <- exponent %orifnull% 1
+  attr(result, "hword") <- hword
   class(result) <- "bw.optim"
   return(result)
 }
 
 print.bw.optim <- function(x, ...) {
   y <- as.numeric(x)
-  names(y) <- attr(x, "labels")$hname
+  names(y) <- hname <- attr(x, "labels")$hname
   print(y, ...)
+  if(!is.null(m <- attr(x, "template"))) {
+    exponent <- attr(x, "exponent") %orifnull% 1
+    hpow <- if(exponent == 1) hname else paste0(paren(hname), "^", exponent)
+    cat("\n")
+    splat(hpow, "is interpreted as a multiple of:")
+    print(m)
+  }
   return(invisible(NULL))
 }
 
@@ -69,7 +84,9 @@ summary.bw.optim <- function(object, ...) {
 }
 
 print.summary.bw.optim <- function(x, ..., digits=3) {
-  splat("Bandwidth value selected by", x$criterion)
+  hword <- x$hword %orifnull% "bandwidth"
+  Hword <- paste0(toupper(substring(hword, 1, 1)), substring(hword, 2))
+  splat(Hword, "value selected by", x$criterion)
   su <- summary(x$units)
   splat("Optimal value:",
         x$labels$hname, "=",
@@ -77,7 +94,7 @@ print.summary.bw.optim <- function(x, ..., digits=3) {
         if(x$hopt == 1) su$singular else su$plural,
         su$explain)
   splat("Search performed over", length(x$h),
-        "candidate bandwidths in the interval",
+        "candidate values of", hword, "in the interval",
         prange(signif(range(x$h), digits=digits)))
   optname <- if(is.null(x$optimum)) "Optimum" else 
              switch(x$optimum, min="Minimum", max="Maximum", x$optimum)
@@ -91,6 +108,12 @@ print.summary.bw.optim <- function(x, ..., digits=3) {
   }
   if(!is.null(creator <- x$info$creator)) 
     splat("Computed by the function", sQuote(creator))
+  if(!is.null(tem <- x$template)) {
+    exponent <- x$exponent
+    Hpow <- if(exponent == 1) Hword else paste0(paren(Hword), "^", exponent)
+    splat(Hpow, "is interpreted as a multiplier of:")
+    print(tem)
+  }
   return(invisible(NULL))
 }
 

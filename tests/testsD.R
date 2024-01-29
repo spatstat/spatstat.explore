@@ -21,7 +21,7 @@ cat(paste("--------- Executing",
 #'                    and idw, adaptive.density, intensity
 #'                    and SpatialMedian, SpatialQuantile
 #'
-#'  $Revision: 1.65 $  $Date: 2024/01/21 04:01:57 $
+#'  $Revision: 1.67 $  $Date: 2024/01/29 07:07:16 $
 #'
 
 if(!FULLTEST)
@@ -301,6 +301,7 @@ local({
     stroke(5, weights=expression(x))
     stroke(5, kernel="epa")
     stroke(sigma=Inf)
+    stroke(varcov1=diag(c(1,1))) # 'anisotropic' code
   }
   if(FULLTEST) {
     Z <- as.im(function(x,y){abs(x)+1}, Window(longleaf))
@@ -437,6 +438,16 @@ local({
     UU <- Smooth(X, 5, geometric=TRUE)
     V <- Smooth(longleaf, 5, geometric=TRUE, at="points")
     VV <- Smooth(X, 5, geometric=TRUE, at="points")
+  }
+
+  if(FULLTEST) {
+    ## isotropic and anisotropic cases of bw.smoothppp
+    bi <- bw.smoothppp(longleaf)
+    ba <- bw.smoothppp(longleaf, varcov1=diag(c(1,1)))
+    ## should be equal
+    if(abs(bi-ba) > 0.001)
+      stop(paste("Inconsistency in bw.smoothppp: isotropic =", bi,
+                 "!=", ba, "= anisotropic"))
   }
 })
 

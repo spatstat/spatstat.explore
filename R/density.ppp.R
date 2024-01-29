@@ -3,7 +3,7 @@
 #
 #  Method for 'density' for point patterns
 #
-#  $Revision: 1.134 $    $Date: 2023/12/08 06:51:04 $
+#  $Revision: 1.136 $    $Date: 2024/01/29 07:25:10 $
 #
 
 # ksmooth.ppp <- function(x, sigma, ..., edge=TRUE) {
@@ -766,6 +766,20 @@ resolve.2D.kernel <- function(..., sigma=NULL, varcov=NULL, x, mindist=NULL,
                           resolve.defaults(list(X=quote(x)),
                                            list(...)))
     #' interpret the result as either sigma or varcov
+    if(inherits(bw, "bw.optim")) {
+      ## bw is an object representing an optimised scalar 
+      tem <- attr(bw, "template")
+      if(is.null(tem)) {
+        ## usual case: interpret bw as a scalar bandwidth
+        bw <- as.numeric(bw)
+      } else {
+        ## interpret as a scale multiple of the template (usually a matrix)
+        h <- as.numeric(bw)
+        exponent <- attr(bw, "exponent") %orifnull% 1
+        bw <- (h^exponent) * tem
+      }
+    }
+    #' now process 'bw' as a numeric object
     if(!is.numeric(bw))
       stop("bandwidth selector returned a non-numeric result")
     if(length(bw) %in% c(1L,2L)) {

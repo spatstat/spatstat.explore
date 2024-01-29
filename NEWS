@@ -1,14 +1,17 @@
 
-        CHANGES IN spatstat.explore VERSION 3.2-5.010
+        CHANGES IN spatstat.explore VERSION 3.2-5.011
 
 OVERVIEW
 
-    o We thank Marcelino de la Cruz for contributions.
+    o We thank Mohomed Abraj, Marcelino de la Cruz and Stephanie Hogg
+      for contributions.
     
     o Spatially weighted median and quantile of mark values.
     
     o Adaptive estimation of intensity for split point patterns.
 
+    o Anisotropic bandwidth selection
+    
     o Internal improvements.
     
     o Bug fixes.
@@ -21,6 +24,11 @@ NEW FUNCTIONS
     o densityAdaptiveKernel.splitppp
     A method for 'densityAdaptiveKernel' for split point patterns.
     
+SIGNIFICANT USER-VISIBLE CHANGES
+
+    o bw.smoothppp
+    New argument `varcov1' for anisotropic bandwidth selection.
+
 BUG FIXES
 
     o studpermu.test
