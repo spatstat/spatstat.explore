@@ -6,7 +6,7 @@
 #'
 #'   GNU Public Licence >= 2
 #'
-#'   $Revision: 1.4 $ $Date: 2022/05/20 07:39:55 $
+#'   $Revision: 1.5 $ $Date: 2024/01/29 08:00:06 $
 #'
 #' 
 #' threshold selection
@@ -44,7 +44,8 @@ thresholdSelect <- function(X, Z, method=c("Y", "LL", "AR", "t", "C"), Zname) {
   bw.optim(yy, zz, optimum="max",
            cvname=method, hname=Zname, 
            criterion=critname,
-           unitname=if(inherits(Z, "distfun")) unitname(X) else NULL)
+           unitname=if(inherits(Z, "distfun")) unitname(X) else NULL,
+           hword="threshold")
 }
 
 #' confidence interval for threshold
