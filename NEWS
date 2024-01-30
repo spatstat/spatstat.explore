@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.2-5.013
+        CHANGES IN spatstat.explore VERSION 3.2-5.014
 
 OVERVIEW
 
@@ -11,6 +11,8 @@ OVERVIEW
     o Adaptive estimation of intensity for split point patterns.
 
     o Anisotropic bandwidth selection
+
+    o Boyce index.
     
     o Internal improvements.
     
@@ -20,10 +22,13 @@ NEW FUNCTIONS
 
     o SpatialMedian.ppp, SpatialQuantile.ppp
     Spatially weighted median and quantile of mark values of a point pattern.
+
+    o boyce
+    Boyce index and continuous Boyce index.
     
     o densityAdaptiveKernel.splitppp
     A method for 'densityAdaptiveKernel' for split point patterns.
-    
+
 SIGNIFICANT USER-VISIBLE CHANGES
 
     o bw.ppl
