@@ -80,7 +80,13 @@ boyce(X, Z, \dots, breaks = NULL, halfwidth = NULL)
   identical to \code{Z} except that the mark values are the
   values of the discrete Boyce index.
 
-  If \code{Z} is a spatial covariate such as a pixel image,
+  If \code{Z} is a pixel image whose values are categorical (i.e. factor
+  values), then \code{Z} is treated as a tessellation, with one tile
+  for each level of the factor. The discrete Boyce index is then
+  calculated. The result is a tessellation with marks that are the
+  values of the discrete Boyce index.
+  
+  Otherwise, if \code{Z} is a spatial covariate such as a pixel image,
   a \code{function(x,y)} or one of the characters \code{"x"} or
   \code{"y"}, then exactly one of the arguments \code{breaks} or
   \code{halfwidth} must be given. 
@@ -98,9 +104,11 @@ boyce(X, Z, \dots, breaks = NULL, halfwidth = NULL)
     The result is an object of class \code{"fv"} that can be plotted
     to show the discrete Boyce index as a function of \eqn{z}.
   }
-  When \code{Z} is a spatial covariate, the calculation is performed
-  using \code{\link{rhohat.ppp}} (the Boyce index is a special case
-  of \code{rhohat}).
+  When \code{Z} is a spatial covariate (not factor-valued), the calculation is performed
+  using \code{\link{rhohat.ppp}} (since the Boyce index is a special case
+  of \code{rhohat}). Arguments \code{\dots} passed to
+  \code{\link{rhohat.ppp}} control the accuracy of the spatial discretisation
+  and other parameters of the algorithm.
 }
 \value{
   A tessellation (object of class \code{"tess"})

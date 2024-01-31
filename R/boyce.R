@@ -2,13 +2,17 @@
 #'
 #' Discrete and continuous Boyce index
 #'
-#' $Revision: 1.2 $  $Date: 2024/01/30 03:36:59 $
+#' $Revision: 1.3 $  $Date: 2024/01/31 06:59:18 $
 #' 
 #' Copyright (c) 2024 Adrian Baddeley
 
 boyce <- function(X, Z, ..., breaks=NULL, halfwidth=NULL) {
   stopifnot(is.ppp(X))
   lbar <- intensity(unmark(X))
+  if(is.im(Z) && Z$type == "factor") {
+    ## convert to tessellation
+    Z <- tess(image=Z)
+  }
   if(is.tess(Z)) {
     ## discrete Boyce index
     Y <- as.tess(quadratcount(X, tess=Z))
