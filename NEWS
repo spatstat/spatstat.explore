@@ -1,4 +1,17 @@
 
+        CHANGES IN spatstat.explore VERSION 3.2-6.001
+
+    o Bug fixes.
+
+BUG FIXES
+
+    o SpatialMedian.ppp, SpatialQuantile.ppp
+    Argument `sigma' was ignored in some calculations.
+    Fixed.
+
+OVERVIEW
+
+
         CHANGES IN spatstat.explore VERSION 3.2-6
 
 OVERVIEW

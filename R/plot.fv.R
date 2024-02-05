@@ -1,7 +1,7 @@
 #
 #       plot.fv.R   (was: conspire.S)
 #
-#  $Revision: 1.142 $    $Date: 2023/07/09 09:40:40 $
+#  $Revision: 1.143 $    $Date: 2024/02/04 08:04:51 $
 #
 #
 
@@ -645,7 +645,7 @@ assemble.plot.objects <- function(xlim, ylim, ..., lines=NULL, polygon=NULL) {
         lines <- list(lines)
       } else if(!all(unlist(lapply(lines, checkfields, L=c("x", "y")))))
         stop("lines should be a psp object, a list(x,y) or a list of list(x,y)")
-      W <- owin(xlim, ylim)
+      W <- owinInternalRect(xlim, ylim)
       for(i in seq_along(lines)) {
         lines.i <- lines[[i]]
         x.i <- lines.i$x
@@ -737,7 +737,8 @@ findbestlegendpos <- local({
         legout <- do.call(graphics::legend,
                           append(legendspec, list(plot=FALSE)))
         ## determine bounding box
-        legbox <- with(legout$rect, owin(c(left, left+w), c(top-h, top)))
+        legbox <- with(legout$rect, 
+                       owinInternalRect(c(left, left+w), c(top-h, top)))
         scaledlegbox <- affine(legbox, mat=mat)
         ## check for collision 
         Dmin <- min(D[scaledlegbox])

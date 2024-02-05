@@ -3,7 +3,7 @@
 #' Adapted by Adrian Baddeley
 #' Copyright (C) 2016 Kassel Hingee and Adrian Baddeley
 
-# $Revision: 1.10 $  $Date: 2020/12/19 05:25:06 $
+# $Revision: 1.11 $  $Date: 2024/02/04 08:04:51 $
 
 laslett <- function(X, ...,
                     verbose=FALSE, plotit=TRUE,
@@ -67,7 +67,7 @@ maskLaslett <- local({
     Laz <- owin(mask=Laz, xrange=X$xrange, yrange=X$yrange, unitname=unitX)
     #' Largest sub-rectangle of transformed set
     width <- min(TotFalse) * X$xstep
-    Rect <- owin(X$xrange[1L] + c(0, width), X$yrange, unitname=unitX)
+    Rect <- owinInternalRect(X$xrange[1L] + c(0, width), X$yrange, unitname=unitX)
     #' Along each horizontal line (row),
     #' compute a running count of FALSE pixels.
     #' This is the mapping for the set transform
@@ -313,9 +313,9 @@ polyLaslett <- function(X, ..., oldX=X, verbose=FALSE, plotit=TRUE) {
     eps <- nnd[i]/16
     xi <- v$x[i]
     yi <- v$y[i]
-    Below <- owin(xi + c(-eps,eps), yi + c(-eps, 0))
-#    Above <- owin(xi + c(-eps, eps), yi + c(0, eps))
-    UpLeft <- owin(xi + c(-eps, 0), yi + c(0, eps))
+    Below <- owinInternalRect(xi + c(-eps,eps), yi + c(-eps, 0))
+#    Above <- owinInternalRect(xi + c(-eps, eps), yi + c(0, eps))
+    UpLeft <- owinInternalRect(xi + c(-eps, 0), yi + c(0, eps))
     is.tangent[i] <- (overlap.owin(X, Below) <= tiny) &&
                      (overlap.owin(X, UpLeft) < eps^2)
     if(verbose)
@@ -327,7 +327,7 @@ polyLaslett <- function(X, ..., oldX=X, verbose=FALSE, plotit=TRUE) {
   xnew <- x0 + emptylenleft[is.tangent]
   TanNew <- ppp(xnew, ynew, window=TX, check=FALSE, unitname=unitX)
   #  maximal rectangle
-  Rect <- owin(c(X$xrange[1L], minxright), X$yrange, unitname=unitX)
+  Rect <- owinInternalRect(c(X$xrange[1L], minxright), X$yrange, unitname=unitX)
   #
   df <- data.frame(xold=TanOld$x, xnew=TanNew$x, y=TanNew$y)
   #

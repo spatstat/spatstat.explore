@@ -1,7 +1,7 @@
 #
 #  fryplot.R
 #
-#  $Revision: 1.18 $ $Date: 2022/02/10 06:04:37 $
+#  $Revision: 1.19 $ $Date: 2024/02/04 08:04:51 $
 #
 
 fryplot <- function(X, ..., width=NULL, from=NULL, to=NULL, axes=FALSE) {
@@ -13,7 +13,7 @@ fryplot <- function(X, ..., width=NULL, from=NULL, to=NULL, axes=FALSE) {
     halfwidth <- ensure2vector(width)/2
     halfspan <- pmin.int(halfspan, halfwidth)
   }
-  bb <- owin(c(-1,1) * halfspan[1L], c(-1,1) * halfspan[2L])
+  bb <- owinInternalRect(c(-1,1) * halfspan[1L], c(-1,1) * halfspan[2L])
   Y <- frypoints(X, from=from, to=to, dmax=diameter(bb))[bb]
   dont.complain.about(Y)
   do.call(plot.ppp,
@@ -30,7 +30,7 @@ fryplot <- function(X, ..., width=NULL, from=NULL, to=NULL, axes=FALSE) {
 frypoints <- function(X, from=NULL, to=NULL, dmax=Inf) {
   X <- as.ppp(X)
   b <- as.rectangle(X)
-  bb <- owin(c(-1,1) * diff(b$xrange), c(-1,1) * diff(b$yrange))
+  bb <- owinInternalRect(c(-1,1) * diff(b$xrange), c(-1,1) * diff(b$yrange))
   n <- X$n
   xx <- X$x
   yy <- X$y

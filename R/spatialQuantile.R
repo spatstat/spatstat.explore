@@ -95,6 +95,7 @@ SpatialQuantile.ppp <- function(X, prob=0.5, sigma=NULL, ...,
   #' smoothed intensity of entire pattern
   UX <- unmark(X)
   LX <- density(UX, ...,
+                sigma=sigma,
                 at=at, leaveoneout=leaveoneout,
                 weights=weights,
                 edge=edge, diggle=diggle, positive=TRUE)
