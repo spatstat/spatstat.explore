@@ -1,7 +1,9 @@
 
-        CHANGES IN spatstat.explore VERSION 3.2-6.001
+        CHANGES IN spatstat.explore VERSION 3.2-7
 
     o Bug fixes.
+
+    o Internal improvements.
 
 BUG FIXES
 
