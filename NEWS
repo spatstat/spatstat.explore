@@ -1,5 +1,18 @@
 
+        CHANGES IN spatstat.explore VERSION 3.2-7.001
+
+OVERVIEW
+
+    o Minor improvements.
+
+SIGNIFICANT USER-VISIBLE CHANGES
+
+    o cbind.fv, bind.fv
+    Additional arguments may be functions in the R language.
+
         CHANGES IN spatstat.explore VERSION 3.2-7
+
+OVERVIEW
 
     o Bug fixes.
 
@@ -10,8 +23,6 @@ BUG FIXES
     o SpatialMedian.ppp, SpatialQuantile.ppp
     Argument `sigma' was ignored in some calculations.
     Fixed.
-
-OVERVIEW
 
 
         CHANGES IN spatstat.explore VERSION 3.2-6

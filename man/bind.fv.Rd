@@ -11,17 +11,20 @@
 }
 \usage{
 \method{cbind}{fv}(...)
+
 bind.fv(x, y, labl = NULL, desc = NULL, preferred = NULL, clip=FALSE)
 }
 \arguments{
   \item{\dots}{
-    Any number of arguments, which are objects of class \code{"fv"}.
+    Any number of arguments, which are objects of class \code{"fv"},
+    or other data. See Details.
   }
   \item{x}{
     An object of class \code{"fv"}.
   }
   \item{y}{
-    Either a data frame or an object of class \code{"fv"}.
+    Either an object of class \code{"fv"}, a data frame,
+    or a function. See Details.
   }
   \item{labl}{
     Plot labels (see \code{\link{fv}}) for columns of \code{y}.
@@ -57,7 +60,7 @@ bind.fv(x, y, labl = NULL, desc = NULL, preferred = NULL, clip=FALSE)
   The function \code{bind.fv} is a lower level
   utility which glues additional columns onto an
   existing object \code{x} of class \code{"fv"}.
-  It has two modes of use:
+  It has three modes of use:
   \itemize{
     \item 
     If the additional dataset \code{y} is an object of class \code{"fv"}, then
@@ -68,6 +71,11 @@ bind.fv(x, y, labl = NULL, desc = NULL, preferred = NULL, clip=FALSE)
     Alternatively if \code{y} is a data frame, then \code{y} must have the
     same number of rows as \code{x}. All columns of \code{y} will be
     appended to \code{x}.
+    \item
+    Alternatively if \code{y} is a function in the \R language, then
+    this function will be evaluated at the argument values stored
+    in the object \code{x}, and these function values will be appended
+    as a new column to \code{x}.
   }
   The arguments \code{labl} and \code{desc} provide
   plot labels and description strings (as described in \code{\link{fv}})
@@ -75,7 +83,11 @@ bind.fv(x, y, labl = NULL, desc = NULL, preferred = NULL, clip=FALSE)
   \code{"fv"} then \code{labl} and \code{desc} are optional, and
   default to the relevant entries in the object \code{y}. 
   If \code{y} is a data frame then
-  \code{labl} and \code{desc} must be provided.
+  \code{labl} and \code{desc} should be provided, but there is a
+  default.
+
+  For additional flexibility, \code{cbind.fv} also accepts arguments
+  which are data frames or functions.
 }
 \value{
   An object of class \code{"fv"}.
@@ -99,15 +111,24 @@ bind.fv(x, y, labl = NULL, desc = NULL, preferred = NULL, clip=FALSE)
    bind.fv(K1, data.frame(bmono=bm),
                "\%s[bmo](r)",
                "monotone border-corrected estimate of \%s",
-               "bmono") 
+               "bmono")
+
+   # add a column of values defined by a function
+   cbind(K1, upper=function(r) { pi * r^2 + 0.1 })
 }
 \seealso{
-  \code{\link{fv}}, 
-  \code{\link{with.fv}}.
+  \code{\link{fv}} for creating objects of class \code{"fv"} from raw data.
+
+  \code{\link{collapse.fv}} for combining several \code{"fv"} objects
+  with similar columns.
+  
+  \code{\link{with.fv}} for evaluating expressions.
+
+  \code{\link{fvnames}} for extracting and assigning the column names
+  of standard components of \code{"fv"} objects.
 
   \emph{Undocumented} functions for modifying an \code{"fv"} object
-  include \code{fvnames}, \code{fvnames<-},
-  \code{tweak.fv.entry} and \code{rebadge.fv}.
+  include \code{tweak.fv.entry} and \code{rebadge.fv}.
 }
 \keyword{spatial}
 \keyword{attribute}

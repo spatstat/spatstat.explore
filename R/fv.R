@@ -4,7 +4,7 @@
 ##
 ##    class "fv" of function value objects
 ##
-##    $Revision: 1.182 $   $Date: 2023/11/04 04:53:51 $
+##    $Revision: 1.185 $   $Date: 2024/04/02 01:23:12 $
 ##
 ##
 ##    An "fv" object represents one or more related functions
@@ -537,6 +537,11 @@ bind.fv <- function(x, y, labl=NULL, desc=NULL, preferred=NULL, clip=FALSE) {
     if(is.null(desc)) desc <- attr(y, "desc")[-yrpos]
     ##
     y <- ystrip
+  } else if(is.function(y)) {
+    ## evaluate the function 'y' at the argument values of the first object
+    xvals <- x[[fvnames(x, ".x")]]
+    yvals <- y(xvals)
+    y <- data.frame(y=yvals)
   } else {
     ## y is a matrix or data frame
     y <- as.data.frame(y)
@@ -590,14 +595,33 @@ cbind.fv <- function(...) {
     ## could be an fv object 
     if(is.fv(a))
       return(a)
+    ## a is a list of arguments
     n <- length(a)
   }
+  ## First argument is template
   z <- a[[1L]]
   if(!is.fv(z))
     stop("First argument should be an object of class fv")
-  if(n > 1)
-    for(i in 2:n) 
-      z <- bind.fv(z, a[[i]])
+  ## Subsequent arguments
+  if(n > 1) {
+    if(any(isfun <- sapply(a, is.function))) {
+      ## Function(s) will be applied to 'r' values
+      xvals <- z[[fvnames(z, ".x")]]
+      ## Determine variable names using names in cbind call, or default
+      nama <- good.names(names(a), "V", 1:n)
+    }
+    for(i in 2:n) {
+      ai <- a[[i]]
+      if(isfun[i]) {
+        ## apply function to 'r' values
+        yvals <- ai(xvals)
+        ## convert to data frame 
+        ai <- data.frame(y=yvals)
+        colnames(ai) <- nama[i]
+      }
+      z <- bind.fv(z, ai)
+    }
+  }
   return(z)
 }
 
