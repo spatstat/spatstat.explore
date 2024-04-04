@@ -604,6 +604,8 @@ cbind.fv <- function(...) {
     stop("First argument should be an object of class fv")
   ## Subsequent arguments
   if(n > 1) {
+    ## save dotnames (only those explicitly given in data -- no 'guessing')
+    dn <- fvnames(z, ".")
     if(any(isfun <- sapply(a, is.function))) {
       ## Function(s) will be applied to 'r' values
       xvals <- z[[fvnames(z, ".x")]]
@@ -618,9 +620,14 @@ cbind.fv <- function(...) {
         ## convert to data frame 
         ai <- data.frame(y=yvals)
         colnames(ai) <- nama[i]
+      } else if(is.fv(ai)) {
+        ## collect more dotnames
+        dn <- c(dn, fvnames(ai, "."))
       }
       z <- bind.fv(z, ai)
     }
+    ## reattach dotnames
+    fvnames(z, ".") <- dn
   }
   return(z)
 }
