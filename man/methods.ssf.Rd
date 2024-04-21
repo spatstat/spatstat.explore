@@ -105,7 +105,7 @@
   \code{\link[base]{range}},
   \code{\link[base]{min}},
   \code{\link[base]{max}}
-  and \code{\link[spatstat.geom]{integral}}.
+  and \code{\link[spatstat.univar]{integral}}.
 }
 \seealso{
   \code{\link{ssf}}

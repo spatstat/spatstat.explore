@@ -69,6 +69,10 @@ segregation.test(X, \dots)
   An object of class \code{"htest"} representing the result of the test.
 }
 \references{
+  Bithell, J.F. (1991)
+  Estimation of relative risk functions.
+  \emph{Statistics in Medicine} \bold{10}, 1745--1751.
+
   Kelsall, J.E. and Diggle, P.J. (1995)
   Kernel estimation of relative risk.
   \emph{Bernoulli} \bold{1}, 3--16.

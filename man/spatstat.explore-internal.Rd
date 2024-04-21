@@ -79,7 +79,6 @@
 \alias{Krect.engine}
 \alias{Kount}
 \alias{Kwtsum}               
-\alias{km.rs.opt}
 \alias{localKengine}
 \alias{localKmultiEngine}
 \alias{localpcfengine}
@@ -88,7 +87,6 @@
 \alias{makefvlabel}
 \alias{maskLaslett}
 \alias{match2DkernelName}
-\alias{match.kernel}
 \alias{mctestSigtraceEngine}
 \alias{meanlistfv}
 \alias{names<-.fv}
@@ -158,8 +156,6 @@
 \alias{sewsmod}
 \alias{shift.quadrattest}              
 \alias{simulrecipe}              
-\alias{StieltjesCalc}
-\alias{StieltjesCalc.stepfun}
 \alias{StieltjesCalc.fv}
 \alias{Smooth.solist}
 \alias{smoothcrossEngine}              
@@ -312,7 +308,6 @@ Krect.engine(X, rmax, nr, correction, weights,
              ratio, fname, use.integers)
 Kount(dIJ, bI, b, breaks)
 Kwtsum(dIJ, bI, wIJ, b, w, breaks, fatal)
-km.rs.opt(o, cc, d, breaks, KM, RS)
 localKengine(X, \dots, wantL, lambda, rmax, correction, verbose, rvalue)
 localKmultiEngine(X, from, to,
            lambdaFrom, lambdaTo, \dots, rmax, wantL,
@@ -324,7 +319,6 @@ localpcfmatrix(X, i, \dots, lambda, delta, rmax, nr, stoyan)
 lookup2DkernelInfo(kernel)
 makefvlabel(op, accent, fname, sub, argname)
 maskLaslett(X, \dots, eps, dimyx, xy, rule.eps, oldX, verbose, plotit)
-match.kernel(kernel)
 match2DkernelName(kernel)
 mctestSigtraceEngine(R, devdata, devsim, \dots,
      interpolate, confint, alpha, exponent, unitname)
@@ -423,8 +417,6 @@ sewpcf(d, w, denargs, lambda2area, divisor)
 sewsmod(d, ff, wt, Ef, rvals, method="smrep", \dots, nwtsteps=500)
 \method{shift}{quadrattest}(X, \dots)
 simulrecipe(type, expr, envir, csr, pois, constraints)
-StieltjesCalc(M, f, \dots)
-\method{StieltjesCalc}{stepfun}(M, f, \dots)
 \method{StieltjesCalc}{fv}(M, f, \dots)
 \method{Smooth}{solist}(X, \dots)
 smoothcrossEngine(Xdata, Xquery, values, sigma, \dots,

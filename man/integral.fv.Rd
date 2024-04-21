@@ -26,7 +26,7 @@
   }
 }
 \details{
-  This is a method for the generic function \code{\link[spatstat.geom]{integral}}.
+  This is a method for the generic function \code{\link[spatstat.univar]{integral}}.
   It computes the numerical integral
   \deqn{
     I = \int f(x) dx
@@ -50,9 +50,9 @@
   \adrian.
 }
 \seealso{
-  \code{\link[spatstat.explore]{fv.object}}, \code{\link[spatstat.geom]{integral}}
+  \code{\link[spatstat.explore]{fv.object}}, \code{\link[spatstat.univar]{integral}}
 
-  \code{\link[spatstat.explore]{stieltjes}}
+  \code{\link[spatstat.univar]{stieltjes}}
 }
 \examples{
   g <- pcf(redwood, divisor="d")

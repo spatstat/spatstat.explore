@@ -56,7 +56,7 @@ hotbox(Xsource, Xquery, sigma,
   associated with the eigenfunctions of the Laplacian. The heat kernel
   in a rectangle is the product of heat kernels for
   one-dimensional intervals on the horizontal and vertical axes. This
-  function uses \code{\link[spatstat.geom]{hotrod}} to compute the
+  function uses \code{\link[spatstat.univar]{hotrod}} to compute the
   one-dimensional heat kernels, truncating the infinite sum to the
   first \code{nmax} terms, and then calculates the two-dimensional heat
   kernel from each source point to each query location. If

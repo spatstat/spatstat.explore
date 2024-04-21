@@ -110,7 +110,7 @@
   This function \code{relrisk.ppp} is the method for point pattern
   datasets. It computes \emph{nonparametric} estimates of relative risk
   by kernel smoothing (Bithell, 1990, 1991; Diggle, 2003; Baddeley,
-  Rubak and Turner, 2015).
+  Rubak and Turner, 2015). 
 
   If \code{X}  is a bivariate point pattern
   (a multitype point pattern consisting of two types of points)
@@ -311,6 +311,12 @@
   Diggle, P.J. (2003)
   \emph{Statistical analysis of spatial point patterns},
   Second edition. Arnold.
+
+  Diggle, P.J., Zheng, P. and Durr, P. (2005)
+  Non-parametric estimation of spatial segregation in a
+  multivariate point process: bovine tuberculosis in
+  Cornwall, UK. 
+  \emph{Applied Statistics} \bold{54}, 645--658.
 }
 \author{
   \adrian

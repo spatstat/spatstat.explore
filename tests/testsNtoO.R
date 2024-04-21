@@ -13,23 +13,6 @@ cat(paste("--------- Executing",
           if(FULLTEST) "** ALL **" else "**RESTRICTED** subset of",
           "test code -----------\n"))
 #
-# tests/NAinCov.R
-#
-# Testing the response to the presence of NA's in covariates
-#
-# $Revision: 1.9 $ $Date: 2023/11/05 01:45:36 $
-
-if(FULLTEST) {
-local({
-  #' quantile.ewcdf
-  f <- ewcdf(runif(100), runif(100))
-  qf <- quantile(f, probs=c(0.1, NA, 0.8))
-  #' quantile.density
-  f <- density(runif(100))
-  qf <- quantile(f, probs=c(0.1, NA, 0.8))
-})
-}
-#
 #    tests/nnstat.R
 #
 # Check code that uses nndist/nnwhich
