@@ -68,7 +68,7 @@
   This function computes adaptive smoothing bandwidths
   using the methods of Abramson (1982) and Hall and Marron (1988).
 
-  The function \code{\link{bw.abram}} is generic. The function
+  The function \code{\link[spatstat.univar]{bw.abram}} is generic. The function
   \code{bw.abram.ppp} documented here is the method
   for spatial point patterns (objects of class \code{"ppp"}).
   
@@ -134,7 +134,7 @@
   (when \code{at = "pixels"}).
 }
 \seealso{
-  \code{\link{bw.abram}}
+  \code{\link[spatstat.univar]{bw.abram}}
 }
 \references{
   Abramson, I. (1982)

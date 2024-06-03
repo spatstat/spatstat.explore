@@ -1,14 +1,10 @@
 #'
-#'   bw.abram.R
+#'   bw.abram.ppp.R
 #'
-#'   Abramson bandwidths
+#'   Abramson bandwidths for point pattern
 #'
-#'   $Revision: 1.9 $ $Date: 2023/03/07 07:26:49 $
+#'   $Revision: 1.10 $ $Date: 2024/06/03 10:39:59 $
 #'
-
-bw.abram <- function(X, h0, ...) {
-  UseMethod("bw.abram")
-}
 
 bw.abram.ppp <- function(X, h0,
                          ..., 

@@ -184,7 +184,7 @@
                                 for density estimation\cr
     \code{\link[spatstat.explore]{bw.scott}} \tab Scott's rule of thumb 
                                 for density estimation\cr
-    \code{\link[spatstat.explore]{bw.abram}} \tab Abramson's rule for adaptive bandwidths\cr
+    \code{\link[spatstat.explore]{bw.abram.ppp}} \tab Abramson's rule for adaptive bandwidths\cr
     \code{\link[spatstat.explore]{bw.relrisk}} \tab cross-validated bandwidth selection
                                for \code{\link[spatstat.explore]{relrisk}} \cr
     \code{\link[spatstat.explore]{bw.smoothppp}} \tab cross-validated bandwidth selection
