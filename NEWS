@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.2-7.003
+        CHANGES IN spatstat.explore VERSION 3.2-7.004
 
 OVERVIEW
 
@@ -31,6 +31,10 @@ DELETED FUNCTIONS
     The generic 'CDF' and method 'CDF.density' have been moved
     to the new package 'spatstat.univar'.
 
+    o densityAdaptiveKernel
+    The generic 'densityAdaptiveKernel' has been moved
+    to the new package 'spatstat.univar'.
+    
     o dkernel, pkernel, qkernel, rkernel
     These functions have been moved to the new package 'spatstat.univar'.
 

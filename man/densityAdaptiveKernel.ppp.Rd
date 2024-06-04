@@ -1,5 +1,4 @@
-\name{densityAdaptiveKernel}
-\alias{densityAdaptiveKernel}
+\name{densityAdaptiveKernel.ppp}
 \alias{densityAdaptiveKernel.ppp}
 \title{Adaptive Kernel Estimate of Intensity of Point Pattern}
 \description{
@@ -7,8 +6,6 @@
   pattern using a variable-bandwidth smoothing kernel.
 }
 \usage{
-densityAdaptiveKernel(X, \dots)
-
 \method{densityAdaptiveKernel}{ppp}(X, bw, \dots,
        weights=NULL,       
        at=c("pixels", "points"),
@@ -53,6 +50,10 @@ densityAdaptiveKernel(X, \dots)
   spatially-varying intensity from the point pattern \code{X}
   using the partitioning technique of Davies and Baddeley (2018).
 
+  The function \code{\link[spatstat.univar]{densityAdaptiveKernel}} is generic.
+  This file documents the method for point patterns,
+  \code{densityAdaptiveKernel.ppp}.
+  
   The argument \code{bw} specifies the smoothing bandwidths to be
   applied to each of the points in \code{X}. It may be a numeric vector
   of bandwidth values, or a pixel image or function yielding the

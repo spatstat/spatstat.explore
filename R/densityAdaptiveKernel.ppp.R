@@ -1,15 +1,11 @@
 #'
-#'   densityAdaptiveKernel.R
+#'   densityAdaptiveKernel.ppp.R
 #'
-#'   $Revision: 1.14 $  $Date: 2023/12/08 13:15:54 $
+#'   $Revision: 1.16 $  $Date: 2024/06/04 03:09:11 $
 #'
 #'
 #'  Adaptive kernel smoothing via 3D FFT
 #'
-
-densityAdaptiveKernel <- function(X, ...) {
-  UseMethod("densityAdaptiveKernel")
-}
 
 densityAdaptiveKernel.ppp <- function(X, bw, ...,
                                       weights=NULL,
