@@ -3,13 +3,14 @@
 #'
 #'   Likelihood cross-validation for kernel smoother of point pattern
 #'
-#'   $Revision: 1.14 $ $Date: 2024/01/29 09:15:06 $
+#'   $Revision: 1.15 $ $Date: 2024/06/08 23:59:34 $
 #'
 
 bw.ppl <- function(X, ..., srange=NULL, ns=16, sigma=NULL, varcov1=NULL, 
                    weights=NULL, shortcut=FALSE, warn=TRUE) {
   stopifnot(is.ppp(X))
-  if(!is.null(varcov1)) check.nmatrix(varcov1, 2, things="spatial dimensions")
+  if(!is.null(varcov1))
+    check.nmatrix(varcov1, 2, things="spatial dimensions", mname="varcov1")
   if(!is.null(sigma)) {
     stopifnot(is.numeric(sigma) && is.vector(sigma))
     ns <- length(sigma)

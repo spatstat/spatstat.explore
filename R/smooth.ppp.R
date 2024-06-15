@@ -3,7 +3,7 @@
 #
 #  Smooth the marks of a point pattern
 # 
-#  $Revision: 1.89 $  $Date: 2024/01/29 06:32:45 $
+#  $Revision: 1.90 $  $Date: 2024/06/09 00:02:42 $
 #
 
 Smooth <- function(X, ...) {
@@ -879,7 +879,8 @@ bw.smoothppp <- function(X, nh=spatstat.options("n.bandwidth"),
                          kernel="gaussian", varcov1=NULL) {
   stopifnot(is.ppp(X))
   stopifnot(is.marked(X))
-  if(!is.null(varcov1)) check.nmatrix(varcov1, 2, things="spatial dimensions")
+  if(!is.null(varcov1))
+    check.nmatrix(varcov1, 2, things="spatial dimensions", mname="varcov1")
   if(is.function(kernel))
     stop("Custom kernel functions are not yet supported in bw.smoothppp")
   X <- coerce.marks.numeric(X)

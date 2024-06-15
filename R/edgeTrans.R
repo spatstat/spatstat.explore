@@ -1,7 +1,7 @@
 #
 #        edgeTrans.R
 #
-#    $Revision: 1.17 $    $Date: 2022/05/23 02:33:06 $
+#    $Revision: 1.18 $    $Date: 2024/06/08 23:59:28 $
 #
 #    Translation edge correction weights
 #
@@ -53,8 +53,8 @@ edge.Trans <- function(X, Y=X, W=Window(X), exact=FALSE, paired=FALSE,
       stopifnot(length(dx) == length(dy))
     } else {
       ## dx, dy are matrices
-      check.nmatrix(dx)
-      check.nmatrix(dy)
+      check.nmatrix(dx, mname="dx")
+      check.nmatrix(dy, mname="dy")
       stopifnot(all(dim(dx) == dim(dy)))
       nX <- nrow(dx)
       nY <- ncol(dx)

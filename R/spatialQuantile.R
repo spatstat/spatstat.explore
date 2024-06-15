@@ -80,7 +80,7 @@ SpatialQuantile.ppp <- function(X, prob=0.5, sigma=NULL, ...,
   }
   #' numerical weights 
   if(!is.null(weights)) {
-    check.nvector(weights, nX)
+    check.nvector(weights, nX, vname="weights")
     if(any(weights < 0)) stop("Negative weights are not permitted")
     if(sum(weights) < .Machine$double.eps)
       stop("Weights are numerically zero; quantiles are undefined", call.=FALSE)

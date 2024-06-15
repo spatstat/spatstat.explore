@@ -1,7 +1,7 @@
 #
 #	Kinhom.S	Estimation of K function for inhomogeneous patterns
 #
-#	$Revision: 1.103 $	$Date: 2022/10/16 01:50:51 $
+#	$Revision: 1.104 $	$Date: 2024/06/09 00:00:07 $
 #
 #	Kinhom()	compute estimate of K_inhom
 #
@@ -126,10 +126,10 @@
     # Use matrix of weights if it was provided and if it is sufficient
     if(lambda2.suffices && lambda2.given) {
       if(!is.null(reciplambda2)) {
-        check.nmatrix(reciplambda2, npts)
+        check.nmatrix(reciplambda2, npts, mname="reciplambda2")
         validate.weights(reciplambda2, recip=TRUE)
       } else {
-        check.nmatrix(lambda2, npts)
+        check.nmatrix(lambda2, npts, mname="lambda2")
         validate.weights(lambda2)
         reciplambda2 <- 1/lambda2
       }
