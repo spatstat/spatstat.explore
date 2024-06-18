@@ -1,5 +1,6 @@
 \name{spatstat.explore-internal} 
 \title{Internal spatstat.explore functions}
+\alias{spatstat.explore-internal} %DoNotExport
 \alias{[.localpcfmatrix}
 \alias{[.rat}
 \alias{adjust.ratfv}

@@ -1,4 +1,5 @@
 \name{spatstat.explore-deprecated}
+\alias{spatstat.explore-deprecated} %DoNotExport
 \alias{evalCovar}
 \alias{which.max.im}
 \title{Deprecated spatstat.explore functions}
