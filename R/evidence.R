@@ -4,7 +4,7 @@
 #'   evaluate covariate values at data points and at pixels
 #'   together with intensity of null/reference model
 #'
-#' $Revision: 1.50 $ $Date: 2023/05/02 06:45:02 $
+#' $Revision: 1.53 $ $Date: 2024/06/23 00:22:42 $
 #'
 
 
@@ -381,11 +381,15 @@ spatialCovariateEvidence.exactppm <- local({
                         "or one of the characters",
                         sQuote("x"), "or", sQuote("y")),
                   call.=FALSE)
-      #' values of covariate in window
-      Zvalues <- as.vector(Z[W, drop=TRUE])
-      #' corresponding fitted [conditional] intensity values
-      lambda <- as.vector(predict(model, locations=W,
-                                  type=lambdatype)[W, drop=TRUE])
+      #' fitted [conditional] intensity image 
+      Lambda <- predict(model, locations=W, type=lambdatype)
+      #' restrict to W
+      Lambda <- Lambda[W, drop=FALSE]
+      Z <- Z[W, drop=FALSE]
+      #' extract corresponding pixel values 
+      df <- pairs.im(Lambda, Z, plot=FALSE, drop=TRUE)
+      Zvalues <- df$Z
+      lambda  <- df$Lambda
       #' pixel area (constant)
       pixelarea <- with(Z, xstep * ystep)
     } else {
@@ -395,12 +399,16 @@ spatialCovariateEvidence.exactppm <- local({
       marx <- marks(X, dfok=FALSE)
       possmarks <- levels(marx)
       npts <- npoints(X)
+      #' predicted intensity: may restrict domain
+      LambdaImages <- predict(model, locations=W, type=lambdatype)
+      W <- do.call(intersect.owin, unname(lapply(LambdaImages, as.owin)))
+      lambda <- unlist(lapply(LambdaImages, pixelvalues))
+      #' handle covariate
       #' single image: replicate 
       if(is.im(covariate)) {
         covariate <- rep(list(covariate), times=length(possmarks))
         names(covariate) <- as.character(possmarks)
       }
-      #'
       if(is.list(covariate) && all(sapply(covariate, is.im))) {
         #' list of images
         type <- "im"
@@ -436,8 +444,6 @@ spatialCovariateEvidence.exactppm <- local({
         for(k in seq_along(possmarks))
           locn[[k]] <- cbind(locn[[k]], data.frame(marks=possmarks[k]))
         loc <- do.call(rbind, locn)
-        #' corresponding fitted [conditional] intensity values
-        lambda <- predict(model, locations=loc, type=lambdatype)
         #' pixel areas
         pixelarea <- rep(sapply(Z, pixarea), sapply(Z, npixdefined))
       } else if(is.function(covariate)) {
@@ -458,11 +464,6 @@ spatialCovariateEvidence.exactppm <- local({
           for(k in seq_along(possmarks))
             Zfull[[k]] <- as.im(functioncaller, m=possmarks[k], f=covariate, W=Wfull, ...)
         }
-        #' corresponding fitted [conditional] intensity values
-        lambda <- predict(model, locations=W, type=lambdatype)
-        lambda <- unlist(lapply(lambda, pixelvalues))
-        if(length(lambda) != length(Zvalues))
-          stop("Internal error: length(lambda) != length(Zvalues)")
         #' collapse function body to single string
         covname <- singlestring(covname)
         #' pixel areas
@@ -486,6 +487,8 @@ spatialCovariateEvidence.exactppm <- local({
 
     check.finite(lambda, xname="the fitted intensity", usergiven=FALSE)
     check.finite(Zvalues, xname="the covariate", usergiven=TRUE)
+    if(length(lambda) != length(Zvalues))
+      stop("Internal error: length(lambda) != length(Zvalues)")
 
     #' lambda values at data points
     lambdaX <- predict(model, locations=X)
