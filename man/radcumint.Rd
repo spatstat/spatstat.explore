@@ -21,7 +21,7 @@ radcumint(X, \dots, origin, Xname, result = c("fv", "im"))
   \item{origin}{
     Optional. Origin about which the rotations should be performed.
     Either a numeric vector or a character string as described
-    in the help for \code{\link{shift.owin}}.
+    in the help for \code{\link[spatstat.geom]{shift.owin}}.
   }
   \item{Xname}{
     Optional name for \code{X} to be used in the

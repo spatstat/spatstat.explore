@@ -115,8 +115,8 @@ varblock(X, fun = Kest,
   
 }
 \seealso{
- \code{\link{tess}},
- \code{\link{quadrats}} for basic manipulation.
+ \code{\link[spatstat.geom]{tess}},
+ \code{\link[spatstat.geom]{quadrats}} for basic manipulation.
  
  \code{\link{lohboot}} for an alternative bootstrap technique.
 }

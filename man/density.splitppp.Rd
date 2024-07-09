@@ -15,7 +15,7 @@
 \arguments{
   \item{x}{
     Split point pattern (object of class \code{"splitppp"}
-    created by \code{\link{split.ppp}}) to be smoothed.
+    created by \code{\link[spatstat.geom]{split.ppp}}) to be smoothed.
     Alternatively a list of point patterns,
     of class \code{"ppplist"}.
   }
@@ -46,7 +46,7 @@
   \code{"ppplist"} or \code{"splitppp"}.
   
   Typically \code{x} is obtained by applying
-  the function \code{\link{split.ppp}} to a point pattern \code{y}
+  the function \code{\link[spatstat.geom]{split.ppp}} to a point pattern \code{y}
   by calling \code{split(y)}. This splits the points of \code{y} into several
   sub-patterns.
   
@@ -81,8 +81,8 @@
   or a single function of class \code{"funxy"}.
 }
 \seealso{
-  \code{\link{ppp.object}},
-  \code{\link{im.object}}
+  \code{\link[spatstat.geom]{ppp.object}},
+  \code{\link[spatstat.geom]{im.object}}
 }
 \examples{
   Z <- density(split(amacrine), 0.05)

@@ -84,7 +84,7 @@ blur(x, sigma = NULL, \dots,
   A pixel image with the same pixel array as the input image \code{x}.
 }
 \seealso{
-  \code{\link{interp.im}} for interpolating a pixel image to a finer resolution,
+  \code{\link[spatstat.geom]{interp.im}} for interpolating a pixel image to a finer resolution,
   \code{\link{density.ppp}} for blurring a point pattern,
   \code{\link{Smooth.ppp}} for interpolating marks attached to points.
 }

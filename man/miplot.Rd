@@ -10,7 +10,7 @@ miplot(X, ...)
 \arguments{
   \item{X}{
     A point pattern (object of class \code{"ppp"}) or something
-    acceptable to \code{\link{as.ppp}}.
+    acceptable to \code{\link[spatstat.geom]{as.ppp}}.
   }
   \item{\dots}{Optional arguments to control the appearance of the plot.}
 }
@@ -47,7 +47,7 @@ miplot(X, ...)
   \bold{2}: 215--235. 
 }
 \seealso{
-  \code{\link{quadratcount}}
+  \code{\link[spatstat.geom]{quadratcount}}
 }
 \examples{
  miplot(longleaf)

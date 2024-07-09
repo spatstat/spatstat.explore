@@ -14,12 +14,13 @@ adaptive.density(X, \dots, method=c("voronoi","kernel", "nearest"))
   \item{method}{Character string specifying the estimation method}
   \item{\dots}{
     Additional arguments passed to
-    \code{\link{densityVoronoi}}, \code{\link{densityAdaptiveKernel}}
-    or \code{\link{nndensity}}.
+    \code{\link{densityVoronoi}}, \code{\link{densityAdaptiveKernel.ppp}}
+    or \code{\link{nndensity.ppp}}.
   }
 }
 \details{
-  This function is an alternative to \code{\link{density.ppp}}. It
+  This function is an alternative to \code{\link{density.ppp}}
+  and \code{\link[spatstat.linnet]{density.lpp}}. It
   computes an estimate of the intensity function of a point pattern
   dataset. The result is a pixel image giving the estimated intensity.
 
@@ -28,24 +29,25 @@ adaptive.density(X, \dots, method=c("voronoi","kernel", "nearest"))
   the Voronoi-Dirichlet tessellation.
 
   If \code{method="kernel"} the data are passed to the function
-  \code{\link{densityAdaptiveKernel}} which estimates the intensity
-  using a variable-bandwidth kernel estimator.
+  \code{\link{densityAdaptiveKernel.ppp}} which estimates the intensity
+  using a variable-bandwidth kernel estimator. (This is not yet supported
+  when \code{X} has class \code{"lpp"}.)
 
   If \code{method="nearest"} the data are passed to the function
-  \code{\link{nndensity}} which estimates the intensity using the
-  distance to the \code{k}-th nearest data point. (This is not supported
+  \code{\link{nndensity.ppp}} which estimates the intensity using the
+  distance to the \code{k}-th nearest data point. (This is not yet supported
   when \code{X} has class \code{"lpp"}.)
 }
 \value{
-  A pixel image (object of class \code{"im"}) whose values are
-  estimates of the intensity of \code{X}.
+  A pixel image (object of class \code{"im"} or \code{"linim"})
+  whose values are estimates of the intensity of \code{X}.
 }
 \seealso{
   \code{\link{density.ppp}},
   \code{\link{densityVoronoi}},
-  \code{\link{densityAdaptiveKernel}},
-  \code{\link{nndensity}},
-  \code{\link{im.object}}.
+  \code{\link{densityAdaptiveKernel.ppp}},
+  \code{\link{nndensity.ppp}},
+  \code{\link[spatstat.geom]{im.object}}.
 }
 \examples{
   plot(adaptive.density(nztrees, 1), main="Voronoi estimate")

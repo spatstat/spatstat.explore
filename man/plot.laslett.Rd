@@ -18,19 +18,19 @@
     representing the result of Laslett's transform.
   }
   \item{\dots}{
-    Additional plot arguments passed to \code{\link{plot.solist}}.
+    Additional plot arguments passed to \code{\link[spatstat.geom]{plot.solist}}.
   }
   \item{Xpars}{
-    A list of plot arguments passed to \code{\link{plot.owin}}
-    or \code{\link{plot.im}} to display the original region \code{X}
+    A list of plot arguments passed to \code{\link[spatstat.geom]{plot.owin}}
+    or \code{\link[spatstat.geom]{plot.im}} to display the original region \code{X}
     before transformation.
   }
   \item{pointpars}{
-    A list of plot arguments passed to \code{\link{plot.ppp}}
+    A list of plot arguments passed to \code{\link[spatstat.geom]{plot.ppp}}
     to display the tangent points.
   }
   \item{rectpars}{
-    A list of plot arguments passed to \code{\link{plot.owin}}
+    A list of plot arguments passed to \code{\link[spatstat.geom]{plot.owin}}
     to display the maximal rectangle.
   }
 }
@@ -42,8 +42,8 @@
   \code{"laslett"} representing the result of the transformation.
   The result is plotted by this method.
 
-  The plot function \code{\link{plot.solist}} is used to align
-  the before-and-after pictures. See \code{\link{plot.solist}} for
+  The plot function \code{\link[spatstat.geom]{plot.solist}} is used to align
+  the before-and-after pictures. See \code{\link[spatstat.geom]{plot.solist}} for
   further options to control the plot.
 }
 \value{

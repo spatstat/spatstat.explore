@@ -19,7 +19,7 @@
     from which an estimate of the inhomogeneous \eqn{G} function
     will be computed.
     An object of class \code{"ppp"}
-    or in a format recognised by \code{\link{as.ppp}()}
+    or in a format recognised by \code{\link[spatstat.geom]{as.ppp}()}
   }
   \item{lambda}{
     Optional.
@@ -41,7 +41,7 @@
     estimated by kernel smoothing.
   }
   \item{\dots}{
-    Extra arguments passed to \code{\link{as.mask}} to control
+    Extra arguments passed to \code{\link[spatstat.geom]{as.mask}} to control
     the pixel resolution, or passed to \code{\link{density.ppp}}
     to control the smoothing bandwidth.
 }

@@ -47,7 +47,7 @@ pairMean(fun, W, V = NULL, ..., normalise = TRUE)
   Other options are described in \code{\link{distcdf}}.
 
   The algorithm uses \code{\link{distcdf}} to compute the cumulative
-  distribution function of \code{T}, and \code{\link{stieltjes}} to
+  distribution function of \code{T}, and \code{\link[spatstat.univar]{stieltjes}} to
   compute the mean value of \code{fun(T)}.
 
   If \code{normalise=TRUE} (the default) the result is the mean value of

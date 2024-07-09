@@ -33,7 +33,7 @@
     should favour high or low values of the covariate.
   }
   \item{\dots}{
-    Arguments passed to \code{\link{as.mask}} controlling the
+    Arguments passed to \code{\link[spatstat.geom]{as.mask}} controlling the
     pixel resolution for calculations.
   }
 }

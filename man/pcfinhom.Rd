@@ -194,7 +194,7 @@ pcfinhom(X, lambda = NULL, ..., r = NULL,
 \section{Advanced Use}{
   To perform the same computation using several different bandwidths \code{bw},
   it is efficient to use the argument \code{close}.
-  This should be the result of \code{\link{closepairs}(X, rmax)}
+  This should be the result of \code{\link[spatstat.geom]{closepairs}(X, rmax)}
   for a suitably large value of \code{rmax}, namely
   \code{rmax >= max(r) + 3 * bw}.
 }

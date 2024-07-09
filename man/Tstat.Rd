@@ -15,7 +15,7 @@ Tstat(X, ..., r = NULL, rmax = NULL,
   \item{X}{The observed point pattern, 
     from which an estimate of \eqn{T(r)} will be computed.
     An object of class \code{"ppp"}, or data
-    in any format acceptable to \code{\link{as.ppp}()}.
+    in any format acceptable to \code{\link[spatstat.geom]{as.ppp}()}.
   }
   \item{\dots}{Ignored.}
   \item{r}{
@@ -83,9 +83,6 @@ Tstat(X, ..., r = NULL, rmax = NULL,
 \examples{
   plot(Tstat(redwood))
 }
-\author{\adrian
-  
-  
-}
+\author{\adrian}
 \keyword{spatial}
 \keyword{nonparametric}

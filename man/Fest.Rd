@@ -18,7 +18,7 @@ Fhazard(X, \dots)
   \item{X}{The observed point pattern, 
     from which an estimate of \eqn{F(r)} will be computed.
     An object of class \code{ppp}, or data
-    in any format acceptable to \code{\link{as.ppp}()}.
+    in any format acceptable to \code{\link[spatstat.geom]{as.ppp}()}.
   }
   \item{\dots}{
     Extra arguments, passed from \code{Fhazard} to \code{Fest}.
@@ -123,9 +123,9 @@ Fhazard(X, \dots)
   The window (which is specified in \code{X}) may have arbitrary shape. 
 
   The argument \code{X} is interpreted as a point pattern object 
-  (of class \code{"ppp"}, see \code{\link{ppp.object}}) and can
+  (of class \code{"ppp"}, see \code{\link[spatstat.geom]{ppp.object}}) and can
   be supplied in any of the formats recognised
-  by \code{\link{as.ppp}}.
+  by \code{\link[spatstat.geom]{as.ppp}}.
 
   The algorithm uses two discrete approximations which are controlled
   by the parameter \code{eps} and by the spacing of values of \code{r}
@@ -197,7 +197,7 @@ Fhazard(X, \dots)
   nearest data points may lie outside \code{domain}).
   This is useful in bootstrap techniques. The argument \code{domain}
   should be a window (object of class \code{"owin"}) or something acceptable to
-  \code{\link{as.owin}}. It must be a subset of the
+  \code{\link[spatstat.geom]{as.owin}}. It must be a subset of the
   window of the point pattern \code{X}.
 
   The naive empirical distribution of distances from each location
@@ -274,9 +274,9 @@ Fhazard(X, \dots)
   \code{\link{Gest}},
   \code{\link{Jest}},
   \code{\link{Kest}},
-  \code{\link{km.rs}},
-  \code{\link{reduced.sample}},
-  \code{\link{kaplan.meier}}
+  \code{\link[spatstat.univar]{km.rs}},
+  \code{\link[spatstat.univar]{reduced.sample}},
+  \code{\link[spatstat.univar]{kaplan.meier}}
 }
 \examples{
    Fc <- Fest(cells, 0.01)

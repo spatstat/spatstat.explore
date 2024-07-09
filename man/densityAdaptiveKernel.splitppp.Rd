@@ -16,7 +16,7 @@
 \arguments{
   \item{X}{
     Split point pattern (object of class \code{"splitppp"}
-    created by \code{\link{split.ppp}}) to be smoothed.
+    created by \code{\link[spatstat.geom]{split.ppp}}) to be smoothed.
     Alternatively a list of point patterns,
     of class \code{"ppplist"}.
   }
@@ -27,7 +27,7 @@
     Additional arguments passed to
     \code{\link{densityAdaptiveKernel.ppp}}.
     These may include arguments that will be passed to
-    \code{\link{bw.abram}} to compute
+    \code{\link{bw.abram.ppp}} to compute
     the smoothing bandwidths if \code{bw} is missing,
     and arguments passed to \code{\link[spatstat.geom]{as.mask}}
     to control the spatial resolution of the result.

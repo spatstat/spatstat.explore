@@ -27,7 +27,7 @@ segregation.test(X, \dots)
     Number of simulations for the Monte Carlo test.
   }
   \item{permute}{
-    Argument passed to \code{\link{rlabel}}. If \code{TRUE} (the
+    Argument passed to \code{\link[spatstat.random]{rlabel}}. If \code{TRUE} (the
     default), randomisation is performed by randomly permuting the
     labels of \code{X}. If \code{FALSE}, randomisation is performing
     by resampling the labels with replacement.

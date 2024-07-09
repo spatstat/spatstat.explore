@@ -18,7 +18,7 @@ Ksector(X, begin = 0, end = 360, \dots,
   \item{X}{The observed point pattern, 
     from which an estimate of \eqn{K(r)} will be computed.
     An object of class \code{"ppp"}, or data
-    in any format acceptable to \code{\link{as.ppp}()}.
+    in any format acceptable to \code{\link[spatstat.geom]{as.ppp}()}.
   }
   \item{begin,end}{
     Numeric values giving the range of angles inside which

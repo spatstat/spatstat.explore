@@ -16,7 +16,7 @@
 \arguments{
   \item{X}{The observed point pattern.
     An object of class \code{"ppp"} or something acceptable to
-    \code{\link{as.ppp}}. 
+    \code{\link[spatstat.geom]{as.ppp}}. 
   }
   \item{r}{Optional. Numeric vector. The values of the argument \eqn{r}
     at which the mark correlation function 
@@ -83,7 +83,7 @@
   \eqn{k_{mm}(r) \equiv 1}{k[mm](r) =  1}.
 
   The argument \code{X} must be a point pattern (object of class
-  \code{"ppp"}) or any data that are acceptable to \code{\link{as.ppp}}.
+  \code{"ppp"}) or any data that are acceptable to \code{\link[spatstat.geom]{as.ppp}}.
   It must be a marked point pattern.
 
   The cross-correlations are estimated in the same manner as
@@ -95,13 +95,7 @@
   of columns of marks.
 }
 \author{
-  \adrian
-  
-  
-  \rolf
-  
-  and \ege
-  
+  \spatstatAuthors.
 }
 \seealso{
   \code{\link{markcorr}}

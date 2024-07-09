@@ -11,7 +11,7 @@ r = NULL, method = "density", ..., normalise=FALSE)
 \arguments{
   \item{X}{The observed point pattern.
     An object of class \code{"ppp"} or something acceptable to
-    \code{\link{as.ppp}}. It must have marks which are numeric.
+    \code{\link[spatstat.geom]{as.ppp}}. It must have marks which are numeric.
   }
   \item{correction}{
     A character vector containing any selection of the

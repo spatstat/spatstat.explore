@@ -39,7 +39,7 @@ quadrat.test(X, ...)
     Alternatively a fitted point process model (object of class
     \code{"ppm"} or \code{"slrm"}) to be tested.
     Alternatively \code{X} can be the result of applying
-    \code{\link{quadratcount}} to a point pattern.
+    \code{\link[spatstat.geom]{quadratcount}} to a point pattern.
   }
   \item{nx,ny}{
     Numbers of quadrats in the \eqn{x} and \eqn{y} directions.
@@ -85,7 +85,7 @@ quadrat.test(X, ...)
   }
   \item{tess}{
     Tessellation (object of class \code{"tess"} or something acceptable
-    to \code{\link{as.tess}}) determining the
+    to \code{\link[spatstat.geom]{as.tess}}) determining the
     quadrats. Incompatible with \code{nx, ny, xbreaks, ybreaks}.
   }
   \item{nsim}{
@@ -127,7 +127,7 @@ quadrat.test(X, ...)
 
   In all cases, the window of observation is divided
   into tiles, and the number of data points in each tile is
-  counted, as described in \code{\link{quadratcount}}.
+  counted, as described in \code{\link[spatstat.geom]{quadratcount}}.
   The quadrats are rectangular by default, or may be regions of arbitrary shape
   specified by the argument \code{tess}.
   The expected number of points in each quadrat is also calculated,
@@ -199,9 +199,9 @@ quadrat.test(X, ...)
 }
 \seealso{
   \code{\link{quadrat.test.splitppp}},
-  \code{\link{quadratcount}},
-  \code{\link{quadrats}},
-  \code{\link{quadratresample}},
+  \code{\link[spatstat.geom]{quadratcount}},
+  \code{\link[spatstat.geom]{quadrats}},
+  \code{\link[spatstat.random]{quadratresample}},
   \code{\link{chisq.test}},
   \code{\link{cdf.test}}.
 

@@ -23,7 +23,7 @@ laslett(X, \dots, verbose = FALSE, plotit = TRUE, discretise = FALSE,
     Graphics arguments to control the plot (passed to
     \code{\link{plot.laslett}} when \code{plotit=TRUE})
     or arguments determining the pixel resolution
-    (passed to \code{\link{as.mask}}).
+    (passed to \code{\link[spatstat.geom]{as.mask}}).
   }
   \item{verbose}{
     Logical value indicating whether to print progress reports.

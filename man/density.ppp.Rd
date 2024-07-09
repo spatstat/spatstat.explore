@@ -30,8 +30,8 @@
     or a pixel image.
   }
   \item{\dots}{
-    Additional arguments passed to \code{\link{pixellate.ppp}}
-    and \code{\link{as.mask}} to determine
+    Additional arguments passed to \code{\link[spatstat.geom]{pixellate.ppp}}
+    and \code{\link[spatstat.geom]{as.mask}} to determine
     the pixel resolution, or passed to \code{sigma} if it is a function.
   }
   \item{edge}{
@@ -259,14 +259,14 @@
   If \code{at="pixels"} (the default), intensity values are
   computed at every location \eqn{u} in a fine grid,
   and are returned as a pixel image. The point pattern is first discretised 
-  using \code{\link{pixellate.ppp}}, then the intensity is
+  using \code{\link[spatstat.geom]{pixellate.ppp}}, then the intensity is
   computed using the Fast Fourier Transform.
   Accuracy depends on the pixel resolution and the discretisation rule.
   The pixel resolution is controlled by the arguments
-  \code{\dots} passed to \code{\link{as.mask}} (specify the number of
+  \code{\dots} passed to \code{\link[spatstat.geom]{as.mask}} (specify the number of
   pixels by \code{dimyx} or the pixel size by \code{eps}). 
   The discretisation rule is controlled by the arguments
-  \code{\dots} passed to \code{\link{pixellate.ppp}}
+  \code{\dots} passed to \code{\link[spatstat.geom]{pixellate.ppp}}
   (the default rule is that each point is allocated to the nearest
   pixel centre; this can be modified using the arguments
   \code{fractional} and \code{preserve}).
@@ -402,8 +402,8 @@
   two (or more) types of points, use \code{\link{relrisk}}.
 
   For information about the data structures, see
-  \code{\link{ppp.object}},
-  \code{\link{im.object}}.
+  \code{\link[spatstat.geom]{ppp.object}},
+  \code{\link[spatstat.geom]{im.object}}.
 }
 \examples{
   if(interactive()) {

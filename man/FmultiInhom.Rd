@@ -29,7 +29,7 @@
   \item{J}{
     A subset index specifying the subset of points to which
     distances are measured. Any kind of subset index acceptable
-    to \code{\link{[.ppp}}.
+    to \code{\link[spatstat.geom]{[.ppp}}.
   }
   \item{lambda}{
     Intensity estimates for each point of \code{X}.

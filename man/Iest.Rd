@@ -11,7 +11,7 @@
   \item{X}{The observed point pattern, 
     from which an estimate of \eqn{I(r)} will be computed.
     An object of class \code{"ppp"}, or data
-    in any format acceptable to \code{\link{as.ppp}()}.
+    in any format acceptable to \code{\link[spatstat.geom]{as.ppp}()}.
   }
   \item{\dots}{Ignored.}
   \item{eps}{
@@ -103,9 +103,9 @@
   a bounded window. 
 
   The argument \code{X} is interpreted as a point pattern object 
-  (of class \code{"ppp"}, see \code{\link{ppp.object}}) and can
+  (of class \code{"ppp"}, see \code{\link[spatstat.geom]{ppp.object}}) and can
   be supplied in any of the formats recognised by
-  \code{\link{as.ppp}()}. It must be a multitype point pattern
+  \code{\link[spatstat.geom]{as.ppp}()}. It must be a multitype point pattern
   (it must have a \code{marks} vector which is a \code{factor}).
 
   The function \code{\link{Jest}} is called to 

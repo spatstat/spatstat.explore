@@ -61,7 +61,7 @@ densityfun(X, \dots)
     \item The arguments \code{x,y} of \code{f}
     specify the query locations. They can be numeric vectors
     of coordinates. Alternatively \code{x} can be a point pattern
-    (or data acceptable to \code{\link{as.ppp}}) and \code{y} is omitted.
+    (or data acceptable to \code{\link[spatstat.geom]{as.ppp}}) and \code{y} is omitted.
     The result of \code{f(x,y)} is a numeric vector giving the values of
     the intensity.
     \item 
@@ -79,7 +79,7 @@ densityfun(X, \dots)
 \value{
   A \code{function} with arguments \code{x,y,drop}.
   The function also belongs to the class \code{"densityfun"} which has
-  methods for \code{print} and \code{\link{as.im}}.
+  methods for \code{print} and \code{\link[spatstat.geom]{as.im}}.
   It also belongs to the class \code{"funxy"} which has methods
   for \code{plot}, \code{contour} and \code{persp}.
 }

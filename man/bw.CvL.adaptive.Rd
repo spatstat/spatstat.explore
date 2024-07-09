@@ -21,7 +21,7 @@ bw.CvL.adaptive(X, \dots,
   }
   \item{\dots}{
     Additional arguments passed to
-    \code{\link{densityAdaptiveKernel}}.
+    \code{\link{densityAdaptiveKernel.ppp}}.
   }
   \item{hrange}{
     Optional numeric vector of length 2 giving the
@@ -111,8 +111,8 @@ bw.CvL.adaptive(X, \dots,
   \code{\link[spatstat.explore]{bw.optim.object}}.
   
   \code{\link{adaptive.density}},
-  \code{\link{densityAdaptiveKernel}},
-  \code{\link{bw.abram}},
+  \code{\link{densityAdaptiveKernel.ppp}},
+  \code{\link{bw.abram.ppp}},
   \code{\link{density.ppp}}.
   
   To select a \emph{fixed} smoothing bandwidth

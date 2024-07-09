@@ -37,7 +37,7 @@ in any of several formats, into an object of class \code{"tess"}.
     tessellation consisting of a single tile.
     \item
     a set of quadrat counts (object of class \code{"quadratcount"})
-    returned by the command \code{\link{quadratcount}}.
+    returned by the command \code{\link[spatstat.geom]{quadratcount}}.
     The quadrats
     used to generate the counts will be extracted and returned as a
     tessellation.
@@ -55,7 +55,8 @@ in any of several formats, into an object of class \code{"tess"}.
   various classes, as listed above.
 }
 \seealso{
-  \code{\link{tess}}
+  \code{\link[spatstat.geom]{tess}}
+
 }
 \examples{
 

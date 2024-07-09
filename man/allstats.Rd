@@ -54,7 +54,7 @@
   \eqn{K} functions respectively. 
 
   The list can be plotted directly using \code{plot} (which dispatches to
-  \code{\link{plot.solist}}). 
+  \code{\link[spatstat.geom]{plot.anylist}}). 
 
   Each list entry retains the format
   of the output of the relevant estimating routine
@@ -71,7 +71,7 @@
   and \rolf
 }
 \seealso{
-         \code{\link{plot.solist}},
+         \code{\link[spatstat.geom]{plot.anylist}},
          \code{\link{plot.fv}},
          \code{\link{fv.object}},
          \code{\link{Fest}},

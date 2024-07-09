@@ -90,7 +90,7 @@ Jfox(X, Y, r=NULL, breaks=NULL, correction=c("km", "rs", "han"), W, \dots,
   Accuracy of \code{Jfox} depends on the pixel resolution,
   which is controlled by the
   arguments \code{eps}, \code{dimyx} and \code{xy} passed to
-  \code{\link{as.mask}}. For example, use \code{eps=0.1} to specify
+  \code{\link[spatstat.geom]{as.mask}}. For example, use \code{eps=0.1} to specify
   square pixels of side 0.1 units, and \code{dimyx=256} to specify a
   256 by 256 grid of pixels.
 }

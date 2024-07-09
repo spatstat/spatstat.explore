@@ -20,7 +20,7 @@ densityVoronoi(X, \dots)
     Fraction (between 0 and 1 inclusive) of the data points that will be
     used to build a tessellation for the intensity estimate.
   }
-  \item{\dots}{Arguments passed to \code{\link{as.im}} determining the
+  \item{\dots}{Arguments passed to \code{\link[spatstat.geom]{as.im}} determining the
     pixel resolution of the result.
   }
   \item{counting}{
@@ -45,7 +45,7 @@ densityVoronoi(X, \dots)
 
   If \code{f=1} (the default), the Voronoi estimate (Barr and Schoenberg, 2010)
   is computed: the point pattern \code{X} is used to construct
-  a Voronoi/Dirichlet tessellation (see \code{\link{dirichlet}});
+  a Voronoi/Dirichlet tessellation (see \code{\link[spatstat.geom]{dirichlet}});
   the areas of the Dirichlet tiles are computed; the estimated intensity
   in each tile is the reciprocal of the tile area.
   The result is a pixel image
@@ -115,8 +115,8 @@ densityVoronoi(X, \dots)
 \seealso{
   \code{\link{adaptive.density}},
   \code{\link{density.ppp}},
-  \code{\link{dirichlet}},
-  \code{\link{im.object}}.
+  \code{\link[spatstat.geom]{dirichlet}},
+  \code{\link[spatstat.geom]{im.object}}.
 }
 \references{
   Baddeley, A. (2007)

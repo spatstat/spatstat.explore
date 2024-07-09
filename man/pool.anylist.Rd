@@ -36,21 +36,13 @@
   An object of the same class as each of the entries in \code{x}.
 }
 \seealso{
-  \code{\link{anylist}},
+  \code{\link[spatstat.geom]{anylist}},
   \code{\link{pool}}.
 }
 \examples{
    Keach <- anylapply(waterstriders, Kest, ratio=TRUE, correction="iso")
    K <- pool(Keach)
 }
-\author{
-\adrian
-
-
-\rolf
-
-and \ege
-
-}
+\author{\spatstatAuthors.}
 \keyword{spatial}
 \keyword{nonparametric}

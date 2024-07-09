@@ -14,7 +14,7 @@
     The observed point pattern, 
     from which an estimate of \eqn{L(r)} will be computed.
     An object of class \code{"ppp"}, or data
-    in any format acceptable to \code{\link{as.ppp}()}.
+    in any format acceptable to \code{\link[spatstat.geom]{as.ppp}()}.
   }
   \item{correction,\dots}{
     Other arguments passed to \code{\link{Kest}}

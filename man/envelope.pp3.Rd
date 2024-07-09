@@ -224,8 +224,8 @@
   \emph{Applied Statistics} \bold{42}, 641--668.
 } 
 \seealso{
-  \code{\link{pp3}},
-  \code{\link{rpoispp3}},
+  \code{\link[spatstat.geom]{pp3}},
+  \code{\link[spatstat.random]{rpoispp3}},
   \code{\link{K3est}},
   \code{\link{G3est}},
   \code{\link{F3est}},

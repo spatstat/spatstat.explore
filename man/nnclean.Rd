@@ -114,9 +114,9 @@
   Adapted for \pkg{spatstat} by \adrian.
 }
 \seealso{
-  \code{\link{nndist}}, 
-  \code{\link{split.ppp}}, 
-  \code{\link{cut.ppp}}
+  \code{\link[spatstat.geom]{nndist}}, 
+  \code{\link[spatstat.geom]{split.ppp}}, 
+  \code{\link[spatstat.geom]{cut.ppp}}
 }
 \examples{
   # shapley galaxy cluster

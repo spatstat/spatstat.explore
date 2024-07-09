@@ -91,7 +91,7 @@ Kdot(X, i, r=NULL, breaks=NULL, correction, ..., ratio=FALSE, from)
   determines the type of that point.
   
   The argument \code{X} must be a point pattern (object of class
-  \code{"ppp"}) or any data that are acceptable to \code{\link{as.ppp}}.
+  \code{"ppp"}) or any data that are acceptable to \code{\link[spatstat.geom]{as.ppp}}.
   It must be a marked point pattern, and the mark vector
   \code{X$marks} must be a factor.
 

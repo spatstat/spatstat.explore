@@ -20,14 +20,14 @@
     Defaults to \code{W}.
   }
   \item{\dots}{
-    Arguments passed to \code{\link{as.mask}} to determine the
+    Arguments passed to \code{\link[spatstat.geom]{as.mask}} to determine the
     pixel resolution for the calculation.
   }
   \item{dV, dW}{
     Optional. Probability densities (not necessarily normalised)
     for the first and second random points respectively.
     Data in any format acceptable
-    to \code{\link{as.im}}, for example, a \code{function(x,y)}
+    to \code{\link[spatstat.geom]{as.im}}, for example, a \code{function(x,y)}
     or a pixel image or a numeric value. The default
     corresponds to a uniform distribution over the window.
   }
@@ -80,11 +80,11 @@
   finite and nonnegative.
 
   The calculation is performed by numerical integration of the set covariance
-  function \code{\link{setcov}} for uniformly distributed points, and
-  by computing the covariance function \code{\link{imcov}} in the
+  function \code{\link[spatstat.geom]{setcov}} for uniformly distributed points, and
+  by computing the covariance function \code{\link[spatstat.geom]{imcov}} in the
   general case. The accuracy of the result depends on
   the pixel resolution used to represent the windows: this is controlled
-  by the arguments \code{\dots} which are passed to \code{\link{as.mask}}.
+  by the arguments \code{\dots} which are passed to \code{\link[spatstat.geom]{as.mask}}.
   For example use \code{eps=0.1} to specify pixels of size 0.1 units.
 
   The arguments \code{W} or \code{V} may also be point patterns
@@ -106,8 +106,8 @@
   values with spacing less than or equal to \code{delta}.
 }
 \seealso{
-  \code{\link{setcov}},
-  \code{\link{as.mask}}.
+  \code{\link[spatstat.geom]{setcov}},
+  \code{\link[spatstat.geom]{as.mask}}.
 }
 \examples{
  # The unit disc

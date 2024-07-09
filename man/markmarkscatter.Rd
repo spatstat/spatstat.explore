@@ -19,7 +19,7 @@ markmarkscatter(X, rmax, \dots, col = NULL, symap = NULL, transform=I, jit=FALSE
     which contribute to the plot.
   }
   \item{\dots}{
-    Additional arguments passed to \code{\link{plot.ppp}} to
+    Additional arguments passed to \code{\link[spatstat.geom]{plot.ppp}} to
     control the scatterplot.
   }
   \item{transform}{
@@ -30,12 +30,12 @@ markmarkscatter(X, rmax, \dots, col = NULL, symap = NULL, transform=I, jit=FALSE
     perturbed using \code{\link[base]{jitter}}. 
   }
   \item{col}{
-    Optional. A vector of colour values, or a \code{\link{colourmap}}
+    Optional. A vector of colour values, or a \code{\link[spatstat.geom]{colourmap}}
     to be used to portray the pairwise distance values. Ignored
     if \code{symap} is given.
   }
   \item{symap}{
-    Optional. A \code{\link{symbolmap}} to be used to
+    Optional. A \code{\link[spatstat.geom]{symbolmap}} to be used to
     portray the pairwise distance values. Overrides \code{col}.
   }
 }

@@ -280,7 +280,7 @@
  \code{\link{bw.relrisk}},
  \code{\link{density.ppp}},
  \code{\link{Smooth.ppp}},
- \code{\link{eval.im}}
+ \code{\link[spatstat.geom]{eval.im}}
 }
 \examples{
    p.oak <- relrisk(urkiola, 20)

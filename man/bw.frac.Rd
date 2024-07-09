@@ -17,7 +17,7 @@
     A window (object of class \code{"owin"}) or
     point pattern (object of class \code{"ppp"})
     or other data which can be converted to a window
-    using \code{\link{as.owin}}.
+    using \code{\link[spatstat.geom]{as.owin}}.
   }
   \item{\dots}{
     Arguments passed to \code{\link{distcdf}}.

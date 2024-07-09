@@ -24,7 +24,7 @@ Hest(X, r=NULL, breaks=NULL, ...,
   \item{breaks}{
 	This argument is for internal use only.
   }
-  \item{\dots}{Arguments passed to \code{\link{as.mask}}
+  \item{\dots}{Arguments passed to \code{\link[spatstat.geom]{as.mask}}
     to control the discretisation.
   }
   \item{W}{
@@ -72,7 +72,7 @@ Hest(X, r=NULL, breaks=NULL, ...,
   \code{"owin"}). It is assumed to be a realisation of a stationary
   random set.
 
-  The algorithm first calls \code{\link{distmap}} to compute the
+  The algorithm first calls \code{\link[spatstat.geom]{distmap}} to compute the
   distance transform of \code{X}, then computes the Kaplan-Meier
   and reduced-sample estimates of the cumulative distribution
   following Hansen et al (1999).
@@ -86,7 +86,7 @@ Hest(X, r=NULL, breaks=NULL, ...,
 
   Accuracy depends on the pixel resolution, which is controlled by the
   arguments \code{eps}, \code{dimyx} and \code{xy} passed to
-  \code{\link{as.mask}}. For example, use \code{eps=0.1} to specify
+  \code{\link[spatstat.geom]{as.mask}}. For example, use \code{eps=0.1} to specify
   square pixels of side 0.1 units, and \code{dimyx=256} to specify a
   256 by 256 grid of pixels.
 }

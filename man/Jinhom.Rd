@@ -19,7 +19,7 @@
     from which an estimate of the inhomogeneous \eqn{J} function
     will be computed.
     An object of class \code{"ppp"}
-    or in a format recognised by \code{\link{as.ppp}()}
+    or in a format recognised by \code{\link[spatstat.geom]{as.ppp}()}
   }
   \item{lambda}{
     Optional.

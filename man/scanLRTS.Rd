@@ -23,7 +23,7 @@ scanLRTS(X, r, \dots,
     Radius of circle to use. A single number or a numeric vector.
   }
   \item{\dots}{
-    Optional. Arguments passed to \code{\link{as.mask}} to determine the
+    Optional. Arguments passed to \code{\link[spatstat.geom]{as.mask}} to determine the
     spatial resolution of the computations.
   }
   \item{method}{

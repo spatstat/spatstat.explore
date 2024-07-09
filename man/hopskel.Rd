@@ -86,8 +86,8 @@ hopskel.test(X, \dots,
 \seealso{
   \code{\link{clarkevans}},
   \code{\link{clarkevans.test}},
-  \code{\link{nndist}},
-  \code{\link{nncross}}
+  \code{\link[spatstat.geom]{nndist}},
+  \code{\link[spatstat.geom]{nncross}}
 }
 \examples{
   hopskel(redwood)

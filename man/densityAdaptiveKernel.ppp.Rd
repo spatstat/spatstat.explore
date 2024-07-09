@@ -24,7 +24,7 @@
   }
   \item{\dots}{
     Arguments passed to
-    \code{\link{bw.abram}} to compute the smoothing bandwidths
+    \code{\link{bw.abram.ppp}} to compute the smoothing bandwidths
     if \code{bw} is missing,
     or passed to \code{\link[spatstat.geom]{as.mask}}
     to control the spatial resolution of the result.
@@ -97,7 +97,7 @@
   determined by the smoothing bandwidth values \code{bw}.
 
   Typically the bandwidth values are computed by first computing
-  a pilot estimate of the intensity, then using \code{\link{bw.abram}}
+  a pilot estimate of the intensity, then using \code{\link{bw.abram.ppp}}
   to compute the vector of bandwidths according to Abramson's rule.
   This involves specifying a global bandwidth \code{h0}.
   
@@ -132,6 +132,7 @@
   Chapman and Hall, New York.
 }
 \seealso{
+  \code{\link{bw.abram.ppp}},
   \code{\link{density.ppp}},
   \code{\link{adaptive.density}},
   \code{\link{densityVoronoi}},

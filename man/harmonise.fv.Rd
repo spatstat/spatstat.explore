@@ -26,7 +26,7 @@
   (or several alternative estimates of this value)
   at equally-spaced values of the function argument \eqn{x}.
 
-  The command \code{\link{harmonise}} is generic. This is the
+  The command \code{\link[spatstat.geom]{harmonise}} is generic. This is the
   method for objects of class \code{"fv"}.
   
   This command makes any number of \code{"fv"} objects compatible,
@@ -67,13 +67,7 @@
   If the arguments were named (\code{name=value}) then the return value
   also carries these names.
 }
-\author{\adrian
-  
-  ,
-  \rolf
-  
-  and \ege.
-}
+\author{\spatstatAuthors.}
 \examples{
    H <- harmonise(K=Kest(cells), G=Gest(cells))
    H

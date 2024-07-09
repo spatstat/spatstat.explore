@@ -214,7 +214,7 @@
   inside \code{domain} and the second point is unrestricted.
   The argument \code{domain}
   should be a window (object of class \code{"owin"}) or something acceptable to
-  \code{\link{as.owin}}. It must be a subset of the
+  \code{\link[spatstat.geom]{as.owin}}. It must be a subset of the
   window of the point pattern \code{X}.
 
   To compute a confidence band for the true value of the
@@ -230,7 +230,7 @@
 \section{Advanced Use}{
   To perform the same computation using several different bandwidths \code{bw},
   it is efficient to use the argument \code{close}.
-  This should be the result of \code{\link{closepairs}(X, rmax)}
+  This should be the result of \code{\link[spatstat.geom]{closepairs}(X, rmax)}
   for a suitably large value of \code{rmax}, namely
   \code{rmax >= max(r) + 3 * bw}.
 }

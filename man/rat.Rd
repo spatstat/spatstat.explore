@@ -16,7 +16,7 @@ rat(ratio, numerator, denominator, check = TRUE)
   }
   \item{check}{
     Logical. Whether to check that
-    the objects are \code{\link{compatible}}.
+    the objects are \code{\link[spatstat.geom]{compatible}}.
   }
 }
 \details{
@@ -43,7 +43,7 @@ rat(ratio, numerator, denominator, check = TRUE)
   By default the algorithm checks
   whether the three arguments \code{ratio}, \code{numerator},
   \code{denominator} are compatible objects, according to
-  \code{\link{compatible}}.
+  \code{\link[spatstat.geom]{compatible}}.
   
   The result is equivalent to \code{ratio} except for the
   addition of extra information.
@@ -57,7 +57,7 @@ rat(ratio, numerator, denominator, check = TRUE)
   and \rolf.
 }
 \seealso{
-  \code{\link{compatible}}, 
+  \code{\link[spatstat.geom]{compatible}}, 
   \code{\link[spatstat.explore]{pool}}
 }
 \keyword{spatial}

@@ -62,13 +62,13 @@
   neighbours of a point with mark \code{i} that have mark \code{j}.
 
   To perform more complicated calculations on the neighbours of every
-  point, use \code{\link{markstat}} or \code{\link{applynbd}}. 
+  point, use \code{\link[spatstat.geom]{markstat}} or \code{\link[spatstat.geom]{applynbd}}. 
 }
 \seealso{
-  \code{\link{markstat}},
-  \code{\link{applynbd}},
+  \code{\link[spatstat.geom]{markstat}},
+  \code{\link[spatstat.geom]{applynbd}},
   \code{\link{Kcross}},
-  \code{\link{ppp.object}},
+  \code{\link[spatstat.geom]{ppp.object}},
   \code{\link{table}}
 }
 \examples{

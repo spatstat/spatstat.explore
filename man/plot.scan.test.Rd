@@ -21,7 +21,7 @@
     produced by \code{\link{scan.test}}.
   }
   \item{\dots}{
-    Arguments passed to \code{\link{plot.im}} to control the appearance
+    Arguments passed to \code{\link[spatstat.geom]{plot.im}} to control the appearance
     of the plot.
   }
   \item{what}{

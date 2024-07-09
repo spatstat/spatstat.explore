@@ -97,7 +97,7 @@
   \eqn{X_J}{X[J]}. 
 
   The argument \code{X} must be a point pattern (object of class
-  \code{"ppp"}) or any data that are acceptable to \code{\link{as.ppp}}.
+  \code{"ppp"}) or any data that are acceptable to \code{\link[spatstat.geom]{as.ppp}}.
 
   The arguments \code{I} and \code{J} specify two subsets of the
   point pattern. They may be any type of subset indices, for example,

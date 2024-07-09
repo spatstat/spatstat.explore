@@ -52,8 +52,8 @@
   \code{\link[spatstat.model]{domain.ppm}},
   \code{\link[spatstat.random]{domain.rmhmodel}},
   \code{\link[spatstat.linnet]{domain.lpp}}.
-  \code{\link{Window}},
-  \code{\link{Frame}}.
+  \code{\link[spatstat.geom]{Window}},
+  \code{\link[spatstat.geom]{Frame}}.
 }
 \examples{
   domain(quadrat.test(redwood, 2, 2))

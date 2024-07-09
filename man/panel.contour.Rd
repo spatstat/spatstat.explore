@@ -23,8 +23,8 @@ panel.histogram(x, ...)
     Coordinates of points in a scatterplot.
   }
   \item{\dots}{
-    Extra graphics arguments, passed to \code{\link{contour.im}},
-    \code{\link{plot.im}} or \code{\link[graphics]{rect}}, respectively,
+    Extra graphics arguments, passed to \code{\link[spatstat.geom]{contour.im}},
+    \code{\link[spatstat.geom]{plot.im}} or \code{\link[graphics]{rect}}, respectively,
     to control the appearance of the panel.
   }
   \item{sigma}{

@@ -17,14 +17,14 @@ stienenSet(X, edge=TRUE)
     Point pattern (object of class \code{"ppp"}).
   }
   \item{\dots}{
-    Arguments passed to \code{\link{plot.ppp}}
+    Arguments passed to \code{\link[spatstat.geom]{plot.ppp}}
     to control the plot.
   }
   \item{bg}{
     Fill colour for circles.
   }
   \item{border}{
-    Either a list of arguments passed to \code{\link{plot.ppp}}
+    Either a list of arguments passed to \code{\link[spatstat.geom]{plot.ppp}}
     to control the display of circles at the border of the diagram,
     or the value \code{FALSE}
     indicating that the border circles should not be plotted.
@@ -62,22 +62,15 @@ stienenSet(X, edge=TRUE)
   Dissertation, RWTH Aachen.
 }
 \seealso{
-  \code{\link{nndist}},
-  \code{\link{plot.ppp}}
+  \code{\link[spatstat.geom]{nndist}},
+  \code{\link[spatstat.geom]{plot.ppp}}
 }
 \examples{
   Y <- stienenSet(cells)
   stienen(redwood)
   stienen(redwood, border=list(bg=NULL, lwd=2, cols="red"))
 }
-\author{\adrian
-  
-  
-  \rolf
-  
-  and \ege
-  
-}
+\author{\spatstatAuthors.}
 \keyword{spatial}
 \keyword{math}
 \keyword{manip}

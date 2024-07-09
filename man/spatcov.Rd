@@ -127,7 +127,7 @@ spatcov(X, Y=X, \dots, correlation=FALSE, isotropic = TRUE,
   \adrian
 }
 \seealso{
-  \code{\link{imcov}}, \code{\link{setcov}}
+  \code{\link[spatstat.geom]{imcov}}, \code{\link[spatstat.geom]{setcov}}
 }
 \examples{
 if(offline <- !interactive()) op <- spatstat.options(npixel=32)

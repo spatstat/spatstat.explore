@@ -22,11 +22,11 @@ rectcontact(X, \dots, asp = 1, npasses=4,
   }
   \item{asp}{
     Aspect ratio for the rectangular metric. A single positive number.
-    See \code{\link{rectdistmap}} for explanation.
+    See \code{\link[spatstat.geom]{rectdistmap}} for explanation.
   }
   \item{npasses}{
     Number of passes to perform in the distance algorithm. A positive integer.
-    See \code{\link{rectdistmap}} for explanation.
+    See \code{\link[spatstat.geom]{rectdistmap}} for explanation.
   }
   \item{eps}{
     Pixel size, if the image should be converted to a finer grid.

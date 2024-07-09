@@ -48,7 +48,7 @@ Smoothfun(X, \dots)
 \value{
   A \code{function} with arguments \code{x,y}.
   The function also belongs to the class \code{"Smoothfun"} which has
-  methods for \code{print} and \code{\link{as.im}}.
+  methods for \code{print} and \code{\link[spatstat.geom]{as.im}}.
   It also belongs to the class \code{"funxy"} which has methods
   for \code{plot}, \code{contour} and \code{persp}.
 }

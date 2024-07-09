@@ -12,7 +12,7 @@ from a point pattern in a window of arbitrary shape.
   \item{X}{The observed point pattern, 
     from which an estimate of \eqn{\kappa}{Kappa} will be computed.
     An object of class \code{"ppp"}, or data
-    in any format acceptable to \code{\link{as.ppp}()}.
+    in any format acceptable to \code{\link[spatstat.geom]{as.ppp}()}.
     }
     \item{sigma}{
       Standard deviation \eqn{\sigma}{sigma} of the Gaussian
@@ -23,7 +23,7 @@ from a point pattern in a window of arbitrary shape.
       should be applied.
     }
     \item{\dots}{
-      Arguments passed to \code{\link{as.mask}} controlling
+      Arguments passed to \code{\link[spatstat.geom]{as.mask}} controlling
       the pixel resolution.
     }
     \item{varcov}{
@@ -33,7 +33,7 @@ from a point pattern in a window of arbitrary shape.
 }
 \value{
   A real-valued pixel image (an object of class \code{"im"},
-  see \code{\link{im.object}}) whose pixel values are estimates
+  see \code{\link[spatstat.geom]{im.object}}) whose pixel values are estimates
   of the density of the reduced second moment measure
   at each location.
 }
@@ -118,7 +118,7 @@ from a point pattern in a window of arbitrary shape.
   If desired, the value of \eqn{\kappa(A)}{Kappa(A)} for a region
   \eqn{A} can be estimated by computing the integral of the pixel image
   over the domain \eqn{A}, i.e.\ summing the pixel values and
-  multiplying by pixel area, using \code{\link{integral.im}}.
+  multiplying by pixel area, using \code{\link[spatstat.geom]{integral.im}}.
   One possible application is to compute anisotropic counterparts of the
   \eqn{K}-function (in which the disc of radius \eqn{t} is replaced
   by another shape). See Examples.
@@ -149,9 +149,9 @@ from a point pattern in a window of arbitrary shape.
 \seealso{
   \code{\link{Kest}},
   \code{\link{fryplot}},
-  \code{\link{spatstat.options}},
-  \code{\link{integral.im}},
-  \code{\link{im.object}}
+  \code{\link[spatstat.geom]{spatstat.options}},
+  \code{\link[spatstat.geom]{integral.im}},
+  \code{\link[spatstat.geom]{im.object}}
 }
 \examples{
  plot(Kmeasure(cells, 0.05))

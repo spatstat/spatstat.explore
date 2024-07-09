@@ -24,7 +24,7 @@ nndensity(x, ...)
     will be computed. There is a sensible default.
   }
   \item{\dots}{
-    Arguments passed to \code{\link{nnmap}} and \code{\link{as.mask}}
+    Arguments passed to \code{\link[spatstat.geom]{nnmap}} and \code{\link[spatstat.geom]{as.mask}}
     controlling the pixel resolution.
   }
   \item{verbose}{
@@ -65,9 +65,9 @@ nndensity(x, ...)
   The default value of \code{k} is the square root of the number of
   points in \code{x}, which seems to work well in many cases.
   
-  The window of \code{x} is digitised using \code{\link{as.mask}}
-  and the values \eqn{d(s)} are computed using \code{\link{nnmap}}.
-  To control the pixel resolution, see \code{\link{as.mask}}.
+  The window of \code{x} is digitised using \code{\link[spatstat.geom]{as.mask}}
+  and the values \eqn{d(s)} are computed using \code{\link[spatstat.geom]{nnmap}}.
+  To control the pixel resolution, see \code{\link[spatstat.geom]{as.mask}}.
 }
 \value{
   A pixel image (object of class \code{"im"}) giving the
@@ -85,7 +85,7 @@ nndensity(x, ...)
 }
 \seealso{
  \code{\link{density.ppp}},
- \code{\link{intensity}}
+ \code{\link[spatstat.geom]{intensity.ppp}}
  for alternative estimates of point process intensity.
 }
 \examples{

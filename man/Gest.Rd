@@ -18,7 +18,7 @@ Gest(X, r=NULL, breaks=NULL, \dots,
   \item{X}{The observed point pattern, 
     from which an estimate of \eqn{G(r)} will be computed.
     An object of class \code{ppp}, or data
-    in any format acceptable to \code{\link{as.ppp}()}.
+    in any format acceptable to \code{\link[spatstat.geom]{as.ppp}()}.
   }
   \item{r}{Optional. Numeric vector. The values of the argument \eqn{r}
     at which \eqn{G(r)} should be evaluated. There is a sensible default.
@@ -105,9 +105,9 @@ Gest(X, r=NULL, breaks=NULL, \dots,
   may have arbitrary shape. 
 
   The argument \code{X} is interpreted as a point pattern object 
-  (of class \code{"ppp"}, see \code{\link{ppp.object}}) and can
+  (of class \code{"ppp"}, see \code{\link[spatstat.geom]{ppp.object}}) and can
   be supplied in any of the formats recognised
-  by \code{\link{as.ppp}()}. 
+  by \code{\link[spatstat.geom]{as.ppp}()}. 
 
   The estimation of \eqn{G} is hampered by edge effects arising from 
   the unobservability of points of the random pattern outside the window. 
@@ -145,7 +145,7 @@ Gest(X, r=NULL, breaks=NULL, \dots,
   nearest neighbours may lie outside \code{domain}).
   This is useful in bootstrap techniques. The argument \code{domain}
   should be a window (object of class \code{"owin"}) or something acceptable to
-  \code{\link{as.owin}}. It must be a subset of the
+  \code{\link[spatstat.geom]{as.owin}}. It must be a subset of the
   window of the point pattern \code{X}.
 
   The naive empirical distribution of distances from each point of
@@ -156,8 +156,8 @@ Gest(X, r=NULL, breaks=NULL, \dots,
   empirical \eqn{G} as if it were an unbiased estimator of  \eqn{G}.
 
   To simply compute the nearest neighbour distance for each point in the
-  pattern, use \code{\link{nndist}}. To determine which point is the
-  nearest neighbour of a given point, use \code{\link{nnwhich}}.
+  pattern, use \code{\link[spatstat.geom]{nndist}}. To determine which point is the
+  nearest neighbour of a given point, use \code{\link[spatstat.geom]{nnwhich}}.
 }
 \references{
     Baddeley, A.J. Spatial sampling and censoring.
@@ -204,14 +204,14 @@ Gest(X, r=NULL, breaks=NULL, \dots,
   but its maximum value may be less than \eqn{1}.
 }
 \seealso{
-  \code{\link{nndist}},
-  \code{\link{nnwhich}},
+  \code{\link[spatstat.geom]{nndist}},
+  \code{\link[spatstat.geom]{nnwhich}},
   \code{\link{Fest}},
   \code{\link{Jest}},
   \code{\link{Kest}},
-  \code{\link{km.rs}},
-  \code{\link{reduced.sample}},
-  \code{\link{kaplan.meier}}
+  \code{\link[spatstat.univar]{km.rs}},
+  \code{\link[spatstat.univar]{reduced.sample}},
+  \code{\link[spatstat.univar]{kaplan.meier}}
 }
 \examples{
   G <- Gest(cells)

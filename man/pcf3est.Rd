@@ -117,7 +117,7 @@
   and Rana Moyeed.
 }
 \seealso{
-  \code{\link{pp3}} to create a three-dimensional point
+  \code{\link[spatstat.geom]{pp3}} to create a three-dimensional point
   pattern (object of class \code{"pp3"}).
   
   \code{\link{F3est}},

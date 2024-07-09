@@ -20,7 +20,7 @@ rotmean(X, ..., origin, padzero=TRUE, Xname, result=c("fv", "im"), adjust=1)
   \item{origin}{
     Optional. Origin about which the rotations should be performed.
     Either a numeric vector or a character string as described
-    in the help for \code{\link{shift.owin}}.
+    in the help for \code{\link[spatstat.geom]{shift.owin}}.
   }
   \item{padzero}{
     Logical. If \code{TRUE} (the default), the value of \code{X}

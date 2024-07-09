@@ -17,7 +17,7 @@
     of \code{\link{quadrat.test}}.
   }
   \item{\dots}{
-    Additional arguments passed to \code{\link{plot.tess}} to
+    Additional arguments passed to \code{\link[spatstat.geom]{plot.tess}} to
     control the display of the quadrats.
   }
   \item{textargs}{
@@ -32,7 +32,7 @@
   \code{\link{quadrat.test}} and represents the result of
   a \eqn{\chi^2}{chi^2} test for a spatial point pattern.
 
-  The quadrats are first plotted using \code{\link{plot.tess}}.
+  The quadrats are first plotted using \code{\link[spatstat.geom]{plot.tess}}.
   Then in each quadrat, the observed and expected counts
   and the Pearson residual are displayed as text using
   \code{\link[graphics]{text.default}}.
@@ -47,15 +47,12 @@
 }
 \seealso{
   \code{\link{quadrat.test}},
-  \code{\link{plot.tess}},
+  \code{\link[spatstat.geom]{plot.tess}},
   \code{\link[graphics]{text.default}},
-  \code{\link{plot.quadratcount}}
+  \code{\link[spatstat.geom]{plot.quadratcount}}
 }
 \author{\adrian
-  
-  
   and \rolf
-  
 }
 \keyword{spatial}
 \keyword{htest}

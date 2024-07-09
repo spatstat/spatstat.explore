@@ -12,7 +12,7 @@
   \item{X}{The observed point pattern, 
     from which an estimate of \eqn{J(r)} will be computed.
     An object of class \code{"ppp"}, or data
-    in any format acceptable to \code{\link{as.ppp}()}.
+    in any format acceptable to \code{\link[spatstat.geom]{as.ppp}()}.
   }
   \item{\dots}{Ignored.}
   \item{eps}{
@@ -105,9 +105,9 @@
   may have arbitrary shape. 
 
   The argument \code{X} is interpreted as a point pattern object 
-  (of class \code{"ppp"}, see \code{\link{ppp.object}}) and can
+  (of class \code{"ppp"}, see \code{\link[spatstat.geom]{ppp.object}}) and can
   be supplied in any of the formats recognised by
-  \code{\link{as.ppp}()}. 
+  \code{\link[spatstat.geom]{as.ppp}()}. 
 
   The functions \code{\link{Fest}} and \code{\link{Gest}} are called to 
   compute estimates of \eqn{F(r)} and \eqn{G(r)} respectively.
@@ -224,9 +224,9 @@
   \code{\link{Fest}},
   \code{\link{Gest}},
   \code{\link{Kest}},
-  \code{\link{km.rs}},
-  \code{\link{reduced.sample}},
-  \code{\link{kaplan.meier}}
+  \code{\link[spatstat.univar]{km.rs}},
+  \code{\link[spatstat.univar]{reduced.sample}},
+  \code{\link[spatstat.univar]{kaplan.meier}}
 }
 \examples{
    J <- Jest(cells, 0.01)

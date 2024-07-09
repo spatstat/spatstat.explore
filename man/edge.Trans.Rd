@@ -94,10 +94,10 @@ rmax.Trans(W, g=setcov(W))
   \itemize{
     \item if \code{exact=TRUE}, the edge
     correction weights are computed exactly using 
-    \code{\link{overlap.owin}}, which can be quite slow.
+    \code{\link[spatstat.geom]{overlap.owin}}, which can be quite slow.
     \item if \code{exact=FALSE} (the default),
     the weights are computed rapidly by evaluating the
-    set covariance function \code{\link{setcov}}
+    set covariance function \code{\link[spatstat.geom]{setcov}}
     using the Fast Fourier Transform.
   }
   If any value of the edge correction weight exceeds \code{trim},
@@ -115,7 +115,7 @@ rmax.Trans(W, g=setcov(W))
   The value of \code{rmax.Trans} is the shortest distance from the
   origin \eqn{(0,0)} to the boundary of the support of
   the set covariance function of \code{W}. It is computed by pixel
-  approximation using \code{\link{setcov}}, unless \code{W} is a
+  approximation using \code{\link[spatstat.geom]{setcov}}, unless \code{W} is a
   rectangle, when \code{rmax.Trans(W)} is the length of the
   shortest side of the rectangle.
 }
@@ -131,7 +131,7 @@ rmax.Trans(W, g=setcov(W))
 \seealso{
   \code{\link{rmax.Trans}},
   \code{\link{edge.Ripley}},
-  \code{\link{setcov}},
+  \code{\link[spatstat.geom]{setcov}},
   \code{\link{Kest}}
 }
 \examples{

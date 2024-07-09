@@ -37,9 +37,9 @@
 }
 \seealso{
   \code{\link{quadrat.test}},
-  \code{\link{quadratcount}},
-  \code{\link{quadrats}},
-  \code{\link{quadratresample}},
+  \code{\link[spatstat.geom]{quadratcount}},
+  \code{\link[spatstat.geom]{quadrats}},
+  \code{\link[spatstat.random]{quadratresample}},
   \code{\link{chisq.test}},
   \code{\link{cdf.test}}.
 

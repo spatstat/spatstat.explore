@@ -45,7 +45,7 @@
     Internal use only.
   }
   \item{na.action}{
-    Character string (passed to \code{\link{is.marked.ppp}})
+    Character string (passed to \code{\link[spatstat.geom]{is.marked.ppp}})
     specifying what to do if the marks contain \code{NA} values.
   }
 }

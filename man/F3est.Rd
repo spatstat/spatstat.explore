@@ -144,10 +144,10 @@ F3est(X, ..., rmax = NULL, nrval = 128, vside = NULL,
   The default value of \code{vside} ensures that the total number of
   voxels is \code{2^22} or about 4 million.
   To change the default number of voxels, see
-  \code{\link{spatstat.options}("nvoxel")}.
+  \code{\link[spatstat.geom]{spatstat.options}("nvoxel")}.
 }
 \seealso{
-  \code{\link{pp3}} to create a three-dimensional point
+  \code{\link[spatstat.geom]{pp3}} to create a three-dimensional point
   pattern (object of class \code{"pp3"}).
   
   \code{\link{G3est}},

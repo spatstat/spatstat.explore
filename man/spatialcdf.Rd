@@ -26,7 +26,7 @@ spatialcdf(Z, weights = NULL, normalise = FALSE, ..., W = NULL, Zname = NULL)
     sum to 1.
   }
   \item{\dots}{
-    Arguments passed to \code{\link{as.mask}} to determine the pixel
+    Arguments passed to \code{\link[spatstat.geom]{as.mask}} to determine the pixel
     resolution, or extra arguments passed to \code{Z} if it is a function.
   }
   \item{W}{
@@ -53,7 +53,7 @@ spatialcdf(Z, weights = NULL, normalise = FALSE, ..., W = NULL, Zname = NULL)
   \code{weights} are multiplied by the pixel area.
   Then the weighted empirical cumulative distribution function
   of \code{Z} values
-  is computed using \code{\link{ewcdf}}. The resulting function
+  is computed using \code{\link[spatstat.univar]{ewcdf}}. The resulting function
   \eqn{F} is such that \eqn{F(t)} is the total weight (or weighted area)
   of the region of space where \eqn{Z \le t}{Z <= t}.
 
@@ -63,7 +63,7 @@ spatialcdf(Z, weights = NULL, normalise = FALSE, ..., W = NULL, Zname = NULL)
   quadrature points used to fit the model. The \code{weights} are
   multiplied by the weights of the quadrature points.
   Then the weighted empirical cumulative distribution of \code{Z} values
-  is computed using \code{\link{ewcdf}}. The resulting function
+  is computed using \code{\link[spatstat.univar]{ewcdf}}. The resulting function
   \eqn{F} is such that \eqn{F(t)} is the expected number of points
   in the point process that will fall in the region of space
   where \eqn{Z \le t}{Z <= t}.
@@ -84,7 +84,7 @@ spatialcdf(Z, weights = NULL, normalise = FALSE, ..., W = NULL, Zname = NULL)
   \spatstatAuthors.
 }
 \seealso{
-  \code{\link{ewcdf}},
+  \code{\link[spatstat.univar]{ewcdf}},
   \code{\link{cdf.test}}
 }
 \examples{

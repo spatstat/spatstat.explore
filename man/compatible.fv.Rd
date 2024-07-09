@@ -26,7 +26,7 @@
 
   This command tests whether such objects are compatible
   (so that, for example, they could be added or subtracted).
-  It is a method for the generic command \code{\link{compatible}}.
+  It is a method for the generic command \code{\link[spatstat.geom]{compatible}}.
   
   The functions are compatible if they have been evaluated at the
   same sequence of values of the argument \code{r}, and if the
@@ -40,10 +40,7 @@
   \code{\link{eval.fv}} 
 }
 \author{\adrian
-  
-  
   and \rolf
-  
 }
 \keyword{spatial}
 \keyword{manip}

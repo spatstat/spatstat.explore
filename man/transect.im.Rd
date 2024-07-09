@@ -82,7 +82,7 @@ transect.im(X, ..., from="bottomleft", to="topright",
   and \rolf
 }
 \seealso{
-  \code{\link{im}}
+  \code{\link[spatstat.geom]{im}}
 }
 \examples{
   Z <- bei.extra$elev

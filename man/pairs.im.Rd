@@ -85,9 +85,9 @@
   \code{\link{pairs.default}},
   \code{\link{panel.contour}},
   \code{\link{panel.image}},
-  \code{\link{plot.im}},
+  \code{\link[spatstat.geom]{plot.im}},
   \code{\link{cov.im}},
-  \code{\link{im}},
+  \code{\link[spatstat.geom]{im}},
   \code{\link{par}}
 }
 \examples{

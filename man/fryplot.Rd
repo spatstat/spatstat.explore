@@ -12,7 +12,7 @@ frypoints(X, from=NULL, to=NULL, dmax=Inf)
 \arguments{
   \item{X}{
     A point pattern (object of class \code{"ppp"}) or something
-    acceptable to \code{\link{as.ppp}}.
+    acceptable to \code{\link[spatstat.geom]{as.ppp}}.
   }
   \item{\dots}{Optional arguments to control the appearance of the
     plot.}

@@ -15,7 +15,7 @@ markconnect(X, i, j, r=NULL,
 \arguments{
   \item{X}{The observed point pattern.
     An object of class \code{"ppp"} or something acceptable to
-    \code{\link{as.ppp}}. 
+    \code{\link[spatstat.geom]{as.ppp}}. 
   }
   \item{i}{Number or character string identifying the type (mark value)
     of the points in \code{X} from which distances are measured.
@@ -92,7 +92,7 @@ markconnect(X, i, j, r=NULL,
   while smaller values indicate negative association.
 
   The argument \code{X} must be a point pattern (object of class
-  \code{"ppp"}) or any data that are acceptable to \code{\link{as.ppp}}.
+  \code{"ppp"}) or any data that are acceptable to \code{\link[spatstat.geom]{as.ppp}}.
   It must be a multitype point pattern (a marked point pattern
   with factor-valued marks).
 

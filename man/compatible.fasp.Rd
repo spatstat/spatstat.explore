@@ -18,7 +18,7 @@
 
   This command tests whether such objects are compatible
   (so that, for example, they could be added or subtracted).
-  It is a method for the generic command \code{\link{compatible}}.
+  It is a method for the generic command \code{\link[spatstat.geom]{compatible}}.
   
   The function arrays are compatible if the arrays have the same dimensions,
   and the corresponding elements in each cell of the array
@@ -31,11 +31,6 @@
 \seealso{
   \code{\link{eval.fasp}}
 }
-\author{\adrian
-  
-  
-  and \rolf
-  
-}
+\author{\adrian and \rolf}
 \keyword{spatial}
 \keyword{manip}

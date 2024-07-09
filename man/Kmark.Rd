@@ -18,7 +18,7 @@
 \arguments{
   \item{X}{The observed point pattern.
     An object of class \code{"ppp"} or something acceptable to
-    \code{\link{as.ppp}}. 
+    \code{\link[spatstat.geom]{as.ppp}}. 
   }
   \item{f}{Optional. Test function \eqn{f} used in the definition of the
     mark correlation function. An \R function with at least two

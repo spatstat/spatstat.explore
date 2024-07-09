@@ -14,7 +14,7 @@ from a point pattern in a window of arbitrary shape.
   \item{X}{The observed point pattern, 
     from which an estimate of \eqn{K(r)} will be computed.
     An object of class \code{"ppp"}, or data
-    in any format acceptable to \code{\link{as.ppp}()}.
+    in any format acceptable to \code{\link[spatstat.geom]{as.ppp}()}.
   }
   \item{\dots}{Ignored.}
   \item{r}{
@@ -112,9 +112,9 @@ from a point pattern in a window of arbitrary shape.
   of a stationary point process, given observation of the process
   inside a known, bounded window. 
   The argument \code{X} is interpreted as a point pattern object 
-  (of class \code{"ppp"}, see \code{\link{ppp.object}}) and can
+  (of class \code{"ppp"}, see \code{\link[spatstat.geom]{ppp.object}}) and can
   be supplied in any of the formats recognised by
-  \code{\link{as.ppp}()}.
+  \code{\link[spatstat.geom]{as.ppp}()}.
 
   The estimation of \eqn{K} is hampered by edge effects arising from 
   the unobservability of points of the random pattern outside the window. 
@@ -221,7 +221,7 @@ from a point pattern in a window of arbitrary shape.
   inside \code{domain} and the second point is unrestricted.
   This is useful in bootstrap techniques. The argument \code{domain}
   should be a window (object of class \code{"owin"}) or something acceptable to
-  \code{\link{as.owin}}. It must be a subset of the
+  \code{\link[spatstat.geom]{as.owin}}. It must be a subset of the
   window of the point pattern \code{X}.
 
   The estimator \code{Kest} ignores marks.
@@ -324,7 +324,7 @@ Baddeley, A.J. Spatial sampling and censoring.
   \code{\link{Kmulti}} for counterparts of the \eqn{K} function
   for multitype point patterns.
   
-  \code{\link{reduced.sample}} for the calculation of reduced sample
+  \code{\link[spatstat.univar]{reduced.sample}} for the calculation of reduced sample
   estimators.
 }
 \examples{

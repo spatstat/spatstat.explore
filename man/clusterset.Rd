@@ -41,7 +41,7 @@
     The default is initially set to \code{FALSE}.
   }
   \item{\dots}{
-    Optional arguments passed to \code{\link{as.mask}} to control the
+    Optional arguments passed to \code{\link[spatstat.geom]{as.mask}} to control the
     pixel resolution if \code{exact=FALSE}.
   }
 }

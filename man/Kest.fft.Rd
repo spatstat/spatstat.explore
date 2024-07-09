@@ -13,7 +13,7 @@ using the Fast Fourier Transform.
   \item{X}{The observed point pattern, 
     from which an estimate of \eqn{K(r)} will be computed.
     An object of class \code{"ppp"}, or data
-    in any format acceptable to \code{\link{as.ppp}()}.
+    in any format acceptable to \code{\link[spatstat.geom]{as.ppp}()}.
   }
   \item{sigma}{
     Standard deviation of the isotropic Gaussian
@@ -24,7 +24,7 @@ using the Fast Fourier Transform.
     should be evaluated. There is a sensible default.
   }
   \item{\dots}{
-    Arguments passed to \code{\link{as.mask}} determining the
+    Arguments passed to \code{\link[spatstat.geom]{as.mask}} determining the
     spatial resolution for the FFT calculation.
   }
   \item{breaks}{
@@ -58,7 +58,7 @@ using the Fast Fourier Transform.
   The result is an approximation whose accuracy depends on the
   resolution of the pixel raster. The resolution is controlled
   by the arguments \code{\dots}, or by setting the parameter \code{npixel} in 
-  \code{\link{spatstat.options}}.
+  \code{\link[spatstat.geom]{spatstat.options}}.
 }
 \references{
   Cressie, N.A.C. \emph{Statistics for spatial data}.
@@ -87,7 +87,7 @@ using the Fast Fourier Transform.
 \seealso{
   \code{\link{Kest}},
   \code{\link{Kmeasure}},
-  \code{\link{spatstat.options}}
+  \code{\link[spatstat.geom]{spatstat.options}}
 }
 \examples{
  pp <- runifpoint(10000)

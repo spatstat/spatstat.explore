@@ -174,7 +174,7 @@ Kcross.inhom(X, i, j, lambdaI=NULL, lambdaJ=NULL, \dots,  r=NULL, breaks=NULL,
   suggest dependence between the points of types \eqn{i} and \eqn{j}.
 
   The argument \code{X} must be a point pattern (object of class
-  \code{"ppp"}) or any data that are acceptable to \code{\link{as.ppp}}.
+  \code{"ppp"}) or any data that are acceptable to \code{\link[spatstat.geom]{as.ppp}}.
   It must be a marked point pattern, and the mark vector
   \code{X$marks} must be a factor.
 

@@ -19,7 +19,7 @@
     Standard deviation of isotropic Gaussian smoothing kernel.
   }
   \item{\dots}{
-    Extra arguments, including arguments passed to \code{\link{as.mask}}
+    Extra arguments, including arguments passed to \code{\link[spatstat.geom]{as.mask}}
     to determine the resolution of the resulting image.
   }
   \item{weights}{
@@ -57,7 +57,7 @@
   \itemize{
     \item if \code{method="FFT"} (the default),
     the line segments are discretised
-    using \code{\link{pixellate.psp}}, then the Fast Fourier Transform
+    using \code{\link[spatstat.geom]{pixellate.psp}}, then the Fast Fourier Transform
     is used to calculate the convolution. This method is the fastest,
     but is slightly less accurate. Accuracy can be improved by
     increasing pixel resolution.
@@ -88,8 +88,8 @@
   }
 }
 \seealso{
-  \code{\link{psp.object}},
-  \code{\link{im.object}},
+  \code{\link[spatstat.geom]{psp.object}},
+  \code{\link[spatstat.geom]{im.object}},
   \code{\link{density}}
 }
 \examples{

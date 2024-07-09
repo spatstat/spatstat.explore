@@ -126,7 +126,7 @@ cdf.test(...)
   observation window are evaluated,
   weighted according to the point process intensity of the fitted model,
   and compiled into a cumulative distribution function \eqn{F} using
-  \code{\link{ewcdf}}.
+  \code{\link[spatstat.univar]{ewcdf}}.
 
   The probability integral transformation is then applied:
   the values of the \code{covariate} at the original data points

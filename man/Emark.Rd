@@ -20,7 +20,7 @@ Vmark(X, r=NULL,
 \arguments{
   \item{X}{The observed point pattern.
     An object of class \code{"ppp"} or something acceptable to
-    \code{\link{as.ppp}}. The pattern should have numeric marks.
+    \code{\link[spatstat.geom]{as.ppp}}. The pattern should have numeric marks.
   }
   \item{r}{Optional. Numeric vector. The values of the argument \eqn{r}
     at which the function \eqn{E(r)} or \eqn{V(r)} should be evaluated.
@@ -101,7 +101,7 @@ Vmark(X, r=NULL,
   constant (not depending on \eqn{r}). See Schlather et al (2004).
 
   The argument \code{X} must be a point pattern (object of class
-  \code{"ppp"}) or any data that are acceptable to \code{\link{as.ppp}}.
+  \code{"ppp"}) or any data that are acceptable to \code{\link[spatstat.geom]{as.ppp}}.
   It must be a marked point pattern with numeric marks.
 
   The argument \code{r} is the vector of values for the

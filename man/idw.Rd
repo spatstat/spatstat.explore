@@ -17,7 +17,7 @@ idw(X, power=2, at=c("pixels", "points"), ..., se=FALSE)
     only at the points of \code{X} (\code{at="points"}).
     String is partially matched.
   }
-  \item{\dots}{Arguments passed to \code{\link{as.mask}}
+  \item{\dots}{Arguments passed to \code{\link[spatstat.geom]{as.mask}}
     to control the pixel resolution of the result.}
   \item{se}{
     Logical value specifying whether to calculate a standard error.
@@ -46,7 +46,7 @@ idw(X, power=2, at=c("pixels", "points"), ..., se=FALSE)
   is the Euclidean distance from \eqn{u} to \eqn{x_i}{x[i]}.
   
   The argument \code{X} must be a marked point pattern (object
-  of class \code{"ppp"}, see \code{\link{ppp.object}}).
+  of class \code{"ppp"}, see \code{\link[spatstat.geom]{ppp.object}}).
   The points of the pattern are taken to be the
   observation locations \eqn{x_i}{x[i]}, and the marks of the pattern
   are taken to be the numeric values \eqn{v_i}{v[i]} observed at these
@@ -59,7 +59,7 @@ idw(X, power=2, at=c("pixels", "points"), ..., se=FALSE)
   If \code{at="pixels"} (the default), the smoothed mark value
   is calculated at a grid of pixels, and the result is a pixel image.
   The arguments \code{\dots} control the pixel resolution.
-  See \code{\link{as.mask}}.
+  See \code{\link[spatstat.geom]{as.mask}}.
 
   If \code{at="points"}, the smoothed mark values are calculated
   at the data points only, using a leave-one-out rule (the mark value
@@ -106,11 +106,12 @@ idw(X, power=2, at=c("pixels", "points"), ..., se=FALSE)
 }
 \seealso{
   \code{\link{density.ppp}},
-  \code{\link{ppp.object}},
-  \code{\link{im.object}}.
+  \code{\link[spatstat.geom]{ppp.object}},
+  \code{\link[spatstat.geom]{im.object}}.
 
-  See \code{\link{Smooth.ppp}} for kernel smoothing
-  and \code{\link{nnmark}} for nearest-neighbour interpolation.
+  See \code{\link{Smooth.ppp}} for kernel smoothing,
+  \code{\link{SpatialMedian.ppp}} for median smoothing
+  and \code{\link[spatstat.geom]{nnmark}} for nearest-neighbour interpolation.
   
   To perform other kinds of interpolation, see also the \code{akima} package.
 }

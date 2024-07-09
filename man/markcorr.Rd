@@ -16,7 +16,7 @@ markcorr(X, f = function(m1, m2) { m1 * m2}, r=NULL,
 \arguments{
   \item{X}{The observed point pattern.
     An object of class \code{"ppp"} or something acceptable to
-    \code{\link{as.ppp}}. 
+    \code{\link[spatstat.geom]{as.ppp}}. 
   }
   \item{f}{Optional. Test function \eqn{f} used in the definition of the
     mark correlation function. An \R function with at least two
@@ -160,7 +160,7 @@ markcorr(X, f = function(m1, m2) { m1 * m2}, r=NULL,
   on the choice of function \eqn{f}.
 
   The argument \code{X} must be a point pattern (object of class
-  \code{"ppp"}) or any data that are acceptable to \code{\link{as.ppp}}.
+  \code{"ppp"}) or any data that are acceptable to \code{\link[spatstat.geom]{as.ppp}}.
   It must be a marked point pattern.
 
   The argument \code{f} determines the function to be applied to

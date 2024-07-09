@@ -131,7 +131,7 @@ markvar(X, sigma=NULL, ..., weights=NULL, varcov=NULL)
   least squares cross-validation (see below).
   
   The argument \code{X} must be a marked point pattern (object
-  of class \code{"ppp"}, see \code{\link{ppp.object}}).
+  of class \code{"ppp"}, see \code{\link[spatstat.geom]{ppp.object}}).
   The points of the pattern are taken to be the
   observation locations \eqn{x_i}{x[i]}, and the marks of the pattern
   are taken to be the numeric values \eqn{v_i}{v[i]} observed at these
@@ -176,7 +176,7 @@ markvar(X, sigma=NULL, ..., weights=NULL, varcov=NULL)
   If the chosen bandwidth \code{sigma} is very small,
   kernel smoothing is mathematically equivalent
   to nearest-neighbour interpolation; the result will
-  be computed by \code{\link{nnmark}}. This is
+  be computed by \code{\link[spatstat.geom]{nnmark}}. This is
   unless \code{at="points"} and \code{leaveoneout=FALSE},
   when the original mark values are returned.
 }
@@ -214,9 +214,9 @@ markvar(X, sigma=NULL, ..., weights=NULL, varcov=NULL)
   
   \code{\link{density.ppp}},
   \code{\link{bw.smoothppp}},
-  \code{\link{nnmark}},
-  \code{\link{ppp.object}},
-  \code{\link{im.object}}.
+  \code{\link[spatstat.geom]{nnmark}},
+  \code{\link[spatstat.geom]{ppp.object}},
+  \code{\link[spatstat.geom]{im.object}}.
 
   See \code{\link{idw}} for inverse-distance weighted smoothing.
   
