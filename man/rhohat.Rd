@@ -517,8 +517,8 @@ rhohat(object, covariate, ...)
   Nonparametric maximum likelihood algorithm by \adrian.
 }
 \seealso{
-  \code{\link{rho2hat}},
-  \code{\link{methods.rhohat}},
+  \code{\link[spatstat.explore]{rho2hat}},
+  \code{\link[spatstat.explore]{methods.rhohat}},
   \code{\link[spatstat.model]{parres}}.
 
   See \code{\link[spatstat.model]{ppm}} for a parametric method for the same problem.

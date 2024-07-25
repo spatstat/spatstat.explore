@@ -114,7 +114,7 @@ quadrat.test(X, ...)
     if \code{X} is a split point pattern, then for each of the
     component point patterns (taken separately) we test 
     the null hypotheses of Complete Spatial Randomness.
-    See \code{\link{quadrat.test.splitppp}} for documentation.
+    See \code{\link[spatstat.explore]{quadrat.test.splitppp}} for documentation.
     \item
     If \code{X} is a fitted point process model, then it should be
     a Poisson point process model. The 
@@ -198,12 +198,12 @@ quadrat.test(X, ...)
   counts and the Pearson residuals. See the examples.
 }
 \seealso{
-  \code{\link{quadrat.test.splitppp}},
+  \code{\link[spatstat.explore]{quadrat.test.splitppp}},
   \code{\link[spatstat.geom]{quadratcount}},
   \code{\link[spatstat.geom]{quadrats}},
   \code{\link[spatstat.random]{quadratresample}},
   \code{\link{chisq.test}},
-  \code{\link{cdf.test}}.
+  \code{\link[spatstat.explore]{cdf.test}}.
 
   To test a Poisson point process model against a specific alternative,
   use \code{\link[spatstat.model]{anova.ppm}}.

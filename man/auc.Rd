@@ -39,7 +39,7 @@ auc(X, \dots)
 }
 \details{
   This command computes the AUC, the area under the Receiver Operating
-  Characteristic curve. The ROC itself is computed by \code{\link{roc}}.
+  Characteristic curve. The ROC itself is computed by \code{\link[spatstat.explore]{roc}}.
 
   For a point pattern \code{X} and a covariate \code{Z}, the
   AUC is a numerical index that measures the ability of the 
@@ -80,7 +80,7 @@ auc(X, \dots)
   \spatstatAuthors.
 }
 \seealso{
-  \code{\link{roc}}
+  \code{\link[spatstat.explore]{roc}}
 }
 \examples{
   auc(swedishpines, "x")

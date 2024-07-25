@@ -156,7 +156,7 @@ cdf.test(...)
   gives an informative summary of the test outcome.
 
   The return value also belongs to the class \code{"cdftest"}
-  for which there is a plot method \code{\link{plot.cdftest}}.
+  for which there is a plot method \code{\link[spatstat.explore]{plot.cdftest}}.
   The plot method displays the empirical cumulative distribution
   function of the covariate at the data points, and the predicted
   cumulative distribution function of the covariate under the model,
@@ -194,9 +194,9 @@ cdf.test(...)
   and \rolf
 }
 \seealso{
-  \code{\link{plot.cdftest}},
-  \code{\link{quadrat.test}},
-  \code{\link{berman.test}},
+  \code{\link[spatstat.explore]{plot.cdftest}},
+  \code{\link[spatstat.explore]{quadrat.test}},
+  \code{\link[spatstat.explore]{berman.test}},
   \code{\link[stats]{ks.test}},
   \code{\link[goftest]{cvm.test}},
   \code{\link[goftest]{ad.test}},

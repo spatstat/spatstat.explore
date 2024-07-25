@@ -39,7 +39,7 @@
 }
 \details{
   This command computes Receiver Operating
-  Characteristic curve. The area under the ROC is computed by \code{\link{auc}}.
+  Characteristic curve. The area under the ROC is computed by \code{\link[spatstat.explore]{auc}}.
 
   For a point pattern \code{X} and a covariate \code{Z}, the
   ROC is a plot showing the ability of the 
@@ -86,7 +86,7 @@
 \spatstatAuthors.
 }
 \seealso{
-\code{\link{auc}}
+\code{\link[spatstat.explore]{auc}}
 }
 \examples{
   plot(roc(swedishpines, "x"))
