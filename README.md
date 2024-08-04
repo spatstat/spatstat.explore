@@ -41,15 +41,21 @@ For a full list of functions, see the help file for `spatstat.explore-package`.
 - scan statistic
 - cluster detection (Allard-Fraley cluster set, Byers-Raftery cleaning)
 
-#### Nonparametric estimation
+#### Nonparametric estimation of trend
 
 - kernel estimation of intensity of a point pattern
 - kernel smoothing of mark values attached to point locations
 - kernel estimation of relative risk
 - kernel smoothing of a line segment pattern
 - bandwidth selection
+- spatial CDF 
 - nonparametric estimation of intensity as a function of a covariate
 - ROC curve, AUC
+- Sufficient Data Reduction
+- optimal thresholding of a covariate
+
+#### Nonparametric estimation of dependence between points
+
 - summary functions (K-function, pair correlation function,
 empty space function, nearest neighbour distance function, J-function, etc)
 and multi-type versions of these functions
@@ -58,6 +64,7 @@ and multi-type versions of these functions
 - simulation envelopes of summary functions
 - manipulation of summary functions (plot, evaluate, differentiate, smooth etc)
 - spatial bootstrap
+
 
 #### Formal inference
 

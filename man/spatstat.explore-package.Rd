@@ -204,7 +204,10 @@
     \code{\link[spatstat.explore]{rhohat}} \tab Kernel estimate of covariate effect\cr
     \code{\link[spatstat.explore]{rho2hat}} \tab Kernel estimate of effect of two covariates\cr
     \code{\link[spatstat.explore]{spatialcdf}} \tab Spatial cumulative distribution function\cr
-    \code{\link[spatstat.explore]{roc}} \tab Receiver operating characteristic curve
+    \code{\link[spatstat.explore]{roc}} \tab Receiver operating characteristic curve \cr
+    \code{\link[spatstat.explore]{sdr}} \tab Sufficient Data Reduction \cr
+    \code{\link[spatstat.explore]{thresholdSelect}} \tab optimal
+    thresholding of a predictor 
   }
 
   \bold{Summary statistics for a point pattern:}
