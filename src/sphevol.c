@@ -1,9 +1,9 @@
-#include <math.h>
 #include <R.h>
+#include <Rmath.h>
 #include "geom3.h"
 /*
 
-	$Revision: 1.3 $ 	$Date: 2022/10/22 02:32:10 $
+	$Revision: 1.4 $ 	$Date: 2024/08/19 23:51:38 $
 
 	Routine for calculating ABSOLUTE volume of intersection 
 	between sphere and box
@@ -13,7 +13,7 @@
 # /////////////////////////////////////////////
 # AUTHOR: Adrian Baddeley, CWI, Amsterdam, 1991.
 # 
-# MODIFIED BY: Adrian Baddeley, Perth 2009
+# MODIFIED BY: Adrian Baddeley, Perth 2009, 2024
 #
 # This software is distributed free
 # under the conditions that
@@ -54,7 +54,7 @@ sphevol(
 	double v3(double a, int sa, double b, int sb, double c, int sc, double r);
 
 	rcubed = r * r * r;
-	spherevol = (4.0/3.0) * PI * rcubed;
+	spherevol = (4.0/3.0) * M_PI * rcubed;
 
 	p[1] = box->x0 - point->x;
 	p[2] = box->y0 - point->y;
@@ -193,12 +193,11 @@ u(double a, double b, double c)
 		return(0.0);
 
 	return(
-		(PI/12.0) * (2.0 - 3.0 * (a + b + c)
+		(M_PI/12.0) * (2.0 - 3.0 * (a + b + c)
 			  	+ (a * a * a + b * b * b + c * c * c))
-
 		+ w(a,b) + w(b,c) + w(a,c)
 		- a * b * c
-	);
+	       );
 }
 	
 
