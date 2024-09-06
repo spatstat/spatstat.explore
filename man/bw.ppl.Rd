@@ -9,7 +9,7 @@
 }
 \usage{
    bw.ppl(X, \dots, srange=NULL, ns=16, sigma=NULL, varcov1=NULL,
-          weights=NULL, shortcut=FALSE, warn=TRUE)
+          weights=NULL, shortcut=TRUE, warn=TRUE)
 }
 \arguments{
   \item{X}{
@@ -81,9 +81,9 @@
   which can be plotted to show the (rescaled) mean-square error
   as a function of \code{sigma}.
 
-  If \code{shortcut=TRUE}, the computation is accelerated by
+  If \code{shortcut=TRUE} (the default), the computation is accelerated by
   omitting the integral term in the equation above. This is valid
-  because the integral is approximately constant.
+  because the integral is approximately constant. 
 }
 \section{Anisotropic Smoothing}{
   Anisotropic kernel smoothing is available in \code{\link{density.ppp}} using
@@ -118,7 +118,7 @@
   }
   \testonly{
     b1 <- bw.ppl(redwood, srange=c(0.03, 0.07), ns=2)
-    b2 <- bw.ppl(redwood, srange=c(0.03, 0.07), ns=2, shortcut=TRUE)
+    b2 <- bw.ppl(redwood, srange=c(0.03, 0.07), ns=2, shortcut=FALSE)
   }
 }
 \references{

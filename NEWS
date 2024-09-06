@@ -1,4 +1,15 @@
 
+        CHANGES IN spatstat.explore VERSION 3.3-2.001
+
+OVERVIEW
+
+    o Tweaks to bandwidth selection.
+
+SIGNIFICANT USER-VISIBLE CHANGES
+
+    o bw.ppl
+    Argument 'shortcut' now defaults to TRUE.
+
         CHANGES IN spatstat.explore VERSION 3.3-2
 
 OVERVIEW

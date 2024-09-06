@@ -3,11 +3,11 @@
 #'
 #'   Likelihood cross-validation for kernel smoother of point pattern
 #'
-#'   $Revision: 1.15 $ $Date: 2024/06/08 23:59:34 $
+#'   $Revision: 1.17 $ $Date: 2024/09/06 07:09:13 $
 #'
 
 bw.ppl <- function(X, ..., srange=NULL, ns=16, sigma=NULL, varcov1=NULL, 
-                   weights=NULL, shortcut=FALSE, warn=TRUE) {
+                   weights=NULL, shortcut=TRUE, warn=TRUE) {
   stopifnot(is.ppp(X))
   if(!is.null(varcov1))
     check.nmatrix(varcov1, 2, things="spatial dimensions", mname="varcov1")
@@ -44,6 +44,7 @@ bw.ppl <- function(X, ..., srange=NULL, ns=16, sigma=NULL, varcov1=NULL,
       cv[i] <- sum(log(lamx))
     }
   } else {
+    IntLam <- numeric(ns)
     for(i in 1:ns) {
       if(is.null(varcov1)) {
         si <- sigma[i]
@@ -57,7 +58,9 @@ bw.ppl <- function(X, ..., srange=NULL, ns=16, sigma=NULL, varcov1=NULL,
                       weights=weights, ...)
       lam <- density(X, sigma=si, varcov=vi,
                      weights=weights, ...)
-      cv[i] <- sum(log(lamx)) - integral.im(lam)
+      mu <- integral.im(lam)
+      cv[i] <- sum(log(lamx)) - mu
+      IntLam[i] <- mu
     }
   }
   result <- bw.optim(cv, sigma, iopt=which.max(cv),
@@ -68,6 +71,8 @@ bw.ppl <- function(X, ..., srange=NULL, ns=16, sigma=NULL, varcov1=NULL,
                      hargnames="srange",
                      unitname=if(is.null(varcov1)) unitname(X) else NULL,
                      template=varcov1, exponent=2)
+  if(!shortcut) 
+    attr(result, "info") <- list(IntegralLambda=IntLam)
   return(result)
 }
 
