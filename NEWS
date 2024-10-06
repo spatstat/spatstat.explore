@@ -1,9 +1,27 @@
 
-        CHANGES IN spatstat.explore VERSION 3.3-2.001
+        CHANGES IN spatstat.explore VERSION 3.3-2.002
 
 OVERVIEW
 
+    o relative risk estimation using diffusion.
+
+    o smoothing using diffusion.
+
     o Tweaks to bandwidth selection.
+
+NEW FUNCTIONS
+
+    o relriskHeat, relriskHeat.ppp
+    Relative risk estimation using diffusion.
+
+    o blurHeat, blurHeat.im
+    Image smoothing using diffusion.
+
+    o SmoothHeat, SmoothHeat.ppp
+    Smoothing numerical values observed at points, using diffusion.
+
+    o bw.relriskHeatppp
+    Bandwidth selection for relriskHeat.ppp
 
 SIGNIFICANT USER-VISIBLE CHANGES
 

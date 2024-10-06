@@ -3,6 +3,10 @@
 #'
 #'   Diffusion estimator of density/intensity
 #'
+#'   Copyright (C) 2018-2024 Adrian Baddeley, Tilman Davies and Suman Rakshit
+#' 
+#'   Licence: GNU Public Licence >= 2
+#'
 
 densityHeat <- function(x, sigma, ...) {
   UseMethod("densityHeat")
