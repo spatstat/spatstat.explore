@@ -1,5 +1,5 @@
 ## scriptUtils.R
-##       $Revision: 1.11 $ $Date: 2022/02/09 00:52:53 $
+##       $Revision: 1.13 $ $Date: 2024/12/27 08:27:27 $
 
 ## slick way to use precomputed data
 ##    If the named file exists, it is loaded, giving access to the data.
@@ -10,7 +10,7 @@ reload.or.compute <- function(filename, expr,
                               objects=NULL,
                               context=parent.frame(),
                               destination=parent.frame(),
-                              force=FALSE, verbose=TRUE) {
+                              force=FALSE, verbose=TRUE, exclude=NULL) {
   stopifnot(is.character(filename) && length(filename) == 1)
   if(force || !file.exists(filename)) {
     if(verbose) splat("Recomputing...")
@@ -22,6 +22,8 @@ reload.or.compute <- function(filename, expr,
     ## default is to save all objects that were created
     if(is.null(objects))
       objects <- ls(envir=en)
+    ## exclude specified objects?
+    objects <- setdiff(objects, exclude)
     ## save them in the designated file
     save(list=objects, file=filename, compress=TRUE, envir=en)
     ## assign them into the parent frame 
@@ -33,6 +35,8 @@ reload.or.compute <- function(filename, expr,
       splat("Reloading from", sQuote(filename),
             "saved at", file.mtime(filename))
     result <- load(filename, envir=destination)
+    ## expect to find all objects listed in 'objects' and not excluded
+    objects <- setdiff(objects, exclude)
     if(!all(ok <- (objects %in% result))) {
       nbad <- sum(!ok)
       warning(paste(ngettext(nbad, "object", "objects"),

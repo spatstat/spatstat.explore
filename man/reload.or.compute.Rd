@@ -12,7 +12,7 @@
 reload.or.compute(filename, expr, objects = NULL,
                   context = parent.frame(), 
                   destination = parent.frame(),
-                  force=FALSE, verbose=TRUE)
+                  force=FALSE, verbose=TRUE, exclude=NULL)
 }
 \arguments{
   \item{filename}{
@@ -26,6 +26,11 @@ reload.or.compute(filename, expr, objects = NULL,
     in \code{filename} after evaluating \code{expr},
     or names of objects that should be present in \code{filename}
     when loaded.
+  }
+  \item{exclude}{
+    Optional character vector of names of objects
+    that should \bold{not} be saved in \code{filename}
+    and are \bold{not} expected to be present in \code{filename}.
   }
   \item{context}{
     Environment containing objects that are mentioned in \code{expr}
@@ -83,8 +88,10 @@ reload.or.compute(filename, expr, objects = NULL,
   reload.or.compute(myfile, {
      # some very long computation ending with ..
      x <- 42
+     intermediateWorking <- 12345
      y <- sqrt(x)
-  })
+  }, exclude="intermediateWorking")
+  ## the values x and y are saved
 }
 \author{
   \adrian

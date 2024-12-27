@@ -1,4 +1,15 @@
 
+        CHANGES IN spatstat.explore VERSION 3.3-3.001
+
+OVERVIEW
+
+    o Minor improvements
+    
+SIGNIFICANT USER-VISIBLE CHANGES
+
+    o reload.or.compute
+    New argument 'exclude' specifies which objects should not be saved.
+
         CHANGES IN spatstat.explore VERSION 3.3-3
 
 OVERVIEW
