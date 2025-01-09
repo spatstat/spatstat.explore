@@ -1,12 +1,14 @@
 \name{reload.or.compute}
 \alias{reload.or.compute}
 \title{
-  Compute Unless Previously Saved
+  Perform Computations or Retrieve Results From File
 }
 \description{
+  This utility either performs computations and saves the results in
+  a file, or retrieves the results of previous computations stored in a file.
   If the designated file does not yet exist,
-  evaluate the expression and save the results in the file.
-  If the file already exists, re-load the results from the file.
+  the expression will be evaluated, and the results will be saved in the file.
+  If the file already exists, the results will be re-loaded from the file.
 }
 \usage{
 reload.or.compute(filename, expr, objects = NULL,
@@ -53,20 +55,27 @@ reload.or.compute(filename, expr, objects = NULL,
   time-consuming computations. It would typically be
   used in an \R script file or an \code{\link[utils]{Sweave}} document.
 
-  If the file called \code{filename} does not yet exist,
+  If the file called \code{filename} does not yet exist
+  (or if \code{force=TRUE}),
   then \code{expr} will be evaluated
-  and the results will be saved in \code{filename}.
+  and the results will be saved in \code{filename}
+  using \code{\link[base]{save}}.
+  By default, all objects that were created by evaluating the expression
+  will be saved in the file.
   The optional argument \code{objects} specifies which results should be saved
-  to the file: the default is to save all objects that were created
-  by evaluating the expression. 
+  to the file. The optional argument \code{exclude}
+  specifies results which should \emph{not} be saved.
 
-  If the file called \code{filename} already exists, then it
-  will be loaded.
+  If the file called \code{filename} already exists
+  (and if \code{force=FALSE}, the default), then this file
+  will be loaded into \R using \code{\link{load}}.
   The optional argument \code{objects} specifies the names
-  of objects that should be present in the file; a warning is issued
+  of objects that must be present in the file; a warning is issued
   if any of them are missing.
 
-  The resulting objects can be assigned into any desired \code{destination}.
+  The resulting objects (either evaluated or loaded from file)
+  can be assigned into any desired
+  \code{destination} environment.
   The default behaviour is equivalent to evaluating \code{expr}
   in the current environment.
 
