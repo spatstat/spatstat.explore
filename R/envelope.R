@@ -3,7 +3,7 @@
 #
 #   computes simulation envelopes 
 #
-#   $Revision: 2.125 $  $Date: 2023/08/15 08:07:52 $
+#   $Revision: 2.128 $  $Date: 2025/01/27 08:56:27 $
 #
 
 
@@ -496,8 +496,12 @@ envelopeEngine <-
       funX <- funX[, c(argname, valname, "theo")]
     else
       funX <- funX[, c(argname, valname)]
-    # apply the transformation to it
+    ## save name of function before transformation
+    fname.orig <- attr(funX, "fname")
+    ## apply the transformation to it
     funX <- eval(transform.funX)
+  } else {
+    fname.orig <- NULL
   }
     
   argvals <- funX[[argname]]
@@ -878,6 +882,7 @@ envelopeEngine <-
                             scale=scale, clamp=clamp,
                             csr=csr, use.theory=use.theory,
                             nrank=nrank, ginterval=ginterval, nSD=nSD,
+                            fname.orig=fname.orig, transform=transform,
                             Yname=Yname, do.pwrong=do.pwrong,
                             weights=weights, gaveup=gaveup)
 
@@ -1130,6 +1135,8 @@ envelope.matrix <- function(Y, ...,
                             Yname=NULL,
                             argname=NULL,
                             arg.desc=NULL,
+                            fname.orig=NULL,
+                            transform=NULL,
                             do.pwrong=FALSE,
                             weights=NULL,
                             precomputed=NULL,
@@ -1188,8 +1195,13 @@ envelope.matrix <- function(Y, ...,
                 yexp=yexp,
                 fname="f")
   }
-
-
+  ## for use in making labels
+  ## doesn't work at present!
+  ## FNAME <- fname.orig %orifnull% fname
+  ## TRA   <- transform
+  FNAME <- fname
+  TRA <- NULL
+  
   NAvector <- rep(NA_real_, length(argvals))
   
   if(!cheat) {
@@ -1531,16 +1543,17 @@ envelope.matrix <- function(Y, ...,
                                      hiCI=hiCI)
              loCIlabel <-
                if(alternative == "greater" && !gaveup) "-infinity" else
-               makefvlabel(NULL, NULL, fname, "loCI", argname=argname)
+               makefvlabel(NULL, NULL, FNAME, "loCI", argname=argname, pre=TRA)
              hiCIlabel <-
                if(alternative == "less" && !gaveup) "infinity" else 
-               makefvlabel(NULL, NULL, fname, "hiCI", argname=argname)
-             mslabl <- c(makefvlabel(NULL, "bar", fname, argname=argname),
-                         makefvlabel("var", "hat", fname, argname=argname),
-                         makefvlabel("res", "hat", fname, argname=argname),
-                         makefvlabel("stdres", "hat", fname, argname=argname),
-                         loCIlabel,
-                         hiCIlabel)
+               makefvlabel(NULL, NULL, FNAME, "hiCI", argname=argname, pre=TRA)
+             mslabl <- c(
+               makefvlabel(NULL, "bar", FNAME, argname=argname, pre=TRA),
+               makefvlabel("var", "hat", FNAME, argname=argname, pre=TRA),
+               makefvlabel("res", "hat", FNAME, argname=argname, pre=TRA),
+               makefvlabel("stdres", "hat", FNAME, argname=argname, pre=TRA),
+               loCIlabel,
+               hiCIlabel)
              wted <- if(use.weights) "weighted " else NULL
              msdesc <- c(paste0(wted, "sample mean of %s from simulations"),
                          paste0(wted, "sample variance of %s from simulations"),
@@ -1562,15 +1575,16 @@ envelope.matrix <- function(Y, ...,
                                      hiCI=hiCI)
              loCIlabel <-
                if(alternative == "greater" && !gaveup) "-infinity" else
-               makefvlabel(NULL, NULL, fname, "loCI", argname=argname)
+               makefvlabel(NULL, NULL, FNAME, "loCI", argname=argname, pre=TRA)
              hiCIlabel <-
                if(alternative == "less" && !gaveup) "infinity" else 
-               makefvlabel(NULL, NULL, fname, "hiCI", argname=argname)
-             mslabl <- c(makefvlabel("var", "hat", fname, argname=argname),
-                         makefvlabel("res", "hat", fname, argname=argname),
-                         makefvlabel("stdres", "hat", fname, argname=argname),
-                         loCIlabel,
-                         hiCIlabel)
+               makefvlabel(NULL, NULL, FNAME, "hiCI", argname=argname, pre=TRA)
+             mslabl <- c(
+               makefvlabel("var", "hat", FNAME, argname=argname, pre=TRA),
+               makefvlabel("res", "hat", FNAME, argname=argname, pre=TRA),
+               makefvlabel("stdres", "hat", FNAME, argname=argname, pre=TRA),
+               loCIlabel,
+               hiCIlabel)
              msdesc <- c(paste0(if(use.weights) "weighted " else NULL,
                                 "sample variance of %s from simulations"),
                          "raw residual",
@@ -1603,19 +1617,19 @@ envelope.matrix <- function(Y, ...,
 
   if(use.theory) {
     # reference is computed curve `theo'
-    reflabl <- makefvlabel(NULL, NULL, fname, "theo", argname=argname)
+    reflabl <- makefvlabel(NULL, NULL, FNAME, "theo", argname=argname, pre=TRA)
     refdesc <- paste0("theoretical value of %s", if(csr) " for CSR" else NULL)
   } else {
     # reference is sample mean of simulations
-    reflabl <- makefvlabel(NULL, "bar", fname, argname=argname)
+    reflabl <- makefvlabel(NULL, "bar", FNAME, argname=argname, pre=TRA)
     refdesc <- paste0(if(use.weights) "weighted " else NULL,
                       "sample mean of %s from simulations")
   }
 
   lolabl <- if(alternative == "greater" && !gaveup) "-infinity" else
-             makefvlabel(NULL, "hat", fname, "lo", argname=argname)
+             makefvlabel(NULL, "hat", FNAME, "lo", argname=argname, pre=TRA)
   hilabl <- if(alternative == "less"&& !gaveup) "infinity" else
-             makefvlabel(NULL, "hat", fname, "hi", argname=argname)
+             makefvlabel(NULL, "hat", FNAME, "hi", argname=argname, pre=TRA)
 
   result <- fv(results,
                argu=argname,
@@ -1624,10 +1638,11 @@ envelope.matrix <- function(Y, ...,
                fmla= paste(". ~", argname),
                alim=intersect.ranges(atr$alim, range(results[[argname]])),
                labl=c(argname,
-                 makefvlabel(NULL, "hat", fname, "obs", argname=argname),
-                 reflabl,
-                 lolabl,
-                 hilabl),
+                      makefvlabel(NULL, "hat", FNAME,
+                                  "obs", argname=argname, pre=TRA),
+                      reflabl,
+                      lolabl,
+                      hilabl),
                desc=c(arg.desc,
                  "observed value of %s for data pattern",
                  refdesc, lo.name, hi.name),

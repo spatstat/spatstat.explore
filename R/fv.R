@@ -4,7 +4,7 @@
 ##
 ##    class "fv" of function value objects
 ##
-##    $Revision: 1.185 $   $Date: 2024/04/02 01:23:12 $
+##    $Revision: 1.186 $   $Date: 2025/01/27 08:26:00 $
 ##
 ##
 ##    An "fv" object represents one or more related functions
@@ -399,11 +399,14 @@ flatfname <- function(x) {
   as.name(fn)
 }
 
-makefvlabel <- function(op=NULL, accent=NULL, fname, sub=NULL, argname="r") {
+makefvlabel <- function(op=NULL, accent=NULL, fname, sub=NULL, argname="r",
+                        pre=NULL, post=NULL) {
   ## de facto standardised label
   a <- "%s"
   if(!is.null(accent)) 
     a <- paste0(accent, paren(a))     ## eg hat(%s)
+  if(!is.null(pre)) # expression including '.'
+    a <- sub(".", a, as.character(pre), fixed=TRUE) # eg asin(sqrt(hat(%s)))
   if(!is.null(op))
     a <- paste0("bold", paren(op), "~", a)  ## eg bold(var)~hat(%s)
   if(is.null(sub)) {
@@ -420,6 +423,8 @@ makefvlabel <- function(op=NULL, accent=NULL, fname, sub=NULL, argname="r") {
     }
   } 
   a <- paste0(a, paren(argname))
+  if(!is.null(post)) # expression including '.'
+    a <- sub(".", a, as.character(post), fixed=TRUE) 
   return(a)
 }
 
