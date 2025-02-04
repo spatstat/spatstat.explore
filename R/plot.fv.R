@@ -1,7 +1,7 @@
 #
 #       plot.fv.R   (was: conspire.S)
 #
-#  $Revision: 1.143 $    $Date: 2024/02/04 08:04:51 $
+#  $Revision: 1.144 $    $Date: 2025/02/04 00:25:40 $
 #
 #
 
@@ -57,7 +57,7 @@ plot.fv <- local({
                       shade=fvnames(x, ".s"), shadecol="grey", add=FALSE,
                       log="",
                       mathfont=c("italic", "plain", "bold", "bolditalic"), 
-                      limitsonly=FALSE) {
+                      limitsonly=FALSE, do.plot=TRUE) {
 
     xname <-
       if(is.language(substitute(x))) short.deparse(substitute(x)) else ""
@@ -416,8 +416,10 @@ plot.fv <- local({
 
     ## ------------------ start plotting ---------------------------
 
+    do.plot <- isTRUE(do.plot)
+    
     ## create new plot
-    if(!add)
+    if(do.plot && !add)
       do.call(plot.default,
               resolve.defaults(list(xlim, ylim, type="n", log=log),
                                list(xlab=xlab, ylab=ylab),
@@ -507,9 +509,11 @@ plot.fv <- local({
   
     ## ----------------- plot lines ------------------------------
 
-    for(i in allind) {
-      clip.to.usr(xlogscale, ylogscale)
-      lines(rhsdata, lhsdata[,i], lty=lty[i], col=col[i], lwd=lwd[i])
+    if(do.plot) {
+      for(i in allind) {
+        clip.to.usr(xlogscale, ylogscale)
+        lines(rhsdata, lhsdata[,i], lty=lty[i], col=col[i], lwd=lwd[i])
+      }
     }
 
     if(nplots == 1)
@@ -555,7 +559,7 @@ plot.fv <- local({
 
     ## --------------- handle legend plotting  -----------------------------
     
-    if(identical(legend, TRUE)) {
+    if(do.plot && isTRUE(legend)) {
       ## legend will be plotted
       ## Basic parameters of legend
       legendxpref <- if(identical(legendpos, "float")) NULL else legendpos

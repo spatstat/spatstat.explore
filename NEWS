@@ -1,4 +1,17 @@
 
+        CHANGES IN spatstat.explore VERSION 3.3-4.002
+
+OVERVIEW
+
+    o We thank Tingting Zhan for contributions.
+    
+    o Minor improvements.
+    
+SIGNIFICANT USER-VISIBLE CHANGES
+
+    o plot.fv
+    New argument 'do.plot'.
+
         CHANGES IN spatstat.explore VERSION 3.3-4
 
 OVERVIEW

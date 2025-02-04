@@ -13,7 +13,7 @@
            shade=fvnames(x, ".s"), shadecol="grey",
            add=FALSE, log="",
            mathfont=c("italic", "plain", "bold", "bolditalic"), 
-           limitsonly=FALSE)
+           limitsonly=FALSE, do.plot=TRUE)
 }
 \arguments{
   \item{x}{
@@ -129,6 +129,12 @@
     just the \eqn{x} and \eqn{y} limits of the plot are computed
     and returned. 
   }
+  \item{do.plot}{
+    Logical value indicating whether to actually plot the graph of \code{x}.
+    Setting \code{do.plot=FALSE} will simply return the data frame
+    giving the meaning of the different line types and colours,
+    without plotting them.
+  }
 }
 \value{
   Invisible: either \code{NULL}, or a data frame giving the meaning of the
@@ -192,7 +198,11 @@
   be changed using \code{\link[spatstat.geom]{spatstat.options}("plot.fv")}.
 
   Use \code{type = "n"} to create the plot region and draw the axes
-  without plotting any data.
+  without plotting any curves.
+
+  Use \code{do.plot=FALSE} to suppress all plotting.
+  The return value is a data frame giving the meaning of the
+  different line types and colours which would have been plotted.
 
   Use \code{limitsonly=TRUE} to suppress all plotting
   and just compute the \eqn{x} and \eqn{y} limits. This can be used
