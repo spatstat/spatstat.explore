@@ -441,6 +441,10 @@
 \references{
   \baddrubaturnbook
   
+  Bithell, J.F. (1990)
+  An application of density estimation to geographical epidemiology.
+  \emph{Statistics in Medicine} \bold{9}, 691--701.
+  
   Diggle, P.J. (1985)
   A kernel method for smoothing point process data.
   \emph{Applied Statistics} (Journal of the Royal Statistical Society,
