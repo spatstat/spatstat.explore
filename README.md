@@ -59,15 +59,15 @@ For a full list of functions, see the help file for `spatstat.explore-package`.
 - summary functions (K-function, pair correlation function,
 empty space function, nearest neighbour distance function, J-function, etc)
 and multi-type versions of these functions
-- mark correlation function, mark independence diagnostoc
+- mark correlation function, mark independence diagnostic
 - local summary functions (LISA)
 - simulation envelopes of summary functions
 - manipulation of summary functions (plot, evaluate, differentiate, smooth etc)
-- spatial bootstrap
-
 
 #### Formal inference
 
+- spatial bootstrap
+- asymptotic variance estimates
 - hypothesis tests (quadrat test, Clark-Evans test, Berman test, Diggle-Cressie-Loosmore-Ford test, scan test, studentised permutation test, segregation test, envelope tests, Dao-Genton test, balanced independent two-stage test)
 
 #### Data manipulation
