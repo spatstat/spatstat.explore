@@ -6,10 +6,17 @@
   a point pattern using kernel methods.
 }
 \usage{
-  \method{pcf}{ppp}(X, \dots, r = NULL, kernel="epanechnikov", bw=NULL,
-                    stoyan=0.15,
+  \method{pcf}{ppp}(X, \dots, r = NULL,
+                    adaptive=FALSE,
+                    kernel="epanechnikov", bw=NULL, h=NULL,
+                    bw.args=list(), stoyan=0.15, adjust=1, 
                     correction=c("translate", "Ripley"),
-                    divisor = c("r", "d"),
+                    divisor = c("r", "d", "a", "t"),
+                    zerocor=c("weighted", "reflection", "convolution",
+                             "bdrykern", "JonesFoster", "none"),
+                    gref = NULL,
+                    tau = 0,
+                    fast = TRUE, 
                     var.approx = FALSE,
                     domain=NULL,
                     ratio=FALSE, close=NULL)
@@ -18,30 +25,51 @@
   \item{X}{
     A point pattern (object of class \code{"ppp"}).
   }
+  \item{\dots}{
+    Arguments passed to \code{\link[stats]{density.default}} or
+    to \code{\link[spatstat.univar]{densityBC}} controlling the kernel smoothing
+    of the pair correlation estimate.
+  }
   \item{r}{
-    Vector of values for the argument \eqn{r} at which \eqn{g(r)} 
+    Optional. Vector of values for the argument \eqn{r} at which \eqn{g(r)} 
     should be evaluated. There is a sensible default.
   }
+  \item{adaptive}{
+    Logical value specifying whether to use adaptive kernel smoothing
+    (\code{adaptive=TRUE}) or fixed-bandwidth kernel smoothing
+    (\code{adaptive=FALSE}, the default).
+  }
   \item{kernel}{
-    Choice of smoothing kernel,
-    passed to \code{\link{density.default}}.
+    Choice of smoothing kernel, passed to \code{\link[stats]{density.default}}.
   }
   \item{bw}{
-    Bandwidth for smoothing kernel,
-    passed to \code{\link{density.default}}.
-    Either a single numeric value giving the standard deviation of the kernel,
-    or a character string specifying a bandwidth selection rule
-    recognised by \code{\link{density.default}}.
-    If \code{bw} is missing or \code{NULL},
-    the default value is computed using
-    Stoyan's rule of thumb: see Details.
+    Bandwidth for smoothing kernel.
+    Either a single numeric value giving the standard deviation of the
+    kernel, or a character string specifying a bandwidth selection rule,
+    or a function that computes the selected bandwidth.
+    See Details.
   }
-  \item{\dots}{
-    Other arguments passed to the kernel density estimation 
-    function \code{\link{density.default}}.
+  \item{h}{
+    Kernel halfwidth \eqn{h} (incompatible with argument \code{bw}).
+    A numerical value.
+    The parameter \code{h} is defined as the
+    half-width of the support of the kernel, except for the Gaussian
+    kernel where \code{h} is the standard deviation.
+  }
+  \item{bw.args}{
+    Optional. List of additional arguments to be passed to \code{bw}
+    when \code{bw} is a function. Alternatively, \code{bw} may be a
+    function that should be applied to \code{X} to produce a list of
+    additional arguments.
   }
   \item{stoyan}{
     Coefficient for Stoyan's bandwidth selection rule; see Details.
+  }
+  \item{adjust}{
+     Numerical adjustment factor for the bandwidth.
+     The bandwidth actually used is \code{adjust * bw}.
+     This makes it easy to specify choices like \sQuote{half the
+     selected bandwidth}.
   }
   \item{correction}{
     Edge correction. A character vector specifying the choice
@@ -49,7 +77,34 @@
   }
   \item{divisor}{
     Choice of divisor in the estimation formula:
-    either \code{"r"} (the default) or \code{"d"}. See Details.
+    either \code{"r"} (the default) or \code{"d"},
+    or the new alternatives \code{"a"} or \code{"t"}. See Details.
+  }
+  \item{zerocor}{
+    String (partially matched) specifying a correction for the boundary effect
+    bias at \eqn{r=0}. Possible values are
+    \code{"none"}, \code{"weighted"}, \code{"convolution"},
+    \code{"reflection"}, \code{"bdrykern"} and \code{"JonesFoster"}.
+    See Details, or help file for \code{\link[spatstat.univar]{densityBC}}.
+  }
+  \item{gref}{
+    Optional. A pair correlation function that will be used as the
+    reference for the transformation to uniformity, when
+    \code{divisor="t"}. Either a \code{function} in the \R language
+    giving the pair correlation function, or a fitted model
+    (object of class \code{"kppm"}, \code{"dppm"}, \code{"ppm"}
+    or \code{"slrm"}) or a theoretical point process model
+    (object of class \code{"zclustermodel"} or \code{"detpointprocfamily"})
+    for which the pair correlation function
+    can be computed.  
+  }
+  \item{tau}{
+    Optional shrinkage coefficient. A single numeric value.
+  }
+  \item{fast}{
+    Logical value specifying whether to compute the kernel smoothing
+    using a Fast Fourier Transform algorithm (\code{fast=TRUE})
+    or an exact analytic kernel sum (\code{fast=FALSE}).
   }
   \item{var.approx}{
     Logical value indicating whether to compute an analytic
@@ -97,7 +152,8 @@
   estimate of \eqn{g(r)}.
 
   The return value also has an attribute \code{"bw"} giving the
-  smoothing bandwidth that was used.
+  smoothing bandwidth that was used, and an attribute \code{"info"}
+  containing details of the algorithm parameters.
 }
 \details{
   The pair correlation function \eqn{g(r)} 
@@ -123,7 +179,7 @@
   }
   where \eqn{K'(r)} is the derivative of \eqn{K(r)}, the
   reduced second moment function (aka ``Ripley's \eqn{K} function'')
-  of the point process. See \code{\link{Kest}} for information
+  of the point process. See \code{\link[spatstat.explore]{Kest}} for information
   about \eqn{K(r)}.
 
   For a stationary Poisson process, the
@@ -147,6 +203,24 @@
     estimate of \eqn{g(r)} is divided by \eqn{d_{ij}}{d[ij]}
     instead of dividing by \eqn{r}. This usually improves the
     bias of the estimator when \eqn{r} is close to zero.
+    \item
+    If \code{divisor="a"} then improved method of
+    \smoothpcfpapercite is used. The distances \eqn{d_{ij}}{d[ij]}
+    are first converted to disc areas
+    \eqn{a_{ij}=\pi d_{ij}^2}{a[ij] = pi * d[ij]^2},
+    and smoothing is performed on the area scale,
+    then the result is back-transformed to the original scale.
+    \item
+    If \code{divisor="t"} then the distances \eqn{d_{ij}}{d[ij]}
+    are transformed to uniformity
+    using the reference pair correlation function \code{gref}
+    as described in \smoothpcfpapercite.
+    \item
+    If \code{divisor} is a \code{function} in the \R language, then
+    it will be applied to the point pattern \code{X} and should return
+    one of the strings \code{"r"}, \code{"d"}, \code{"a"} or \code{"t"}
+    listed above. This option makes it possible to specify a rule
+    which decides which estimator to use, based on the data.
   }
 
   There is also a choice of spatial edge corrections
@@ -176,15 +250,40 @@
   statistical performance; \code{correction="good"} selects the option
   which is the best compromise between statistical performance and speed
   of computation.
-  
+
+  Argument \code{zerocor} determines the correction
+  to the one-dimensional kernel-smoothed estimate
+  on the real number line, to correct bias close to the boundary \eqn{r=0}.
+  The argument \code{zerocor} is passed to 
+  \code{\link[spatstat.univar]{densityBC}}.
+  Options include:
+  \itemize{
+    \item
+    \code{zerocor="none"}: no correction.
+    \item
+    \code{zerocor="convolution"}: the convolution, uniform or
+     renormalization kernel.
+    \item
+    \code{zerocor="weighted"}: the cut-and-normalization method.
+    \item
+    \code{zerocor="reflection"}:
+    the reflection method.
+    \item
+    \code{zerocor="bdrykern"}: the linear boundary kernel.
+    \item
+    \code{zerocor="JonesFoster"}:
+      the Jones-Foster modification of the linear boundary kernel.
+  }
+
   The choice of smoothing kernel is controlled by the 
-  argument \code{kernel} which is passed to \code{\link{density.default}}.
+  argument \code{kernel} which is passed
+  to \code{\link[stats]{density.default}}.
   The default is the Epanechnikov kernel, recommended by
   Stoyan and Stoyan (1994, page 285).
 
   The bandwidth of the smoothing kernel can be controlled by the
   argument \code{bw}. Bandwidth is defined as the standard deviation
-  of the kernel; see the documentation for \code{\link{density.default}}.
+  of the kernel; see the documentation for \code{\link[stats]{density.default}}.
   For the Epanechnikov kernel with half-width \code{h},
   the argument \code{bw} is equivalent to \eqn{h/\sqrt{5}}{h/sqrt(5)}.
 
@@ -199,7 +298,53 @@
   The argument \code{stoyan} determines the value of \eqn{c}.
   The smoothing bandwidth that was used in the calculation is returned
   as an attribute of the final result.
-  
+
+  The argument \code{bw} can be
+  \itemize{
+    \item
+    missing or null. In this case, the default value for \code{bw}
+    is \code{"stoyan"} when \code{adaptive=FALSE}
+    and \code{"bw.abram"} when \code{adaptive=TRUE}.
+    \item
+    a single numeric value giving the bandwidth.
+    \item
+    a character string specifying a bandwidth selection rule.
+    String names of rules applicable when \code{adaptive=FALSE} 
+    include \code{"stoyan"}, \code{"fiksel"}
+    and any rules recognised by \code{\link[stats]{density.default}}.
+    String names applicable when \code{adaptive=TRUE} include
+    \code{"bw.abram"} and \code{"bw.pow"}.
+    \item
+    a function that computes the selected bandwidth.
+    \itemize{
+      \item 
+      If \code{adaptive=FALSE}, the function \code{bw} will be applied to the
+      point pattern \code{X} to determine the bandwidth. Examples include
+      \code{\link{bw.pcf}} and \code{\link{bw.stoyan}}.
+      The function \code{bw} should accept the point pattern \code{X}
+      as its first argument. Additional arguments to \code{bw} may be
+      specified in the list \code{bw.args}. If \code{bw} recognises any
+      of the arguments
+      \code{kernel}, \code{correction}, \code{divisor}, \code{zerocor}
+      and \code{adaptive}, then these arguments will be passed to
+      \code{bw} as well. 
+      The function \code{bw} should return a single
+      numeric value.
+      \item
+      If \code{adaptive=TRUE}, the function \code{bw} will be applied to
+      the vector of pairwise distances between data points (or the
+      transformed distances if \code{divisor="a"} or \code{divisor="t"}).
+      Examples include \code{\link[spatstat.univar]{bw.abram.default}}
+      and \code{\link[spatstat.univar]{bw.pow}}.
+      The function \code{bw} should accept the vector of pairwise
+      distances as its first argument. Additional arguments to \code{bw} may be
+      specified in the list \code{bw.args}. 
+     }
+  }
+  Note that if \code{bw.args} is a function, it will be applied to
+  the point pattern \code{X} to determine the list of arguments
+  (whether \code{adaptive} is \code{TRUE} or \code{FALSE}).
+
   The argument \code{r} is the vector of values for the
   distance \eqn{r} at which \eqn{g(r)} should be evaluated.
   There is a sensible default.
@@ -218,7 +363,7 @@
   window of the point pattern \code{X}.
 
   To compute a confidence band for the true value of the
-  pair correlation function, use \code{\link{lohboot}}.
+  pair correlation function, use \code{\link[spatstat.explore]{lohboot}}.
 
   If \code{var.approx = TRUE}, the variance of the
   estimate of the pair correlation will also be calculated using
@@ -226,6 +371,11 @@
   which is valid for stationary point processes which are not
   too clustered. This calculation is not yet implemented when
   the argument \code{domain} is given.
+
+  If \code{fast=TRUE}, the calculation uses the Fast Fourier Transform
+  to the maximum extent possible for the chosen boundary correction.
+  If \code{fast=FALSE} (the default), the entire calculation uses
+  analytic formulas written in \code{C} code.
 }
 \section{Advanced Use}{
   To perform the same computation using several different bandwidths \code{bw},
@@ -235,6 +385,8 @@
   \code{rmax >= max(r) + 3 * bw}.
 }
 \references{
+  \smoothpcfpaper
+  
   Guan, Y. (2007)
   A least-squares cross-validation bandwidth selection approach in pair
   correlation function estimation.
@@ -250,38 +402,33 @@
   John Wiley and Sons.
 }
 \seealso{
-  \code{\link{Kest}},
-  \code{\link{pcf}},
-  \code{\link{density.default}},
-  \code{\link{bw.stoyan}},
-  \code{\link{bw.pcf}},
-  \code{\link{lohboot}}.
+  \code{\link{densityBC}},
+  
+  \code{\link[spatstat.explore]{Kest}},
+  \code{\link[spatstat.explore]{pcf}},
+  \code{\link[stats]{density.default}},
+  \code{\link[spatstat.explore]{bw.stoyan}},
+  \code{\link[spatstat.explore]{bw.pcf}},
+  \code{\link[spatstat.explore]{lohboot}}.
 }
 \examples{
-  X <- simdat
-  \testonly{
-    X <- X[seq(1,npoints(X), by=4)]
-  }
-  p <- pcf(X)
-  plot(p, main="pair correlation function for X")
-  # indicates inhibition at distances r < 0.3
-
-  pd <- pcf(X, divisor="d")
+  pr <- pcf(redwood, divisor="r")
+  plot(pr, main="pair correlation function for redwoods")
 
   # compare estimates
-  plot(p, cbind(iso, theo) ~ r, col=c("blue", "red"),
-         ylim.covers=0, main="", lwd=c(2,1), lty=c(1,3), legend=FALSE)
-  plot(pd, iso ~ r, col="green", lwd=2, add=TRUE)
-  legend("center", col=c("blue", "green"), lty=1, lwd=2,
-         legend=c("divisor=r","divisor=d"))
+  pd <- pcf(redwood, divisor="d")
+  pa <- pcf(redwood, divisor="a")
 
-  # calculate approximate variance and show POINTWISE confidence bands
-  pv <- pcf(X, var.approx=TRUE)
-  plot(pv, cbind(iso, iso+2*sqrt(v), iso-2*sqrt(v)) ~ r)
+  plot(pr, cbind(iso, theo) ~ r, col=c("red", "black"),
+       ylim.covers=0, main="Estimates of PCF",
+       lwd=c(2,1), lty=c(1,3), legend=FALSE)
+  plot(pd, iso ~ r, col="blue", lwd=2, add=TRUE)
+  plot(pa, iso ~ r, col="green", lwd=2, add=TRUE)
+  legend("center", col=c("red", "blue", "green"), lty=1, lwd=2,
+         legend=c("divisor=r","divisor=d", "divisor=a"))
 }
 \author{
-  \spatstatAuthors
-  and \martinH.
+  \spatstatAuthorsComma, \martinH  and \tilman.
 }
 \keyword{spatial}
 \keyword{nonparametric}

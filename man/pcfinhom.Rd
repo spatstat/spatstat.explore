@@ -8,16 +8,19 @@
   a point pattern using kernel methods.
 }
 \usage{
-pcfinhom(X, lambda = NULL, ..., r = NULL,
-         kernel = "epanechnikov",
-         bw = NULL, adjust.bw=1, stoyan = 0.15,
-         correction = c("translate", "Ripley"),
-         divisor = c("r", "d"),
-         renormalise = TRUE, normpower=1,
-         update = TRUE, leaveoneout = TRUE,
-         reciplambda = NULL,
-         sigma = NULL, adjust.sigma = 1,
-         varcov = NULL, close=NULL)
+pcfinhom(X, lambda = NULL, \dots,
+            r = NULL, adaptive = FALSE,
+            kernel = "epanechnikov", bw = NULL, h = NULL,
+            bw.args = list(), stoyan = 0.15, adjust = 1,
+            correction = c("translate", "Ripley"),
+            divisor = c("r", "d", "a", "t"),
+            zerocor=c("weighted", "reflection", "convolution",
+                      "bdrykern", "JonesFoster", "none"),
+            renormalise = TRUE, normpower = 1,
+            update = TRUE, leaveoneout = TRUE,
+            reciplambda = NULL, sigma = NULL, adjust.sigma = 1, varcov = NULL,
+            gref = NULL, tau = 0, fast = TRUE, var.approx = FALSE,
+            domain = NULL, ratio = FALSE, close = NULL)
 }
 \arguments{
   \item{X}{
@@ -34,43 +37,66 @@ pcfinhom(X, lambda = NULL, ..., r = NULL,
     or a \code{function(x,y)} which
     can be evaluated to give the intensity value at any location.
   }
+  \item{\dots}{
+    Arguments passed to \code{\link[stats]{density.default}} or
+    to \code{\link[spatstat.univar]{densityBC}} controlling the kernel smoothing.
+  }
   \item{r}{
     Vector of values for the argument \eqn{r} at which \eqn{g(r)} 
     should be evaluated. There is a sensible default.
+  }
+  \item{adaptive}{
+    Logical value specifying whether to use adaptive kernel smoothing
+    (\code{adaptive=TRUE}) or fixed-bandwidth kernel smoothing
+    (\code{adaptive=FALSE}, the default).
   }
   \item{kernel}{
     Choice of smoothing kernel, passed to \code{\link{density.default}}.
   }
   \item{bw}{
-    Bandwidth for one-dimensional smoothing kernel,
-    passed to \code{\link{density.default}}.
-    Either a single numeric value,
-    or a character string specifying a bandwidth selection rule
-    recognised by \code{\link{density.default}}.
-    If \code{bw} is missing or \code{NULL},
-    the default value is computed using
-    Stoyan's rule of thumb: see \code{\link{bw.stoyan}}.
+    Bandwidth for smoothing kernel.
+    Either a single numeric value giving the standard deviation of the
+    kernel, or a character string specifying a bandwidth selection rule,
+    or a function that computes the selected bandwidth.
+    See Details.
   }
-  \item{adjust.bw}{
-    Numeric value. \code{bw} will be multiplied by this value.
+  \item{h}{
+    Kernel halfwidth \eqn{h} (incompatible with argument \code{bw}).
+    A numerical value.
+    The parameter \code{h} is defined as the
+    half-width of the support of the kernel, except for the Gaussian
+    kernel where \code{h} is the standard deviation.
   }
-  \item{\dots}{
-    Other arguments passed to the kernel density estimation 
-    function \code{\link{density.default}}.
+  \item{bw.args}{
+    Optional. List of additional arguments to be passed to \code{bw}
+    when \code{bw} is a function. Alternatively, \code{bw} may be a
+    function that should be applied to \code{X} to produce a list of
+    additional arguments.
   }
   \item{stoyan}{
-    Coefficient for Stoyan's bandwidth selection rule;
-    see \code{\link{bw.stoyan}}.
+    Coefficient for Stoyan's bandwidth selection rule; see Details.
+  }
+  \item{adjust}{
+     Numerical adjustment factor for the bandwidth.
+     The bandwidth actually used is \code{adjust * bw}.
+     This makes it easy to specify choices like \sQuote{half the
+     selected bandwidth}.
   }
   \item{correction}{
-    Character string or character vector
-    specifying the choice of edge correction.
-    See \code{\link{Kest}} for explanation and options.
+    Edge correction. A character vector specifying the choice
+    (or choices) of edge correction. See Details.
   }
   \item{divisor}{
     Choice of divisor in the estimation formula:
-    either \code{"r"} (the default) or \code{"d"}.
-    See \code{\link{pcf.ppp}}.
+    either \code{"r"} (the default) or \code{"d"},
+    or the new alternatives \code{"a"} or \code{"t"}. See Details.
+  }
+  \item{zerocor}{
+    String (partially matched) specifying a correction for the boundary effect
+    bias at \eqn{r=0}. Possible values are
+    \code{"none"}, \code{"weighted"}, \code{"convolution"},
+    \code{"reflection"}, \code{"bdrykern"} and \code{"JonesFoster"}.
+    See Details, or help file for \code{\link[spatstat.univar]{densityBC}}.
   }
   \item{renormalise}{
     Logical. Whether to renormalise the estimate. See Details.
@@ -113,6 +139,39 @@ pcfinhom(X, lambda = NULL, ..., r = NULL,
   \item{adjust.sigma}{
     Numeric value. \code{sigma} will be multiplied by this value.
   }
+  \item{gref}{
+    Optional. A pair correlation function that will be used as the
+    reference for the transformation to uniformity, when
+    \code{divisor="t"}. Either a \code{function} in the \R language
+    giving the pair correlation function, or a fitted model
+    (object of class \code{"kppm"}, \code{"dppm"}, \code{"ppm"}
+    or \code{"slrm"}) or a theoretical point process model
+    (object of class \code{"zclustermodel"} or \code{"detpointprocfamily"})
+    for which the pair correlation function
+    can be computed.  
+  }
+  \item{tau}{
+    Optional shrinkage coefficient. A single numeric value.
+  }
+  \item{fast}{
+    Logical value specifying whether to compute the kernel smoothing
+    using a Fast Fourier Transform algorithm (\code{fast=TRUE})
+    or an exact analytic kernel sum (\code{fast=FALSE}).
+  }
+  \item{var.approx}{
+    Logical value indicating whether to compute an analytic
+    approximation to the variance of the estimated pair correlation.
+  }
+  \item{domain}{
+    Optional. Calculations will be restricted to this subset
+    of the window. See Details.
+  }
+  \item{ratio}{
+    Logical. 
+    If \code{TRUE}, the numerator and denominator of
+    each edge-corrected estimate will also be saved,
+    for use in analysing replicated point patterns.
+  }
   \item{close}{
     Advanced use only. Precomputed data. See section on Advanced Use.
   }
@@ -151,7 +210,12 @@ pcfinhom(X, lambda = NULL, ..., r = NULL,
 
   The command \code{pcfinhom} estimates the inhomogeneous
   pair correlation using a modified version of
-  the algorithm in \code{\link{pcf.ppp}}.   
+  the algorithm in \code{\link{pcf}}. In this modified version,
+  the contribution from each pair of points \eqn{X[i], X[j]} is
+  weighted by
+  \eqn{1/(\lambda(X[i]) \lambda(X[j]))}{1/(lambda(X[i]) lambda(X[j]))}.
+  The arguments \code{divisor}, \code{correction} and \code{zerocor}
+  are interpreted as described in the help file for \code{\link{pcf}}.
   
   If \code{renormalise=TRUE} (the default), then the estimates 
   are multiplied by \eqn{c^{\mbox{normpower}}}{c^normpower} where 
@@ -172,59 +236,49 @@ pcfinhom(X, lambda = NULL, ..., r = NULL,
   }
 }
 \value{
-  A function value table (object of class \code{"fv"}).
+  A function value table
+  (object of class \code{"fv"}).
   Essentially a data frame containing the variables
-  \item{r}{
-    the vector of values of the argument \eqn{r} 
-    at which the inhomogeneous pair correlation function
-    \eqn{g_{\rm inhom}(r)}{ginhom(r)} has been  estimated
+  \item{r}{the vector of values of the argument \eqn{r} 
+    at which the pair correlation function \eqn{g(r)} has been  estimated
   }
   \item{theo}{vector of values equal to 1,
-    the theoretical value of \eqn{g_{\rm inhom}(r)}{ginhom(r)}
-    for the Poisson process
+    the theoretical value of \eqn{g(r)} for the Poisson process
   }
-  \item{trans}{vector of values of \eqn{g_{\rm inhom}(r)}{ginhom(r)}
+  \item{trans}{vector of values of \eqn{g(r)}
     estimated by translation correction
   }
-  \item{iso}{vector of values of \eqn{g_{\rm inhom}(r)}{ginhom(r)}
+  \item{iso}{vector of values of \eqn{g(r)}
     estimated by Ripley isotropic correction
   }
+  \item{v}{vector of approximate values of the variance of
+    the estimate of \eqn{g(r)}
+  }
   as required.
+
+  If \code{ratio=TRUE} then the return value also has two
+  attributes called \code{"numerator"} and \code{"denominator"}
+  which are \code{"fv"} objects
+  containing the numerators and denominators of each
+  estimate of \eqn{g(r)}.
+
+  The return value also has an attribute \code{"bw"} giving the
+  smoothing bandwidth that was used, and an attribute \code{"info"}
+  containing details of the algorithm parameters. 
 }
-\section{Advanced Use}{
-  To perform the same computation using several different bandwidths \code{bw},
-  it is efficient to use the argument \code{close}.
-  This should be the result of \code{\link[spatstat.geom]{closepairs}(X, rmax)}
-  for a suitably large value of \code{rmax}, namely
-  \code{rmax >= max(r) + 3 * bw}.
-}
-\seealso{
-  \code{\link{pcf}}, 
-  \code{\link{pcf.ppp}}, 
-  \code{\link{bw.stoyan}},
-  \code{\link{bw.pcf}},
-  \code{\link{Kinhom}}
-}
-\examples{
-  X <- residualspaper$Fig4b
-  online <- interactive()
-  if(!online) {
-    ## reduce size of dataset
-    X <- X[c(FALSE, TRUE)]
-  }
-  plot(pcfinhom(X, stoyan=0.2, sigma=0.1))
-  if(require("spatstat.model")) {
-    if(online) {
-      fit <- ppm(X ~ polynom(x,y,2))
-    } else {
-      ## simpler model, faster computation
-      fit <- ppm(X ~ x)
-    }
-    plot(pcfinhom(X, lambda=fit, normpower=2))
-  }
+\references{
+  \smoothpcfpaper
 }
 \author{
-  \spatstatAuthors.
-} 
+  \spatstatAuthorsComma, \martinH and \tilman.
+}
+\seealso{
+  \code{\link{pcf}},
+  \code{\link{bw.bdh}},
+  \code{\link{bw.pcfinhom}}
+}
+\examples{
+  g <- pcfinhom(japanesepines, divisor="a")
+}
 \keyword{spatial}
 \keyword{nonparametric}

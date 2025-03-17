@@ -41,7 +41,7 @@ local({
 #'
 #'   Various K and L functions and pcf
 #'
-#'   $Revision: 1.43 $  $Date: 2022/06/17 01:47:08 $
+#'   $Revision: 1.45 $  $Date: 2025/03/15 11:29:33 $
 #'
 #'   Assumes 'EveryStart.R' was run
 
@@ -105,12 +105,20 @@ local({
                 rmax=0.02, weights=Z, ratio=TRUE)
     #' pcf.ppp special code blocks
     pr  <- pcf(Cells, ratio=TRUE, var.approx=TRUE)
-    pc  <- pcf(Cells, domain=square(0.5))
-    pcr <- pcf(Cells, domain=square(0.5), ratio=TRUE)
+    pc  <- pcf(Cells, domain=square(0.5), zerocor="none")
+    pcr <- pcf(Cells, domain=square(0.5), ratio=TRUE, zerocor="none")
     pw <- pcf(Redwood, correction="none")
     pwr <- pcf(Redwood, correction="none", ratio=TRUE)
     pv <- pcf(Redwood, kernel="rectangular")
     p1 <- pcf(Redwood[1])
+    #' pcf.ppp - combinations of zerocor and divisor
+    px <- pcf(Redwood, zerocor="conv", divisor="d")
+    px <- pcf(Redwood, zerocor="bdry", divisor="d")
+    px <- pcf(Redwood, zerocor="ref", divisor="a")
+    px <- pcf(Redwood, adaptive=TRUE)
+    px <- pcf(Redwood, adaptive=TRUE, zerocor="conv", divisor="d")
+    px <- pcf(Redwood, adaptive=TRUE, zerocor="bdry", divisor="d")
+    px <- pcf(Redwood, adaptive=TRUE, zerocor="ref", divisor="a")
     #' pcf.fv
     K <- Kest(Redwood)
     g <- pcf(K, method="a")

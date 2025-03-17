@@ -1,14 +1,51 @@
 
-        CHANGES IN spatstat.explore VERSION 3.3-4.002
+        CHANGES IN spatstat.explore VERSION 3.3-4.005
 
 OVERVIEW
 
-    o We thank Tingting Zhan for contributions.
+    o We thank Ya-Mei Chang and Tingting Zhan for contributions.
     
-    o Minor improvements.
+    o New estimator of pair correlation function.
+
+    o New methods for bandwidth selection for pair correlation estimation.
+
+    o Helper functions for measuring estimator performance.
+
+NEW FUNCTIONS
+
+    o bw.bdh
+    Adjust bandwidth of kernel estimate of pair correlation function,
+    to account for inhomogeneity.
+
+    o bw.pcfinhom
+    Cross-validation rule for selecting bandwidth of kernel estimate
+    of (inhomogeneous) pair correlation function.
+
+    o ptwise.envelope, bias.envelope, RMSE.envelope
+    Calculate pointwise statistics of the simulated function values
+    in an envelope object.
+    
+    o ISE.envelope, ISB.envelope, IV.envelope
+    Integrated squared error, integrated squared bias, integrated variance
+    of the simulated function values in an envelope object.
+    
+    o MISE.envelope
+    Mean integrated squared error of the simulated function values
+    in an envelope object.
     
 SIGNIFICANT USER-VISIBLE CHANGES
 
+    o pcf.ppp
+    New option: divisor="a" calculates a new estimator of the pcf
+    with improved performance.
+    
+    o pcfinhom
+    New option: divisor="a" calculates a new estimator of the inhomogeneous pcf
+    with improved performance.
+
+    o bw.stoyan
+    New argument 'extrapolate' supports a modification of Stoyan's rule.
+    
     o plot.fv
     New argument 'do.plot'.
 

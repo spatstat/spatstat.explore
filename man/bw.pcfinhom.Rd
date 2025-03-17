@@ -1,15 +1,15 @@
-\name{bw.pcf}
-\alias{bw.pcf}
+\name{bw.pcfinhom}
+\alias{bw.pcfinhom}
 \title{
-  Cross Validated Bandwidth Selection for Pair Correlation Function
+  Cross Validated Bandwidth Selection for Inhomogeneous Pair Correlation Function
 }
 \description{
   Uses composite likelihood or generalized least squares 
   cross-validation to select a smoothing bandwidth
-  for the kernel estimation of pair correlation function.
+  for the kernel estimation of the inhomogeneous pair correlation function.
 }
 \usage{
-  bw.pcf(X, \dots, rmax=NULL, nr=10000, 
+  bw.pcfinhom(X, lambda=NULL, \dots, rmax=NULL, nr=10000, 
            cv.method=c("compLik", "leastSQ", "oracle"),
            leaveoneout=TRUE, simple=TRUE,
            fast=TRUE, srange=NULL, ns=32, use.count=TRUE,
@@ -20,8 +20,19 @@
   \item{X}{
     A point pattern (object of class \code{"ppp"}).
   }
+  \item{lambda}{
+    Optional.
+    Values of the estimated intensity function.
+    Either a vector giving the intensity values
+    at the points of the pattern \code{X},
+    a pixel image (object of class \code{"im"}) giving the
+    intensity values at all locations, a fitted point process model
+    (object of class \code{"ppm"}, \code{"kppm"} or \code{"dppm"})
+    or a \code{function(x,y)} which
+    can be evaluated to give the intensity value at any location.
+  }
   \item{\dots}{
-    Additional arguments passed to \code{\link{pcf}}.
+    Additional arguments passed to \code{\link{pcfinhom}}.
   }
   \item{rmax}{
     Optional. Numeric value. Maximum value of the spatial lag distance \eqn{r} 
@@ -85,7 +96,7 @@
 \details{
   This function selects an appropriate bandwidth \code{bw}
   for the kernel estimator of the pair correlation function 
-  of a point process intensity computed by \code{\link{pcf}}.
+  of a point process intensity computed by \code{\link{pcfinhom}}.
 
   With \code{cv.method="leastSQ"}, the bandwidth 
   \eqn{h} is chosen to minimise an unbiased 
@@ -118,7 +129,7 @@
   The result is a numerical value giving the selected bandwidth.
 }
 \section{Definition of bandwidth}{
-  The bandwidth \code{bw} returned by \code{bw.pcf}
+  The bandwidth \code{bw} returned by \code{bw.pcfinhom}
   is the standard deviation of the smoothing kernel,
   following the standard convention in \R.
   As mentioned in the documentation for
@@ -136,11 +147,11 @@
   which can be plotted.
 }
 \seealso{
-  \code{\link{pcf}}
+  \code{\link{pcfinhom}}
 }
 \examples{
-  b <- bw.pcf(redwood3)
-  plot(pcf(redwood3, bw=b))
+  b <- bw.pcfinhom(japanesepines)
+  plot(pcfinhom(japanesepines, bw=b))
 }
 \references{
   \smoothpcfpaper
@@ -167,7 +178,7 @@
 \author{
   Rasmus Waagepetersen and Abdollah Jalilian. 
   Adapted for \pkg{spatstat} by \spatstatAuthors.
-  Further hacked by \adrian, \martinH and \tilman.
+  Hacked by \adrian, \martinH and \tilman.
 }
 \keyword{spatial}
 \keyword{methods}

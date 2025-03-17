@@ -3,7 +3,7 @@
 #
 #   Estimation of relative risk
 #
-#  $Revision: 1.68 $  $Date: 2023/06/25 02:23:43 $
+#  $Revision: 1.69 $  $Date: 2025/03/15 09:34:21 $
 #
 
 relrisk <- function(X, ...) UseMethod("relrisk")
@@ -474,17 +474,6 @@ relrisk.ppp <- local({
   
   relrisk.ppp
 })
-
-
-bw.stoyan <- function(X, co=0.15) {
-  ## Stoyan's rule of thumb
-  stopifnot(is.ppp(X))
-  n <- npoints(X)
-  W <- Window(X)
-  a <- area(W)
-  stoyan <- co/sqrt(5 * max(1,n)/a)
-  return(stoyan)
-}
 
 
 bw.relrisk <- function(X, ...) {

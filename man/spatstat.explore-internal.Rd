@@ -225,7 +225,7 @@ CressieReadStatistic(OBS,EXP,lambda,normalise,named)
 CressieReadSymbol(lambda)
 CressieReadName(lambda)
 cutoff2Dkernel(kernel, sigma, varcov, \dots, scalekernel, cutoff, fatal)
-CVforPCF(bw, stuff)
+CVforPCF(BW, stuff)
 Deviation(x, ref, leaveout, n, xi)
 densitycrossEngine(Xdata, Xquery, sigma, \dots,
                     kernel, scalekernel,
@@ -415,7 +415,8 @@ second.moment.calc(x, sigma, edge, what, \dots,
 second.moment.engine(x, sigma, edge, what, \dots,
       kernel, scalekernel, kerpow,
       obswin, varcov, npts, debug, fastgauss)
-sewpcf(d, w, denargs, lambda2area, divisor)
+sewpcf(d, w, denargs, lambda2area, divisor,
+       zerocor, fast, convert, adaptive, tau, gref, Transform)
 sewsmod(d, ff, wt, Ef, rvals, method="smrep", \dots, nwtsteps=500)
 \method{shift}{quadrattest}(X, \dots)
 simulrecipe(type, expr, envir, csr, pois, constraints)
