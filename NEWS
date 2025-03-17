@@ -1,9 +1,10 @@
 
-        CHANGES IN spatstat.explore VERSION 3.3-4.006
+        CHANGES IN spatstat.explore VERSION 3.3-4.007
 
 OVERVIEW
 
-    o We thank Ya-Mei Chang and Tingting Zhan for contributions.
+    o We thank Ya-Mei Chang, Tilman Davies, Martin Hazelton
+    and Tingting Zhan for contributions.
     
     o New estimator of pair correlation function.
 
