@@ -191,9 +191,7 @@
                                for \code{\link[spatstat.explore]{relrisk}} \cr
     \code{\link[spatstat.explore]{bw.smoothppp}} \tab cross-validated bandwidth selection
                                for \code{\link[spatstat.explore]{Smooth.ppp}} \cr
-    \code{\link[spatstat.explore]{bw.frac}} \tab bandwidth selection using window geometry\cr
-    \code{\link[spatstat.explore]{bw.stoyan}} \tab Stoyan's rule of thumb for bandwidth
-                               for \code{\link[spatstat.explore]{pcf}}
+    \code{\link[spatstat.explore]{bw.frac}} \tab bandwidth selection using window geometry
   }
 
   \bold{Modern exploratory tools:}
@@ -242,6 +240,18 @@
     \code{\link[spatstat.explore]{varblock}} \tab variances and confidence intervals\cr
                    \tab for a summary function \cr
     \code{\link[spatstat.explore]{lohboot}} \tab bootstrap for a summary function 
+  }
+
+  Selecting the bandwidth for kernel estimation of the summary function:
+  \tabular{ll}{
+    \code{\link[spatstat.explore]{bw.stoyan}} \tab Stoyan's rule of thumb for bandwidth
+                               for \code{\link[spatstat.explore]{pcf}}\cr
+    \code{\link[spatstat.explore]{bw.pcf}} \tab cross-validated bandwidth selection
+                               for \code{\link[spatstat.explore]{pcf}} \cr
+    \code{\link[spatstat.explore]{bw.pcfinhom}} \tab cross-validated bandwidth selection
+                               for \code{\link[spatstat.explore]{pcfinhom}} \cr
+    \code{\link[spatstat.explore]{bw.bdh}} \tab Adjusted Stoyan rule of thumb for bandwidth
+                               for \code{\link[spatstat.explore]{pcfinhom}}
   }
 
   Related facilities:
@@ -414,6 +424,24 @@
     \code{\link[spatstat.explore]{scan.test}} \tab spatial scan statistic/test \cr
     \code{\link[spatstat.explore]{studpermu.test}} \tab studentised permutation test\cr
     \code{\link[spatstat.explore]{segregation.test}} \tab test of segregation of types 
+  }
+
+  Manipulation of envelope objects:
+  
+  \tabular{ll}{
+  \code{\link[spatstat.explore]{as.data.frame.envelope}} \tab convert to data frame \cr
+  \code{\link[spatstat.explore]{with.fv}} \tab calculations with column(s) of data \cr
+  \code{\link[spatstat.explore]{eval.fv}} \tab calculations with all columns of data \cr
+  \code{\link[spatstat.explore]{plot.envelope}} \tab plot envelope \cr
+  \code{\link[spatstat.explore]{summary.envelope}} \tab print summary information \cr
+  \code{\link[spatstat.explore]{pool.envelope}} \tab pool data from several envelopes \cr
+  \code{\link[spatstat.explore]{ptwise.envelope}} \tab compute pointwise statistics \cr
+  \code{\link[spatstat.explore]{bias.envelope}} \tab pointwise bias \cr
+  \code{\link[spatstat.explore]{RMSE.envelope}} \tab pointwise root mean square error \cr
+  \code{\link[spatstat.explore]{MISE.envelope}} \tab mean integrated squared error \cr
+  \code{\link[spatstat.explore]{ISB.envelope}} \tab integrated squared bias \cr
+  \code{\link[spatstat.explore]{IV.envelope}} \tab integrated variance \cr
+  \code{\link[spatstat.explore]{ISE.envelope}} \tab integrated squared error
   }
 
   \bold{Hypothesis tests:}
