@@ -1,4 +1,10 @@
 
+        CHANGES IN spatstat.explore VERSION 3.4-1
+
+OVERVIEW
+
+    o Minor change to documentation to satisfy CRAN package checker.
+
         CHANGES IN spatstat.explore VERSION 3.4-0
 
 OVERVIEW

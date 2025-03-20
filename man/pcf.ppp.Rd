@@ -402,7 +402,7 @@
   John Wiley and Sons.
 }
 \seealso{
-  \code{\link{densityBC}},
+  \code{\link[spatstat.univar]{densityBC}},
   
   \code{\link[spatstat.explore]{Kest}},
   \code{\link[spatstat.explore]{pcf}},
