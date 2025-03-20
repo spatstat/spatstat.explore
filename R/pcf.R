@@ -3,7 +3,7 @@
 #'
 #' Calculate pair correlation function from point pattern (pcf.ppp)
 #' 
-#' $Revision: 1.76 $ $Date: 2025/03/15 11:19:01 $
+#' $Revision: 1.77 $ $Date: 2025/03/20 07:13:32 $
 #'
 #' Copyright (c) 2008-2025 Adrian Baddeley, Tilman Davies and Martin Hazelton
 
@@ -538,7 +538,9 @@ sewpcf <- function(d, w, denargs, lambda2area,
     started <- proc.time()
     splat("sewpcf")
   }
-  
+
+  ## trap outdated usage
+  if(identical(as.character(divisor), c("r", "d"))) divisor <- "r" 
   divisor <- match.arg(divisor)
   zerocor <- match.arg(zerocor)
   w <- as.numeric(w)
