@@ -3,7 +3,7 @@
 #
 #   Estimation of relative risk
 #
-#  $Revision: 1.69 $  $Date: 2025/03/15 09:34:21 $
+#  $Revision: 1.70 $  $Date: 2025/04/05 03:26:52 $
 #
 
 relrisk <- function(X, ...) UseMethod("relrisk")
@@ -16,7 +16,8 @@ relrisk.ppp <- local({
                           relative=FALSE,
                           adjust=1, edge=TRUE, diggle=FALSE,
                           se=FALSE, wtype=c("value", "multiplicity"),
-                          casecontrol=TRUE, control=1, case, fudge=0) {
+                          casecontrol=TRUE, control=1, case,
+                          shrink=0, fudge=0) {
     stopifnot(is.ppp(X))
     stopifnot(is.multitype(X))
     control.given <- !missing(control)
@@ -45,7 +46,29 @@ relrisk.ppp <- local({
                     if(ntypes==2) "casecontrol=FALSE" else
                     "there are more than 2 types of points"))
     }
-    ## fudge constant
+    
+    ## initialise error report
+    uhoh <- NULL
+    ## prepare for analysis
+    Y <- split(X) 
+    splitweights <- if(weighted) split(weights, marx) else rep(list(NULL), ntypes)
+    uX <- unmark(X)
+    
+    ## compute bandwidth (default bandwidth selector is bw.relrisk)
+    ker <- resolve.2D.kernel(...,
+                             sigma=sigma, varcov=varcov, adjust=adjust,
+                             bwfun=bw.relrisk, x=X)
+    sigma <- ker$sigma
+    varcov <- ker$varcov
+    if(bandwidth.is.infinite(sigma))
+      edge <- FALSE
+    SmoothPars <- resolve.defaults(list(sigma=sigma, varcov=varcov, at=at,
+                                        edge=edge, diggle=diggle),
+                                   list(...))
+    kernel <- SmoothPars$kernel %orifnull% "gaussian"
+
+    ## shrinkage term
+    ## (a) 'fudge' - constant - rarely used
     if(missing(fudge) || is.null(fudge)) {
       fudge <- rep(0, ntypes)
     } else {
@@ -55,25 +78,26 @@ relrisk.ppp <- local({
       if(length(fudge) == 1)
         fudge <- rep(fudge, ntypes)
     }
-    ## initialise error report
-    uhoh <- NULL
-    ## prepare for analysis
-    Y <- split(X) 
-    splitweights <- if(weighted) split(weights, marx) else rep(list(NULL), ntypes)
-    uX <- unmark(X)
-    ## compute bandwidth (default bandwidth selector is bw.relrisk)
-    ker <- resolve.2D.kernel(...,
-                             sigma=sigma, varcov=varcov, adjust=adjust,
-                             bwfun=bw.relrisk, x=X)
-    sigma <- ker$sigma
-    varcov <- ker$varcov
-
-    ## determine smoothing parameters   
-    if(bandwidth.is.infinite(sigma))
-      edge <- FALSE
-    SmoothPars <- resolve.defaults(list(sigma=sigma, varcov=varcov, at=at,
-                                        edge=edge, diggle=diggle),
-                                   list(...))
+    ## (b) shrinkage factor - multiple of K(0) as used by Bithell
+    if(missing(shrink) || is.null(shrink)) {
+      shrink <- rep(0, ntypes)
+    } else {
+      check.nvector(shrink, ntypes,
+                    things="types of points", oneok=TRUE, vname="shrink")
+      stopifnot(all(shrink >= 0))
+      if(length(shrink) == 1)
+        shrink <- rep(shrink, ntypes)
+      ## rescale
+      K0 <- evaluate2Dkernel(kernel, 0, 0, sigma=sigma, varcov=varcov)
+      shrink <- shrink * K0
+      if(!relative) {
+        #' for spatially varying probabilities, multiply by average probability
+        pbar <- table(marx)/length(marx)
+        shrink <- shrink * pbar
+      }
+    }
+    fudge <- fudge + shrink
+    
     ## threshold for 0/0
     tinythresh <- 8 * .Machine$double.eps
     ## 

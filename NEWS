@@ -1,4 +1,15 @@
 
+        CHANGES IN spatstat.explore VERSION 3.4-2.001
+
+OVERVIEW
+
+    o Shrinkage estimator of relative risk.
+
+SIGNIFICANT USER-VISIBLE CHANGES
+
+    o relrisk.ppp
+    New argument 'shrink' supports Bithell's shrinkage estimator.
+
         CHANGES IN spatstat.explore VERSION 3.4-2
 
 OVERVIEW
