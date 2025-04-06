@@ -303,6 +303,10 @@ local({
     stroke(sigma=Inf)
     stroke(varcov1=diag(c(1,1))) # 'anisotropic' code
   }
+  if(ALWAYS) {
+    #' new code for shrinkage estimate
+    stroke(5, shrink=4, FUN=FALSE)
+  }
   if(FULLTEST) {
     Z <- as.im(function(x,y){abs(x)+1}, Window(longleaf))
     stroke(5, weights=Z)
@@ -329,15 +333,17 @@ local({
   
   niets <- markmean(longleaf, 9)
   
-  strike <- function(..., Y=finpines) {
+  strike <- function(..., Y=finpines, FUN=TRUE) {
     Z <- Smooth(Y, ..., at="pixels")
     Z <- Smooth(Y, ..., at="points", leaveoneout=TRUE)
     Z <- Smooth(Y, ..., at="points", leaveoneout=FALSE)
-    f <- Smoothfun(Y, ...)
-    f(4, 1)
-    f(Y[1:2])
-    f(Y[FALSE])
-    U <- as.im(f)
+    if(FUN) {
+      f <- Smoothfun(Y, ...)
+      f(4, 1)
+      f(Y[1:2])
+      f(Y[FALSE])
+      U <- as.im(f)
+    }
     return(invisible(NULL))
   }
   if(ALWAYS) {
@@ -346,6 +352,10 @@ local({
     strike(varcov=diag(c(1.2, 2.1)))
     strike(sigma=1e-6)
     strike(sigma=Inf)
+  }
+  if(ALWAYS) {
+    #' new code for shrinkage estimate
+    strike(sigma=1.5, shrink=4, FUN=FALSE)
   }
   if(FULLTEST) {
     strike(sigma=1e-6, kernel="epa")

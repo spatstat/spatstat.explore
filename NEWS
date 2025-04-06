@@ -5,10 +5,16 @@ OVERVIEW
 
     o Shrinkage estimator of relative risk.
 
+    o Normalised relative risk.
+    
 SIGNIFICANT USER-VISIBLE CHANGES
 
     o relrisk.ppp
     New argument 'shrink' supports Bithell's shrinkage estimator.
+
+    o relrisk.ppp
+    New argument 'normalise' controls whether the estimate will be
+    normalised so that constant risk corresponds to the value 1.
 
         CHANGES IN spatstat.explore VERSION 3.4-2
 

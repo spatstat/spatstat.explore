@@ -14,7 +14,7 @@
 \method{relrisk}{ppp}(X, sigma = NULL, ...,
            at = c("pixels", "points"),
            weights = NULL, varcov = NULL, 
-           relative=FALSE,
+           relative=FALSE, normalise=FALSE,
            adjust=1, edge=TRUE, diggle=FALSE,
            se=FALSE, wtype=c("value", "multiplicity"),
            casecontrol=TRUE, control=1, case, shrink=0, fudge=0)
@@ -56,6 +56,10 @@
     If \code{TRUE}, it computes the    
     \emph{relative risk}, the ratio of probabilities
     of each type relative to the probability of a control.
+  }
+  \item{normalise}{
+    Logical value specifying whether the results should be normalised
+    so that constant risk corresponds to the value 1.
   }
   \item{adjust}{
     Optional. Adjustment factor for the bandwidth \code{sigma}.

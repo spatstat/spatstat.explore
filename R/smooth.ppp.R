@@ -3,7 +3,7 @@
 #
 #  Smooth the marks of a point pattern
 # 
-#  $Revision: 1.91 $  $Date: 2025/04/06 03:20:01 $
+#  $Revision: 1.92 $  $Date: 2025/04/06 10:53:41 $
 #
 
 Smooth <- function(X, ...) {
@@ -501,7 +501,7 @@ Smooth.ppp <- function(X, sigma=NULL, ...,
                    numerators <- numerators + shrinknumer
                  } else {
                    ## add shrinknumer[j] to numerators[, j]
-                   numerators <- numerators + shrinknumer[col[numerators]]
+                   numerators <- numerators + shrinknumer[col(numerators)]
                  }
                },
                pixels = {
