@@ -3,7 +3,7 @@
 #
 #  Smooth the marks of a point pattern
 # 
-#  $Revision: 1.90 $  $Date: 2024/06/09 00:02:42 $
+#  $Revision: 1.91 $  $Date: 2025/04/06 03:20:01 $
 #
 
 Smooth <- function(X, ...) {
@@ -24,7 +24,8 @@ Smooth.ppp <- function(X, sigma=NULL, ...,
                        se=FALSE,
                        loctype=c("random", "fixed"),
                        wtype=c("multiplicity", "importance"),
-                       geometric=FALSE) {
+                       geometric=FALSE,
+                       shrink=0, shrinktype=c("mean", "median")) {
   verifyclass(X, "ppp")
   if(!is.marked(X, dfok=TRUE, na.action="fatal"))
     stop("X should be a marked point pattern", call.=FALSE)
@@ -34,7 +35,8 @@ Smooth.ppp <- function(X, sigma=NULL, ...,
   if(!all(is.finite(as.matrix(marx))))
     stop("Some mark values are Inf, NaN or NA", call.=FALSE)
   univariate <- is.null(dim(marx))
-
+  nc <- if(univariate) 1 else ncol(marx)
+  
   ## options
   at <- pickoption("output location type", at,
                    c(pixels="pixels",
@@ -45,7 +47,6 @@ Smooth.ppp <- function(X, sigma=NULL, ...,
   ## trivial case
   if(nX == 0) {
     cn <- colnames(marks(X))
-    nc <- length(cn)
     switch(at,
            points = {
              Estimate <- if(univariate) numeric(0) else
@@ -184,6 +185,34 @@ Smooth.ppp <- function(X, sigma=NULL, ...,
   }
 
   ## .................. finite bandwidth .............................
+
+  ## shrinkage
+  nc <- if(is.null(dim(marx))) 1 else ncol(marx)
+  if(shrinking <- (!missing(shrink) && (length(shrink) > 0))) {
+    check.nvector(shrink, nc, 
+                  things="columns of marks", oneok=TRUE, vname="shrink")
+    stopifnot(all(shrink >= 0))
+    if(length(shrink) == 1 && nc > 1)
+      shrink <- rep(shrink, nc)
+    ## Rescale by Kernel at 0
+    K0 <- evaluate2Dkernel(kernel, 0, 0, sigma=sigma, varcov=varcov)
+    shrinkdenom <- shrink * K0
+    ## Numerator shrinkage constant involves mean or median mark 'ybar'
+    shrinktype <- match.arg(shrinktype)
+    marxmat <- if(univariate) matrix(marx, ncol=1) else marx
+    if(weighted) {
+      ybar <- switch(shrinktype,
+                     mean = apply(marxmat, 2, weighted.mean, w=weights),
+                     median = apply(marxmat, 2, weighted.median, w=weights))
+    } else {
+      ybar <- switch(shrinktype,
+                     mean = colMeans(marxmat, na.rm=TRUE),
+                     median = apply(marxmat, 2, median, na.rm=TRUE))
+    }
+    shrinknumer <- shrinkdenom * ybar
+  } else {
+    shrinknumer <- shrinkdenom <- rep(0, nc)
+  }
   
   ## Diggle's edge correction?
   if(diggle && !edge) warning("Option diggle=TRUE overridden by edge=FALSE")
@@ -366,7 +395,9 @@ Smooth.ppp <- function(X, sigma=NULL, ...,
                                                sigma=sigma, varcov=varcov,
                                                kernel=kernel,
                                                scalekernel=scalekernel,
-                                               edge=FALSE),
+                                               edge=FALSE,
+                                               shrinknumer=shrinknumer,
+                                               shrinkdenom=shrinkdenom),
                                           list(...)))
              },
              pixels={
@@ -393,6 +424,10 @@ Smooth.ppp <- function(X, sigma=NULL, ...,
                                                scalekernel=scalekernel,
                                                edge=FALSE),
                                           list(...)))
+               if(shrinking) {
+                 numerator   <- shrinknumer + numerator
+                 denominator <- shrinkdenom + denominator
+               }
                result <- eval.im(numerator/denominator)
                ## trap small values of denominator
                ## trap NaN and +/- Inf values of result, but not NA
@@ -457,6 +492,26 @@ Smooth.ppp <- function(X, sigma=NULL, ...,
                                       edge=FALSE),
                                  list(...)))
       uhoh <- attr(numerators, "warnings")
+      ## shrinkage estimator
+      if(shrinking) {
+        denominator <- shrinkdenom + denominator
+        switch(at,
+               points = {
+                 if(is.null(dim(numerators))) {
+                   numerators <- numerators + shrinknumer
+                 } else {
+                   ## add shrinknumer[j] to numerators[, j]
+                   numerators <- numerators + shrinknumer[col[numerators]]
+                 }
+               },
+               pixels = {
+                 ## add shrinknumer[j] to numerators[[j]]
+                 numerators <- as.imlist(mapply("+",
+                                                numerators,
+                                                as.list(shrinknumer),
+                                                SIMPLIFY=FALSE))
+               })
+      }
       ## calculate ratios
       switch(at,
              points={
@@ -560,7 +615,8 @@ smoothpointsEngine <- function(x, values, sigma, ...,
                                weights=NULL, varcov=NULL,
                                leaveoneout=TRUE,
                                sorted=FALSE, cutoff=NULL,
-                               debug=FALSE) {
+                               debug=FALSE,
+                               shrinknumer=0, shrinkdenom=0) {
   stopifnot(is.logical(leaveoneout))
 
   if(!is.null(dim(values)))
@@ -573,6 +629,8 @@ smoothpointsEngine <- function(x, values, sigma, ...,
     attr(result, "varcov") <- varcov
     return(result)
   }
+
+  shrinking <- (shrinkdenom != 0)
 
   validate2Dkernel(kernel)
   if(is.character(kernel)) kernel <- match2DkernelName(kernel)
@@ -637,7 +695,7 @@ smoothpointsEngine <- function(x, values, sigma, ...,
   
   if(isgauss &&
      spatstat.options("densityTransform") &&
-     spatstat.options("densityC")) {
+     spatstat.options("densityC") && !shrinking) {
     ## .................. experimental C code .....................
     if(debug)
       cat('Transforming to standard coordinates (densityTransform=TRUE).\n')
@@ -697,7 +755,7 @@ smoothpointsEngine <- function(x, values, sigma, ...,
       # Use mark of nearest neighbour (by l'Hopital's rule)
       result[nbg] <- values[nnwhich(x)[nbg]]
     }
-  } else if(isgauss && spatstat.options("densityC")) {
+  } else if(isgauss && spatstat.options("densityC") && !shrinking) {
     # .................. C code ...........................
     if(debug)
       cat('Using standard code (densityC=TRUE).\n')
@@ -837,6 +895,11 @@ smoothpointsEngine <- function(x, values, sigma, ...,
                                                    cutoff=cutoff),
                                               list(...),
                                               list(edge=FALSE)))
+    }
+    if(shrinking) {
+      ## shrinkage estimate
+      numerator <- shrinknumer + numerator
+      denominator <- shrinkdenom + denominator
     }
     if(is.null(uhoh <- attr(numerator, "warnings"))) {
       result <- numerator/denominator

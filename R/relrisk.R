@@ -3,7 +3,7 @@
 #
 #   Estimation of relative risk
 #
-#  $Revision: 1.70 $  $Date: 2025/04/05 03:26:52 $
+#  $Revision: 1.71 $  $Date: 2025/04/06 02:17:04 $
 #
 
 relrisk <- function(X, ...) UseMethod("relrisk")
@@ -69,7 +69,7 @@ relrisk.ppp <- local({
 
     ## shrinkage term
     ## (a) 'fudge' - constant - rarely used
-    if(missing(fudge) || is.null(fudge)) {
+    if(missing(fudge) || (length(fudge) == 0)) {
       fudge <- rep(0, ntypes)
     } else {
       check.nvector(fudge, ntypes,
@@ -79,7 +79,7 @@ relrisk.ppp <- local({
         fudge <- rep(fudge, ntypes)
     }
     ## (b) shrinkage factor - multiple of K(0) as used by Bithell
-    if(missing(shrink) || is.null(shrink)) {
+    if(missing(shrink) || (length(shrink) == 0)) {
       shrink <- rep(0, ntypes)
     } else {
       check.nvector(shrink, ntypes,

@@ -20,7 +20,8 @@
                      se = FALSE,
                      loctype = c("random", "fixed"),
                      wtype = c("multiplicity", "importance"),
-                     geometric = FALSE)
+                     geometric = FALSE,
+                     shrink=0, shrinktype=c("mean", "median"))
 
 markmean(X, ...)
 
@@ -100,6 +101,9 @@ markvar(X, sigma=NULL, ..., weights=NULL, varcov=NULL)
   \item{geometric}{
     Logical value indicating whether to perform geometric mean
     smoothing instead of arithmetic mean smoothing. See Details.
+  }
+  \item{shrink,shrinktype}{
+    Experimental. Do Not Use.
   }
 }
 \details{
