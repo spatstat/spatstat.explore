@@ -30,6 +30,7 @@
 \alias{CressieReadName}
 \alias{cutoff2Dkernel}
 \alias{CVforPCF}
+\alias{DeltaMethodVarOfRatio}
 \alias{Deviation}
 \alias{densitycrossEngine}
 \alias{densitypointsEngine}
@@ -102,6 +103,7 @@
 \alias{plot.plotpairsim}
 \alias{plot.spatialcdf}
 \alias{polyLaslett}
+\alias{posify}
 \alias{predict.exactppm}
 \alias{prefixfv}
 \alias{print.bw.frac}
@@ -180,6 +182,7 @@
 \alias{validate.angles}        
 \alias{validate.weights}        
 \alias{vanilla.fv}
+\alias{VarOfWtdMean}
 \alias{weightedclosepairs}
 \alias{X2testEngine}
 
@@ -226,6 +229,7 @@ CressieReadSymbol(lambda)
 CressieReadName(lambda)
 cutoff2Dkernel(kernel, sigma, varcov, \dots, scalekernel, cutoff, fatal)
 CVforPCF(BW, stuff)
+DeltaMethodVarOfRatio(num, den, varnum, varden, covnumden, positive)
 Deviation(x, ref, leaveout, n, xi)
 densitycrossEngine(Xdata, Xquery, sigma, \dots,
                     kernel, scalekernel,
@@ -342,6 +346,7 @@ pcfmulti.inhom(X, I, J, lambdaI, lambdaJ, \dots,
 \method{plot}{plotpairsim}(x, \dots)
 \method{plot}{spatialcdf}(x, \dots, xlab, ylab, do.points)
 polyLaslett(X, \dots, oldX, verbose, plotit)
+posify(x, eps)
 \method{predict}{exactppm}(object, locations, \dots, eps, dimyx, rule.eps)
 prefixfv(x, tagprefix, descprefix, lablprefix, whichtags)
 \method{print}{bw.frac}(x, \dots)
@@ -459,6 +464,7 @@ validate2Dkernel(kernel, fatal)
 validate.angles(angles, unit, guess)
 validate.weights(x, recip, how, allowzero, allowinf)
 vanilla.fv(x)
+VarOfWtdMean(marx, weights)
 weightedclosepairs(X, r, correction, what)
 X2testEngine(OBS, EXP, \dots, method, CR, df, nsim,
      conditional, alternative, testname, dataname)

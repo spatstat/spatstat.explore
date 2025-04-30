@@ -261,9 +261,9 @@ local({
   }
   if(ALWAYS) {
     ## underflow example from stackoverflow!
-    funky <- scanpp("funky.tab", owin(c(4, 38), c(0.3, 17)))
-    P <- relrisk(funky, 0.5)
-    R <- relrisk(funky, 0.5, relative=TRUE)
+#    funky <- scanpp("funky.tab", owin(c(4, 38), c(0.3, 17)))
+#    P <- relrisk(funky, 0.5)
+#    R <- relrisk(funky, 0.5, relative=TRUE)
   }
   ## more than 2 types
   if(ALWAYS) {

@@ -3,7 +3,7 @@
 #
 #  Method for 'density' for point patterns
 #
-#  $Revision: 1.136 $    $Date: 2024/01/29 07:25:10 $
+#  $Revision: 1.137 $    $Date: 2025/04/30 12:53:56 $
 #
 
 # ksmooth.ppp <- function(x, sigma, ..., edge=TRUE) {
@@ -208,18 +208,6 @@ density.ppp <- function(x, sigma=NULL, ...,
 }
 
 divideimage <- function(numer, denom) eval.im(numer/denom)
-
-posify <- function(x, eps=.Machine$double.xmin) {
-  force(eps) # scalpel
-  if(is.im(x)) return(eval.im(pmax(eps, x)))
-  if(inherits(x, "solist")) return(solapply(x, posify, eps=eps))
-  if(is.numeric(x)) return(pmax(eps, x))
-  # data frame or list
-  if(is.list(x) && all(sapply(x, is.numeric)))
-    return(lapply(x, posify, eps=eps))
-  warning("Internal error: posify did not recognise data format")
-  return(x)
-}
 
 divide.by.pixelarea <- function(x) {
   if(is.im(x)) {
@@ -1118,3 +1106,15 @@ density.splitppp <- function(x, ..., weights=NULL, se=FALSE) {
   return(z)
 }
 
+posify <- function(x, eps=.Machine$double.xmin) {
+  force(eps) # scalpel
+  if(is.im(x)) return(eval.im(pmax(eps, x)))
+  if(inherits(x, "solist")) return(solapply(x, posify, eps=eps))
+  if(is.numeric(x)) return(pmax(eps, x))
+  if(is.data.frame(x) && all(sapply(x, is.numeric)))
+    return(as.data.frame(lapply(x, posify, eps=eps)))
+  if(is.list(x) && all(sapply(x, is.numeric)))
+    return(lapply(x, posify, eps=eps))
+  warning("Internal error: posify did not recognise data format")
+  return(x)
+}

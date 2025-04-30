@@ -3,7 +3,7 @@
 #
 #  Smooth the marks of a point pattern
 # 
-#  $Revision: 1.92 $  $Date: 2025/04/06 10:53:41 $
+#  $Revision: 1.94 $  $Date: 2025/04/30 12:53:47 $
 #
 
 Smooth <- function(X, ...) {
@@ -338,12 +338,12 @@ Smooth.ppp <- function(X, sigma=NULL, ...,
                             weights=weights,
                             edge=edge && diggle, diggle=diggle, # sic
                             at=at, leaveoneout=leaveoneout, positive=TRUE)
-    
-             Vest <- if(at == "points") Vnum/Den^2 else
-                            imagelistOp(Vnum, Den^2, "/")
+
+             Vest <- posify(if(at == "points") Vnum/Den^2 else
+                            imagelistOp(Vnum, Den^2, "/"))
                      
            })
-    SE <- sqrt(Vest)
+    SE <- if(is.solist(Vest)) solapply(Vest, sqrt) else sqrt(Vest)
   }
   
   ##  ------------------------------------------------------------
@@ -1343,12 +1343,14 @@ VarOfWtdMean <- function(marx, weights) {
   return(V)
 }
 
-DeltaMethodVarOfRatio <- function(num, den, varnum, varden, covnumden) {
+DeltaMethodVarOfRatio <- function(num, den, varnum, varden, covnumden,
+                                  positive=TRUE) {
   Estimate <- num/den
   V <- Estimate^2 * (
     varnum/num^2
     - 2 * covnumden/(num * den)
     + varden/den^2
   )
-  return(V)
+  return(if(positive) posify(V) else V)
 }
+
