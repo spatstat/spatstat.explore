@@ -3,7 +3,7 @@
 #
 #  Smooth the marks of a point pattern
 # 
-#  $Revision: 1.94 $  $Date: 2025/04/30 12:53:47 $
+#  $Revision: 1.98 $  $Date: 2025/05/12 05:47:59 $
 #
 
 Smooth <- function(X, ...) {
@@ -937,9 +937,11 @@ markvar  <- function(X, sigma=NULL, ..., weights=NULL, varcov=NULL) {
   return(V)
 }
 
-bw.smoothppp <- function(X, nh=spatstat.options("n.bandwidth"),
+bw.smoothppp <- function(X, ...,
+                         nh=spatstat.options("n.bandwidth"),
                          hmin=NULL, hmax=NULL, warn=TRUE,
-                         kernel="gaussian", varcov1=NULL) {
+                         kernel="gaussian", varcov1=NULL,
+                         train=NULL, test=NULL) {
   stopifnot(is.ppp(X))
   stopifnot(is.marked(X))
   if(!is.null(varcov1))
@@ -947,15 +949,30 @@ bw.smoothppp <- function(X, nh=spatstat.options("n.bandwidth"),
   if(is.function(kernel))
     stop("Custom kernel functions are not yet supported in bw.smoothppp")
   X <- coerce.marks.numeric(X)
-  # rearrange in ascending order of x-coordinate (for C code)
-  X <- X[fave.order(X$x)]
-  #
-  marx <- marks(X)
-  dimmarx <- dim(marx)
-  if(!is.null(dimmarx))
-    marx <- as.matrix(as.data.frame(marx))
-  # determine a range of bandwidth values
-#  n <- npoints(X)
+  if(!is.null(train)) {
+    ## training subset (logical vector)
+    train <- ppsubset(X, I=train, Iname='train', fatal=TRUE)
+  }
+  if(!is.null(test)) {
+    ## subset for prediction (logical vector)
+    test <- ppsubset(X, I=test, Iname='test', fatal=TRUE)
+  }
+  ## rearrange in ascending order of x-coordinate (for C code)
+  ord <- fave.order(X$x)
+  X <- X[ord]
+  if(!is.null(train)) train <- train[ord]
+  if(!is.null(test)) test <- test[ord]
+  #' sub-patterns
+  Xtrain <- if(is.null(train)) X else X[train]
+  Xtest  <- if(is.null(test))  X else X[test]
+  #' observed values 
+  ytrain <- marks(Xtrain)
+  ytest  <- marks(Xtest)
+  if(multicolumn <- !is.null(dim(ytrain))) {
+    ytrain <- as.matrix(as.data.frame(ytrain))
+    ytest  <- as.matrix(as.data.frame(ytest))
+  }
+  #' determine a range of bandwidth values
   if(is.null(hmin) || is.null(hmax)) {
     W <- Window(X)
     d <- diameter(as.rectangle(W))
@@ -983,24 +1000,44 @@ bw.smoothppp <- function(X, nh=spatstat.options("n.bandwidth"),
       hmax <- min(d/2, hmax)
     }
   } else stopifnot(hmin < hmax)
-  #
+  #' sequence of bandwidth values
   h <- geomseq(from=hmin, to=hmax, length.out=nh)
   cv <- numeric(nh)
-  # 
-  # compute cross-validation criterion
+  #' compute cross-validation criterion
   for(i in seq_len(nh)) {
-    if(is.null(varcov1)) {
-      yhat <- Smooth(X, sigma = h[i],
-                     at="points", leaveoneout=TRUE,
-                     kernel=kernel, sorted=TRUE)
+    if(is.null(train)) {
+      #' All data are used for training. 
+      #' Initially predict value at all locations
+      if(is.null(varcov1)) {
+        yhat <- Smooth(X, sigma = h[i],
+                       at="points", leaveoneout=TRUE,
+                       kernel=kernel, sorted=TRUE)
+      } else {
+        yhat <- Smooth(X, varcov = (h[i]^2)  * varcov1,
+                       at="points", leaveoneout=TRUE,
+                       kernel=kernel, sorted=TRUE)
+      }
+      if(multicolumn)
+        yhat <- as.matrix(as.data.frame(yhat))
+      #' Now restrict to test locations only, if required
+      if(!is.null(test))
+        yhat <- if(multicolumn) yhat[test,] else yhat[test]
     } else {
-      yhat <- Smooth(X, varcov = (h[i]^2)  * varcov1,
-                     at="points", leaveoneout=TRUE,
-                     kernel=kernel, sorted=TRUE)
+      #' Separate subsets are used for training and testing.
+      if(is.null(varcov1)) {
+        yhat <- smoothcrossEngine(Xtrain, Xtest, values=ytrain,
+                                  sigma = h[i],
+                                  kernel=kernel, sorted=TRUE)
+      } else {
+        yhat <- smoothcrossEngine(Xtrain, Xtest, values=ytrain,
+                                  varcov = (h[i]^2)  * varcov1,
+                                  kernel=kernel, sorted=TRUE)
+      }
+      if(multicolumn)
+        yhat <- as.matrix(as.data.frame(yhat))
     }
-    if(!is.null(dimmarx))
-      yhat <- as.matrix(as.data.frame(yhat))
-    cv[i] <- mean((marx - yhat)^2)
+    #' sum of squared errors
+    cv[i] <- mean((ytest - yhat)^2)
   }
 
   # optimize
@@ -1011,7 +1048,8 @@ bw.smoothppp <- function(X, nh=spatstat.options("n.bandwidth"),
                      warnextreme=warn,
                      hargnames=c("hmin", "hmax"),
                      unitname=if(is.null(varcov1)) unitname(X) else NULL,
-                     template=varcov1, exponent=2)
+                     template=varcov1, exponent=2,
+                     train=train, test=test)
   return(result)
 }
 

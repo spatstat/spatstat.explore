@@ -1,11 +1,13 @@
 
-        CHANGES IN spatstat.explore VERSION 3.4-2.005
+        CHANGES IN spatstat.explore VERSION 3.4-2.006
 
 OVERVIEW
 
     o Shrinkage estimator of relative risk.
 
     o Normalised relative risk.
+
+    o Extensions to cross-validated bandwidth selection for smoothing.
 
     o Bug fixes.
     
@@ -18,12 +20,13 @@ SIGNIFICANT USER-VISIBLE CHANGES
     New argument 'normalise' controls whether the estimate will be
     normalised so that constant risk corresponds to the value 1.
 
+    o bw.smoothppp
+    New arguments 'train' and 'test' for cross-validation.
+
 BUG FIXES
 
     o Smooth.ppp
     The estimate of standard error could sometimes take the value NaN.
-    This occurred when the bandwidth sigma was too small, leading to a
-    slightly negative value for the delta method estimate of variance.
     Fixed.
 
         CHANGES IN spatstat.explore VERSION 3.4-2

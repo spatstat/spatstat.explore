@@ -8,15 +8,16 @@
   for spatial smoothing of marks.
 }
 \usage{
-   bw.smoothppp(X, nh = spatstat.options("n.bandwidth"),
+   bw.smoothppp(X, \dots, nh = spatstat.options("n.bandwidth"),
                 hmin=NULL, hmax=NULL, warn=TRUE, kernel="gaussian",
-                varcov1=NULL)
+                varcov1=NULL, train=NULL, test=NULL)
 }
 
 \arguments{
   \item{X}{
     A marked point pattern with numeric marks.
   }
+  \item{\dots}{Ignored.}
   \item{nh}{
     Number of trial values of smoothing bandwith \code{sigma}
     to consider. The default is 32.
@@ -41,6 +42,14 @@
     Optional. Variance-covariance matrix matrix of the kernel with
     bandwidth \eqn{h=1}. See section on Anisotropic Smoothing.
   }
+  \item{train,test}{
+    Optional. Training and testing subsets for cross-validation.
+    Each argument is either a valid subset index in the usual \R sense,
+    or a window (an object of class \code{"owin"}) 
+    delineating a subset of the original observation window,
+    or a pixel image with logical values defining a subset of the
+    original observation window.
+  }
 }
 \details{
   This function selects an appropriate bandwidth for the nonparametric
@@ -56,6 +65,16 @@
   Then the bandwidth is chosen to minimise 
   the squared error of the smoothed values
   \eqn{\sum_i (y_i - \hat y_i)^2}{sum (y[i] - y*[i])^2}.
+
+  If the argument \code{train} is given, then spatial smoothing is
+  calculated using only the data from the subset \code{X[train]}.
+  If the argument \code{test} is given, then smoothed values are
+  calculated only at the locations in the subset \code{X[test]},
+  and squared errors are summed over the locations in \code{X[test]}.
+  
+
+  (If \code{test} is given, then this sum of squared errors
+  is computed only over the specified subset of locations.)
 
   The result of \code{bw.smoothppp}
   is a numerical value giving the selected bandwidth \code{sigma}.

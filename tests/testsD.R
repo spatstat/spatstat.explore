@@ -458,6 +458,10 @@ local({
     if(abs(bi-ba) > 0.001)
       stop(paste("Inconsistency in bw.smoothppp: isotropic =", bi,
                  "!=", ba, "= anisotropic"))
+    ## Cross-validation from training to testing sets
+    a <- bw.smoothppp(longleaf, test=(marks(longleaf) < 30))
+    a <- bw.smoothppp(longleaf, train=square(c(100,200)))
+    a <- bw.smoothppp(longleaf, train=c(FALSE,TRUE), test=c(TRUE,FALSE))
   }
 })
 
