@@ -3,7 +3,7 @@
 #
 #  Smooth the marks of a point pattern
 # 
-#  $Revision: 1.100 $  $Date: 2025/05/13 00:56:40 $
+#  $Revision: 1.102 $  $Date: 2025/05/13 06:30:52 $
 #
 
 Smooth <- function(X, ...) {
@@ -979,8 +979,17 @@ bw.smoothppp <- function(X, ...,
     d <- diameter(as.rectangle(W))
     # Stoyan's rule of thumb 
     stoyan <- bw.stoyan(X)
-    # rule of thumb based on nearest-neighbour distances
-    nnd <- nndist(unique(X))
+    #' rule of thumb based on nearest-neighbour distances
+    if(is.null(test) && is.null(train)) {
+      nnd <- nndist(unique(X))
+    } else {
+      seqX <- seq_len(npoints(X))
+      itrain <- if(is.null(train)) seqX else which(train)
+      itest  <- if(is.null(test))  seqX else which(test)
+      nnd <- nncross(Xtrain, Xtest,
+                     iX=itrain, iY=itest,
+                     what="dist")
+    }
     if(any(ok <- is.finite(nnd) & (nnd > 0))) {
       nnd <- nnd[ok]
     } else {
