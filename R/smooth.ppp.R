@@ -3,7 +3,7 @@
 #
 #  Smooth the marks of a point pattern
 # 
-#  $Revision: 1.98 $  $Date: 2025/05/12 05:47:59 $
+#  $Revision: 1.100 $  $Date: 2025/05/13 00:56:40 $
 #
 
 Smooth <- function(X, ...) {
@@ -737,7 +737,7 @@ smoothpointsEngine <- function(x, values, sigma, ...,
                PACKAGE="spatstat.explore")
       if(sorted) result <- zz$result else result[oo] <- zz$result
     } else {
-      wtsort <- weights[oo]
+      wtsort <- if(sorted) weights else weights[oo]
       zz <- .C(SE_Gwtsmoopt,
                nxy     = as.integer(npts),
                x       = as.double(xx),
@@ -787,7 +787,7 @@ smoothpointsEngine <- function(x, values, sigma, ...,
                  PACKAGE="spatstat.explore")
         if(sorted) result <- zz$result else result[oo] <- zz$result
       } else {
-        wtsort <- weights[oo]
+        wtsort <- if(sorted) weights else weights[oo]
         zz <- .C(SE_wtsmoopt,
                  nxy     = as.integer(npts),
                  x       = as.double(xx),
@@ -818,7 +818,7 @@ smoothpointsEngine <- function(x, values, sigma, ...,
                  PACKAGE="spatstat.explore")
         if(sorted) result <- zz$result else result[oo] <- zz$result
       } else {
-        wtsort <- weights[oo]
+        wtsort <- if(sorted) weights else weights[oo]
         zz <- .C(SE_awtsmoopt,
                  nxy     = as.integer(npts),
                  x       = as.double(xx),
@@ -972,6 +972,7 @@ bw.smoothppp <- function(X, ...,
     ytrain <- as.matrix(as.data.frame(ytrain))
     ytest  <- as.matrix(as.data.frame(ytest))
   }
+  trainIndicator <- if(is.null(train)) NULL else as.numeric(train)
   #' determine a range of bandwidth values
   if(is.null(hmin) || is.null(hmax)) {
     W <- Window(X)
@@ -1005,38 +1006,23 @@ bw.smoothppp <- function(X, ...,
   cv <- numeric(nh)
   #' compute cross-validation criterion
   for(i in seq_len(nh)) {
-    if(is.null(train)) {
-      #' All data are used for training. 
-      #' Initially predict value at all locations
-      if(is.null(varcov1)) {
-        yhat <- Smooth(X, sigma = h[i],
-                       at="points", leaveoneout=TRUE,
-                       kernel=kernel, sorted=TRUE)
-      } else {
-        yhat <- Smooth(X, varcov = (h[i]^2)  * varcov1,
-                       at="points", leaveoneout=TRUE,
-                       kernel=kernel, sorted=TRUE)
-      }
-      if(multicolumn)
-        yhat <- as.matrix(as.data.frame(yhat))
-      #' Now restrict to test locations only, if required
-      if(!is.null(test))
-        yhat <- if(multicolumn) yhat[test,] else yhat[test]
+    #' Initially predict value at all locations
+    if(is.null(varcov1)) {
+      yhat <- Smooth(X, sigma = h[i],
+                     weights=trainIndicator,
+                     at="points", leaveoneout=TRUE,
+                     kernel=kernel, sorted=TRUE)
     } else {
-      #' Separate subsets are used for training and testing.
-      if(is.null(varcov1)) {
-        yhat <- smoothcrossEngine(Xtrain, Xtest, values=ytrain,
-                                  sigma = h[i],
-                                  kernel=kernel, sorted=TRUE)
-      } else {
-        yhat <- smoothcrossEngine(Xtrain, Xtest, values=ytrain,
-                                  varcov = (h[i]^2)  * varcov1,
-                                  kernel=kernel, sorted=TRUE)
-      }
-      if(multicolumn)
-        yhat <- as.matrix(as.data.frame(yhat))
+      yhat <- Smooth(X, varcov = (h[i]^2)  * varcov1,
+                     weights=trainIndicator,
+                     at="points", leaveoneout=TRUE,
+                     kernel=kernel, sorted=TRUE)
     }
-    #' sum of squared errors
+    if(multicolumn)
+      yhat <- as.matrix(as.data.frame(yhat))
+    #' Now restrict to test locations only, if required
+    if(!is.null(test))
+      yhat <- if(multicolumn) yhat[test,] else yhat[test]
     cv[i] <- mean((ytest - yhat)^2)
   }
 
