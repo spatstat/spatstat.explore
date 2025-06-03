@@ -1,12 +1,25 @@
 
-        CHANGES IN spatstat.explore VERSION 3.4-3.001
+        CHANGES IN spatstat.explore VERSION 3.4-3.002
 
 OVERVIEW
 
+    o We thank Suman Rakshit for contributions.
+    
     o Extension of ROC curves.
 
     o Youden index
 
+NEW FUNCTIONS
+
+    o roc.rhohat, roc.cdftest, roc.bermantest
+    Calculate ROC from other kinds of data.
+    
+    o roc.im
+    Calculate ROC from a pixel image such as an estimate of intensity.
+    
+    o youden
+    Youden statistic for ROC curves.
+    
 SIGNIFICANT USER-VISIBLE CHANGES
 
     o roc.ppp
@@ -21,6 +34,7 @@ SIGNIFICANT USER-VISIBLE CHANGES
 
     o roc.ppp
     New argument 'method' determines the estimation method.
+    New options include a kernel smoothing estimate and a monotone estimate.
 
     o roc.ppp
     New arguments 'CI', 'alpha' for calculating confidence intervals.
@@ -29,17 +43,6 @@ SIGNIFICANT USER-VISIBLE CHANGES
     New argument 'subset' specifies a sub-region of the spatial domain
     in which the ROC should be calculated.
 
-NEW FUNCTIONS
-
-    o roc.rhohat, roc.cdftest, roc.bermantest
-    Calculate ROC from other kinds of data.
-    
-    o roc.im
-    Calculate ROC from a pixel image such as an estimate of intensity.
-    
-    o youden
-    Youden statistic for ROC curves.
-    
         CHANGES IN spatstat.explore VERSION 3.4-3
 
 OVERVIEW
