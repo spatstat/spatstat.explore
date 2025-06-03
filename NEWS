@@ -1,4 +1,45 @@
 
+        CHANGES IN spatstat.explore VERSION 3.4-3.001
+
+OVERVIEW
+
+    o Extension of ROC curves.
+
+    o Youden index
+
+SIGNIFICANT USER-VISIBLE CHANGES
+
+    o roc.ppp
+    New argument 'baseline' allows calculation of ROC relative to a baseline.
+
+    o roc.ppp
+    New argument 'weights' for numerical weights on the data points.
+
+    o roc.ppp
+    New argument 'observations' specifies whether to use the exact point
+    coordinates or pixel presence-absence indicators.
+
+    o roc.ppp
+    New argument 'method' determines the estimation method.
+
+    o roc.ppp
+    New arguments 'CI', 'alpha' for calculating confidence intervals.
+
+    o roc.ppp
+    New argument 'subset' specifies a sub-region of the spatial domain
+    in which the ROC should be calculated.
+
+NEW FUNCTIONS
+
+    o roc.rhohat, roc.cdftest, roc.bermantest
+    Calculate ROC from other kinds of data.
+    
+    o roc.im
+    Calculate ROC from a pixel image such as an estimate of intensity.
+    
+    o youden
+    Youden statistic for ROC curves.
+    
         CHANGES IN spatstat.explore VERSION 3.4-3
 
 OVERVIEW

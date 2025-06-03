@@ -7,7 +7,10 @@
 \alias{ang2rad}
 \alias{as.data.frame.bw.optim}
 \alias{as.data.frame.fv}
-\alias{assemble.plot.objects}       
+\alias{as.roc.data.frame}
+\alias{assemble.plot.objects}
+\alias{aucData}
+\alias{auc.spatialCDFframe}
 \alias{bandwidth.is.infinite}
 \alias{BartCalc}
 \alias{bermantestCalc}
@@ -87,11 +90,17 @@
 \alias{localpcfmatrix}
 \alias{lookup2DkernelInfo}
 \alias{makefvlabel}
+\alias{makeRocDesc}
+\alias{makeRocFlabel}
+\alias{makeRocTag}
 \alias{maskLaslett}
 \alias{match2DkernelName}
 \alias{mctestSigtraceEngine}
 \alias{meanlistfv}
+\alias{monotonicRhoFun}
+\alias{monotonicRhoFunCalc}
 \alias{names<-.fv}
+\alias{needROC}
 \alias{nncleanEngine}
 \alias{pairs.listof}
 \alias{pairs.solist}
@@ -101,11 +110,13 @@
 \alias{plot.bw.optim}
 \alias{plot.localpcfmatrix}
 \alias{plot.plotpairsim}
+\alias{plot.roc}
 \alias{plot.spatialcdf}
 \alias{polyLaslett}
 \alias{posify}
 \alias{predict.exactppm}
 \alias{prefixfv}
+\alias{prettyweird}
 \alias{print.bw.frac}
 \alias{print.bw.optim}
 \alias{print.densityfun}
@@ -141,12 +152,17 @@
 \alias{resolve.reciplambda}
 \alias{resolve.reciplambda.ppp}
 \alias{resolveEinfo}
+\alias{resolveNullModel}
 \alias{rhohatEngine}
 \alias{rhohatCalc}
 \alias{rmax.Rigid}
 \alias{rmax.rule}
-\alias{rocData}
-\alias{rocModel}
+\alias{roc.function}
+\alias{roc.spatialCDFframe}
+\alias{rocDummy}
+\alias{rocEngine}
+\alias{rocIm}
+\alias{rocSmoothCalc}
 \alias{roseContinuous}
 \alias{scanmeasure}
 \alias{scanmeasure.ppp}
@@ -201,7 +217,12 @@ adjust.ratfv(f, columns, numfactor, denfactor)
 ang2rad(ang, unit, start, clockwise)
 \method{as.data.frame}{bw.optim}(x, \dots)
 \method{as.data.frame}{fv}(x, \dots)
+as.roc.data.frame(x, method, covtype, CI, leftoneout)
 assemble.plot.objects(xlim, ylim, \dots, lines, polygon)
+aucData(covariate, nullmodel, \dots,
+        high, interpolate, jitter, subset,
+        covariateAtPoints, discrimAtPoints)
+\method{auc}{spatialCDFframe}(X, \dots, high)
 bandwidth.is.infinite(sigma)
 BartCalc(fY, fK)
 bermantestCalc(fram, which, alternative, \dots)
@@ -324,12 +345,18 @@ localpcfengine(X, \dots, delta, rmax, nr, stoyan, lambda, rvalue)
 localpcfmatrix(X, i, \dots, lambda, delta, rmax, nr, stoyan)
 lookup2DkernelInfo(kernel)
 makefvlabel(op, accent, fname, sub, argname, pre, post)
+makeRocDesc(desc, leftoneout)
+makeRocFlabel(sub, leftoneout, super, f, argu)
+makeRocTag(sub, leftoneout)
 maskLaslett(X, \dots, eps, dimyx, xy, rule.eps, oldX, verbose, plotit)
 match2DkernelName(kernel)
 mctestSigtraceEngine(R, devdata, devsim, \dots,
      interpolate, confint, alpha, exponent, unitname)
 meanlistfv(z, \dots)
+monotonicRhoFun(X, Z, increasing, \dots, weights, subset, baseline)
+monotonicRhoFunCalc(x, z, massx, weightz, increasing)
 \method{names}{fv}(x) <- value
+needROC(\dots)
 nncleanEngine(kthNND, k, d, \dots, tol, maxit,
               plothist, lineargs, verbose, Xname)
 \method{pairs}{listof}(\dots, plot=TRUE)
@@ -344,11 +371,13 @@ pcfmulti.inhom(X, I, J, lambdaI, lambdaJ, \dots,
 \method{plot}{bw.optim}(x, \dots, showopt, optargs)
 \method{plot}{localpcfmatrix}(x, \dots)
 \method{plot}{plotpairsim}(x, \dots)
+\method{plot}{roc}(x, fmla, \dots, main, threshold)
 \method{plot}{spatialcdf}(x, \dots, xlab, ylab, do.points)
 polyLaslett(X, \dots, oldX, verbose, plotit)
 posify(x, eps)
 \method{predict}{exactppm}(object, locations, \dots, eps, dimyx, rule.eps)
 prefixfv(x, tagprefix, descprefix, lablprefix, whichtags)
+prettyweird(x, p, pieces, neach)
 \method{print}{bw.frac}(x, \dots)
 \method{print}{bw.optim}(x, \dots)
 \method{print}{densityfun}(x, \dots)
@@ -391,6 +420,7 @@ resolve.reciplambda(X, lambda, reciplambda, \dots)
 \method{resolve.reciplambda}{ppp}(X, lambda, reciplambda, \dots,
                     sigma, varcov, leaveoneout, update, check)
 resolveEinfo(x, what, fallback, warn, atomic)
+resolveNullModel(baseline, X, observations, \dots)
 rhohatEngine(model, covariate, reference, volume, \dots,
                subset, weights, method, horvitz, smoother,
                resolution, spatCovarArgs,
@@ -406,8 +436,20 @@ rhohatCalc(ZX, Zvalues, lambda, denom, \dots,
            covunits, modelcall, callstring, savestuff)
 rmax.Rigid(X, g)
 rmax.rule(fun, W, lambda)
-rocData(covariate, nullmodel, \dots, high, p)
-rocModel(lambda, nullmodel, \dots, high, p)
+\method{roc}{function}(X, covariate, \dots, high, tp, method, nsteps)
+\method{roc}{spatialCDFframe}(X, \dots, high, plength)
+rocDummy(X, U, covariate, \dots,
+         high, method, subset, weights, weightsU,
+         p, plength, bw, adjust, CI, alpha, degfreefun)
+rocEngine(discrim, nullmodel, \dots,
+          covtype, fittedmodel,
+          method, high, weights, discrimAtPoints,
+          p, plength, interpolate, jitter, subset,
+          bw, adjust, CI, alpha, degfreefun, leftoneout)
+rocIm(X, covariate, \dots, high, p, plength)
+rocSmoothCalc(ZX, ZU,\dots, weightsX, weightsU,
+              high, kernel, bw, adjust, alpha, nGrid, p, plength,
+              doCI, degfreeU)
 roseContinuous(ang, rad, unit, \dots,
                start, clockwise, main, labels, at, do.plot)
 scanmeasure(X, \dots)
@@ -443,10 +485,10 @@ spatialCDFtestCalc(fra, test, \dots, details)
 spatialCovariateEvidence(model, covariate, \dots)
 \method{spatialCovariateEvidence}{exactppm}(model, covariate, \dots, lambdatype,
           dimyx, eps, rule.eps, interpolate, jitter, jitterfactor,
-          modelname, covname, dataname, subset, clip.predict) 
+          modelname, covname, dataname, subset, clip.predict, raster.action) 
 \method{spatialCovariateEvidence}{ppp}(model, covariate, \dots, lambdatype,
           dimyx, eps, rule.eps, interpolate, jitter, jitterfactor,
-          modelname, covname, dataname, subset, clip.predict)
+          modelname, covname, dataname, subset, clip.predict, raster.action)
 sphere.volume(range, nval = 10)
 \method{summary}{bw.optim}(object, \dots)
 \method{summary}{envelope}(object,\dots)

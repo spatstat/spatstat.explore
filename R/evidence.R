@@ -4,7 +4,7 @@
 #'   evaluate covariate values at data points and at pixels
 #'   together with intensity of null/reference model
 #'
-#' $Revision: 1.53 $ $Date: 2024/06/23 00:22:42 $
+#' $Revision: 1.55 $ $Date: 2025/06/02 07:00:33 $
 #'
 
 
@@ -31,8 +31,10 @@ spatialCovariateEvidence.ppp <- local({
                             interpolate=TRUE,
                             jitter=TRUE, jitterfactor=1,
                             modelname=NULL, covname=NULL,
-                            dataname=NULL, subset=NULL, clip.predict=TRUE) {
+                            dataname=NULL, subset=NULL, clip.predict=TRUE,
+                            raster.action) {
     lambdatype <- match.arg(lambdatype)
+    dont.complain.about(raster.action)
     dont.complain.about(lambdatype)
     if(is.null(modelname)) modelname <- "CSR"
     if(is.null(dataname)) dataname <- "data"
@@ -285,9 +287,10 @@ spatialCovariateEvidence.exactppm <- local({
                                  interpolate=TRUE,
                                  jitter=TRUE, jitterfactor=1,
                                  modelname=NULL, covname=NULL,
-                                 dataname=NULL, subset=NULL, clip.predict=TRUE) {
+                                 dataname=NULL, subset=NULL, clip.predict=TRUE,
+                                 raster.action) {
     lambdatype <- match.arg(lambdatype)
-    dont.complain.about(lambdatype)
+    dont.complain.about(lambdatype, raster.action)
     #' evaluate covariate values at data points and at pixels
     ispois <- TRUE
     csr <- is.null(model$baseline)

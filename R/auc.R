@@ -1,93 +1,75 @@
 ##
-## auc.R
 ##
-##  Calculate ROC curve or area under it
+##  auc.R
 ##
-## $Revision: 1.17 $ $Date: 2023/08/15 07:44:11 $
-
-roc <- function(X, ...) { UseMethod("roc") }
-
-roc.ppp <- function(X, covariate, ..., high=TRUE) {
-  nullmodel <- exactppm(X)
-  result <- rocData(covariate, nullmodel, ..., high=high)
-  return(result)
-}
-
-rocData <- function(covariate, nullmodel, ...,
-                    high=TRUE,
-                    p=seq(0, 1, length=1024)) {
-  d <- spatialCDFframe(nullmodel, covariate, ...)
-  U <- d$values$U
-  ec <- if(high) ecdf(1-U) else ecdf(U)
-  if(!missing(p)) {
-    check.nvector(p)
-    stopifnot(min(p) >= 0)
-    stopifnot(max(p) <= 1)
-    if(prod(range(diff(p))) < 0) stop("p should be a monotone sequence")
-  }
-  df <- data.frame(p=p, fobs=ec(p), fnull=p)
-  result <- fv(df,
-               argu="p",
-               ylab=quote(roc(p)),
-               valu="fobs",
-               fmla= . ~ p,
-               desc=c("fraction of area",
-                      "observed fraction of points",
-                      "expected fraction if no effect"),
-               fname="roc")
-  fvnames(result, ".") <- c("fobs", "fnull")
-  return(result)
-}
-
-rocModel <- function(lambda, nullmodel, ..., high,
-                     p=seq(0, 1, length=1024)) {
-  if(!missing(high))
-    warning("Argument 'high' is ignored when computing ROC for a fitted model")
-  d<- spatialCDFframe(nullmodel, lambda, ...) 
-  U <- d$values$U
-  ec <- ecdf(1-U) 
-  if(!missing(p)) {
-    check.nvector(p)
-    stopifnot(min(p) >= 0)
-    stopifnot(max(p) <= 1)
-    if(prod(range(diff(p))) < 0) stop("p should be a monotone sequence")
-  }
-  fobs <- ec(p)
-  FZ <- d$values$FZ
-  FZinverse <- quantilefun.ewcdf(FZ)
-  lambdavalues <- if(is.im(lambda)) lambda[] else unlist(lapply(lambda, "["))
-  F1Z <- ewcdf(lambdavalues, lambdavalues/sum(lambdavalues))    
-  ftheo <- 1 - F1Z(FZinverse(1-p))
-  df <- data.frame(p=p, fobs=fobs, ftheo=ftheo, fnull=p)
-  result <- fv(df,
-               argu="p",
-               ylab=quote(roc(p)),
-               valu="fobs",
-               fmla = . ~ p,
-               desc=c("fraction of area",
-                 "observed fraction of points",
-                 "expected fraction of points",
-                 "expected fraction if no effect"),
-               fname="roc")
-  fvnames(result, ".") <- c("fobs", "ftheo", "fnull")
-  return(result)
-}
-
-
-## Code for roc.ppm, roc.slrm, roc.kppm is moved to spatstat.model
-
-#    ......................................................
+##  Calculate Area Under ROC curve
+##       (in spatstat.explore)
+##
+##
+## Copyright (c) 2017-2025 Adrian Baddeley/Ege Rubak/Rolf Turner
+##
 
 auc <- function(X, ...) { UseMethod("auc") }
 
-auc.ppp <- function(X, covariate, ..., high=TRUE) {
-  d <- spatialCDFframe(exactppm(X), covariate, ...)
-  U <- d$values$U
-  EU <- mean(U)
-  result <- if(high) EU else (1 - EU) 
+needROC <- function(...) {
+  ## these arguments require the use of roc()
+  any(c("observations", "baseline", "weights") %in% names(list(...)))
+}
+
+auc.ppp <- function(X, covariate, ...,
+                    high=TRUE,  subset=NULL) {
+  verifyclass(X, "ppp")
+  if(needROC(...)) {
+    ro <- roc(X, covariate, ..., high=high, subset=subset)
+    result <- auc(ro)
+  } else {
+    nullmodel <- exactppm(X)
+    result <- aucData(covariate, nullmodel, ..., high=high, subset=subset)
+  }
   return(result)
 }
 
-## Code for auc.ppm, auc.slrm, auc.kppm is moved to spatstat.model
+
+aucData <- function(covariate, nullmodel, ..., high=TRUE,
+                    interpolate=FALSE, jitter=FALSE, subset=NULL,
+                    covariateAtPoints=discrimAtPoints,
+                    discrimAtPoints=NULL) {
+  d <- spatialCDFframe(nullmodel, covariate, ...,
+                       covariateAtPoints=covariateAtPoints,
+                       interpolate=interpolate, jitter=jitter,
+                       subset=subset)
+  U <- d$values$U
+  EU <- mean(U)
+  result <- if(high) EU else (1 - EU)
+  return(result)
+}
 
 
+
+
+auc.im <- function(X, covariate, ..., high=TRUE) {
+  ro <- roc(X, covariate, ..., high=high)
+  auc(ro)
+}
+
+auc.roc <- function(X, ...) {
+  with(X, colMeans(.))
+}
+
+
+## AUC methods for other classes
+auc.spatialCDFframe <- function(X, ..., high=TRUE) {
+  trap.extra.arguments(...)
+  U <- X$values$U
+  EU <- mean(U)
+  result <- if (high) EU else (1 - EU)
+  return(result)
+}
+
+auc.bermantest <- function(X, ..., high=TRUE) {
+  auc(X[["fram"]], high=high, ...)
+}
+
+auc.cdftest <- function(X, ..., high=TRUE) {
+  auc(attr(X, "frame"), high=high, ...)
+}
