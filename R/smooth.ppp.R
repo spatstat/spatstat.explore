@@ -3,7 +3,7 @@
 #
 #  Smooth the marks of a point pattern
 # 
-#  $Revision: 1.103 $  $Date: 2025/05/13 07:01:00 $
+#  $Revision: 1.104 $  $Date: 2025/06/11 02:34:18 $
 #
 
 Smooth <- function(X, ...) {
@@ -233,7 +233,7 @@ Smooth.ppp <- function(X, sigma=NULL, ...,
     } else {
       warning(paste("Bandwidth is close to zero:",
                     "nearest-neighbour interpolation performed"))
-      Estimate <- nnmark(X, ..., k=1, at=at)
+      Estimate <- nnmark(X, ..., k=1, at=at, ties="mean")
     }
     if(!se) {
       result <- Estimate
@@ -1355,7 +1355,7 @@ ExpSmoothLog <- function(X, ..., at=c("pixels", "points"), weights=NULL,
              Z[yok] <- Smooth(YOK, ..., at=at, weights=weightsOK)
            },
            pixels = {
-             isfinite <- nnmark(Y %mark% yok, ...)
+             isfinite <- nnmark(Y %mark% yok, ..., ties="mean")
              support <- solutionset(isfinite)
              Window(YOK) <- support
              Z <- as.im(-Inf, W=Window(Y), ...)

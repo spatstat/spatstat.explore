@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.4-3.003
+        CHANGES IN spatstat.explore VERSION 3.4-3.004
 
 OVERVIEW
 
@@ -42,6 +42,9 @@ SIGNIFICANT USER-VISIBLE CHANGES
     o roc.ppp
     New argument 'subset' specifies a sub-region of the spatial domain
     in which the ROC should be calculated.
+
+   o Smooth.ppp
+   Slight change to algorithm for handling very small bandwidths.
 
         CHANGES IN spatstat.explore VERSION 3.4-3
 

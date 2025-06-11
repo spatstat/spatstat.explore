@@ -180,7 +180,8 @@ markvar(X, sigma=NULL, ..., weights=NULL, varcov=NULL)
   If the chosen bandwidth \code{sigma} is very small,
   kernel smoothing is mathematically equivalent
   to nearest-neighbour interpolation; the result will
-  be computed by \code{\link[spatstat.geom]{nnmark}}. This is
+  be computed by \code{\link[spatstat.geom]{nnmark}} with ties resolved
+  by taking the average mark. This is
   unless \code{at="points"} and \code{leaveoneout=FALSE},
   when the original mark values are returned.
 }
