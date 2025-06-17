@@ -3,7 +3,7 @@
 #
 #  Smooth the marks of a point pattern
 # 
-#  $Revision: 1.104 $  $Date: 2025/06/11 02:34:18 $
+#  $Revision: 1.105 $  $Date: 2025/06/14 03:30:03 $
 #
 
 Smooth <- function(X, ...) {
@@ -203,7 +203,8 @@ Smooth.ppp <- function(X, sigma=NULL, ...,
     if(weighted) {
       ybar <- switch(shrinktype,
                      mean = apply(marxmat, 2, weighted.mean, w=weights),
-                     median = apply(marxmat, 2, weighted.median, w=weights))
+                     median = apply(marxmat, 2, weighted.median, w=weights,
+                                    collapse=FALSE))
     } else {
       ybar <- switch(shrinktype,
                      mean = colMeans(marxmat, na.rm=TRUE),

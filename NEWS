@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.4-3.004
+        CHANGES IN spatstat.explore VERSION 3.4-3.006
 
 OVERVIEW
 
@@ -7,7 +7,9 @@ OVERVIEW
     
     o Extension of ROC curves.
 
-    o Youden index
+    o Shrinkage estimate in Smooth.ppp.
+    
+    o Youden index.
 
 NEW FUNCTIONS
 
@@ -43,8 +45,12 @@ SIGNIFICANT USER-VISIBLE CHANGES
     New argument 'subset' specifies a sub-region of the spatial domain
     in which the ROC should be calculated.
 
-   o Smooth.ppp
-   Slight change to algorithm for handling very small bandwidths.
+    o Smooth.ppp
+    Shrinkage estimate implemented.
+    New arguments 'shrink' and 'shrinktype'.
+
+    o Smooth.ppp
+    Slight change to algorithm for handling very small bandwidths.
 
         CHANGES IN spatstat.explore VERSION 3.4-3
 
