@@ -30,7 +30,7 @@
     spatial smoothing.
   }
   \item{type}{
-    Integer specifying the type of median
+    Integer specifying the type of quantile
     (using the convention of \code{\link[stats]{quantile.default}};
     see Details).
     Only types 1 and 4 are currently implemented.

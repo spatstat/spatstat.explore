@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.4-3.006
+        CHANGES IN spatstat.explore VERSION 3.4-3.007
 
 OVERVIEW
 
@@ -50,6 +50,9 @@ SIGNIFICANT USER-VISIBLE CHANGES
     New arguments 'shrink' and 'shrinktype'.
 
     o Smooth.ppp
+    Slight change to algorithm for handling very small bandwidths.
+
+    o SpatialQuantile.ppp, SpatialMedian.ppp
     Slight change to algorithm for handling very small bandwidths.
 
         CHANGES IN spatstat.explore VERSION 3.4-3
