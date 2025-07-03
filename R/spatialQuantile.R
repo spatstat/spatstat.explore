@@ -114,7 +114,7 @@ SpatialQuantile.ppp <- function(X, prob=0.5, sigma=NULL, ...,
                   "sigma is probably too small"),
             call.=FALSE)
     #' apply l'Hopital's Rule at the problem locations
-    tiesfun <- function(x, p, ty=type) {unname(quantile(x, probs=p, type=ty))}
+    tiesfun <- function(x, p=prob, ty=type) {unname(quantile(x, probs=p, type=ty))}
     Z[Bad] <- nnmark(X, at=at, xy=LX, ties=tiesfun)[Bad]
     Good <- !Bad
   }

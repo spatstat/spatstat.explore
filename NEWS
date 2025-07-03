@@ -1,15 +1,17 @@
 
-        CHANGES IN spatstat.explore VERSION 3.4-3.007
+        CHANGES IN spatstat.explore VERSION 3.4-3.008
 
 OVERVIEW
 
-    o We thank Suman Rakshit for contributions.
+    o We thank Jakob Jentschke and Suman Rakshit for contributions.
     
     o Extension of ROC curves.
 
     o Shrinkage estimate in Smooth.ppp.
     
     o Youden index.
+
+    o Minor improvements and bug fixes.
 
 NEW FUNCTIONS
 
@@ -24,6 +26,9 @@ NEW FUNCTIONS
     
 SIGNIFICANT USER-VISIBLE CHANGES
 
+    o cov.im, cor.im
+    Default changed to 'use="complete.obs"'.
+    
     o roc.ppp
     New argument 'baseline' allows calculation of ROC relative to a baseline.
 

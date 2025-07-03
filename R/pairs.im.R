@@ -1,7 +1,7 @@
 #
 #   pairs.im.R
 #
-#   $Revision: 1.23 $   $Date: 2022/11/03 11:08:33 $
+#   $Revision: 1.24 $   $Date: 2025/07/03 00:55:53 $
 #
 
 pairs.listof <- pairs.solist <- function(..., plot=TRUE) {
@@ -164,14 +164,14 @@ panel.histogram <- function(x, ...) {
 
 ## pairwise things like correlations
 
-cov.im <- function(..., use = "everything",
+cov.im <- function(..., use = "complete.obs",
                    method = c("pearson", "kendall", "spearman")) {
   df <- pairs.im(..., plot=FALSE, drop=FALSE)
   V <- cov(df, use=use, method=method)
   return(V)
 }  
 
-cor.im <- function(..., use = "everything",
+cor.im <- function(..., use = "complete.obs",
                    method = c("pearson", "kendall", "spearman")) {
   df <- pairs.im(..., plot=FALSE, drop=FALSE)
   R <- cor(df, use=use, method=method)
