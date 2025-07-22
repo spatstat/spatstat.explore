@@ -161,6 +161,24 @@ rocIm <- function(X, covariate, ..., high=TRUE,
   as.roc.data.frame(df)
 }
 
+#' Temporary code provides soon-to-be-deprecated functions rocData, rocModel
+
+rocData <- function(covariate, nullmodel, ..., high=TRUE,
+                    p=seq(0, 1, length=1024)) {
+  rocEngine(covariate, nullmodel, high=high, p=p, covtype="covariate")
+}
+
+rocModel <- function(lambda, nullmodel, ..., high=TRUE,
+                     p=seq(0, 1, length=1024),
+                     lambdatype=c("intensity", "probabilities")) {
+  lambdatype <- match.arg(lambdatype)
+  covtype <- if(lambdatype == "probabilities") "probability" else "intensity"
+  if(!high)
+    warning("Argument 'high' is ignored for point process models",
+            call.=FALSE)
+  rocEngine(lambda, nullmodel, high=TRUE, p=p, covtype=covtype)
+}
+
 
 
 resolveNullModel <- function(baseline, X,

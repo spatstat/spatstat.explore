@@ -159,6 +159,8 @@
 \alias{rmax.rule}
 \alias{roc.function}
 \alias{roc.spatialCDFframe}
+\alias{rocData}
+\alias{rocModel} 
 \alias{rocDummy}
 \alias{rocEngine}
 \alias{rocIm}
@@ -438,6 +440,8 @@ rmax.Rigid(X, g)
 rmax.rule(fun, W, lambda)
 \method{roc}{function}(X, covariate, \dots, high, tp, method, nsteps)
 \method{roc}{spatialCDFframe}(X, \dots, high, plength)
+rocData(covariate, nullmodel, \dots, high, p)
+rocModel(lambda, nullmodel, \dots, high, p, lambdatype)
 rocDummy(X, U, covariate, \dots,
          high, method, subset, weights, weightsU,
          p, plength, bw, adjust, CI, alpha, degfreefun)
