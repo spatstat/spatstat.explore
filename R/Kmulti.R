@@ -4,7 +4,7 @@
 #	Compute estimates of cross-type K functions
 #	for multitype point patterns
 #
-#	$Revision: 5.61 $	$Date: 2023/02/28 02:06:33 $
+#	$Revision: 5.62 $	$Date: 2025/09/03 03:35:46 $
 #
 #
 # -------- functions ----------------------------------------
@@ -43,6 +43,7 @@
 # ------------------------------------------------------------------------
 
 "Lcross" <- function(X, i, j, ..., from, to, correction) {
+  if(is.NAobject(X)) return(NAobject("fv"))
   if(!is.multitype(X, dfok=FALSE)) 
 	stop("Point pattern must be multitype")
   if(missing(i)) i <- if(!missing(from)) from else levels(marks(X))[1]
@@ -64,6 +65,7 @@
 }
 
 "Ldot" <- function(X, i, ..., from, correction) {
+  if(is.NAobject(X)) return(NAobject("fv"))
   if(!is.multitype(X, dfok=FALSE)) 
 	stop("Point pattern must be multitype")
   if(missing(i)) i <- if(!missing(from)) from else levels(marks(X))[1]
@@ -86,6 +88,7 @@ function(X, i, j, r=NULL, breaks=NULL,
          ratio=FALSE, from, to)
 {
   verifyclass(X, "ppp")
+  if(is.NAobject(X)) return(NAobject("fv"))
   if(!is.multitype(X, dfok=FALSE)) 
 	stop("Point pattern must be multitype")
   if(missing(correction))
@@ -128,6 +131,7 @@ function(X, i, r=NULL, breaks=NULL,
          ratio=FALSE, from)
 {
   verifyclass(X, "ppp")
+  if(is.NAobject(X)) return(NAobject("fv"))
   if(!is.multitype(X, dfok=FALSE)) 
 	stop("Point pattern must be multitype")
   if(missing(correction))
@@ -155,6 +159,7 @@ function(X, I, J, r=NULL, breaks=NULL,
          rmax=NULL, ratio=FALSE)
 {
   verifyclass(X, "ppp")
+  if(is.NAobject(X)) return(NAobject("fv"))
 
   npts <- npoints(X)
   W <- Window(X)

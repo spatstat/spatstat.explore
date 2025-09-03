@@ -1,7 +1,7 @@
 #
 #	Kinhom.S	Estimation of K function for inhomogeneous patterns
 #
-#	$Revision: 1.104 $	$Date: 2024/06/09 00:00:07 $
+#	$Revision: 1.105 $	$Date: 2025/09/03 03:31:00 $
 #
 #	Kinhom()	compute estimate of K_inhom
 #
@@ -45,6 +45,7 @@
 # ------------------------------------------------------------------------
 
 "Linhom" <- function(X, ..., correction) {
+  if(is.NAobject(X)) return(NAobject("fv"))
   if(missing(correction)) correction <- NULL
   K <- Kinhom(X, ..., correction=correction)
   L <- eval.fv(sqrt(pmax.int(K,0)/pi))
@@ -72,6 +73,7 @@
 	    ratio=FALSE)
 {
     verifyclass(X, "ppp")
+    if(is.NAobject(X)) return(NAobject("fv"))
     nlarge.given <- !missing(nlarge)
     rfixed <- !missing(r) || !missing(breaks)
     

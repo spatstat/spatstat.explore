@@ -3,10 +3,11 @@
 #
 #	Computes estimates of the empty space function
 #
-#	$Revision: 4.47 $	$Date: 2019/11/01 01:32:28 $
+#	$Revision: 4.48 $	$Date: 2025/09/03 03:43:44 $
 #
 
 Fhazard <- function(X, ...) {
+  if(is.NAobject(X)) return(NAobject("fv"))
   Z <- Fest(X, ...)
   if(!any(names(Z) == "km"))
     stop("Kaplan-Meier estimator 'km' is required for hazard rate")
@@ -35,6 +36,7 @@ Fest <- function(X, ..., eps = NULL, r=NULL, breaks=NULL,
                  correction=c("rs", "km", "cs"),
                  domain=NULL) {
   verifyclass(X, "ppp")
+  if(is.NAobject(X)) return(NAobject("fv"))
   if(!is.null(domain))
     stopifnot(is.subset.owin(domain, Window(X)))
 

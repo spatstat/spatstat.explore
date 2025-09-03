@@ -2,7 +2,7 @@
 #
 #	I function
 #
-#	$Revision: 1.16 $	$Date: 2019/10/31 03:01:26 $
+#	$Revision: 1.17 $	$Date: 2025/09/03 03:47:50 $
 #
 #
 #
@@ -11,6 +11,7 @@ Iest <- local({
   Iest <- function(X, ...,
                    eps=NULL, r = NULL, breaks = NULL, correction=NULL) {
 
+  if(is.NAobject(X)) return(NAobject("fv"))
     X <- as.ppp(X)
     if(!is.multitype(X))
       stop("Only applicable to multitype point patterns")

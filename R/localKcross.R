@@ -3,7 +3,7 @@
 #'
 #'     original by Ege Rubak
 #' 
-#'     $Revision: 1.18 $ $Date: 2023/02/28 02:06:58 $
+#'     $Revision: 1.19 $ $Date: 2025/09/03 03:59:04 $
 
 "localLcross" <- function(X, from, to, ..., rmax = NULL, correction = "Ripley") {
   localKcross(X, from, to, ..., rmax = rmax, correction = correction, wantL = TRUE)
@@ -15,7 +15,8 @@
 
 "localKcross" <-
   function(X, from, to, ..., rmax = NULL, correction="Ripley", verbose=TRUE, rvalue=NULL)
-  {
+{
+    if(is.NAobject(X)) return(NAobject("fv"))
     verifyclass(X, "ppp")
     if(!is.multitype(X, dfok=FALSE)) 
 	    stop("Point pattern must be multitype")
@@ -58,6 +59,7 @@
 "localKdot" <- 
 function(X, from, ..., rmax = NULL, correction="Ripley", verbose=TRUE, rvalue=NULL)
 {
+  if(is.NAobject(X)) return(NAobject("fv"))
   verifyclass(X, "ppp")
   if(!is.multitype(X, dfok=FALSE)) 
   	stop("Point pattern must be multitype")
@@ -88,6 +90,7 @@ function(X, from, ..., rmax = NULL, correction="Ripley", verbose=TRUE, rvalue=NU
            sigma=NULL, varcov=NULL,
            lambdaX=NULL, update=TRUE, leaveoneout=TRUE)
   {
+    if(is.NAobject(X)) return(NAobject("fv"))
     verifyclass(X, "ppp")
     if(!is.multitype(X, dfok=FALSE))
       stop("Point pattern must be multitype")
@@ -128,6 +131,8 @@ localLcross.inhom <- function(X, from, to, lambdaFrom = NULL, lambdaTo = NULL, .
            Ikey="I",
            Jkey="J")
   {
+    if(is.NAobject(X)) return(NAobject("fv"))
+
     npts <- npoints(X)
     W <- Window(X)
     areaW <- area(W)

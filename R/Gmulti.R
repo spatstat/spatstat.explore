@@ -8,7 +8,7 @@
 #		Gdot		      G_{i\bullet}
 #		Gmulti	              (generic)
 #
-#	$Revision: 4.46 $	$Date: 2023/02/28 02:05:42 $
+#	$Revision: 4.47 $	$Date: 2025/09/03 03:45:35 $
 #
 ################################################################################
 
@@ -23,6 +23,7 @@ function(X, i, j, r=NULL, breaks=NULL, ..., correction=c("rs", "km", "han"))
 #       r:              (optional) values of argument r  
 #	breaks:		(optional) breakpoints for argument r
 #
+  if(is.NAobject(X)) return(NAobject("fv"))
   X <- as.ppp(X)
   if(!is.marked(X, dfok=FALSE))
     stop(paste("point pattern has no", sQuote("marks")))
@@ -58,6 +59,7 @@ function(X, i, r=NULL, breaks=NULL, ..., correction=c("km","rs","han")) {
 #       r:              (optional) values of argument r  
 #	breaks:		(optional) breakpoints for argument r
 #
+  if(is.NAobject(X)) return(NAobject("fv"))
   X <- as.ppp(X)
   if(!is.marked(X))
     stop(paste("point pattern has no", sQuote("marks")))
@@ -94,6 +96,7 @@ function(X, I, J, r=NULL, breaks=NULL, ..., disjoint=NULL,
 #       r:              (optional) values of argument r  
 #	breaks:		(optional) breakpoints for argument r
 #
+  if(is.NAobject(X)) return(NAobject("fv"))
   verifyclass(X, "ppp")
   W <- X$window
   npts <- npoints(X)

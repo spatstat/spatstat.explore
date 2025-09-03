@@ -1,7 +1,7 @@
 #
 # Jinhom.R
 #
-#  $Revision: 1.22 $ $Date: 2023/04/08 04:07:04 $
+#  $Revision: 1.23 $ $Date: 2025/09/03 03:48:38 $
 #
 
 Ginhom <- function(X, lambda=NULL, lmin=NULL,
@@ -11,6 +11,7 @@ Ginhom <- function(X, lambda=NULL, lmin=NULL,
                    ratio=FALSE, update = TRUE,
                    warn.bias=TRUE, savelambda=FALSE) {
   
+  if(is.NAobject(X)) return(NAobject("fv"))
   stopifnot(is.ppp(X))
 
   npts <- npoints(X)
@@ -188,6 +189,7 @@ Finhom <- function(X, lambda=NULL, lmin=NULL,
                    ratio=FALSE, update = TRUE,
                    warn.bias=TRUE, savelambda=FALSE) {
   
+  if(is.NAobject(X)) return(NAobject("fv"))
   stopifnot(is.ppp(X))
 
   npts <- npoints(X)
@@ -391,6 +393,7 @@ Jinhom <- function(X, lambda=NULL, lmin=NULL,
                    sigma=NULL, varcov=NULL,
                    r=NULL, breaks=NULL, ratio=FALSE, update = TRUE,
                    warn.bias=TRUE, savelambda=FALSE) {
+  if(is.NAobject(X)) return(NAobject("fv"))
   ## compute inhomogeneous G (including determination of r and lmin)
   GX <- Ginhom(X, lambda=lambda, lmin=lmin, ...,
                sigma=sigma, varcov=varcov, r=r, breaks=breaks,

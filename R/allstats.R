@@ -2,7 +2,7 @@
 #
 #   allstats.R
 #
-#   $Revision: 1.18 $   $Date: 2016/02/11 10:17:12 $
+#   $Revision: 1.20 $   $Date: 2025/09/03 04:04:42 $
 #
 #
 allstats <- function(pp, ..., dataname=NULL,verb=FALSE) {
@@ -10,6 +10,7 @@ allstats <- function(pp, ..., dataname=NULL,verb=FALSE) {
 # Function allstats --- to calculate the F, G, K, and J functions
 # for an unmarked point pattern.
 #
+  if(is.NAobject(pp)) return(NAobject("fasp"))
   verifyclass(pp,"ppp")
   if(is.marked(pp))
     stop("This function is applicable only to unmarked patterns.\n")

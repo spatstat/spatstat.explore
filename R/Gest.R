@@ -3,7 +3,7 @@
 #
 #	Compute estimates of nearest neighbour distance distribution function G
 #
-#	$Revision: 4.32 $	$Date: 2020/08/25 06:13:10 $
+#	$Revision: 4.33 $	$Date: 2025/09/03 03:44:15 $
 #
 ################################################################################
 #
@@ -12,6 +12,7 @@
 function(X, r=NULL, breaks=NULL, ..., correction=c("rs", "km", "han"),
          domain=NULL) {
   verifyclass(X, "ppp")
+  if(is.NAobject(X)) return(NAobject("fv"))
   if(!is.null(domain))
       stopifnot(is.subset.owin(domain, Window(X)))
   

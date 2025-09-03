@@ -1,7 +1,7 @@
 #
 #   pcfmulti.R
 #
-#   $Revision: 1.12 $   $Date: 2023/04/06 00:03:01 $
+#   $Revision: 1.13 $   $Date: 2025/09/03 03:41:25 $
 #
 #   multitype pair correlation functions
 #
@@ -13,6 +13,7 @@ pcfcross <-
          divisor=c("r","d"), ratio=FALSE)
 {
   verifyclass(X, "ppp")
+  if(is.NAobject(X)) return(NAobject("fv"))
   stopifnot(is.multitype(X))
   if(missing(correction))
     correction <- NULL
@@ -56,6 +57,7 @@ function(X, i, ...,
          ratio=FALSE)
 {
   verifyclass(X, "ppp")
+  if(is.NAobject(X)) return(NAobject("fv"))
   stopifnot(is.multitype(X))
   if(missing(correction))
     correction <- NULL
@@ -98,6 +100,7 @@ pcfmulti <- function(X, I, J, ...,
                      ratio=FALSE)
 {
   verifyclass(X, "ppp")
+  if(is.NAobject(X)) return(NAobject("fv"))
 #  r.override <- !is.null(r)
   divisor <- match.arg(divisor)
 

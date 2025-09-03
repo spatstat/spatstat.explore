@@ -1,11 +1,12 @@
 #
 #	Kscaled.R	Estimation of K function for locally-scaled process
 #
-#	$Revision: 1.18 $	$Date: 2022/05/23 00:14:56 $
+#	$Revision: 1.20 $	$Date: 2025/09/03 04:31:12 $
 #
 
 "Lscaled" <- function(...) {
   K <- Kscaled(...)
+  if(is.NAobject(K)) return(K)
   L <- eval.fv(sqrt(pmax.int(K,0)/pi))
   # relabel the fv object
   L <- rebadge.fv(L, quote(L[scaled](r)), c("L","scaled"))
@@ -21,6 +22,7 @@
             renormalise=FALSE, normpower=1,
             sigma=NULL, varcov=NULL)
 {
+  if(is.NAobject(X)) return(NAobject("fv"))
   verifyclass(X, "ppp")
 #  rfixed <- !missing(r) || !missing(breaks)
 

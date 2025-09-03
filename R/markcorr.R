@@ -2,7 +2,7 @@
 ##
 ##     markcorr.R
 ##
-##     $Revision: 1.88 $ $Date: 2022/06/08 03:07:56 $
+##     $Revision: 1.89 $ $Date: 2025/09/03 04:02:18 $
 ##
 ##    Estimate the mark correlation function
 ##    and related functions 
@@ -18,6 +18,7 @@ markvario <- local({
   markvario <- 
     function(X, correction=c("isotropic", "Ripley", "translate"),
              r=NULL, method="density", ..., normalise=FALSE) {
+      if(is.NAobject(X)) return(NAobject("fv"))
       m <- onecolumn(marks(X))
       if(!is.numeric(m))
         stop("Marks are not numeric")
@@ -54,6 +55,7 @@ markconnect <- local({
                           correction=c("isotropic", "Ripley", "translate"),
                           method="density", ...,
                           normalise=FALSE) {
+    if(is.NAobject(X)) return(NAobject("fv"))
     stopifnot(is.ppp(X) && is.multitype(X))
     if(missing(correction))
       correction <- NULL
@@ -97,6 +99,7 @@ Emark <- local({
   Emark <- function(X, r=NULL, 
                     correction=c("isotropic", "Ripley", "translate"),
                     method="density", ..., normalise=FALSE) {
+    if(is.NAobject(X)) return(NAobject("fv"))
     stopifnot(is.ppp(X) && is.marked(X))
     marx <- marks(X)
     isvec <- is.vector(marx) && is.numeric(marx)
@@ -126,6 +129,7 @@ Vmark <- local({
   Vmark <- function(X, r=NULL, 
                     correction=c("isotropic", "Ripley", "translate"),
                     method="density", ..., normalise=FALSE) {
+    if(is.NAobject(X)) return(NAobject("fv"))
     if(missing(correction))
       correction <- NULL
     E <- Emark(X, r=r, correction=correction, method=method, ...,
@@ -174,6 +178,7 @@ Kmark <-
   ## If multiplicative=TRUE then w(u,v) = f(u) f(v)
   ## If multiplicative=FALSE then w(u,v) = f(u, v)
   ##
+  if(is.NAobject(X)) return(NAobject("fv"))
   stopifnot(is.ppp(X) && is.marked(X))
   is.marked(X, dfok=FALSE)
   W <- Window(X)
@@ -281,6 +286,7 @@ markcorr <-
            internal=NULL)
 {
   ## mark correlation function with test function f
+  if(is.NAobject(X)) return(NAobject("fv"))
   stopifnot(is.ppp(X) && is.marked(X))
   nX <- npoints(X)
   
@@ -542,6 +548,7 @@ markcrosscorr <-
            correction=c("isotropic", "Ripley", "translate"),
            method="density", ..., normalise=TRUE, Xname=NULL)
 {
+  if(is.NAobject(X)) return(NAobject("fv"))
   if(missing(Xname))
     Xname <- short.deparse(substitute(X))
 

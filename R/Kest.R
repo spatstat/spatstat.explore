@@ -1,7 +1,7 @@
 #
 #	Kest.R		Estimation of K function
 #
-#	$Revision: 5.139 $	$Date: 2022/06/30 07:49:47 $
+#	$Revision: 5.140 $	$Date: 2025/09/03 03:30:04 $
 #
 #
 # -------- functions ----------------------------------------
@@ -35,6 +35,7 @@
 # ------------------------------------------------------------------------
 
 "Lest" <- function(X, ..., correction) {
+  if(is.NAobject(X)) return(NAobject("fv"))
   if(missing(correction)) correction <- NULL
   K <- Kest(X, ..., correction=correction)
   L <- eval.fv(sqrt(K/pi), dotonly=FALSE)
@@ -63,6 +64,7 @@ function(X, ..., r=NULL, rmax=NULL, breaks=NULL,
          ratio=FALSE)
 {
   verifyclass(X, "ppp")
+  if(is.NAobject(X)) return(NAobject("fv"))
   nlarge.given <- !missing(nlarge) && !is.null(nlarge)
   rfixed <- !is.null(r) || !is.null(breaks)
   npts <- npoints(X)

@@ -1,12 +1,13 @@
 #
 #	Kmulti.inhom.S		
 #
-#	$Revision: 1.56 $	$Date: 2023/02/28 02:06:17 $
+#	$Revision: 1.57 $	$Date: 2025/09/03 03:36:39 $
 #
 #
 # ------------------------------------------------------------------------
 
 Lcross.inhom <- function(X, i, j, ..., correction) {
+  if(is.NAobject(X)) return(NAobject("fv"))
   if(!is.multitype(X, dfok=FALSE))
 	stop("Point pattern must be multitype")
   if(missing(i)) i <- levels(marks(X))[1]
@@ -29,6 +30,7 @@ Lcross.inhom <- function(X, i, j, ..., correction) {
 }
 
 Ldot.inhom <- function(X, i, ..., correction) {
+  if(is.NAobject(X)) return(NAobject("fv"))
   if(!is.multitype(X, dfok=FALSE))
 	stop("Point pattern must be multitype")
   if(missing(i)) i <- levels(marks(X))[1]
@@ -56,6 +58,7 @@ function(X, i, j, lambdaI=NULL, lambdaJ=NULL, ...,
          lambdaX=NULL, update=TRUE, leaveoneout=TRUE)
 {
   verifyclass(X, "ppp")
+  if(is.NAobject(X)) return(NAobject("fv"))
   if(!is.multitype(X, dfok=FALSE))
 	stop("Point pattern must be multitype")
   if(missing(correction))
@@ -99,6 +102,7 @@ function(X, i, lambdaI=NULL, lambdadot=NULL, ...,
          lambdaX=NULL, update=TRUE, leaveoneout=TRUE)
 {
   verifyclass(X, "ppp")
+  if(is.NAobject(X)) return(NAobject("fv"))
   if(!is.multitype(X, dfok=FALSE))
 	stop("Point pattern must be multitype")
   if(missing(correction))
@@ -148,6 +152,7 @@ function(X, I, J, lambdaI=NULL, lambdaJ=NULL,
          lambdaX=NULL, update=TRUE, leaveoneout=TRUE)
 {
   verifyclass(X, "ppp")
+  if(is.NAobject(X)) return(NAobject("fv"))
 
   dflt <- list(Iname="points satisfying condition I",
                Jname="points satisfying condition J",

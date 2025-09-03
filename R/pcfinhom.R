@@ -5,7 +5,7 @@
 #'
 #' Copyright (c) 2008-2025 Adrian Baddeley, Tilman Davies and Martin Hazelton
 #'
-#' $Revision: 1.30 $ $Date: 2025/03/15 11:19:08 $
+#' $Revision: 1.31 $ $Date: 2025/09/03 03:42:50 $
 
 pcfinhom <- function(X, lambda=NULL, ..., r=NULL,
                      adaptive=FALSE,
@@ -28,6 +28,8 @@ pcfinhom <- function(X, lambda=NULL, ..., r=NULL,
                      domain=NULL, ratio=FALSE,
                      close=NULL)
 {
+  if(is.NAobject(X)) return(NAobject("fv"))
+
   kernel <- match.kernel(kernel)
   if(is.function(divisor)) divisor <- divisor(X)
   divisor <- match.arg(divisor)

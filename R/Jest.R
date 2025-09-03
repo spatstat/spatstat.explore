@@ -3,11 +3,12 @@
 #	Usual invocation to compute J function
 #	if F and G are not required 
 #
-#	$Revision: 4.27 $	$Date: 2023/12/07 10:42:49 $
+#	$Revision: 4.28 $	$Date: 2025/09/03 03:46:04 $
 #
 #
 #
 Jest <- function(X, ..., eps=NULL, r=NULL, breaks=NULL, correction=NULL) {
+  if(is.NAobject(X)) return(NAobject("fv"))
   X <- as.ppp(X)
   W <- Window(X)
   brks <- handle.r.b.args(r, breaks, window=W, pixeps=eps,

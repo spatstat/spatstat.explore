@@ -104,6 +104,7 @@
 \alias{nncleanEngine}
 \alias{pairs.listof}
 \alias{pairs.solist}
+\alias{pcf.NAobject}
 \alias{pcf3engine}
 \alias{pcfmulti.inhom}
 \alias{plot.bw.frac}
@@ -363,6 +364,7 @@ nncleanEngine(kthNND, k, d, \dots, tol, maxit,
               plothist, lineargs, verbose, Xname)
 \method{pairs}{listof}(\dots, plot=TRUE)
 \method{pairs}{solist}(\dots, plot=TRUE)
+\method{pcf}{NAobject}(X, \dots)
 pcf3engine(x, y, z, box, rmax, nrval, correction, delta)
 pcfmulti.inhom(X, I, J, lambdaI, lambdaJ, \dots,
                lambdaX, r, breaks, kernel,

@@ -1,7 +1,7 @@
 #
 #   pcfmulti.inhom.R
 #
-#   $Revision: 1.19 $   $Date: 2023/03/11 06:15:44 $
+#   $Revision: 1.20 $   $Date: 2025/09/03 03:42:03 $
 #
 #   inhomogeneous multitype pair correlation functions
 #
@@ -15,6 +15,7 @@ pcfcross.inhom <-
          sigma=NULL, adjust.sigma=1, varcov=NULL)
 {
   verifyclass(X, "ppp")
+  if(is.NAobject(X)) return(NAobject("fv"))
   stopifnot(is.multitype(X))
   if(missing(correction))
     correction <- NULL
@@ -54,6 +55,7 @@ function(X, i, lambdaI=NULL, lambdadot=NULL, ...,
          sigma=NULL, adjust.sigma=1, varcov=NULL)
 {
   verifyclass(X, "ppp")
+  if(is.NAobject(X)) return(NAobject("fv"))
   stopifnot(is.multitype(X))
   if(missing(correction))
     correction <- NULL
@@ -101,6 +103,7 @@ pcfmulti.inhom <- function(X, I, J, lambdaI=NULL, lambdaJ=NULL, ...,
                            Jname="points satisfying condition J")
 {
   verifyclass(X, "ppp")
+  if(is.NAobject(X)) return(NAobject("fv"))
 #  r.override <- !is.null(r)
 
   win <- X$window

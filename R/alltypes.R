@@ -1,7 +1,7 @@
 #
 #      alltypes.R
 #
-#   $Revision: 1.38 $   $Date: 2022/01/04 05:30:06 $
+#   $Revision: 1.39 $   $Date: 2025/09/03 04:04:50 $
 #
 #
                                   
@@ -11,6 +11,7 @@ alltypes <- function(X, fun="K", ...,
 # Function 'alltypes' --- calculates a summary function for
 # each type, or each pair of types, in a multitype point pattern
 #
+  if(is.NAobject(X)) return(NAobject("fasp"))
   if(is.ppp(X)) classname <- "ppp" else
   if(is.lpp(X)) classname <- "lpp" else
   stop("X should be a ppp or lpp object")

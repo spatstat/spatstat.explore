@@ -3,7 +3,7 @@
 #	Usual invocations to compute multitype J function(s)
 #	if F and G are not required 
 #
-#	$Revision: 4.46 $	$Date: 2023/02/28 02:05:58 $
+#	$Revision: 4.47 $	$Date: 2025/09/03 03:47:18 $
 #
 #
 #
@@ -19,6 +19,7 @@ function(X, i, j, eps=NULL, r=NULL, breaks=NULL, ..., correction=NULL) {
 #       r:              (optional) values of argument r  
 #	breaks:		(optional) breakpoints for argument r
 #
+  if(is.NAobject(X)) return(NAobject("fv"))
   X <- as.ppp(X)
   if(!is.marked(X))
     stop(paste("point pattern has no", sQuote("marks")))
@@ -60,6 +61,7 @@ function(X, i, eps=NULL, r=NULL, breaks=NULL, ..., correction=NULL) {
 #       r:              (optional) values of argument r  
 #	breaks:		(optional) breakpoints for argument r
 #
+  if(is.NAobject(X)) return(NAobject("fv"))
   X <- as.ppp(X)
   if(!is.marked(X))
     stop(paste("point pattern has no", sQuote("marks")))
@@ -102,6 +104,7 @@ function(X, I, J, eps=NULL, r=NULL, breaks=NULL, ..., disjoint=NULL,
 #	breaks:		(optional) breakpoints for argument r
 #  
 #
+  if(is.NAobject(X)) return(NAobject("fv"))
   X <- as.ppp(X)
   W<- X$window
   I <- ppsubset(X, I, "I")

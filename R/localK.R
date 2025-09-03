@@ -1,7 +1,7 @@
 #
 #	localK.R		Getis-Franklin neighbourhood density function
 #
-#	$Revision: 1.25 $	$Date: 2019/06/23 06:30:55 $
+#	$Revision: 1.26 $	$Date: 2025/09/03 03:50:23 $
 #
 #
 
@@ -26,6 +26,7 @@
 "localK" <-
   function(X, ..., rmax = NULL, correction="Ripley", verbose=TRUE, rvalue=NULL)
 {
+  if(is.NAobject(X)) return(NAobject("fv"))
   verifyclass(X, "ppp")
   localKengine(X, ..., rmax = rmax,
                correction=correction, verbose=verbose, rvalue=rvalue)
@@ -36,6 +37,7 @@
            rmax = NULL, correction="Ripley", verbose=TRUE, rvalue=NULL,
            sigma=NULL, varcov=NULL, update=TRUE, leaveoneout=TRUE)
 {
+  if(is.NAobject(X)) return(NAobject("fv"))
   verifyclass(X, "ppp")
 
   a <- resolve.lambda(X, lambda, ...,
