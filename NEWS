@@ -1,11 +1,33 @@
 
-        CHANGES IN spatstat.explore VERSION 3.5-2.001
+        CHANGES IN spatstat.explore VERSION 3.5-3
 
 OVERVIEW
 
     o Summary functions handle NA objects.
     
+SIGNIFICANT USER-VISIBLE CHANGES
 
+    o Summary functions 
+    (Kest, Kest.fft, Kcross, Kdot, Kmulti, Kscaled,
+    Kinhom, Kcross.inhom, Kdot.inhom, Kmulti.inhom,
+    Lest, Lcross, Ldot, Linhom, Lscaled, Lcross.inhom, Ldot.inhom,
+    pcf, pcfcross, pcfdot, pcfmulti, pcfinhom, pcfcross.inhom, pcfdot.inhom,
+    Fest, Gest, Gcross, Gdot, Gmulti, Jest, Jcross, Jdot, Jmulti, Iest,
+    Finhom, Ginhom, Jinhom, markcorr, markvario, markconnect, Emark, Vmark)
+    If X is a missing point pattern, a missing object of class 'fv' is returned.
+
+   o Local summary functions
+    (localL, localK, localLcross, localKcross, localLdot, localKdot
+    localLcross.inhom, localKcross.inhom, localLdot.inhom, localKdot.inhom)
+    If X is a missing point pattern, a missing 'data.frame' is returned.
+
+   o allstats, alltypes
+   If the first argument is a missing point pattern,
+   a missing object of class 'fasp' is returned.
+
+   o Kmeasure
+   If X is a missing point pattern, a missing pixel image is returned.
+   
         CHANGES IN spatstat.explore VERSION 3.5-2
 
 OVERVIEW

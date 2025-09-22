@@ -1,7 +1,7 @@
 #
 #           Kmeasure.R
 #
-#           $Revision: 1.75 $    $Date: 2023/03/15 13:41:48 $
+#           $Revision: 1.76 $    $Date: 2025/09/22 01:38:02 $
 #
 #     Kmeasure()         compute an estimate of the second order moment measure
 #
@@ -528,6 +528,7 @@ second.moment.engine <-
 BartCalc <- function(fY, fK) { Mod(fY)^2 * fK }
   
 Kest.fft <- function(X, sigma, r=NULL, ..., breaks=NULL) {
+  if(is.NAobject(X)) return(NAobject("fv"))
   verifyclass(X, "ppp")
   W <- Window(X)
   lambda <- npoints(X)/area(W)
