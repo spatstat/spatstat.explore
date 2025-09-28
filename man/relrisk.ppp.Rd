@@ -32,8 +32,8 @@
     to select a different bandwidth for each type of point. See Details.
   }
   \item{\dots}{
-    Arguments passed to \code{\link{bw.relrisk}} to select the
-    bandwidth, or passed to \code{\link{density.ppp}} to control the
+    Arguments passed to \code{\link[spatstat.explore]{bw.relrisk}} to select the
+    bandwidth, or passed to \code{\link[spatstat.explore]{density.ppp}} to control the
     pixel resolution.
   }
   \item{at}{
@@ -107,7 +107,7 @@
   }
 }
 \details{
-  The command \code{\link{relrisk}} is generic and can be used to
+  The command \code{\link[spatstat.explore]{relrisk}} is generic and can be used to
   estimate relative risk in different ways.
   
   This function \code{relrisk.ppp} is the method for point pattern
@@ -183,12 +183,12 @@
     the bandwidth. 
     Bandwidth selection will be applied
     \bold{separately to each type of point}.
-    An example of such a function is \code{\link{bw.diggle}}.
+    An example of such a function is \code{\link[spatstat.explore]{bw.diggle}}.
     \item 
     \code{sigma} and \code{varcov}
     are both missing or null. Then a \bold{common}
     smoothing bandwidth \code{sigma}
-    will be selected by cross-validation using \code{\link{bw.relrisk}}.
+    will be selected by cross-validation using \code{\link[spatstat.explore]{bw.relrisk}}.
     \item
     An infinite smoothing bandwidth, \code{sigma=Inf}, is permitted
     and yields a constant estimate of relative risk.
@@ -306,10 +306,11 @@
   estimates of relative risk, using the fitted model.
 
   See also 
- \code{\link{bw.relrisk}},
- \code{\link{density.ppp}},
- \code{\link{Smooth.ppp}},
- \code{\link[spatstat.geom]{eval.im}}
+  \code{\link[spatstat.explore]{bw.relrisk}} for bandwidth selection,
+  \code{\link[spatstat.explore]{tolcon}} for tolerance contours,
+ \code{\link[spatstat.explore]{density.ppp}} for density/intensity estimation,
+ \code{\link[spatstat.explore]{Smooth.ppp}} for smoothing the mark values,
+ and \code{\link[spatstat.geom]{eval.im}} for image manipulation.
 }
 \examples{
    p.oak <- relrisk(urkiola, 20)

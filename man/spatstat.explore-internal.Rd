@@ -113,6 +113,8 @@
 \alias{plot.plotpairsim}
 \alias{plot.roc}
 \alias{plot.spatialcdf}
+\alias{plot.tolcon}
+\alias{plot.tolconlist}
 \alias{polyLaslett}
 \alias{posify}
 \alias{predict.exactppm}
@@ -135,6 +137,7 @@
 \alias{print.Smoothfun}       
 \alias{print.summary.bw.optim}
 \alias{print.summary.ssf}
+\alias{print.tolcon}
 \alias{quadrat.testEngine}
 \alias{ratfv}
 \alias{rebadge.as.crossfun}
@@ -177,6 +180,8 @@
 \alias{sewpcf}
 \alias{sewsmod}
 \alias{shift.quadrattest}              
+\alias{shift.tolcon}              
+\alias{shift.tolconlist}              
 \alias{simulrecipe}              
 \alias{StieltjesCalc.fv}
 \alias{Smooth.solist}
@@ -377,6 +382,8 @@ pcfmulti.inhom(X, I, J, lambdaI, lambdaJ, \dots,
 \method{plot}{plotpairsim}(x, \dots)
 \method{plot}{roc}(x, fmla, \dots, main, threshold)
 \method{plot}{spatialcdf}(x, \dots, xlab, ylab, do.points)
+\method{plot}{tolcon}(x, \dots, show.contour, levels)
+\method{plot}{tolconlist}(x, \dots)
 polyLaslett(X, \dots, oldX, verbose, plotit)
 posify(x, eps)
 \method{predict}{exactppm}(object, locations, \dots, eps, dimyx, rule.eps)
@@ -399,6 +406,7 @@ prettyweird(x, p, pieces, neach)
 \method{print}{Smoothfun}(x, \dots)
 \method{print}{summary.bw.optim}(x, \dots, digits)
 \method{print}{summary.ssf}(x, \dots)
+\method{print}{tolcon}(x, \dots)
 quadrat.testEngine(X, nx, ny, alternative, method, conditional, CR, 
      \dots, nsim, Xcount, xbreaks, ybreaks, tess, fit, df.est, Xname, fitname)
 ratfv(df, numer, denom, \dots, ratio)
@@ -472,6 +480,8 @@ sewpcf(d, w, denargs, lambda2area, divisor,
        zerocor, fast, convert, adaptive, tau, gref, Transform)
 sewsmod(d, ff, wt, Ef, rvals, method="smrep", \dots, nwtsteps=500)
 \method{shift}{quadrattest}(X, \dots)
+\method{shift}{tolcon}(X, \dots)
+\method{shift}{tolconlist}(X, \dots)
 simulrecipe(type, expr, envir, csr, pois, constraints)
 \method{StieltjesCalc}{fv}(M, f, \dots)
 \method{Smooth}{solist}(X, \dots)

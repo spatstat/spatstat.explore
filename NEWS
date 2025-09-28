@@ -1,4 +1,23 @@
 
+        CHANGES IN spatstat.explore VERSION 3.5-3.001
+
+OVERVIEW
+
+    o Nearest neighbour counting functions.
+
+    o Tolerance contours for relative risk.
+
+    o We thank Lucia Cobo Sanchez and Tilman Davies for contributions.
+
+NEW FUNCTIONS
+
+    o nnequal, nncount
+    Summary functions for multitype point patterns
+    based on the types of nearest neighbours.
+
+    o tolcon
+    Tolerance contours for spatial relative risk.
+
         CHANGES IN spatstat.explore VERSION 3.5-3
 
 OVERVIEW
