@@ -8,7 +8,7 @@
 hasenvelope <- function(X, E=NULL) {
   if(inherits(E, "envelope")) {
     attr(X, "envelope") <- E
-    class(X) <- c("hasenvelope", class(X))
+    class(X) <- unique(c("hasenvelope", class(X)))
   }
   return(X)
 }

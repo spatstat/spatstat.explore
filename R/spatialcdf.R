@@ -46,7 +46,7 @@ spatialcdf <- function(Z, weights=NULL, normalise=FALSE, ...,
       wtname <- if(normalise) "fraction of weight" else "weight"
     }
   }
-  class(G) <- c("spatialcdf", class(G))
+  class(G) <- unique(c("spatialcdf", class(G)))
   attr(G, "call") <- sys.call()
   attr(G, "Zname") <- Zname
   attr(G, "ylab") <- paste("Cumulative", wtname)

@@ -17,7 +17,7 @@ ssf <- function(loc, val) {
   if(nrow(val) != npoints(loc))
     stop("Incompatible lengths")
   result <- loc %mark% val
-  class(result) <- c("ssf", class(result))
+  class(result) <- unique(c("ssf", class(result)))
   attr(result, "ok") <- complete.cases(val)
   return(result)
 }
@@ -46,7 +46,7 @@ print.ssf <- function(x, ..., brief=FALSE) {
 
 summary.ssf <- function(object, ...) {
   z <- NextMethod("summary")
-  class(z) <- c("summary.ssf", class(z))
+  class(z) <- unique(c("summary.ssf", class(z)))
   return(z)
 }
 
@@ -186,7 +186,7 @@ Smooth.ssf <- function(X, ...) {
     ok   <- ok[id]
   }
   out <- loc %mark% val
-  class(out) <- c("ssf", class(out))
+  class(out) <- unique(c("ssf", class(out)))
   attr(out, "ok") <- ok
   return(out)    
 }

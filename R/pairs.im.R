@@ -90,7 +90,7 @@ pairs.im <- local({
                                       list(labels=imnames, pch=".")))
     labels <- resolve.defaults(rest, list(labels=imnames))$labels
     colnames(pixdf) <- labels
-    class(pixdf) <- c("plotpairsim", class(pixdf))
+    class(pixdf) <- unique(c("plotpairsim", class(pixdf)))
     return(invisible(pixdf))
   }
 

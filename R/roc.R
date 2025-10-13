@@ -578,7 +578,7 @@ as.roc.data.frame <- function(x, method = NULL,
     fvnames(result, ".s") <- as.character(shadenames)
   }
   #' 
-  class(result) <- c("roc", class(result))
+  class(result) <- unique(c("roc", class(result)))
   return(result)
 }
 

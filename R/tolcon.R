@@ -48,10 +48,10 @@ tolcon <- function(X, ..., nsim=19,
              })
     attr(y, "nsim") <- nsim
     attr(y, "alternative") <- alternative
-    class(y) <- c("tolcon", class(y))
+    class(y) <- unique(c("tolcon", class(y)))
     result[[j]] <- y
   }
-  class(result) <- c("tolconlist", class(result))
+  class(result) <- unique(c("tolconlist", class(result)))
   return(result)
 }
 

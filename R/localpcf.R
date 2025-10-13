@@ -156,7 +156,7 @@ localpcfmatrix <- function(X, i=seq_len(npoints(X)), ...,
   # dress up
   attr(out, "r") <- seq(from=0, to=rmax, length.out=nr)
   attr(out, "delta") <- delta
-  class(out) <- c("localpcfmatrix", class(out))
+  class(out) <- unique(c("localpcfmatrix", class(out)))
   return(out)
 }
 
@@ -198,7 +198,7 @@ plot.localpcfmatrix <- function(x, ...) {
       x <- matrix(x, nrow=length(r))
     attr(x, "r") <- r
     attr(x, "delta") <- delta
-    class(x) <- c("localpcfmatrix", class(x))
+    class(x) <- unique(c("localpcfmatrix", class(x)))
     return(x)
 }
 

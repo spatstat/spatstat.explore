@@ -179,7 +179,7 @@ quadrat.testEngine <- function(X, nx, ny,
                          alternative=alternative,
                          testname=testblurb, dataname=Xname)
 
-  class(result) <- c("quadrattest", class(result))
+  class(result) <- unique(c("quadrattest", class(result)))
   attr(result, "quadratcount") <- Xcount
   return(result)
 }
@@ -469,7 +469,7 @@ pool.quadrattest <- function(...,
                          alternative=alternative,
                          testname=testname, dataname=Xname)
   # add info
-  class(result) <- c("quadrattest", class(result))
+  class(result) <- unique(c("quadrattest", class(result)))
   attr(result, "tests") <- as.solist(tests)
   # there is no quadratcount attribute 
   return(result)

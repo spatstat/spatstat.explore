@@ -100,7 +100,7 @@ fv <- function(x, argu="r", ylab=NULL, valu, fmla=NULL,
   attr(x, "dotnames") <- NULL
   attr(x, "shade") <- NULL
   ## 
-  class(x) <- c("fv", class(x))
+  class(x) <- unique(c("fv", class(x)))
   return(x)
 }
 

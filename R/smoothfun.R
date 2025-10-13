@@ -49,7 +49,7 @@ Smoothfun.ppp <- function(X, sigma=NULL, ...,
     do.call(smoothcrossEngine, append(list(Xquery=Xquery), stuff))
   }
   g <- funxy(g, as.rectangle(as.owin(X)))
-  class(g) <- c("Smoothfun", class(g))
+  class(g) <- unique(c("Smoothfun", class(g)))
   return(g)
 }
 

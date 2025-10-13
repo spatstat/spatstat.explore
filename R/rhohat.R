@@ -698,7 +698,7 @@ rhohatCalc <- local({
       fvnames(rslt, ".s") <- c("hi", "lo")
     } else fvnames(rslt, ".")  <- c("rho", "ave")
     ## pack up
-    class(rslt) <- c("rhohat", class(rslt))
+    class(rslt) <- unique(c("rhohat", class(rslt)))
     ## add info
     stuff <- 
       list(modelcall  = modelcall, 

@@ -171,7 +171,7 @@ rho2hat <- function(object, cov1, cov2, ..., method=c("ratio", "reweight")) {
                               Z12points=Z12points,
                               sigma=sigma,
                               varcov=varcov)
-  class(rslt) <- c("rho2hat", class(rslt))
+  class(rslt) <- unique(c("rho2hat", class(rslt)))
   rslt
 }
 

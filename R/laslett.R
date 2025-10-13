@@ -163,7 +163,7 @@ maskLaslett <- local({
     result <- list(oldX=oldX,
                    TanOld=TanOld, TanNew=TanNew, Rect=Rect,
                    df=tangents)
-    class(result) <- c("laslett", class(result))
+    class(result) <- unique(c("laslett", class(result)))
     if(plotit)
       plot(result, ...)
     return(result)
@@ -334,7 +334,7 @@ polyLaslett <- function(X, ..., oldX=X, verbose=FALSE, plotit=TRUE) {
   result <- list(oldX=oldX,
                  TanOld=TanOld, TanNew=TanNew, Rect=Rect,
                  df=df)
-  class(result) <- c("laslett", class(result))
+  class(result) <- unique(c("laslett", class(result)))
   if(plotit)
     plot(result, ...)
   return(result)
