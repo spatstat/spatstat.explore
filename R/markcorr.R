@@ -2,7 +2,7 @@
 ##
 ##     markcorr.R
 ##
-##     $Revision: 1.89 $ $Date: 2025/09/03 04:02:18 $
+##     $Revision: 1.90 $ $Date: 2025/11/05 01:56:16 $
 ##
 ##    Estimate the mark correlation function
 ##    and related functions 
@@ -222,20 +222,22 @@ Kmark <-
     else
       warning(whinge)
   }
-  ## estimated intensity
-  lambda <- intensity(X)
+  ## estimated intensity of locations
+  UX <- unmark(X)  
+  lambda <- intensity(UX)
+  ## calculate  
   mX <- marks(X)
   switch(ftype,
          mul={
            wt <- mX/lambda
-           K <- Kinhom(X, r=r, reciplambda=wt, correction=correction,
+           K <- Kinhom(UX, r=r, reciplambda=wt, correction=correction,
                        ..., renormalise=FALSE)
            Ef2 <- mean(mX)^2
          },
          equ={
            fXX <- outer(mX, mX, "==")
            wt <- fXX/lambda^2
-           K <- Kinhom(X, r=r, reciplambda2=wt, correction=correction,
+           K <- Kinhom(UX, r=r, reciplambda2=wt, correction=correction,
                        ..., renormalise=FALSE)
            mtable <- table(mX)
            Ef2 <- sum(mtable^2)/length(mX)^2
@@ -243,14 +245,14 @@ Kmark <-
          product={
            f1X <- do.call(f1, append(list(mX), fargs))
            wt <- f1X/lambda
-           K <- Kinhom(X, r=r, reciplambda=wt, correction=correction,
+           K <- Kinhom(UX, r=r, reciplambda=wt, correction=correction,
                        ..., renormalise=FALSE)
            Ef2 <- mean(f1X)^2
          },
          general={
            fXX <- do.call(outer, append(list(mX, mX, f), fargs))
            wt <- fXX/lambda^2
-           K <- Kinhom(X, r=r, reciplambda2=wt, correction=correction,
+           K <- Kinhom(UX, r=r, reciplambda2=wt, correction=correction,
                        ..., renormalise=FALSE)
            Ef2 <- mean(fXX)
          })

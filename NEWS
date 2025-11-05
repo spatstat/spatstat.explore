@@ -1,13 +1,15 @@
 
-        CHANGES IN spatstat.explore VERSION 3.5-3.003
+        CHANGES IN spatstat.explore VERSION 3.5-3.004
 
 OVERVIEW
+
+    o We thank Lucia Cobo Sanchez and Tilman Davies for contributions.
 
     o Nearest neighbour counting functions.
 
     o Tolerance contours for relative risk.
 
-    o We thank Lucia Cobo Sanchez and Tilman Davies for contributions.
+    o Minor improvements and bug fixes.
 
 NEW FUNCTIONS
 
@@ -18,6 +20,12 @@ NEW FUNCTIONS
     o tolcon
     Tolerance contours for spatial relative risk.
 
+BUG FIXES
+
+   o Kmark
+   Calculation was incorrect for multitype patterns (categorical marks).
+   Fixed.
+   
         CHANGES IN spatstat.explore VERSION 3.5-3
 
 OVERVIEW
