@@ -87,7 +87,8 @@ tolcon(X, \dots, nsim = 19, alternative=c("greater", "less", "two.sided"),
   \code{\link[spatstat.explore]{relrisk.ppp}}
 }
 \examples{
-   Z <- tolcon(mucosa, casecontrol=FALSE, sigma=0.1)
+   ns <- if(interactive()) 19 else 9
+   Z <- tolcon(mucosa, sigma=0.1, nsim=ns)
    plot(Z, main="")
 }
 \keyword{spatial}
