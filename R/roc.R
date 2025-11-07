@@ -330,7 +330,8 @@ rocEngine <- function(discrim, nullmodel,
                        subset=subset,
                        raster.action="ignore",
                        make.quantile.function=TRUE)
-  U <- d$values$U
+  dval <- d$values
+  U <- dval$U
   UU <- if(high) 1 - U else U
   ec <- ewcdf(UU, weights=weights)
   if(!missing(p)) {
@@ -339,8 +340,8 @@ rocEngine <- function(discrim, nullmodel,
     stopifnot(max(p) <= 1)
     if(prod(range(diff(p))) < 0) stop("p should be a monotone sequence")
   }
-  FZ <- d$values$FZ
-  FZinverse <- d$values$FZinverse
+  FZ <- dval$FZ
+  FZinverse <- dval$FZinverse
   ## thresholds
   thresh <- if(high) FZinverse(1-p) else FZinverse(p)
   ## Initialize output object
@@ -361,12 +362,21 @@ rocEngine <- function(discrim, nullmodel,
   }
 
   if(!is.null(fittedmodel) || covtype != "covariate") {
-    ## Add 'theoretical' curve predicted by fitted model
+    ## Add 'theoretical' curve predicted by model
     switch(covtype,
-           intensity = ,
            probability = {
-             ## traditional usage: the discriminant is the predicted intensity
-             lambdavalues <- discrimvalues <- d$values$Zvalues
+             ## traditional usage
+             ## Discriminant is predicted presence probability p_j
+             discrimvalues <- dval$Zvalues
+             ## Pixel weight = presence probability
+             pixelweights <- dval$EdN
+           },
+           intensity = {
+             ## continuous version of traditional usage
+             ## Discriminant is predicted intensity lambda(u)
+             discrimvalues <- dval$Zvalues
+             ## Pixel weight = lambda(u) du 
+             pixelweights <- dval$EdN
            },
            covariate = {
              ## Non-traditional usage: model-predicted ROC of another covariate.
@@ -375,25 +385,27 @@ rocEngine <- function(discrim, nullmodel,
                                   interpolate=interpolate, jitter=jitter,
                                   subset=subset,
                                   raster.action="ignore")
-             discrimvalues <- b$values$Zvalues
-             lambdavalues  <- b$values$lambda
+             vb <- b$values
+             discrimvalues <- vb$Zvalues
+             ## Pixel weight = lambda(u) du or probability
+             pixelweights  <- vb$EdN
            })
     if(high) {
-      F1negZ <- ewcdf(-discrimvalues, lambdavalues/sum(lambdavalues))
+      F1negZ <- ewcdf(-discrimvalues, pixelweights/sum(pixelweights))
       df$theo <- F1negZ(-FZinverse(1-p))
     } else {
-      F1Z <- ewcdf(discrimvalues, lambdavalues/sum(lambdavalues))
+      F1Z <- ewcdf(discrimvalues, pixelweights/sum(pixelweights))
       df$theo <- F1Z(FZinverse(p))
     }
   }
 
   ## Add smooth estimate if requested
   if("smooth" %in% method){
-    val <- d$values
     doCI <- (CI == "smooth")
-    est <- rocSmoothCalc(val$ZX, val$Zvalues,
-                         weightsX=weights,
-                         weightsU=val$lambda,
+    est <- rocSmoothCalc(ZX       = dval$ZX,
+                         ZU       = dval$Zvalues,
+                         weightsX = weights,
+                         weightsU = dval$EdN,
                          high=high, p=p,
                          bw=bw, adjust=adjust,
                          doCI=doCI, alpha=alpha,

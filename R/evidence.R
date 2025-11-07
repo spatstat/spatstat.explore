@@ -4,7 +4,7 @@
 #'   evaluate covariate values at data points and at pixels
 #'   together with intensity of null/reference model
 #'
-#' $Revision: 1.55 $ $Date: 2025/06/02 07:00:33 $
+#' $Revision: 1.56 $ $Date: 2025/11/07 05:18:11 $
 #'
 
 
@@ -246,6 +246,7 @@ spatialCovariateEvidence.ppp <- local({
                    lambda      = lambda,
                    lambdaX     = lambdaX,
                    weights     = pixelarea,
+                   EdN         = lambda * pixelarea, # increment of lamba(u) du
                    ZX          = ZX,
                    type        = type)
     return(list(values=values, info=info, X=X)) # X is possibly a subset of original
@@ -506,6 +507,7 @@ spatialCovariateEvidence.exactppm <- local({
                    lambda      = lambda,
                    lambdaX     = lambdaX,
                    weights     = pixelarea,
+                   EdN         = lambda * pixelarea, # increment of lamba(u) du
                    ZX          = ZX,
                    type        = type)
     return(list(values=values, info=info, X=X)) # X is possibly a subset of original
