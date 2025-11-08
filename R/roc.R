@@ -8,6 +8,8 @@
 ## Copyright (c) 2017-2025 Adrian Baddeley/Ege Rubak/Rolf Turner/Suman Rakshit
 ##
 ##
+## Source file roc.R      $Revision: 1.9 $ $Date: 2025/11/08 08:46:25 $
+## ..................................................................
 
 roc <- function(X, ...) { UseMethod("roc") }
 
@@ -178,6 +180,7 @@ rocModel <- function(lambda, nullmodel, ..., high=TRUE,
             call.=FALSE)
   rocEngine(lambda, nullmodel, high=TRUE, p=p, covtype=covtype)
 }
+
 
 
 
@@ -369,14 +372,14 @@ rocEngine <- function(discrim, nullmodel,
              ## Discriminant is predicted presence probability p_j
              discrimvalues <- dval$Zvalues
              ## Pixel weight = presence probability
-             pixelweights <- dval$EdN
+             pixelweights <- dval$Zvalues
            },
            intensity = {
              ## continuous version of traditional usage
              ## Discriminant is predicted intensity lambda(u)
              discrimvalues <- dval$Zvalues
              ## Pixel weight = lambda(u) du 
-             pixelweights <- dval$EdN
+             pixelweights <- dval$Zvalues * dval$weights
            },
            covariate = {
              ## Non-traditional usage: model-predicted ROC of another covariate.
@@ -387,7 +390,7 @@ rocEngine <- function(discrim, nullmodel,
                                   raster.action="ignore")
              vb <- b$values
              discrimvalues <- vb$Zvalues
-             ## Pixel weight = lambda(u) du or probability
+             ## Pixel weight = probability or lambda(u) du
              pixelweights  <- vb$EdN
            })
     if(high) {

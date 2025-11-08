@@ -179,6 +179,7 @@ spatialCDFframe <- function(model, covariate, ...,
   Zvalues <- values$Zvalues
   lambda  <- values$lambda
   weights <- values$weights
+  ## values at data points or presence pixels
   ZX      <- covariateAtPoints %orifnull% values$ZX
   # compute empirical cdf of Z values at points of X
   FZX <- ecdf(ZX)
