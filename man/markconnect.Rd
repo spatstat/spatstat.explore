@@ -67,6 +67,9 @@ markconnect(X, i, j, r=NULL,
   according to the selected edge corrections. These columns contain
   estimates of the function \eqn{p_{ij}(r)}{p[i,j](r)}
   obtained by the edge corrections named.
+
+  The returned object also has an attribute \code{"smooth.args"} giving
+  the smoothing parameters that were used to calculate the estimate.
 }
 \details{
   The mark connection function \eqn{p_{ij}(r)}{p[i,j](r)}

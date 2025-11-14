@@ -93,6 +93,10 @@
   A function array (object of class \code{"fasp"}) containing
   the mark cross-correlation functions for each possible pair
   of columns of marks.
+
+  Each function in the array also
+  has an attribute \code{"smooth.args"} containing
+  the smoothing parameters that were used to compute the estimate.
 }
 \author{
   \spatstatAuthors.

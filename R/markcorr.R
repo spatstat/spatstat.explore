@@ -2,7 +2,7 @@
 ##
 ##     markcorr.R
 ##
-##     $Revision: 1.90 $ $Date: 2025/11/05 01:56:16 $
+##     $Revision: 1.93 $ $Date: 2025/11/14 04:46:01 $
 ##
 ##    Estimate the mark correlation function
 ##    and related functions 
@@ -153,7 +153,8 @@ Vmark <- local({
       if(normalise) 
         Vi <- eval.fv(Vi/sig2[i])
       Vi <- rebadge.fv(Vi, quote(V(r)), "V")
-      attr(Vi, "labl") <- attr(Ei, "labl")
+      attr(Vi, "labl")        <- attr(Ei, "labl")
+      attr(Vi, "smooth.args") <- attr(Ei, "smooth.args")
       V[[i]] <- Vi
     }
     if(length(V) == 1) return(V[[1]])
@@ -499,12 +500,13 @@ markcorr <-
     ff <- ff * weights[I] * weights[J]
   
   #### Compute estimates ##############
-        
+
   if(any(correction == "none")) {
     ## uncorrected estimate
     edgewt <- rep.int(1, length(dIJ))
     ## get smoothed estimate of mark covariance
     Mnone <- sewsmod(dIJ, ff, edgewt, Efdenom, r, method, ...)
+    smooth.args <- attr(Mnone, "smooth.args")
     result <- bind.fv(result,
                       data.frame(un=Mnone), "{hat(%s)[%s]^{un}}(r)",
                       "uncorrected estimate of %s",
@@ -516,6 +518,7 @@ markcorr <-
     edgewt <- edge.Trans(XI, XJ, paired=TRUE)
     ## get smoothed estimate of mark covariance
     Mtrans <- sewsmod(dIJ, ff, edgewt, Efdenom, r, method, ...)
+    smooth.args <- attr(Mtrans, "smooth.args")
     result <- bind.fv(result,
                       data.frame(trans=Mtrans), "{hat(%s)[%s]^{trans}}(r)",
                       "translation-corrected estimate of %s",
@@ -526,6 +529,7 @@ markcorr <-
     edgewt <- edge.Ripley(XI, matrix(dIJ, ncol=1))
     ## get smoothed estimate of mark covariance
     Miso <- sewsmod(dIJ, ff, edgewt, Efdenom, r, method, ...)
+    smooth.args <- attr(Miso, "smooth.args")
     result <- bind.fv(result,
                       data.frame(iso=Miso), "{hat(%s)[%s]^{iso}}(r)",
                       "Ripley isotropic correction estimate of %s",
@@ -540,6 +544,8 @@ markcorr <-
   fvnames(result, ".") <- corrxns
   ##
   unitname(result) <- unitname(X)
+
+  attr(result, "smooth.args") <- smooth.args
   return(result)
 }
 
@@ -675,6 +681,7 @@ markcrosscorr <-
         edgewt <- rep.int(1, length(dIJ))
         ## get smoothed estimate of mark covariance
         Mnone <- sewsmod(dIJ, ff, edgewt, Efdenom, r, method, ...)
+        smooth.args <- attr(Mnone, "smooth.args")
         fun.ij <- bind.fv(fun.ij,
                           data.frame(un=Mnone),
                           "{hat(%s)[%s]^{un}}(r)",
@@ -687,6 +694,7 @@ markcrosscorr <-
         edgewt <- edge.Trans(XI, XJ, paired=TRUE)
         ## get smoothed estimate of mark covariance
         Mtrans <- sewsmod(dIJ, ff, edgewt, Efdenom, r, method, ...)
+        smooth.args <- attr(Mtrans, "smooth.args")
         fun.ij <- bind.fv(fun.ij,
                           data.frame(trans=Mtrans),
                           "{hat(%s)[%s]^{trans}}(r)",
@@ -698,6 +706,7 @@ markcrosscorr <-
         edgewt <- edge.Ripley(XI, matrix(dIJ, ncol=1))
         ## get smoothed estimate of mark covariance
         Miso <- sewsmod(dIJ, ff, edgewt, Efdenom, r, method, ...)
+        smooth.args <- attr(Miso, "smooth.args")
         fun.ij <- bind.fv(fun.ij,
                           data.frame(iso=Miso), "{hat(%s)[%s]^{iso}}(r)",
                           "Ripley isotropic correction estimate of %s",
@@ -712,6 +721,7 @@ markcrosscorr <-
       fvnames(fun.ij, ".") <- corrxns
       ##
       unitname(fun.ij) <- unitname(X)
+      attr(fun.ij, "smooth.args") <- smooth.args
       funs <- append(funs, list(fun.ij))
     }
   }
@@ -740,15 +750,30 @@ sewsmod <- function(d, ff, wt, Ef, rvals, method="smrep", ..., nwtsteps=500) {
   wt <- as.vector(wt)
   switch(method,
          density={
-           ## smooth estimate of kappa_f
-           Kf <- unnormdensity(d, weights=ff * wt,
-                               from=min(rvals), to=max(rvals), n=length(rvals),
-                               ...)$y
            ## smooth estimate of kappa_1
            K1 <- unnormdensity(d, weights=wt, 
                                from=min(rvals), to=max(rvals), n=length(rvals),
-                               ...)$y
+                               ...)
+           bw.used <- K1$bw
+           kernel  <- K1$kernel
+           K1 <- K1$y
+           ## smooth estimate of kappa_f using selected bandwidth
+           Kf <- do.call(unnormdensity,
+                         resolve.defaults(
+                           list(x=d,
+                                weights=ff * wt,
+                                from=min(rvals),
+                                to=max(rvals),
+                                n=length(rvals),
+                                bw=bw.used, # use same bandwidth as K1
+                                adjust=1 # 
+                                ),
+                           list(...)
+                         )
+                         )
+           Kf <- Kf$y
            result <- Kf/(Ef * K1)
+           attr(result, "smooth.args") <- list(bw=bw.used, kernel=kernel)
          },
          sm={
            ## This is slow!
@@ -757,18 +782,30 @@ sewsmod <- function(d, ff, wt, Ef, rvals, method="smrep", ..., nwtsteps=500) {
              stop(paste("Option method=sm requires package sm,",
                         "which is not available"))
 
-           ## smooth estimate of kappa_f
-           fw <- ff * wt
-           est <- sm::sm.density(d, weights=fw,
-                                 eval.points=rvals,
-                                 display="none", nbins=0, ...)$estimate
-           numerator <- est * sum(fw)/sum(est)
            ## smooth estimate of kappa_1
            est0 <- sm::sm.density(d, weights=wt,
                                   eval.points=rvals,
-                                  display="none", nbins=0, ...)$estimate
+                                  display="none", nbins=0, ...)
+           h.used <- est0$h
+           est0    <- est0$estimate
            denominator <- est0 * (sum(wt)/ sum(est0)) * Ef
+           ## smooth estimate of kappa_f
+           fw <- ff * wt
+           est <- do.call(sm::sm.density,
+                          resolve.defaults(list(x=d,
+                                                h=h.used, # use same bandwidth
+                                                weights=fw,
+                                                eval.points=rvals,
+                                                display="none",
+                                                nbins=0,
+                                                hmult=1),
+                                           list(...)
+                                           )
+                          )
+           est <- est$estimate
+           numerator <- est * sum(fw)/sum(est)
            result <- numerator/denominator
+           attr(result, "smooth.args") <- list(h=h.used)
          },
          smrep={
            suppressWarnings(smok <- requireNamespace("sm"))
@@ -787,17 +824,27 @@ sewsmod <- function(d, ff, wt, Ef, rvals, method="smrep", ..., nwtsteps=500) {
            nfw <- round(nwtsteps * fw/max(fw))
            drep.fw <- rep.int(d, nfw)
 
-           ## smooth estimate of kappa_f
-           est <- sm::sm.density(drep.fw,
-                                 eval.points=rvals,
-                                 display="none", ...)$estimate
-           numerator <- est * sum(fw)/sum(est)
            ## smooth estimate of kappa_1
            est0 <- sm::sm.density(drep.w,
                                   eval.points=rvals,
-                                  display="none", ...)$estimate
+                                  display="none", ...)
+           h.used <- est0$h
+           est0    <- est0$estimate
            denominator <- est0 * (sum(wt)/ sum(est0)) * Ef
+           ## smooth estimate of kappa_f
+           est <- do.call(sm::sm.density,
+                          resolve.defaults(list(x=drep.fw,
+                                                eval.points=rvals,
+                                                display="none",
+                                                h=h.used,
+                                                hmult=1),
+                                           list(...)
+                                           )
+                          )
+           est <- est$estimate
+           numerator <- est * sum(fw)/sum(est)
            result <- numerator/denominator
+           attr(result, "smooth.args") <- list(h=h.used)
          },
          loess = {
            ## set up data frame
@@ -810,6 +857,7 @@ sewsmod <- function(d, ff, wt, Ef, rvals, method="smrep", ..., nwtsteps=500) {
            ## denominator is the sample mean of all ff[i,j],
            ## an estimate of E(ff(M1,M2)) for M1,M2 independent marks
            result <- Eff/Ef
+           attr(result, "smooth.args") <- list(...)
          },
          )
   return(result)

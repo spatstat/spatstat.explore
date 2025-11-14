@@ -44,7 +44,8 @@ markcorr(X, f = function(m1, m2) { m1 * m2}, r=NULL,
   
   \item{\dots}{
     Arguments passed to the density estimation routine
-    (\code{\link{density}}, \code{\link{loess}} or \code{sm.density})
+    (\code{\link[stats]{density.default}},
+    \code{\link[stats]{loess}} or \code{\link[sm]{sm.density}})
     selected by \code{method}.
   }
   \item{weights}{
@@ -73,6 +74,9 @@ markcorr(X, f = function(m1, m2) { m1 * m2}, r=NULL,
 \value{
   A function value table (object of class \code{"fv"})
   or a list of function value tables, one for each column of marks.
+
+  The return value also has an attribute \code{"smooth.args"} containing
+  the smoothing parameters that were used to compute the estimate.
   
   An object of class \code{"fv"} (see \code{\link{fv.object}})
   is essentially a data frame containing numeric columns 
@@ -224,12 +228,11 @@ markcorr(X, f = function(m1, m2) { m1 * m2}, r=NULL,
   \describe{
     \item{\code{"density"}}{
       which uses the standard kernel
-      density estimation routine \code{\link{density}}, and
+      density estimation routine \code{\link[stats]{density.default}}, and
       works only for evenly-spaced \code{r} values;
     }
     \item{\code{"loess"}}{
-      which uses the function \code{loess} in the
-      package \pkg{modreg};
+      which uses the function \code{\link[stats]{loess}};
     }
     \item{\code{"sm"}}{
       which uses the function \code{sm.density} in the

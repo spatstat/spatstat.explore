@@ -69,6 +69,10 @@ Vmark(X, r=NULL,
   according to the selected edge corrections. These columns contain
   estimates of the function \eqn{E(r)} or \eqn{V(r)}
   obtained by the edge corrections named.
+
+  Each of the returned functions
+  also has an attribute \code{"smooth.args"} giving
+  the smoothing parameters that were used to calculate the estimate.
 }
 \details{
   For a marked point process,

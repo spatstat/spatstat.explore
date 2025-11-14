@@ -62,7 +62,7 @@ r = NULL, method = "density", ..., normalise=FALSE)
 }
 \value{
   An object of class \code{"fv"} (see \code{\link{fv.object}}).
-  
+
   Essentially a data frame containing numeric columns 
   \item{r}{the values of the argument \eqn{r} 
     at which the mark variogram \eqn{\gamma(r)}{gamma(r)}
@@ -77,6 +77,9 @@ r = NULL, method = "density", ..., normalise=FALSE)
   according to the selected edge corrections. These columns contain
   estimates of the function \eqn{\gamma(r)}{gamma(r)}
   obtained by the edge corrections named.
+
+  The returned object also has an attribute \code{"smooth.args"} giving
+  the smoothing parameters that were used to calculate the estimate.
 }
 \references{
   Cressie, N.A.C. (1991)
