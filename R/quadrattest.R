@@ -1,7 +1,7 @@
 #
 #   quadrattest.R
 #
-#   $Revision: 1.70 $  $Date: 2023/07/17 07:38:30 $
+#   $Revision: 1.71 $  $Date: 2025/11/16 09:34:27 $
 #
 
 
@@ -134,6 +134,16 @@ quadrat.testEngine <- function(X, nx, ny,
     masses <- as.numeric(probs[])
     V <- tileindex(xy, Z=tess)
     fitmeans <- tapplysum(masses, list(tile=V))
+    normalised <- FALSE
+    df.est.implied <- length(coef(fit))
+  } else if(inherits(fit, "lppm")) {
+    if(!requireNamespace("spatstat.linnet")) 
+      stop("To predict the fitted model, the package spatstat.linnet is required",
+           call.=FALSE)
+    nullname <- paste("fitted Poisson model", sQuote(fitname), "on network")
+    lambda <- predict(fit, type="intensity")
+    means <- integral(lambda, tess)
+    fitmeans <- sum(Xcount) * means/sum(means)
     normalised <- FALSE
     df.est.implied <- length(coef(fit))
   } else
