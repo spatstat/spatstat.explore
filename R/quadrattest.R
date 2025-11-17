@@ -1,7 +1,7 @@
 #
 #   quadrattest.R
 #
-#   $Revision: 1.71 $  $Date: 2025/11/16 09:34:27 $
+#   $Revision: 1.75 $  $Date: 2025/11/17 09:26:18 $
 #
 
 
@@ -94,12 +94,18 @@ quadrat.testEngine <- function(X, nx, ny,
   normalised <- FALSE
   df.est.implied <- 0
   if(is.null(fit)) {
-    nullname <- "CSR"
-    if(tess$type == "rect") 
-      areas <- outer(diff(tess$xgrid), diff(tess$ygrid), "*")
-    else 
-      areas <- unlist(lapply(tiles(tess), area))
-    fitmeans <- sum(Xcount) * areas/sum(areas)
+    if(is.tess(tess)) {
+      nullname <- "CSR"
+      areas <- tile.areas(tess)
+      fitmeans <- sum(Xcount) * areas/sum(areas)
+    } else if(inherits(tess, "lintess")) {
+      if(!requireNamespace("spatstat.linnet"))
+        stop("To analyse the tessellation, the package spatstat.linnet is required",
+             call.=FALSE)
+      nullname <- "CSR on a network"
+      lenfs <- spatstat.linnet::tile.lengths(tess)
+      fitmeans <- sum(Xcount) * lenfs/sum(lenfs)
+    }
     normalised <- TRUE
     df.est.implied <- 1
   } else if(is.im(fit) || inherits(fit, "funxy")) {
@@ -146,9 +152,10 @@ quadrat.testEngine <- function(X, nx, ny,
     fitmeans <- sum(Xcount) * means/sum(means)
     normalised <- FALSE
     df.est.implied <- length(coef(fit))
-  } else
+  } else {
     stop("fit should be a point process model (ppm or slrm) or pixel image")
-  
+  }
+    
   df <- switch(method,
                Chisq      = length(fitmeans) - df.est %orifnull% df.est.implied,
                MonteCarlo = NULL)    
@@ -312,7 +319,11 @@ print.quadrattest <- function(x, ...) {
        splat("Quadrats of component tests:")
      }
      x <- as.tess(x)
-     x <- if(is.tess(x)) unmark(x) else solapply(x, unmark)
+     if(is.tess(x)) {
+       x <- unmark(x)
+     } else if(all(sapply(x, is.tess))) {
+       x <- solapply(x, unmark)
+     }
      do.call(print,
              resolve.defaults(list(x=quote(x)),
                               list(...),
@@ -502,7 +513,8 @@ extractAtomicQtests <- function(x) {
 as.tess.quadrattest <- function(X) {
   if(is.atomicQtest(X)) {
     Y <- attr(X, "quadratcount")
-    return(as.tess(Y))
+    Z <- attr(Y, "tess")
+    return(Z)
   }
   tests <- extractAtomicQtests(X)
   return(as.solist(lapply(tests, as.tess.quadrattest)))
