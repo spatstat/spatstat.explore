@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.5-3.010
+        CHANGES IN spatstat.explore VERSION 3.5-3.011
 
 OVERVIEW
 
@@ -13,6 +13,9 @@ OVERVIEW
 
 NEW FUNCTIONS
 
+    o markequal
+    Mark equality function e(r) for multitype point patterns.
+    
     o nnequal, nncount
     Summary functions for multitype point patterns
     based on the types of nearest neighbours.

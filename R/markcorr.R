@@ -91,6 +91,17 @@ markconnect <- local({
   markconnect
 })
 
+markequal <- function(X, r=NULL, 
+                      correction=c("isotropic", "Ripley", "translate"),
+                      method="density", ..., normalise=FALSE) {
+  if(is.NAobject(X)) return(NAobject("fv"))
+  stopifnot(is.ppp(X))
+  stopifnot(is.multitype(X))
+  p <- markcorr(X, r=r,
+                correction=correction, method=method, ..., normalise=normalise)
+  e <- rebadge.fv(p, quote(e(r)), "e")
+  return(e)
+}
 
 Emark <- local({
 

@@ -1,13 +1,13 @@
-\name{markconnect}
-\alias{markconnect}
+\name{markequal}
+\alias{markequal}
 \title{
-  Mark Connection Function
+  Mark Equality Function
 }
 \description{
-  Estimate the mark connection function of a multitype point pattern.
+  Estimate the mark equality function of a multitype point pattern.
 }
 \usage{
-markconnect(X, i, j, r=NULL,
+markequal(X, r=NULL,
          correction=c("isotropic", "Ripley", "translate"),
          method="density", \dots, normalise=FALSE)
 }
@@ -16,14 +16,8 @@ markconnect(X, i, j, r=NULL,
     An object of class \code{"ppp"} or something acceptable to
     \code{\link[spatstat.geom]{as.ppp}}. 
   }
-  \item{i}{Number or character string identifying the type (mark value)
-    of the points in \code{X} from which distances are measured.
-  }
-  \item{j}{Number or character string identifying the type (mark value)
-    of the points in \code{X} to which distances are measured.
-  }
   \item{r}{numeric vector. The values of the argument \eqn{r}
-    at which the mark connection function \eqn{p_{ij}(r)}{p[ij](r)}
+    at which the mark equality function \eqn{e_{ij}(r)}{e[ij](r)}
     should be evaluated. There is a sensible default.
   }
   \item{correction}{
@@ -45,8 +39,9 @@ markconnect(X, i, j, r=NULL,
     selected by \code{method}.
   }
   \item{normalise}{
-    If \code{TRUE}, normalise the mark connection function by
-    dividing it by \eqn{p_i p_j}{p[i]*p[j]}, the estimated probability
+    If \code{TRUE}, normalise the pair equality function by
+    dividing it by \eqn{\sum_i p_i^2}{sum[i] p[i]^2},
+    the estimated probability
     that randomly-selected points will have marks \eqn{i} and \eqn{j}.
   }
 }
@@ -55,42 +50,41 @@ markconnect(X, i, j, r=NULL,
   
   Essentially a data frame containing numeric columns 
   \item{r}{the values of the argument \eqn{r} 
-    at which the mark connection function \eqn{p_{ij}(r)}{p[i,j](r)}
-    has been  estimated
+    at which the mark equality function \eqn{e(r)}
+    has been estimated
   }
-  \item{theo}{the theoretical value of \eqn{p_{ij}(r)}{p[i,j](r)}
+  \item{theo}{the theoretical value of \eqn{e(r)}
     when the marks attached to different points are independent
   }
   together with a column or columns named 
   \code{"iso"} and/or \code{"trans"},
   according to the selected edge corrections. These columns contain
-  estimates of the function \eqn{p_{ij}(r)}{p[i,j](r)}
+  estimates of the function \eqn{e(r)}
   obtained by the edge corrections named.
 
   The returned object also has an attribute \code{"smooth.args"} giving
   the smoothing parameters that were used to calculate the estimate.
 }
 \details{
-  The mark connection function \eqn{p_{ij}(r)}{p[i,j](r)}
+  The mark equality function \eqn{e(r)}
   of a multitype point process \eqn{X}
   is a measure of the dependence between the types of two 
   points of the process a distance \eqn{r} apart.
 
-  Informally \eqn{p_{ij}(r)}{p[i,j](r)} is defined
+  Informally \eqn{e(r)} is defined
   as the conditional probability,
   given that there is a point of the process at a location \eqn{u}
   and another point of the process at a location \eqn{v}
-  separated by a distance \eqn{||u-v|| = r}, that the first point
-  is of type \eqn{i} and the second point is of type \eqn{j}.
-  See Stoyan and Stoyan (1994).
+  separated by a distance \eqn{||u-v|| = r}, that the two points have
+  the same type. See Stoyan and Stoyan (1994).
 
   If the marks attached to the points of \code{X} are independent
   and identically distributed, then
-  \eqn{p_{ij}(r) \equiv p_i p_j}{p[i,j](r) =  p[i]p[j]} where
-  \eqn{p_i}{p[i]} denotes the probability that a point is of type
+  \eqn{e(r) \equiv \sum_i p_i^2}{e(r) =  sum[i] p[i]^2} where
+  \eqn{p_i}{p[i]} denotes the probability that a typical point is of type
   \eqn{i}. Values larger than this,
-  \eqn{p_{ij}(r) > p_i p_j}{p[i,j](r) >  p[i]p[j]},
-  indicate positive association between the two types,
+  \eqn{e(r) > \sum_i p_i^2}{e(r) > \sum[i] p[i]^2},
+  indicate positive association between the types of neighbouring points,
   while smaller values indicate negative association.
 
   The argument \code{X} must be a point pattern (object of class
@@ -99,7 +93,7 @@ markconnect(X, i, j, r=NULL,
   with factor-valued marks).
 
   The argument \code{r} is the vector of values for the
-  distance \eqn{r} at which \eqn{p_{ij}(r)}{p[i,j](r)} is estimated.
+  distance \eqn{r} at which \eqn{e(r)} is estimated.
   There is a sensible default.
 
   This algorithm assumes that \code{X} can be treated
@@ -130,7 +124,7 @@ markconnect(X, i, j, r=NULL,
   Note that the estimator assumes the process is stationary (spatially
   homogeneous). 
 
-  The mark connection function is estimated using density estimation
+  The mark equality function is estimated using density estimation
   techniques. The user can choose between
   \describe{
     \item{\code{"density"}}{
@@ -160,13 +154,11 @@ markconnect(X, i, j, r=NULL,
   John Wiley and Sons.
 }
 \seealso{
+  Mark connection function \code{\link{markconnect}}
+  measures the dependence between each pair of types.
+  
   Multitype pair correlation \code{\link{pcfcross}}
   and multitype K-functions \code{\link{Kcross}}, \code{\link{Kdot}}.
-
-  Use \code{\link{alltypes}} to compute the mark connection functions
-  between all pairs of types.
-
-  Mark equality function \code{\link{markequal}} for multitype patterns.
 
   Mark correlation \code{\link{markcorr}} and 
   mark variogram \code{\link{markvario}}
@@ -176,15 +168,10 @@ markconnect(X, i, j, r=NULL,
 \examples{
     # Hughes' amacrine data
     # Cells marked as 'on'/'off'
-    M <- markconnect(amacrine, "on", "off")
-    plot(M)
-
-    # Compute for all pairs of types at once
-    plot(alltypes(amacrine, markconnect))
+    E <- markequal(amacrine)
+    plot(E)
 }
-\author{\adrian
-  and \rolf
-}
+\author{\spatstatAuthors}
 \keyword{spatial}
 \keyword{nonparametric}
 
