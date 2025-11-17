@@ -1,7 +1,7 @@
 #
 #   quadrattest.R
 #
-#   $Revision: 1.75 $  $Date: 2025/11/17 09:26:18 $
+#   $Revision: 1.76 $  $Date: 2025/11/17 10:32:40 $
 #
 
 
@@ -203,6 +203,15 @@ quadrat.testEngine <- function(X, nx, ny,
 
 CressieReadStatistic <- function(OBS, EXP, lambda=1,
                                  normalise=FALSE, named=TRUE) {
+  if(min(EXP) == 0) {
+    ## avoid 0/0 = NaN
+    bad <- (EXP == 0 & OBS == 0)
+    if(any(bad)) {
+      ok <- !bad
+      EXP <- EXP[ok]
+      OBS <- OBS[ok]
+    }
+  }
   if(normalise) EXP <- sum(OBS) * EXP/sum(EXP)
   y <- if(lambda == 1) sum((OBS - EXP)^2/EXP) else
        if(lambda == 0) 2 * sum(ifelse(OBS > 0, OBS * log(OBS/EXP), 0)) else
