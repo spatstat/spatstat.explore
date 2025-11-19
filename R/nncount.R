@@ -20,7 +20,7 @@ nncount <- function(X, i=1, j=2, ..., kmax=20, ratio=TRUE, cumulative=TRUE) {
     stop(paste("Unrecognised value", j, "for argument j"))
   iname <- make.parseable(paste(i))
   jname <- make.parseable(paste(j))
-  N <- nnwhich(X, k=1:kmax)
+  N <- unname(nnwhich(X, k=1:kmax))
   mi <- (marx == i)
   mj <- (marx == j)
   if(!any(mi)) {
@@ -31,7 +31,7 @@ nncount <- function(X, i=1, j=2, ..., kmax=20, ratio=TRUE, cumulative=TRUE) {
   } else {
     Xsub <- X[mi]
     Nsub <- N[mi, , drop=FALSE]
-    Dsub <- nndist(Xsub,  k=1:kmax)
+    Dsub <- unname(nndist(Xsub,  k=1:kmax))
     Bsub <- bdist.points(Xsub)
     observed <- (Dsub <= Bsub)
     counted <- matrix(mj[Nsub], ncol=kmax)
@@ -71,8 +71,8 @@ nncount <- function(X, i=1, j=2, ..., kmax=20, ratio=TRUE, cumulative=TRUE) {
 nnequal <- function(X, ..., kmax=20, ratio=TRUE, cumulative=TRUE) {
   stopifnot(is.ppp(X))
   stopifnot(is.multitype(X))
-  N <- nnwhich(X, k=1:kmax)
-  D <- nndist(X,  k=1:kmax)
+  N <- unname(nnwhich(X, k=1:kmax))
+  D <- unname(nndist(X,  k=1:kmax))
   B <- bdist.points(X)
   observed <- (D <= B)
   marx <- marks(X)

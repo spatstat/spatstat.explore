@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.5-3.013
+        CHANGES IN spatstat.explore VERSION 3.5-3.014
 
 OVERVIEW
 
@@ -33,6 +33,10 @@ BUG FIXES
 
    o Kmark
    Calculation was incorrect for multitype patterns (categorical marks).
+   Fixed.
+
+   o as.data.frame.fv
+   Some attributes of x were incorrectly retained.
    Fixed.
    
         CHANGES IN spatstat.explore VERSION 3.5-3

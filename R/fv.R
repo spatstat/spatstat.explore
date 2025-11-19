@@ -4,7 +4,7 @@
 ##
 ##    class "fv" of function value objects
 ##
-##    $Revision: 1.186 $   $Date: 2025/01/27 08:26:00 $
+##    $Revision: 1.191 $   $Date: 2025/11/19 06:16:52 $
 ##
 ##
 ##    An "fv" object represents one or more related functions
@@ -122,10 +122,10 @@ fv <- function(x, argu="r", ylab=NULL, valu, fmla=NULL,
 
 as.data.frame.fv <- function(x, ...) {
   stopifnot(is.fv(x))
-  fva <- .Spatstat.FvAttrib
-  attributes(x)[fva] <- NULL
+  atr <- attributes(x)
+  attributes(x) <- atr[names(atr) %in% c("names", "row.names")]
   class(x) <- "data.frame"
-  x
+  return(x)
 }
 
 #' is.fv() is now defined in spatstat.geom/R/is.R
@@ -723,7 +723,7 @@ collapse.fv <- local({
     dotnames <- intersect(same, alldotnames)
     ## .............. different  .............................
     ## create names for different versions
-    versionnames <- good.names(names(x), "f", seq_along(x))
+    versionnames <- make.names(good.names(names(x), "f", seq_along(x)))
     shortnames <- abbreviate(versionnames, minlength=12)
     ## now merge the different values
     if(length(different)) {

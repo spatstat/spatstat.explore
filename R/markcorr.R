@@ -2,7 +2,7 @@
 ##
 ##     markcorr.R
 ##
-##     $Revision: 1.93 $ $Date: 2025/11/14 04:46:01 $
+##     $Revision: 1.94 $ $Date: 2025/11/19 02:29:59 $
 ##
 ##    Estimate the mark correlation function
 ##    and related functions 
@@ -519,7 +519,8 @@ markcorr <-
     Mnone <- sewsmod(dIJ, ff, edgewt, Efdenom, r, method, ...)
     smooth.args <- attr(Mnone, "smooth.args")
     result <- bind.fv(result,
-                      data.frame(un=Mnone), "{hat(%s)[%s]^{un}}(r)",
+                      data.frame(un=as.numeric(Mnone)),
+                      "{hat(%s)[%s]^{un}}(r)",
                       "uncorrected estimate of %s",
                       "un")
   }
@@ -531,7 +532,8 @@ markcorr <-
     Mtrans <- sewsmod(dIJ, ff, edgewt, Efdenom, r, method, ...)
     smooth.args <- attr(Mtrans, "smooth.args")
     result <- bind.fv(result,
-                      data.frame(trans=Mtrans), "{hat(%s)[%s]^{trans}}(r)",
+                      data.frame(trans=as.numeric(Mtrans)),
+                      "{hat(%s)[%s]^{trans}}(r)",
                       "translation-corrected estimate of %s",
                       "trans")
   }
@@ -542,7 +544,8 @@ markcorr <-
     Miso <- sewsmod(dIJ, ff, edgewt, Efdenom, r, method, ...)
     smooth.args <- attr(Miso, "smooth.args")
     result <- bind.fv(result,
-                      data.frame(iso=Miso), "{hat(%s)[%s]^{iso}}(r)",
+                      data.frame(iso=as.numeric(Miso)),
+                      "{hat(%s)[%s]^{iso}}(r)",
                       "Ripley isotropic correction estimate of %s",
                       "iso")
   }
@@ -694,7 +697,7 @@ markcrosscorr <-
         Mnone <- sewsmod(dIJ, ff, edgewt, Efdenom, r, method, ...)
         smooth.args <- attr(Mnone, "smooth.args")
         fun.ij <- bind.fv(fun.ij,
-                          data.frame(un=Mnone),
+                          data.frame(un=as.numeric(Mnone)),
                           "{hat(%s)[%s]^{un}}(r)",
                           "uncorrected estimate of %s",
                           "un")
@@ -707,7 +710,7 @@ markcrosscorr <-
         Mtrans <- sewsmod(dIJ, ff, edgewt, Efdenom, r, method, ...)
         smooth.args <- attr(Mtrans, "smooth.args")
         fun.ij <- bind.fv(fun.ij,
-                          data.frame(trans=Mtrans),
+                          data.frame(trans=as.numeric(Mtrans)),
                           "{hat(%s)[%s]^{trans}}(r)",
                           "translation-corrected estimate of %s",
                           "trans")
@@ -719,7 +722,8 @@ markcrosscorr <-
         Miso <- sewsmod(dIJ, ff, edgewt, Efdenom, r, method, ...)
         smooth.args <- attr(Miso, "smooth.args")
         fun.ij <- bind.fv(fun.ij,
-                          data.frame(iso=Miso), "{hat(%s)[%s]^{iso}}(r)",
+                          data.frame(iso=as.numeric(Miso)),
+                          "{hat(%s)[%s]^{iso}}(r)",
                           "Ripley isotropic correction estimate of %s",
                           "iso")
       }
