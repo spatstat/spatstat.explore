@@ -6,7 +6,7 @@
 #
 #        compatible.fv()       Check whether two fv objects are compatible
 #
-#     $Revision: 1.44 $     $Date: 2025/11/19 04:20:27 $
+#     $Revision: 1.45 $     $Date: 2025/11/19 07:11:48 $
 #
 
 eval.fv <- local({
@@ -78,18 +78,19 @@ eval.fv <- local({
       funvalues <- lapply(funs, "[[", i=yn)
       # insert into list of argument values
       vars[fvs] <- funvalues
+      #' do the same with data frames that contain the named column
       if(anyspecial) 
         vars[isspecial] <- lapply(specials, "[[", i=yn)
       #' evaluate
-      result[[yn]] <- eval(e, vars, enclos=envir)
+      ryn <- eval(e, vars, enclos=envir)
+      #' should be a single column
+      if(max(1, ncol(ryn)) > 1)
+        stop(paste("Internal error in eval.fv: calculations for column",
+                   sQuote(yn),
+                   "yielded multiple columns of data"),
+             call.=FALSE)
+      result[[yn]] <- ryn
     }
-    
-    if(any(multicol <- sapply(result, is.multicolumn)))
-      stop(paste("Internal error in eval.fv: calculations for",
-                 ngettext(sum(multicol), "column", "each of the columns"),
-                 commasep(sQuote(ynames[multicol])),
-                 "yielded multiple columns of data"),
-           call.=FALSE)
     if(!relabel)
       return(result)
     # determine mathematical labels.
@@ -187,8 +188,6 @@ eval.fv <- local({
     ## return TRUE for a data frame which contains all the desired columns
     is.data.frame(x) && !is.fv(x) && all(desired %in% names(x))
   }
-  is.multicolumn <- function(x) { max(1, ncol(x)) > 1 }
-
   eval.fv
 })
     
