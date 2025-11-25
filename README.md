@@ -17,6 +17,10 @@ Most of the functionality is for spatial point patterns in two dimensions.
 There is a very modest amount of functionality for 3D and higher dimensional patterns
 and space-time patterns.
 
+You are viewing the GitHub repository which holds
+the latest **development version** of `spatstat.explore`.
+For the latest public release on CRAN, click the green badge above.
+
 ### Overview 
 
 `spatstat.explore` supports
@@ -76,4 +80,22 @@ and multi-type versions of these functions
 - Choi-Hall data sharpening of point locations
 - transects of an image along a line or curve
 - programming tools
+
+### Installing the package
+
+This repository contains the _development version_ of
+`spatstat.explore`. The easiest way to install the development version
+is to start R and type
+
+```R
+repo <- c('https://spatstat.r-universe.dev', 'https://cloud.r-project.org')
+install.packages("spatstat.explore", dependencies=TRUE, repos=repo)
+```
+
+To install the latest _public release_ of `spatstat.explore`,
+type
+
+```R
+install.packages("spatstat.explore")
+```
 
