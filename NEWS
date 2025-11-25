@@ -1,4 +1,23 @@
 
+        CHANGES IN spatstat.explore VERSION 3.6-0.001
+
+OVERVIEW
+
+    o Important changes to mark correlation function
+    
+    o Minor internal changes.
+
+SIGNIFICANT USER-VISIBLE CHANGES
+
+    o markcorr
+    The interpretation of the argument 'weights' has changed.
+
+    o markcorr
+    New argument 'fadjust' (equivalent to the old 'weights').
+
+    o markcrosscorr
+    New argument 'weights'.
+    
         CHANGES IN spatstat.explore VERSION 3.6-0
 
 OVERVIEW

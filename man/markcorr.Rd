@@ -4,14 +4,14 @@
   Mark Correlation Function
 }
 \description{
-  Estimate the marked correlation function
-  of a marked point pattern.
+  Estimate the mark correlation function of a marked point pattern.
 }
 \usage{
 markcorr(X, f = function(m1, m2) { m1 * m2}, r=NULL,
          correction=c("isotropic", "Ripley", "translate"),
          method="density", \dots, weights=NULL,
-         f1=NULL, normalise=TRUE, fargs=NULL, internal=NULL)
+         f1=NULL, normalise=TRUE, fargs=NULL,
+         fadjust=NULL, internal=NULL)
 }
 \arguments{
   \item{X}{The observed point pattern.
@@ -49,11 +49,12 @@ markcorr(X, f = function(m1, m2) { m1 * m2}, r=NULL,
     selected by \code{method}.
   }
   \item{weights}{
-    Optional. Numeric weights for each data point in \code{X}.
+    Optional. Numeric weights associated with each data point in \code{X}. 
     A numeric vector, a pixel image, or a \code{function(x,y)}.
     Alternatively, an \code{expression} to be evaluated to yield the
     weights; the expression may involve the variables
-    \code{x,y,marks} representing the coordinates and marks of\code{X}. 
+    \code{x,y,marks} representing the coordinates and marks of\code{X}.
+    See Details.
   }
   \item{f1}{
     An alternative to \code{f}. If this argument is given,
@@ -68,6 +69,16 @@ markcorr(X, f = function(m1, m2) { m1 * m2}, r=NULL,
   \item{fargs}{
     Optional. A list of extra arguments to be passed to the function
     \code{f} or \code{f1}.
+  }
+  \item{fadjust}{
+    Optional. For advanced use and code development.
+    Numeric values associated with each data point in \code{X}
+    which modify the value of \code{f}.
+    A numeric vector, a pixel image, or a \code{function(x,y)}.
+    Alternatively, an \code{expression} to be evaluated to yield the
+    weights; the expression may involve the variables
+    \code{x,y,marks} representing the coordinates and marks of\code{X}.
+    See Details.
   }
   \item{internal}{Do not use this argument.}
 }
@@ -194,6 +205,11 @@ markcorr(X, f = function(m1, m2) { m1 * m2}, r=NULL,
   The argument \code{f1} should be an \R function with at least one
   argument.
   (It may also take additional arguments, passed through \code{fargs}).
+
+  As an advanced feature, if \code{fadjust} is given, then the value of
+  \eqn{f(x_i,x_j)}{f(x[i], x[j])}
+  for data points \eqn{x_i}{x[i]} and \eqn{x_j}{x[j]}
+  is multiplied by \code{fadjust[i] * fadjust[j]}.
   
   The argument \code{r} is the vector of values for the
   distance \eqn{r} at which \eqn{k_f(r)}{k[f](r)} is estimated.
@@ -224,26 +240,33 @@ markcorr(X, f = function(m1, m2) { m1 * m2}, r=NULL,
 
   The numerator and denominator of the mark correlation function
   (in the expression above) are estimated using density estimation
-  techniques. The user can choose between
+  techniques based on contributions from each pair of data points.
+  If argument \code{weights} is given, then the contribution
+  from each pair of data points \eqn{x_i}{x[i]} and \eqn{x_j}{x[j]}
+  to the density estimate is weighted by
+  \code{weights[i] * weights[j]}. 
+
+  For density estimation the user can choose between
   \describe{
-    \item{\code{"density"}}{
+    \item{\code{method="density"}}{
       which uses the standard kernel
       density estimation routine \code{\link[stats]{density.default}}, and
       works only for evenly-spaced \code{r} values;
     }
-    \item{\code{"loess"}}{
+    \item{\code{method="loess"}}{
       which uses the function \code{\link[stats]{loess}};
     }
-    \item{\code{"sm"}}{
+    \item{\code{method="sm"}}{
       which uses the function \code{sm.density} in the
       package \pkg{sm} and is extremely slow;
     }
-    \item{\code{"smrep"}}{
+    \item{\code{method="smrep"}}{
       which uses the function \code{sm.density} in the
       package \pkg{sm} and is relatively fast, but may require manual
       control of the smoothing parameter \code{hmult}.
     }
   }
+
   If \code{normalise=FALSE} then the algorithm will compute
   only the numerator
   \deqn{
@@ -253,6 +276,12 @@ markcorr(X, f = function(m1, m2) { m1 * m2}, r=NULL,
   }
   of the expression for the mark correlation function.
   In this case, negative values of \code{f} are permitted.
+}
+\section{Warning}{
+  The interpretation of the argument \code{weights} has changed.
+  In \pkg{spatstat.explore} version \code{3.6-0} and earlier,
+  \code{weights} was interpreted in the sense that is
+  now represented by the argument \code{fadjust}.
 }
 \references{
   Stoyan, D. and Stoyan, H. (1994)

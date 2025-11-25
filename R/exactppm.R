@@ -8,7 +8,7 @@
 #'  in nonparametric methods such as 'rhohat' to represent the null/reference model,
 #'  so that the code for nonparametric methods does not depend on 'ppm'
 #'
-#'  $Revision: 1.6 $ $Date: 2023/05/02 07:01:00 $
+#'  $Revision: 1.7 $ $Date: 2025/11/24 04:00:28 $
 
 exactppm <- function(X, baseline=NULL, ..., subset=NULL,
                      eps=NULL, dimyx=NULL,
@@ -98,6 +98,10 @@ is.poisson.exactppm <- function(x) { TRUE }
 
 is.stationary.exactppm <- function(x) {
   is.null(x$baseline) || is.numeric(x$baseline)
+}
+
+fitted.exactppm <- function(object, ...) {
+  predict(object, object$X)
 }
 
 predict.exactppm <- function(object, locations=NULL, ...,
