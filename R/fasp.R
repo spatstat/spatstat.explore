@@ -1,7 +1,7 @@
 #
 #	fasp.R
 #
-#	$Revision: 1.37 $	$Date: 2023/04/05 07:06:22 $
+#	$Revision: 1.38 $	$Date: 2025/12/23 00:59:51 $
 #
 #
 #-----------------------------------------------------------------------------
@@ -13,9 +13,17 @@ fasp <- function(fns, which, formulae=NULL,
                  checkfv=TRUE) {
   stopifnot(is.list(fns))
   stopifnot(is.matrix(which))
-  stopifnot(length(fns) == length(which))
-  n   <- length(which)
+  n   <- length(fns)
 
+  #' matrix 'which' should contain indices into 'fns'
+  which[] <- as.integer(which[])
+  wr <- range(which, na.rm=TRUE)
+  if(wr[1L] < 1 || wr[2L] > n)
+    stop(paste("Some entries of matrix", sQuote("which"),
+               "lie outside the range [1,", n, "] of valid indices for",
+               sQuote("fns")),
+         call.=FALSE)
+  
   if(checkfv && !all(sapply(fns, is.fv)))
     stop("Some entries of 'fns' are not objects of class 'fv'", call.=FALSE)
 
@@ -35,7 +43,7 @@ fasp <- function(fns, which, formulae=NULL,
         # single formula - replicate it
         formulae <- rep.int(formulae, n)
     else 
-        stopifnot(length(formulae) == length(which))
+        stopifnot(length(formulae) == length(fns))
   }
 
   rslt <- list(fns=fns, 

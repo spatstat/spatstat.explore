@@ -107,8 +107,11 @@
   \code{x$titles}.
 }
 
-\value{None.}
-
+\value{
+  (Invisibly) a list containing the results of \code{\link{plot.fv}}
+  for each panel of the array of plots, listed from left to right
+  in rows from top to bottom.
+}
 \section{Warnings}{
   (Each component of) the \code{subset} argument may be a
   logical vector (of the same length as the vectors of data which

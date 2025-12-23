@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.6-0.003
+        CHANGES IN spatstat.explore VERSION 3.6-0.004
 
 OVERVIEW
 
@@ -17,6 +17,9 @@ SIGNIFICANT USER-VISIBLE CHANGES
 
     o markcrosscorr
     New argument 'weights'.
+
+    o plot.fasp
+    Now returns a list containing the results of plot.fv for each panel.
     
         CHANGES IN spatstat.explore VERSION 3.6-0
 
