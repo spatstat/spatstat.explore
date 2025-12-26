@@ -1,7 +1,7 @@
 #
 #       plot.fv.R   (was: conspire.S)
 #
-#  $Revision: 1.144 $    $Date: 2025/02/04 00:25:40 $
+#  $Revision: 1.146 $    $Date: 2025/12/26 02:55:58 $
 #
 #
 
@@ -140,8 +140,8 @@ plot.fv <- local({
     rhs <- fmla[[3]]
 
     ## extract data 
-    lhsdata <- eval(lhs, envir=indata)
-    rhsdata <- eval(rhs, envir=indata)
+    lhsdata <- eval(lhs, envir=indata, enclos=env.user)
+    rhsdata <- eval(rhs, envir=indata, enclos=env.user)
 
     ## reformat
     if(is.vector(lhsdata)) {
@@ -211,7 +211,7 @@ plot.fv <- local({
                                  list(fom=fmla.original)))
           dont.complain.about(u, ux, uy)
           lhsnew <- foo[[2]]
-          morelhs <- eval(lhsnew, envir=indata)
+          morelhs <- eval(lhsnew, envir=indata, enclos=env.user)
           success <- identical(colnames(morelhs), extrashadevars)
         } else if(is.name(lhs) && as.character(lhs) %in% names(indata)) {
           ## lhs is the name of a single column in x
@@ -268,8 +268,8 @@ plot.fv <- local({
     ## restrict data to subset if desired
     if(!is.null(subset)) {
       keep <- if(is.character(subset)) {
-                eval(parse(text=subset), envir=indata)
-              } else eval(subset, envir=indata)
+                eval(parse(text=subset), envir=indata, enclos=env.user)
+              } else eval(subset, envir=indata, enclos=env.user)
       lhsdata <- lhsdata[keep, , drop=FALSE]
       rhsdata <- rhsdata[keep]
     }

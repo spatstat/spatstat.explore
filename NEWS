@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.6-0.004
+        CHANGES IN spatstat.explore VERSION 3.6-0.005
 
 OVERVIEW
 
@@ -20,6 +20,13 @@ SIGNIFICANT USER-VISIBLE CHANGES
 
     o plot.fasp
     Now returns a list containing the results of plot.fv for each panel.
+
+BUG FIXES
+
+    o plot.fv
+    Crashed sometimes if the formula involved the name of
+    an object that was not a column of x.
+    Fixed.
     
         CHANGES IN spatstat.explore VERSION 3.6-0
 

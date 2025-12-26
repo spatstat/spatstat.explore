@@ -233,6 +233,22 @@ local({
   Z <- Jdif(amacrine, i="on")
 })
 }
+
+#' scoping problem: formula refers to external object 
+if(FULLTEST) {
+  local({
+    K <- Kest(cells)
+    rsq <- K$r^2
+    plot(K, . ~ rsq)
+    f <- function(X) {
+      G <- Gest(X)
+      rsquared <- G$r^2
+      plot(G, . ~ rsquared)
+    }
+    f(cells)
+  })
+}
+
 #'
 #'  Test mathlegend code
 #'
