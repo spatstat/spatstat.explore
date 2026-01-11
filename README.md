@@ -5,6 +5,22 @@
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/spatstat.explore)](https://CRAN.R-project.org/package=spatstat.explore) 
 [![GitHub R package version](https://img.shields.io/github/r-package/v/spatstat/spatstat.explore)](https://github.com/spatstat/spatstat.explore)
 
+You are viewing the GitHub repository which holds
+the latest **development version** of `spatstat.explore`.
+For the latest public release on CRAN, click the green badge above.
+
+ - [Overview of `spatstat.geom`](#overview)
+ - [Detailed contents of package](#detailed)
+ - [Installing the package](#installing)
+ - [Bug reports](#bugreports)
+ - [Questions](#questions)
+ - [Proposing changes to code](#proposing)
+ - [Future development](#future)
+
+___
+
+### <a name="overview"></a> Overview of `spatstat.explore`
+
 The original `spatstat` package has been split into
 several sub-packages (See [spatstat/spatstat](https://github.com/spatstat/spatstat))
 
@@ -17,12 +33,6 @@ Most of the functionality is for spatial point patterns in two dimensions.
 There is a very modest amount of functionality for 3D and higher dimensional patterns
 and space-time patterns.
 
-You are viewing the GitHub repository which holds
-the latest **development version** of `spatstat.explore`.
-For the latest public release on CRAN, click the green badge above.
-
-### Overview 
-
 `spatstat.explore` supports
 
 - data manipulation and exploratory graphics
@@ -32,7 +42,9 @@ For the latest public release on CRAN, click the green badge above.
 - nonparametric estimation 
 - hypothesis tests (simulation-based and nonparametric)
 
-### Detailed contents
+___
+
+### <a name="detailed"></a> Detailed contents of `spatstat.explore`
 
 For a full list of functions, see the help file for `spatstat.explore-package`.
 
@@ -81,7 +93,9 @@ and multi-type versions of these functions
 - transects of an image along a line or curve
 - programming tools
 
-### Installing the package
+___
+
+### <a name="installing"></a> Installing the package
 
 This repository contains the _development version_ of
 `spatstat.explore`. The easiest way to install the development version
@@ -99,3 +113,41 @@ type
 install.packages("spatstat.explore")
 ```
 
+___
+
+## <a name="bugreports"></a> Bug reports 
+
+Users are encouraged to report bugs.
+If you find a bug in a `spatstat` function,
+please identify the sub-package containing that function.
+Visit the GitHub repository for the sub-package, 
+click the `Issues` tab at the top of the page, 
+and press *new issue* to start a new bug report, documentation correction
+or feature request.
+
+**Please do not post questions** on the Issues pages,
+because they are too clunky for correspondence.
+
+## <a name="questions"></a> Questions about spatstat
+
+For questions about the `spatstat` package family, first check 
+the question-and-answer website
+[stackoverflow](http://stackoverflow.com/questions/tagged/spatstat)
+to see whether your question has already been asked and answered.
+If not, you can either post your question at stackoverflow, or
+email the authors.
+
+## <a name="proposing"></a> Proposing changes to the code
+
+Feel free to fork `spatstat.explore`, make changes to the code,
+and ask us to include them in the package by making a github *pull request*. 
+
+## <a name="future"></a> Future development
+
+The `spatstat` package family is the result of 30 years of software development
+and contains over 200,000 lines of code.
+It is still under development,
+motivated by the needs of researchers in many fields,
+and driven by innovations in statistical science.
+We welcome contributions of code, and suggestions
+for improvements.
