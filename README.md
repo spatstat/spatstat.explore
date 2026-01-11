@@ -9,7 +9,7 @@ You are viewing the GitHub repository which holds
 the latest **development version** of `spatstat.explore`.
 For the latest public release on CRAN, click the green badge above.
 
- - [Overview of `spatstat.geom`](#overview)
+ - [Overview of `spatstat.explore`](#overview)
  - [Detailed contents of package](#detailed)
  - [Installing the package](#installing)
  - [Bug reports](#bugreports)
