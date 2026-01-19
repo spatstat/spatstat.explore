@@ -5,9 +5,9 @@
 #'
 #' Copyright (c) 2008-2025 Adrian Baddeley, Tilman Davies and Martin Hazelton
 #'
-#' $Revision: 1.31 $ $Date: 2025/09/03 03:42:50 $
+#' $Revision: 1.32 $ $Date: 2026/01/19 09:50:14 $
 
-pcfinhom <- function(X, lambda=NULL, ..., r=NULL,
+pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL, 
                      adaptive=FALSE,
                      kernel="epanechnikov", bw=NULL, h=NULL,
                      bw.args=list(),
@@ -43,7 +43,7 @@ pcfinhom <- function(X, lambda=NULL, ..., r=NULL,
   npts <- npoints(X)
   lambdaBar <- npts/areaW
   samplesize <- npairs <- npts * (npts - 1)
-  rmaxdefault <- rmax.rule("K", win, lambdaBar)        
+  rmaxdefault <- rmax %orifnull% rmax.rule("K", win, lambdaBar)        
 
   if(!is.null(domain)) {
     stop("Sorry, argument 'domain' is not yet supported", call.=FALSE)

@@ -9,7 +9,7 @@
 }
 \usage{
 pcfinhom(X, lambda = NULL, \dots,
-            r = NULL, adaptive = FALSE,
+            r = NULL, rmax=NULL, adaptive = FALSE,
             kernel = "epanechnikov", bw = NULL, h = NULL,
             bw.args = list(), stoyan = 0.15, adjust = 1,
             correction = c("translate", "Ripley"),
@@ -44,6 +44,9 @@ pcfinhom(X, lambda = NULL, \dots,
   \item{r}{
     Vector of values for the argument \eqn{r} at which \eqn{g(r)} 
     should be evaluated. There is a sensible default.
+  }
+  \item{rmax}{
+    Optional. Maximum desired value of the argument \eqn{r}.
   }
   \item{adaptive}{
     Logical value specifying whether to use adaptive kernel smoothing

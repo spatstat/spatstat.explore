@@ -6,7 +6,7 @@
   a non-stationary point pattern.
 }
 \usage{
-  Kinhom(X, lambda=NULL, \dots, r = NULL, breaks = NULL,
+  Kinhom(X, lambda=NULL, \dots, r = NULL, rmax=NULL, breaks = NULL,
     correction=c("border", "bord.modif", "isotropic", "translate"),
     renormalise=TRUE,
     normpower=1,
@@ -46,6 +46,9 @@
     the inhomogeneous \eqn{K} function
     should be evaluated. Not normally given by the user;
     there is a sensible default.
+  }
+  \item{rmax}{
+    Optional. Maximum desired value of the argument \eqn{r}.
   }
   \item{breaks}{
     This argument is for internal use only.

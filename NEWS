@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.6-0.005
+        CHANGES IN spatstat.explore VERSION 3.6-0.006
 
 OVERVIEW
 
@@ -18,6 +18,9 @@ SIGNIFICANT USER-VISIBLE CHANGES
     o markcrosscorr
     New argument 'weights'.
 
+    o pcfinhom, Kinhom, pcf.ppp
+    New argument 'rmax'.
+    
     o plot.fasp
     Now returns a list containing the results of plot.fv for each panel.
 

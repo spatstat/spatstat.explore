@@ -6,7 +6,7 @@
   a point pattern using kernel methods.
 }
 \usage{
-  \method{pcf}{ppp}(X, \dots, r = NULL,
+  \method{pcf}{ppp}(X, \dots, r = NULL, rmax=NULL, 
                     adaptive=FALSE,
                     kernel="epanechnikov", bw=NULL, h=NULL,
                     bw.args=list(), stoyan=0.15, adjust=1, 
@@ -33,6 +33,9 @@
   \item{r}{
     Optional. Vector of values for the argument \eqn{r} at which \eqn{g(r)} 
     should be evaluated. There is a sensible default.
+  }
+  \item{rmax}{
+    Optional. Maximum desired value of the argument \eqn{r}.
   }
   \item{adaptive}{
     Logical value specifying whether to use adaptive kernel smoothing

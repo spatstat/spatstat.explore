@@ -3,7 +3,7 @@
 #
 #   Allard-Fraley estimator of cluster region
 #
-#   $Revision: 1.13 $  $Date: 2022/01/04 05:30:06 $
+#   $Revision: 1.14 $  $Date: 2026/01/09 01:32:50 $
 #
 
 clusterset <- function(X, what=c("marks", "domain"),
@@ -26,7 +26,7 @@ clusterset <- function(X, what=c("marks", "domain"),
     cellid <- as.im(nnfun(X), ...)
   # compute tile areas
   if(fast) {
-    a <- table(factor(as.vector(as.matrix(cellid)), levels=1:n))
+    a <- tabulate(as.vector(as.matrix(cellid)), nbins=n)
     if(verbose) cat("done.\n")
     a <- a + 0.5
     A <- sum(a)

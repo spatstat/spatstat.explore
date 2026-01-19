@@ -1,7 +1,7 @@
 #
 #	Kinhom.S	Estimation of K function for inhomogeneous patterns
 #
-#	$Revision: 1.105 $	$Date: 2025/09/03 03:31:00 $
+#	$Revision: 1.106 $	$Date: 2026/01/19 09:51:22 $
 #
 #	Kinhom()	compute estimate of K_inhom
 #
@@ -59,7 +59,7 @@
 }
 
 "Kinhom"<-
-  function (X, lambda=NULL, ..., r = NULL, breaks = NULL, 
+  function (X, lambda=NULL, ..., r = NULL, rmax=NULL, breaks = NULL, 
             correction=c("border", "bord.modif", "isotropic", "translate"),
             renormalise=TRUE,
             normpower=1,
@@ -83,7 +83,7 @@
     areaW <- area(W)
     diamW <- diameter(W)
     
-    rmaxdefault <- rmax.rule("K", W, npts/areaW)
+    rmaxdefault <- rmax %orifnull% rmax.rule("K", W, npts/areaW)
     breaks <- handle.r.b.args(r, breaks, W, rmaxdefault=rmaxdefault)
     r <- breaks$r
     rmax <- breaks$max

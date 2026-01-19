@@ -14,7 +14,7 @@ pcf <- function(X, ...) {
 
 pcf.NAobject <- function(X, ...) { return(NAobject("fv")) }
 
-pcf.ppp <- function(X, ..., r=NULL,
+pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
                    adaptive=FALSE,
                    kernel="epanechnikov", bw=NULL, h=NULL,
                    bw.args=list(),
@@ -51,7 +51,7 @@ pcf.ppp <- function(X, ..., r=NULL,
   samplesize <- npairs <- npts * (npts - 1)
   lambda <- npts/areaW
   lambda2area <- npairs/areaW
-  rmaxdefault <- rmax.rule("K", win, lambda)        
+  rmaxdefault <- rmax %orifnull% rmax.rule("K", win, lambda)        
 
   ## ....... handle argument 'domain' .......................
   if(!is.null(domain)) {
