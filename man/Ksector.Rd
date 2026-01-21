@@ -10,7 +10,7 @@
 \usage{
 Ksector(X, begin = 0, end = 360, \dots,
         units = c("degrees", "radians"), 
-        r = NULL, breaks = NULL,
+        r = NULL, breaks = NULL, rmax=NULL, 
         correction = c("border", "isotropic", "Ripley", "translate"),
         domain=NULL, ratio = FALSE, verbose=TRUE)
 }
@@ -37,6 +37,10 @@ Ksector(X, begin = 0, end = 360, \dots,
   }
   \item{breaks}{
     This argument is for internal use only.
+  }
+  \item{rmax}{
+    Optional. Maximum desired value of the argument \eqn{r}.
+    A single numeric value. There is a sensible default.
   }
   \item{correction}{
     Optional. A character vector containing any selection of the

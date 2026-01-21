@@ -36,6 +36,7 @@
   }
   \item{rmax}{
     Optional. Maximum desired value of the argument \eqn{r}.
+    A single numeric value.
   }
   \item{adaptive}{
     Logical value specifying whether to use adaptive kernel smoothing

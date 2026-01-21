@@ -11,7 +11,8 @@
   adjusted for spatially varying intensity.
 }
 \usage{
-Kdot.inhom(X, i, lambdaI=NULL, lambdadot=NULL, \dots, r=NULL, breaks=NULL,
+Kdot.inhom(X, i, lambdaI=NULL, lambdadot=NULL, \dots,
+         r=NULL, breaks=NULL, rmax=NULL, 
          correction = c("border", "isotropic", "Ripley", "translate"),
          sigma=NULL, varcov=NULL, lambdaIdot=NULL,
          lambdaX=NULL, update=TRUE, leaveoneout=TRUE)
@@ -64,6 +65,10 @@ Kdot.inhom(X, i, lambdaI=NULL, lambdadot=NULL, \dots, r=NULL, breaks=NULL,
   }
   \item{breaks}{
 	This argument is for internal use only.
+  }
+  \item{rmax}{
+    Optional. Maximum desired value of the argument \eqn{r}.
+    A single numeric value. There is a sensible default.
   }
   \item{correction}{
     A character vector containing any selection of the

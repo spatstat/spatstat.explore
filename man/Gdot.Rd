@@ -10,7 +10,8 @@
   to the nearest other point of any type.
 }
 \usage{
-Gdot(X, i, r=NULL, breaks=NULL, \dots, correction=c("km", "rs", "han"))
+Gdot(X, i, r=NULL, breaks=NULL, \dots,
+     rmax=NULL, correction=c("km", "rs", "han"))
 }
 \arguments{
   \item{X}{The observed point pattern, 
@@ -37,6 +38,10 @@ Gdot(X, i, r=NULL, breaks=NULL, \dots, correction=c("km", "rs", "han"))
     This argument is for internal use only.
   }
   \item{\dots}{Ignored.}
+  \item{rmax}{
+    Optional. Maximum desired value of the argument \eqn{r}.
+    A single numeric value. There is a sensible default.
+  }
   \item{correction}{
     Optional. Character string specifying the edge correction(s)
     to be used. Options are \code{"none"}, \code{"rs"}, \code{"km"},

@@ -6,7 +6,7 @@
   window of arbitrary shape.
 }
 \usage{
-  Jest(X, ..., eps=NULL, r=NULL, breaks=NULL, correction=NULL)
+  Jest(X, ..., eps=NULL, r=NULL, breaks=NULL, rmax=NULL, correction=NULL)
 }
 \arguments{
   \item{X}{The observed point pattern, 
@@ -26,6 +26,10 @@
   }
   \item{breaks}{
 	This argument is for internal use only.
+  }
+  \item{rmax}{
+    Optional. Maximum desired value of the argument \eqn{r}.
+    A single numeric value. There is a sensible default.
   }
   \item{correction}{
     Optional. Character string specifying the choice of edge

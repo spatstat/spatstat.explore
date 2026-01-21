@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.6-0.006
+        CHANGES IN spatstat.explore VERSION 3.6-0.007
 
 OVERVIEW
 
@@ -18,11 +18,22 @@ SIGNIFICANT USER-VISIBLE CHANGES
     o markcrosscorr
     New argument 'weights'.
 
-    o pcfinhom, Kinhom, pcf.ppp
+    o psstA, psstG, psst
     New argument 'rmax'.
     
     o plot.fasp
     Now returns a list containing the results of plot.fv for each panel.
+
+    o summary functions
+    The following functions have a new argument 'rmax':
+    Fest, Finhom, FmultiInhom,
+    Gcom, Gcross, Gdot, Gest, Ginhom, Gmulti, GmultiInhom,
+    Jest, Jcross, Jdot, Jinhom, Jmulti,
+    Kcom, Kcross, Kdot, Kinhom, Kmulti,
+    Kcross.inhom, Kdot.inhom, Kmulti.inhom, Kmark, Ksector,
+    markconnect, markcorr, markcorrint, markcrosscorr, markequal, markvario,
+    pcf.ppp, pcfcross, pcfdot, pcfmulti,
+    pcfinhom, pcfcross.inhom, pcfdot.inhom, pcfmulti.inhom.
 
 BUG FIXES
 

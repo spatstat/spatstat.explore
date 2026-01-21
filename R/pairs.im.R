@@ -1,7 +1,7 @@
 #
 #   pairs.im.R
 #
-#   $Revision: 1.24 $   $Date: 2025/07/03 00:55:53 $
+#   $Revision: 1.25 $   $Date: 2026/01/21 06:26:39 $
 #
 
 pairs.listof <- pairs.solist <- function(..., plot=TRUE) {

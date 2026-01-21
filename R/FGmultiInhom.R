@@ -16,13 +16,13 @@
 #'     Copyright (c) 2016-2023 O. Cronie, M.N.M. van Lieshout, A.J. Baddeley
 #'     GNU Public Licence GPL >= 2.0
 #' 
-#'     $Revision: 1.14 $ $Date: 2023/04/09 10:08:30 $
+#'     $Revision: 1.15 $ $Date: 2026/01/21 06:26:39 $
 
 Gmulti.inhom <- GmultiInhom <- function(X, I, J, 
                         lambda=NULL, lambdaI=NULL, lambdaJ=NULL,
                         lambdamin=NULL,
                         ...,
-                        r=NULL, 
+                        r=NULL, rmax=NULL, 
                         ReferenceMeasureMarkSetI=NULL,
                         ratio=FALSE){
   if(!is.ppp(X) || !is.marked(X))
@@ -31,8 +31,8 @@ Gmulti.inhom <- GmultiInhom <- function(X, I, J,
   nX <- npoints(X)
   
   #' handle r argument
-  rmax <- rmax.rule("G", W, intensity(X))
-  bks <- handle.r.b.args(r, NULL, W, rmaxdefault=rmax)
+  rmaxdefault <- rmax %orifnull% rmax.rule("G", W, intensity(X))
+  bks <- handle.r.b.args(r, NULL, W, rmaxdefault=rmaxdefault)
   r    <- bks$r
   rmax <- bks$max
   nr   <- length(r)
@@ -218,7 +218,7 @@ Fmulti.inhom <- FmultiInhom <- function(X, J,
                         lambda=NULL,lambdaJ=NULL,
                         lambdamin=NULL,
                         ...,
-                        r=NULL) {
+                        r=NULL, rmax=NULL) {
   if(!is.ppp(X) || !is.marked(X))
     stop("X should be a marked point pattern")
   nX <- npoints(X)
@@ -251,7 +251,7 @@ Fmulti.inhom <- FmultiInhom <- function(X, J,
     stopifnot(lambdamin <= min(lambdaJ))
   }
 
-  FJ <- Finhom(XJ, lambda=lambdaJ, lmin=lambdamin, r=r, ...)
+  FJ <- Finhom(XJ, lambda=lambdaJ, lmin=lambdamin, r=r, rmax=rmax, ...)
   conserve <- attr(FJ, "conserve")
   FJ <- rebadge.fv(FJ,
                    new.ylab  = quote(F[inhom, J](r)),
@@ -267,7 +267,7 @@ Gcross.inhom <- function(X, i, j,
                          lambda=NULL, lambdaI=NULL, lambdaJ=NULL,
                          lambdamin=NULL,
                          ...,
-                         r=NULL,
+                         r=NULL, rmax=NULL,
                          ReferenceMeasureMarkSetI=NULL,
                          ratio=FALSE) {
   verifyclass(X, "ppp")
@@ -285,7 +285,7 @@ Gcross.inhom <- function(X, i, j,
   G <- Gmulti.inhom(X, I, J,
                     lambda, lambdaI, lambdaJ, lambdamin,
                     ...,
-                    r=r,
+                    r=r, rmax=rmax,
                     ReferenceMeasureMarkSetI=ReferenceMeasureMarkSetI,
                     ratio=ratio)
   G <- rebadge.as.crossfun(G, "G", "inhom", i, j)
@@ -295,7 +295,7 @@ Gcross.inhom <- function(X, i, j,
 Gdot.inhom <- 
   function(X, i, lambdaI=NULL, lambdadot=NULL, lambdamin=NULL,
            ...,
-           r=NULL, 
+           r=NULL, rmax=NULL, 
            ReferenceMeasureMarkSetI=NULL,
            ratio=FALSE) {
   verifyclass(X, "ppp")
@@ -310,7 +310,7 @@ Gdot.inhom <-
   G <- Gmulti.inhom(X, I, J,
                     lambdaI=lambdaI, lambdaJ=lambdadot, lambdamin=lambdamin,
                     ...,
-                    r=r,
+                    r=r, rmax=rmax,
                     ReferenceMeasureMarkSetI=ReferenceMeasureMarkSetI,
                     ratio=ratio)
   G <- rebadge.as.dotfun(G, "G", "inhom", i)

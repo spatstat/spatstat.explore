@@ -3,12 +3,12 @@
 #	Usual invocations to compute multitype J function(s)
 #	if F and G are not required 
 #
-#	$Revision: 4.47 $	$Date: 2025/09/03 03:47:18 $
+#	$Revision: 4.48 $	$Date: 2026/01/21 06:26:39 $
 #
 #
 #
-"Jcross" <-
-function(X, i, j, eps=NULL, r=NULL, breaks=NULL, ..., correction=NULL) {
+Jcross <- function(X, i, j, eps=NULL, r=NULL, breaks=NULL, ..., 
+          rmax=NULL, correction=NULL) {
 #
 #       multitype J function J_{ij}(r)
 #  
@@ -35,12 +35,12 @@ function(X, i, j, eps=NULL, r=NULL, breaks=NULL, ..., correction=NULL) {
     stop(paste("No points have mark = ", i))
 #        
   if(i == j){
-    result <- Jest(X[I], eps=eps, r=r, breaks=breaks,
+    result <- Jest(X[I], eps=eps, r=r, breaks=breaks, rmax=rmax,
                    correction=correction, checkspacing=checkspacing)
   } else {
     J <- (marx == j)
     result <- Jmulti(X, I, J,
-                     eps=eps, r=r, breaks=breaks, disjoint=TRUE,
+                     eps=eps, r=r, breaks=breaks, rmax=rmax, disjoint=TRUE,
                      correction=correction, checkspacing=checkspacing)
   }
   conserve <- attr(result, "conserve")
@@ -50,7 +50,7 @@ function(X, i, j, eps=NULL, r=NULL, breaks=NULL, ..., correction=NULL) {
 }
 
 "Jdot" <-
-function(X, i, eps=NULL, r=NULL, breaks=NULL, ..., correction=NULL) {
+function(X, i, eps=NULL, r=NULL, breaks=NULL, ..., rmax=NULL, correction=NULL) {
 #  
 #    multitype J function J_{i\dot}(r)
 #  
@@ -77,7 +77,7 @@ function(X, i, eps=NULL, r=NULL, breaks=NULL, ..., correction=NULL) {
   J <- rep.int(TRUE, X$n)
 #  
   result <- Jmulti(X, I, J,
-                   eps=eps, r=r, breaks=breaks, disjoint=FALSE,
+                   eps=eps, r=r, breaks=breaks, rmax=rmax, disjoint=FALSE,
                    correction=correction, checkspacing=checkspacing)
   conserve <- attr(result, "conserve")
   result <- rebadge.as.dotfun(result, "J", NULL, i)
@@ -85,9 +85,8 @@ function(X, i, eps=NULL, r=NULL, breaks=NULL, ..., correction=NULL) {
   return(result)
 }
 
-"Jmulti" <- 	
-function(X, I, J, eps=NULL, r=NULL, breaks=NULL, ..., disjoint=NULL,
-         correction=NULL) {
+Jmulti <- function(X, I, J, eps=NULL, r=NULL, breaks=NULL, ..., rmax=NULL, 
+	 disjoint=NULL, correction=NULL) {
 #  
 #    multitype J function (generic engine)
 #  
@@ -113,7 +112,7 @@ function(X, I, J, eps=NULL, r=NULL, breaks=NULL, ..., disjoint=NULL,
     stop("I and J must be valid subset indices")
   XJ <- X[J]
   lambdaJ <- intensity(XJ)
-  rmaxdefault <- rmax.rule("J", W, lambdaJ)
+  rmaxdefault <- rmax %orifnull% rmax.rule("J", W, lambdaJ)
   brks <- handle.r.b.args(r, breaks, W, rmaxdefault=rmaxdefault)$val
   FJ <- Fest(XJ, eps, breaks=brks, correction=correction, ...)
   GIJ <- Gmulti(X, I, J, breaks=brks,

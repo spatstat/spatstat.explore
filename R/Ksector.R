@@ -1,12 +1,12 @@
 #
 #	Ksector.R	Estimation of 'sector K function'
 #
-#	$Revision: 1.7 $	$Date: 2022/06/27 07:37:57 $
+#	$Revision: 1.8 $	$Date: 2026/01/21 06:26:39 $
 #
 
 Ksector <- function(X, begin=0, end=360, ...,
                     units=c("degrees", "radians"),
-                    r=NULL, breaks=NULL, 
+                    r=NULL, breaks=NULL, rmax=NULL,
                     correction=c("border", "isotropic", "Ripley", "translate"),
                     domain = NULL,
                     ratio=FALSE, verbose=TRUE)
@@ -19,7 +19,7 @@ Ksector <- function(X, begin=0, end=360, ...,
   lambda <- npts/areaW
   npairs <- npts * (npts - 1)
   lambda2 <- npairs/(areaW^2)
-  rmaxdefault <- rmax.rule("K", W, lambda)        
+  rmaxdefault <- rmax %orifnull% rmax.rule("K", W, lambda)        
   breaks <- handle.r.b.args(r, breaks, W, rmaxdefault=rmaxdefault)
   r <- breaks$r
   rmax <- breaks$max

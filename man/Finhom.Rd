@@ -10,7 +10,7 @@
 \usage{
   Finhom(X, lambda = NULL, lmin = NULL, ...,
         sigma = NULL, varcov = NULL,
-        r = NULL, breaks = NULL, ratio = FALSE,
+        r = NULL, breaks = NULL, rmax=NULL, ratio = FALSE,
         update = TRUE, warn.bias=TRUE, savelambda=FALSE)
 }
 \arguments{
@@ -53,6 +53,10 @@
   }
   \item{breaks}{
     This argument is for internal use only.
+  }
+  \item{rmax}{
+    Optional. Maximum desired value of the argument \eqn{r}.
+    A single numeric value. There is a sensible default.
   }
   \item{ratio}{
     Logical. 

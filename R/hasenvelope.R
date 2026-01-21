@@ -3,7 +3,7 @@
 #'
 #'    A simple class of objects which contain additional envelope data
 #' 
-#'    $Revision: 1.1 $ $Date: 2015/10/05 06:20:31 $
+#'    $Revision: 1.2 $ $Date: 2026/01/21 06:26:39 $
 
 hasenvelope <- function(X, E=NULL) {
   if(inherits(E, "envelope")) {

@@ -11,7 +11,7 @@
 }
 \usage{
 Gmulti(X, I, J, r=NULL, breaks=NULL, \dots,
-        disjoint=NULL, correction=c("rs", "km", "han"))
+       rmax=NULL, disjoint=NULL, correction=c("rs", "km", "han"))
 }
 \arguments{
   \item{X}{The observed point pattern, 
@@ -36,6 +36,10 @@ Gmulti(X, I, J, r=NULL, breaks=NULL, \dots,
 	This argument is for internal use only.
   }
   \item{\dots}{Ignored.}
+  \item{rmax}{
+    Optional. Maximum desired value of the argument \eqn{r}.
+    A single numeric value. There is a sensible default.
+  }
   \item{disjoint}{Optional flag indicating whether
     the subsets \code{I} and \code{J} are disjoint.
     If missing, this value will be computed by inspecting the

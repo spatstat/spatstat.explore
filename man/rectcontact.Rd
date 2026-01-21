@@ -9,7 +9,8 @@
 }
 \usage{
 rectcontact(X, \dots, asp = 1, npasses=4,
-            eps = NULL, r = NULL, breaks = NULL, correction = c("rs", "km"))
+            eps = NULL, r = NULL, breaks = NULL, rmax = NULL,
+            correction = c("rs", "km"))
 }
 \arguments{
   \item{X}{
@@ -36,6 +37,10 @@ rectcontact(X, \dots, asp = 1, npasses=4,
   }
   \item{breaks}{
     Do Not Use This.
+  }
+  \item{rmax}{
+    Optional. Maximum desired value of the argument \eqn{r}.
+    A single numeric value. There is a sensible default.
   }
   \item{correction}{
     Character vector specifying the edge correction.

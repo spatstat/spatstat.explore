@@ -9,10 +9,12 @@
 \usage{
   Kmark(X, f = NULL, r = NULL,
         correction = c("isotropic", "Ripley", "translate"), ...,
+        rmax=NULL, 
         f1 = NULL, normalise = TRUE, returnL = FALSE, fargs = NULL)
 
   markcorrint(X, f = NULL, r = NULL,
               correction = c("isotropic", "Ripley", "translate"), ...,
+              rmax=NULL, 
               f1 = NULL, normalise = TRUE, returnL = FALSE, fargs = NULL)
 }
 \arguments{
@@ -37,6 +39,10 @@
   }
   \item{\dots}{
     Ignored.
+  }
+  \item{rmax}{
+    Optional. Maximum desired value of the argument \eqn{r}.
+    A single numeric value. There is a sensible default.
   }
   \item{f1}{
     An alternative to \code{f}. If this argument is given,

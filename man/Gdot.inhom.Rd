@@ -15,7 +15,8 @@
    Gdot.inhom(X, i,
               lambdaI = NULL, lambdadot = NULL, lambdamin = NULL,
               \dots,
-              r = NULL, ReferenceMeasureMarkSetI = NULL, ratio = FALSE)
+              r = NULL, rmax=NULL,
+              ReferenceMeasureMarkSetI = NULL, ratio = FALSE)
 }
 \arguments{
   \item{X}{The observed point pattern, 
@@ -65,6 +66,10 @@
     \eqn{G_{i\bullet}(r)}{Gi.(r)} should be evaluated.
     Not normally given by the user;
     there is a sensible default.
+  }
+  \item{rmax}{
+    Optional. Maximum desired value of the argument \eqn{r}.
+    A single numeric value. There is a sensible default.
   }
   \item{ReferenceMeasureMarkSetI}{
     Optional. The total measure of the mark set. A positive number.

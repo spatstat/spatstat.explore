@@ -8,12 +8,12 @@
 #		Gdot		      G_{i\bullet}
 #		Gmulti	              (generic)
 #
-#	$Revision: 4.47 $	$Date: 2025/09/03 03:45:35 $
+#	$Revision: 4.48 $	$Date: 2026/01/21 06:26:39 $
 #
 ################################################################################
 
-"Gcross" <-		
-function(X, i, j, r=NULL, breaks=NULL, ..., correction=c("rs", "km", "han"))
+Gcross <- function(X, i, j, r=NULL, breaks=NULL, ..., 
+         rmax=NULL, correction=c("rs", "km", "han"))
 {
 #	computes G_{ij} estimates
 #
@@ -37,19 +37,19 @@ function(X, i, j, r=NULL, breaks=NULL, ..., correction=c("rs", "km", "han"))
   if(sum(I) == 0) stop("No points are of type i")
         
   if(i == j){
-    result <- Gest(X[I], r=r, breaks=breaks, ...)
+    result <- Gest(X[I], r=r, breaks=breaks, rmax=rmax, ...)
   } else {
     J <- (marx == j)
     if(sum(J) == 0) stop("No points are of type j")
-    result <- Gmulti(X, I, J, r=r, breaks=breaks, disjoint=FALSE, ...,
-                     correction=correction)
+    result <- Gmulti(X, I, J, r=r, breaks=breaks, rmax=rmax, 
+                     disjoint=FALSE, ..., correction=correction)
   }
   result <- rebadge.as.crossfun(result, "G", NULL, i, j)
   return(result)
 }	
 
-"Gdot" <- 	
-function(X, i, r=NULL, breaks=NULL, ..., correction=c("km","rs","han")) {
+Gdot <- function(X, i, r=NULL, breaks=NULL, ..., 
+                 rmax=NULL, correction=c("km","rs","han")) {
 #  Computes estimate of 
 #      G_{i\bullet}(t) = 
 #  P( a further point of pattern in B(0,t)| a type i point at 0 )
@@ -71,8 +71,8 @@ function(X, i, r=NULL, breaks=NULL, ..., correction=c("km","rs","han")) {
   if(sum(I) == 0) stop("No points are of type i")
   J <- rep.int(TRUE, X$n)	# i.e. all points
 # 
-  result <- Gmulti(X, I, J, r, breaks, disjoint=FALSE, ...,
-                   correction=correction)
+  result <- Gmulti(X, I, J, r=r, breaks=breaks, disjoint=FALSE, ...,
+                   rmax=rmax, correction=correction)
   result <- rebadge.as.dotfun(result, "G", NULL, i)
   return(result)
 }	
@@ -81,7 +81,7 @@ function(X, i, r=NULL, breaks=NULL, ..., correction=c("km","rs","han")) {
 ##########
 
 "Gmulti" <- 	
-function(X, I, J, r=NULL, breaks=NULL, ..., disjoint=NULL,
+function(X, I, J, r=NULL, breaks=NULL, ..., rmax=NULL, disjoint=NULL,
          correction=c("rs", "km", "han")) {
 #
 #  engine for computing the estimate of G_{ij} or G_{i\bullet}
@@ -130,7 +130,7 @@ function(X, I, J, r=NULL, breaks=NULL, ..., disjoint=NULL,
                            multi=TRUE)
 #  determine breakpoints for r values
   lamJ <- nJ/areaW
-  rmaxdefault <- rmax.rule("G", W, lamJ)
+  rmaxdefault <- rmax %orifnull% rmax.rule("G", W, lamJ)
   breaks <- handle.r.b.args(r, breaks, W, rmaxdefault=rmaxdefault)
 #  brks <- breaks$val
   rmax <- breaks$max

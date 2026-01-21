@@ -2,7 +2,7 @@
 ##
 ##     markcorr.R
 ##
-##     $Revision: 1.98 $ $Date: 2025/11/25 06:31:53 $
+##     $Revision: 1.99 $ $Date: 2026/01/21 06:26:39 $
 ##
 ##    Estimate the mark correlation function
 ##    and related functions 
@@ -14,16 +14,17 @@ markvario <- local({
   halfsquarediff <- function(m1, m2) { ((m1-m2)^2)/2 }
 
   markvario <- function(X, correction=c("isotropic", "Ripley", "translate"),
-                        r=NULL, method="density", ..., normalise=FALSE) {
+                        r=NULL, method="density", ..., 
+                        rmax=NULL, normalise=FALSE) {
     if(is.NAobject(X)) return(NAobject("fv"))
     if(missing(correction))
       correction <- NULL
     do.markvario(X, correction=correction, r=r, method=method,
-             normalise=normalise, ...)
+             normalise=normalise, ..., rmax=rmax)
   }
 
   do.markvario <- function(X, correction=c("isotropic", "Ripley", "translate"),
-                           r=NULL, method="density", ...,
+                           r=NULL, method="density", ..., rmax=NULL,
                            weights=NULL, fadjust=NULL,
                            normalise=FALSE) {
     m <- onecolumn(marks(X))
@@ -40,7 +41,7 @@ markvario <- local({
     ## Compute estimates
     v <- markcorr(X, f=halfsquarediff, 
                   r=r, correction=correction, method=method,
-                  normalise=normalise, ...,
+                  normalise=normalise, ..., rmax=rmax,
                   weights=weights, fadjust=fadjust,
                   internal=list(Ef=Ef))
     if(is.fv(v)) v <- anylist(v)
@@ -66,7 +67,7 @@ markconnect <- local({
   
   markconnect <- function(X, i, j, r=NULL, 
                           correction=c("isotropic", "Ripley", "translate"),
-                          method="density", ...,
+                          method="density", ..., rmax=NULL, 
                           normalise=FALSE) {
     if(is.NAobject(X)) return(NAobject("fv"))
     stopifnot(is.ppp(X) && is.multitype(X))
@@ -77,12 +78,12 @@ markconnect <- local({
     if(missing(correction))
       correction <- NULL
     do.markconnect(X=X, i=i, j=j, r=r, correction=correction,
-                   method=method, ..., normalise=normalise)
+                   method=method, ..., rmax=rmax, normalise=normalise)
   }
     
   do.markconnect <- function(X, i, j, r=NULL, 
                              correction=c("isotropic", "Ripley", "translate"),
-                             method="density", ...,
+                             method="density", ..., rmax=NULL, 
                              weights=NULL, fadjust=NULL,
                              normalise=FALSE) {
     ## compute reference value Ef
@@ -95,6 +96,7 @@ markconnect <- local({
     p <- markcorr(X, f=indicateij, r=r,
                   correction=correction, method=method,
                   ...,
+                  rmax=rmax,
                   weights=weights, fadjust=fadjust,
                   fargs=list(i=i, j=j),
                   normalise=normalise,
@@ -118,12 +120,13 @@ markconnect <- local({
 
 markequal <- function(X, r=NULL, 
                       correction=c("isotropic", "Ripley", "translate"),
-                      method="density", ..., normalise=FALSE) {
+                      method="density", ..., rmax=NULL, normalise=FALSE) {
   if(is.NAobject(X)) return(NAobject("fv"))
   stopifnot(is.ppp(X))
   stopifnot(is.multitype(X))
   p <- markcorr(X, r=r,
-                correction=correction, method=method, ..., normalise=normalise)
+                correction=correction, method=method, ..., 
+	        rmax=rmax, normalise=normalise)
   e <- rebadge.fv(p, quote(e(r)), "e")
   return(e)
 }
@@ -134,7 +137,7 @@ Emark <- local({
 
   Emark <- function(X, r=NULL, 
                     correction=c("isotropic", "Ripley", "translate"),
-                    method="density", ..., normalise=FALSE) {
+                    method="density", ..., rmax=NULL, normalise=FALSE) {
     if(is.NAobject(X)) return(NAobject("fv"))
     stopifnot(is.ppp(X) && is.marked(X))
     marx <- marks(X)
@@ -146,7 +149,7 @@ Emark <- local({
       correction <- NULL
     E <- markcorr(X, f1, r=r,
                   correction=correction, method=method,
-                  ..., normalise=normalise)
+                  ..., rmax=rmax, normalise=normalise)
     if(isvec) {
       E <- rebadge.fv(E, quote(E(r)), "E")
     } else {
@@ -164,12 +167,12 @@ Vmark <- local({
 
   Vmark <- function(X, r=NULL, 
                     correction=c("isotropic", "Ripley", "translate"),
-                    method="density", ..., normalise=FALSE) {
+                    method="density", ..., rmax=NULL, normalise=FALSE) {
     if(is.NAobject(X)) return(NAobject("fv"))
     if(missing(correction))
       correction <- NULL
     E <- Emark(X, r=r, correction=correction, method=method, ...,
-             normalise=FALSE)
+             rmax=rmax, normalise=FALSE)
     E2 <- markcorr(X, f2, r=E$r,
                    correction=correction, method=method,
                    ..., normalise=FALSE)
@@ -208,6 +211,7 @@ markcorrint <-
 Kmark <-
   function(X, f=NULL, r=NULL, 
            correction=c("isotropic", "Ripley", "translate"), ...,
+           rmax=NULL,
            f1=NULL, normalise=TRUE, returnL=FALSE, fargs=NULL) {
   ## Computes the analogue of Kest(X)
   ## where each pair (x_i,x_j) is weighted by w(m_i,m_j)
@@ -268,14 +272,14 @@ Kmark <-
          mul={
            wt <- mX/lambda
            K <- Kinhom(UX, r=r, reciplambda=wt, correction=correction,
-                       ..., renormalise=FALSE)
+                       ..., rmax=rmax, renormalise=FALSE)
            Ef2 <- mean(mX)^2
          },
          equ={
            fXX <- outer(mX, mX, "==")
            wt <- fXX/lambda^2
            K <- Kinhom(UX, r=r, reciplambda2=wt, correction=correction,
-                       ..., renormalise=FALSE)
+                       ..., rmax=rmax, renormalise=FALSE)
            mtable <- table(mX)
            Ef2 <- sum(mtable^2)/length(mX)^2
          },
@@ -283,14 +287,14 @@ Kmark <-
            f1X <- do.call(f1, append(list(mX), fargs))
            wt <- f1X/lambda
            K <- Kinhom(UX, r=r, reciplambda=wt, correction=correction,
-                       ..., renormalise=FALSE)
+                       ..., rmax=rmax, renormalise=FALSE)
            Ef2 <- mean(f1X)^2
          },
          general={
            fXX <- do.call(outer, append(list(mX, mX, f), fargs))
            wt <- fXX/lambda^2
            K <- Kinhom(UX, r=r, reciplambda2=wt, correction=correction,
-                       ..., renormalise=FALSE)
+                       ..., rmax=rmax, renormalise=FALSE)
            Ef2 <- mean(fXX)
          })
   K$theo <- K$theo * Ef2
@@ -321,6 +325,7 @@ markcorr <-
   function(X, f = function(m1, m2) { m1 * m2}, r=NULL, 
            correction=c("isotropic", "Ripley", "translate"),
            method="density", ...,
+           rmax=NULL, 
            weights=NULL, 
            f1=NULL, normalise=TRUE, fargs=NULL, fadjust=NULL,
            internal=NULL)
@@ -346,7 +351,7 @@ markcorr <-
     for(j in 1:nc) {
       Xj <- X %mark% marx[,j]
       result[[j]] <- markcorr(Xj, f=f, r=r, correction=correction,
-                              method=method, ...,
+                              method=method, ..., rmax=rmax,
                               weights=weights, fadjust=fadjust,
                               f1=f1, normalise=normalise, fargs=fargs)
     }
@@ -377,7 +382,7 @@ markcorr <-
   W <- X$window
   
   ## determine r values 
-  rmaxdefault <- rmax.rule("K", W, npts/area(W))
+  rmaxdefault <- rmax %orifnull% rmax.rule("K", W, npts/area(W))
   breaks <- handle.r.b.args(r, NULL, W, rmaxdefault=rmaxdefault)
   r <- breaks$r
   rmax <- breaks$max
@@ -613,7 +618,8 @@ markcorr <-
 markcrosscorr <-
   function(X, r=NULL, 
            correction=c("isotropic", "Ripley", "translate"),
-           method="density", ..., weights=NULL, normalise=TRUE, Xname=NULL)
+           method="density", ..., rmax=NULL,
+           weights=NULL, normalise=TRUE, Xname=NULL)
 {
   if(is.NAobject(X)) return(NAobject("fv"))
   if(missing(Xname))
@@ -643,7 +649,7 @@ markcrosscorr <-
   correction <- implemented.for.K(correction, W$type, correction.given)
   
   ## determine r values 
-  rmaxdefault <- rmax.rule("K", W, npts/area(W))
+  rmaxdefault <- rmax %orifnull% rmax.rule("K", W, npts/area(W))
   breaks <- handle.r.b.args(r, NULL, W, rmaxdefault=rmaxdefault)
   r <- breaks$r
   rmax <- breaks$max

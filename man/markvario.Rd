@@ -6,7 +6,7 @@
 }
 \usage{
 markvario(X, correction = c("isotropic", "Ripley", "translate"),
-r = NULL, method = "density", ..., normalise=FALSE)
+r = NULL, method = "density", ..., rmax=NULL, normalise=FALSE)
 }
 \arguments{
   \item{X}{The observed point pattern.
@@ -36,6 +36,10 @@ r = NULL, method = "density", ..., normalise=FALSE)
     or passed to the density estimation routine
     (\code{\link{density}}, \code{\link{loess}} or \code{sm.density})
     selected by \code{method}.
+  }
+  \item{rmax}{
+    Optional. Maximum desired value of the argument \eqn{r}.
+    A single numeric value. There is a sensible default.
   }
   \item{normalise}{If \code{TRUE}, normalise the variogram by
     dividing it by the estimated mark variance.

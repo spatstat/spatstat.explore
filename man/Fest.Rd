@@ -8,7 +8,7 @@
   window of arbitrary shape.
 }
 \usage{
-Fest(X, \dots, eps, r=NULL, breaks=NULL,
+Fest(X, \dots, eps, r=NULL, rmax=NULL, breaks=NULL,
      correction=c("rs", "km", "cs"),
      domain=NULL)
 
@@ -32,6 +32,10 @@ Fhazard(X, \dots)
     at which \eqn{F(r)} should be evaluated. There is a sensible default.
     First-time users are strongly advised not to specify this argument.
     See below for important conditions on \eqn{r}.
+  }
+  \item{rmax}{
+    Optional. Maximum desired value of the argument \eqn{r}.
+    A single numeric value. There is a sensible default.
   }
   \item{breaks}{
     This argument is for internal use only.

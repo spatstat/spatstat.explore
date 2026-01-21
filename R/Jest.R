@@ -3,16 +3,18 @@
 #	Usual invocation to compute J function
 #	if F and G are not required 
 #
-#	$Revision: 4.28 $	$Date: 2025/09/03 03:46:04 $
+#	$Revision: 4.29 $	$Date: 2026/01/21 06:26:39 $
 #
 #
 #
-Jest <- function(X, ..., eps=NULL, r=NULL, breaks=NULL, correction=NULL) {
+Jest <- function(X, ..., eps=NULL, r=NULL, breaks=NULL, 
+        rmax=NULL, correction=NULL) {
   if(is.NAobject(X)) return(NAobject("fv"))
   X <- as.ppp(X)
   W <- Window(X)
+  rmaxdefault <- rmax %orifnull% rmax.rule("J", W, intensity(X))
   brks <- handle.r.b.args(r, breaks, window=W, pixeps=eps,
-                          rmaxdefault=rmax.rule("J", W, intensity(X)))
+                          rmaxdefault=rmaxdefault)
   checkspacing <- !isFALSE(list(...)$checkspacing)
   #' compute F and G 
   FF <- Fest(X, eps=eps, breaks=brks, correction=correction,

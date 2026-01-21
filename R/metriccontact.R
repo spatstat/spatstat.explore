@@ -4,10 +4,10 @@
 #' Metric contact distribution
 #' (corresponding distance transforms are defined in 'metricPdt.R')
 #'
-#'     $Revision: 1.1 $  $Date: 2020/11/29 07:41:37 $
+#'     $Revision: 1.2 $  $Date: 2026/01/21 06:26:39 $
 
 rectcontact <- function(X, ..., asp=1.0, npasses=4,
-                        eps=NULL, r=NULL, breaks=NULL,
+                        eps=NULL, r=NULL, breaks=NULL, rmax=NULL,
                         correction=c("rs", "km")) {
   verifyclass(X, "im")
   rorbgiven <- !is.null(r) || !is.null(breaks)
@@ -29,7 +29,7 @@ rectcontact <- function(X, ..., asp=1.0, npasses=4,
   emptyframe <- !any(W$m)
   
   ## histogram breakpoints
-  rmaxdefault <- rmax.rule("F", W)
+  rmaxdefault <- rmax %orifnull% rmax.rule("F", W)
   breaks <- handle.r.b.args(r, breaks, W, eps, rmaxdefault=rmaxdefault)
   rvals <- breaks$r
   rmax  <- breaks$max

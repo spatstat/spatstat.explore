@@ -5,7 +5,7 @@
 #' Copyright (c) 2019-2025 Lucia Cobo Sanchez and Adrian Baddeley
 #' GNU Public Licence >= 2.0
 #'
-#' $Revision: 1.1 $ $Date: 2025/09/28 03:11:58 $
+#' $Revision: 1.2 $ $Date: 2026/01/21 06:26:39 $
 
 nncount <- function(X, i=1, j=2, ..., kmax=20, ratio=TRUE, cumulative=TRUE) {
   stopifnot(is.ppp(X))

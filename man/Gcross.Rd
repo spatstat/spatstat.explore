@@ -10,7 +10,8 @@
   to the nearest point of type \eqn{j}.
 }
 \usage{
-Gcross(X, i, j, r=NULL, breaks=NULL, \dots, correction=c("rs", "km", "han"))
+Gcross(X, i, j, r=NULL, breaks=NULL, \dots,
+       rmax=NULL, correction=c("rs", "km", "han"))
 }
 \arguments{
   \item{X}{The observed point pattern, 
@@ -43,6 +44,10 @@ Gcross(X, i, j, r=NULL, breaks=NULL, \dots, correction=c("rs", "km", "han"))
   }
   \item{\dots}{
   	Ignored.
+  }
+  \item{rmax}{
+    Optional. Maximum desired value of the argument \eqn{r}.
+    A single numeric value. There is a sensible default.
   }
   \item{correction}{
     Optional. Character string specifying the edge correction(s)

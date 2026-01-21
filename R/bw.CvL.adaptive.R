@@ -1,7 +1,7 @@
 #'
 #'   bw.CvL.adaptive.R
 #'
-#'   $Revision: 1.8 $ $Date: 2022/06/25 04:31:57 $
+#'   $Revision: 1.9 $ $Date: 2026/01/21 06:26:39 $
 #'
 #'   Original code by Marie-Colette van Lieshout
 #'   Modified by Adrian Baddeley

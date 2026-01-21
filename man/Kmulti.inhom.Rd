@@ -13,7 +13,7 @@
 \usage{
   Kmulti.inhom(X, I, J, lambdaI=NULL, lambdaJ=NULL,
           \dots,
-          r=NULL, breaks=NULL,
+          r=NULL, breaks=NULL, rmax=NULL,
           correction=c("border", "isotropic", "Ripley", "translate"),
           lambdaIJ=NULL,
           sigma=NULL, varcov=NULL,
@@ -64,6 +64,10 @@
   }
   \item{breaks}{
 	This argument is for internal use only.
+  }
+  \item{rmax}{
+    Optional. Maximum desired value of the argument \eqn{r}.
+    A single numeric value. There is a sensible default.
   }
   \item{correction}{
     A character vector containing any selection of the

@@ -3,7 +3,7 @@
 ##
 ## bandwidth selection rule bw.diggle (for density.ppp)
 ##
-## $Revision: 1.9 $ $Date: 2022/05/21 08:53:38 $
+## $Revision: 1.10 $ $Date: 2026/01/21 06:26:39 $
 ##
 
 bw.diggle <- local({

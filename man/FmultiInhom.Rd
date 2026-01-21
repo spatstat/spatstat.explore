@@ -15,12 +15,12 @@
   Fmulti.inhom(X, J,
               lambda = NULL, lambdaJ = NULL, lambdamin = NULL,
               \dots,
-              r = NULL)
+              r = NULL, rmax=NULL)
 
   FmultiInhom(X, J,
               lambda = NULL, lambdaJ = NULL, lambdamin = NULL,
               \dots,
-              r = NULL)
+              r = NULL, rmax=NULL)
 }
 \arguments{
   \item{X}{
@@ -53,6 +53,10 @@
   \item{r}{
     Vector of distance values at which the inhomogeneous \eqn{G}
     function should be estimated. There is a sensible default.
+  }
+  \item{rmax}{
+    Optional. Maximum desired value of the argument \eqn{r}.
+    A single numeric value. There is a sensible default.
   }
 }
 \details{

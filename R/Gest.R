@@ -3,13 +3,14 @@
 #
 #	Compute estimates of nearest neighbour distance distribution function G
 #
-#	$Revision: 4.33 $	$Date: 2025/09/03 03:44:15 $
+#	$Revision: 4.34 $	$Date: 2026/01/21 06:26:39 $
 #
 ################################################################################
 #
 "Gest" <-
 "nearest.neighbour" <-
-function(X, r=NULL, breaks=NULL, ..., correction=c("rs", "km", "han"),
+function(X, r=NULL, breaks=NULL, ..., 
+         rmax=NULL, correction=c("rs", "km", "han"),
          domain=NULL) {
   verifyclass(X, "ppp")
   if(is.NAobject(X)) return(NAobject("fv"))
@@ -22,7 +23,7 @@ function(X, r=NULL, breaks=NULL, ..., correction=c("rs", "km", "han"),
   lambda <- npts/area(W)
   
   ## determine r values 
-  rmaxdefault <- rmax.rule("G", W, lambda)
+  rmaxdefault <- rmax %orifnull% rmax.rule("G", W, lambda)
   breaks <- handle.r.b.args(r, breaks, W, rmaxdefault=rmaxdefault)
   rvals <- breaks$r
   rmax  <- breaks$max

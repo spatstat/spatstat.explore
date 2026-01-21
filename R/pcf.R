@@ -3,7 +3,7 @@
 #'
 #' Calculate pair correlation function from point pattern (pcf.ppp)
 #' 
-#' $Revision: 1.78 $ $Date: 2025/09/03 03:40:13 $
+#' $Revision: 1.79 $ $Date: 2026/01/21 06:26:39 $
 #'
 #' Copyright (c) 2008-2025 Adrian Baddeley, Tilman Davies and Martin Hazelton
 

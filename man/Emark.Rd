@@ -12,10 +12,10 @@
 \usage{
 Emark(X, r=NULL,
          correction=c("isotropic", "Ripley", "translate"),
-         method="density", \dots, normalise=FALSE)
+         method="density", \dots, rmax=NULL, normalise=FALSE)
 Vmark(X, r=NULL,
          correction=c("isotropic", "Ripley", "translate"),
-         method="density", \dots, normalise=FALSE)
+         method="density", \dots, rmax=NULL, normalise=FALSE)
 }
 \arguments{
   \item{X}{The observed point pattern.
@@ -42,6 +42,10 @@ Vmark(X, r=NULL,
     Arguments passed to the density estimation routine
     (\code{\link{density}}, \code{\link{loess}} or \code{sm.density})
     selected by \code{method}.
+  }
+  \item{rmax}{
+    Optional. Maximum desired value of the argument \eqn{r}.
+    A single numeric value. There is a sensible default.
   }
   \item{normalise}{
     If\code{TRUE}, normalise the estimate of \eqn{E(r)} or \eqn{V(r)}

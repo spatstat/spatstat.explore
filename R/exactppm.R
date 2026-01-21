@@ -8,7 +8,7 @@
 #'  in nonparametric methods such as 'rhohat' to represent the null/reference model,
 #'  so that the code for nonparametric methods does not depend on 'ppm'
 #'
-#'  $Revision: 1.7 $ $Date: 2025/11/24 04:00:28 $
+#'  $Revision: 1.8 $ $Date: 2026/01/21 06:26:39 $
 
 exactppm <- function(X, baseline=NULL, ..., subset=NULL,
                      eps=NULL, dimyx=NULL,

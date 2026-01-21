@@ -7,7 +7,7 @@
   for a multitype point pattern.
 }
 \usage{
-  pcfdot(X, i, \dots, r = NULL,
+  pcfdot(X, i, \dots, r = NULL, rmax=NULL,
          kernel = "epanechnikov", bw = NULL, stoyan = 0.15,
          correction = c("isotropic", "Ripley", "translate"),
          divisor = c("r", "d"),
@@ -32,6 +32,10 @@
   \item{r}{
     Vector of values for the argument \eqn{r} at which \eqn{g(r)} 
     should be evaluated. There is a sensible default.
+  }
+  \item{rmax}{
+    Optional. Maximum desired value of the argument \eqn{r}.
+    A single numeric value. There is a sensible default.
   }
   \item{kernel}{
     Choice of smoothing kernel,

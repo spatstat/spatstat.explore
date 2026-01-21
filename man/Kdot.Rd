@@ -10,7 +10,9 @@
   within a given distance of a point of type \eqn{i}.
 }
 \usage{
-Kdot(X, i, r=NULL, breaks=NULL, correction, ..., ratio=FALSE, from)
+Kdot(X, i, r=NULL, breaks=NULL,
+     correction  = c("border", "isotropic", "Ripley", "translate"),
+     \dots, rmax=NULL, ratio=FALSE, from)
 }
 \arguments{
   \item{X}{The observed point pattern, 
@@ -45,6 +47,10 @@ Kdot(X, i, r=NULL, breaks=NULL, correction, ..., ratio=FALSE, from)
     Alternatively \code{correction="all"} selects all options.
   }
   \item{\dots}{Ignored.}
+  \item{rmax}{
+    Optional. Maximum desired value of the argument \eqn{r}.
+    A single numeric value. There is a sensible default.
+  }
   \item{ratio}{
     Logical. 
     If \code{TRUE}, the numerator and denominator of

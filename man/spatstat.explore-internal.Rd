@@ -374,7 +374,7 @@ nncleanEngine(kthNND, k, d, \dots, tol, maxit,
 \method{pcf}{NAobject}(X, \dots)
 pcf3engine(x, y, z, box, rmax, nrval, correction, delta)
 pcfmulti.inhom(X, I, J, lambdaI, lambdaJ, \dots,
-               lambdaX, r, breaks, kernel,
+               lambdaX, r, breaks, rmax, kernel,
                bw, adjust.bw, stoyan, correction,
                sigma, adjust.sigma, varcov, update, leaveoneout, 
                Iname, Jname)

@@ -9,7 +9,7 @@
 \usage{
 markconnect(X, i, j, r=NULL,
          correction=c("isotropic", "Ripley", "translate"),
-         method="density", \dots, normalise=FALSE)
+         method="density", \dots, rmax=NULL, normalise=FALSE)
 }
 \arguments{
   \item{X}{The observed point pattern.
@@ -43,6 +43,10 @@ markconnect(X, i, j, r=NULL,
     or passed to the density estimation routine
     (\code{\link{density}}, \code{\link{loess}} or \code{sm.density})
     selected by \code{method}.
+  }
+  \item{rmax}{
+    Optional. Maximum desired value of the argument \eqn{r}.
+    A single numeric value. There is a sensible default.
   }
   \item{normalise}{
     If \code{TRUE}, normalise the mark connection function by

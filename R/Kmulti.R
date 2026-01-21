@@ -4,7 +4,7 @@
 #	Compute estimates of cross-type K functions
 #	for multitype point patterns
 #
-#	$Revision: 5.62 $	$Date: 2025/09/03 03:35:46 $
+#	$Revision: 5.63 $	$Date: 2026/01/21 06:26:39 $
 #
 #
 # -------- functions ----------------------------------------
@@ -83,9 +83,9 @@
 }
 
 "Kcross" <- 
-function(X, i, j, r=NULL, breaks=NULL,
+function(X, i, j, r=NULL, breaks=NULL, 
          correction =c("border", "isotropic", "Ripley", "translate") , ...,
-         ratio=FALSE, from, to)
+         rmax=NULL, ratio=FALSE, from, to)
 {
   verifyclass(X, "ppp")
   if(is.NAobject(X)) return(NAobject("fv"))
@@ -105,20 +105,14 @@ function(X, i, j, r=NULL, breaks=NULL,
   if(i == j) {
     ## use Kest
     XI <- X[I]
-    dont.complain.about(XI)
-    result <- do.call(Kest,
-                      resolve.defaults(list(X=quote(XI),
-                                            r=quote(r),
-                                            breaks=quote(breaks),
-                                            correction=correction, ratio=ratio),
-                                       list(rmax=NULL), ## forbidden 
-                                       list(...)))
+    result <- Kest(XI, r=r, breaks=breaks, rmax=rmax,
+                   correction=correction, ratio=ratio, ...)
   } else {
     J <- (marx == j)
     if(!any(J))
       stop(paste("No points have mark j =", j))
     result <- Kmulti(X, I, J,
-                     r=r, breaks=breaks,
+                     r=r, breaks=breaks, rmax=rmax,
                      correction=correction, ratio=ratio, ...)
   }
   result <- rebadge.as.crossfun(result, "K", NULL, i, j)
@@ -126,9 +120,9 @@ function(X, i, j, r=NULL, breaks=NULL,
 }
 
 "Kdot" <- 
-function(X, i, r=NULL, breaks=NULL,
+function(X, i, r=NULL, breaks=NULL, 
          correction = c("border", "isotropic", "Ripley", "translate") , ...,
-         ratio=FALSE, from)
+         rmax=NULL, ratio=FALSE, from)
 {
   verifyclass(X, "ppp")
   if(is.NAobject(X)) return(NAobject("fv"))
@@ -147,14 +141,15 @@ function(X, i, r=NULL, breaks=NULL,
   if(!any(I)) stop(paste("No points have mark i =", i))
 	
   result <- Kmulti(X, I, J,
-                   r=r, breaks=breaks, correction=correction, ..., ratio=ratio)
+                   r=r, breaks=breaks, rmax=rmax,
+                   correction=correction, ..., ratio=ratio)
   result <- rebadge.as.dotfun(result, "K", NULL, i)
   return(result)
 }
 
 
 "Kmulti"<-
-function(X, I, J, r=NULL, breaks=NULL,
+function(X, I, J, r=NULL, breaks=NULL, 
          correction = c("border", "isotropic", "Ripley", "translate") , ...,
          rmax=NULL, ratio=FALSE)
 {

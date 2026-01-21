@@ -11,7 +11,8 @@
   adjusted for spatially varying intensity.
 }
 \usage{
-Kcross.inhom(X, i, j, lambdaI=NULL, lambdaJ=NULL, \dots,  r=NULL, breaks=NULL,
+Kcross.inhom(X, i, j, lambdaI=NULL, lambdaJ=NULL, \dots,
+         r=NULL, breaks=NULL, rmax=NULL,
          correction = c("border", "isotropic", "Ripley", "translate"),
          sigma=NULL, varcov=NULL,
          lambdaIJ=NULL,
@@ -70,6 +71,10 @@ Kcross.inhom(X, i, j, lambdaI=NULL, lambdaJ=NULL, \dots,  r=NULL, breaks=NULL,
   }
   \item{breaks}{
 	This argument is for advanced use only.
+  }
+  \item{rmax}{
+    Optional. Maximum desired value of the argument \eqn{r}.
+    A single numeric value. There is a sensible default.
   }
   \item{correction}{
     A character vector containing any selection of the

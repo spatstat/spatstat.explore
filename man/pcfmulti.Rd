@@ -9,7 +9,7 @@ estimate the multitype pair correlation function
 using kernel methods.
 }
 \usage{
-   pcfmulti(X, I, J, ..., r = NULL,
+   pcfmulti(X, I, J, ..., r = NULL, rmax=NULL,
             kernel = "epanechnikov", bw = NULL, stoyan = 0.15,
             correction = c("translate", "Ripley"),
             divisor = c("r", "d"),
@@ -36,6 +36,10 @@ using kernel methods.
   \item{r}{
     Vector of values for the argument \eqn{r} at which \eqn{g(r)} 
     should be evaluated. There is a sensible default.
+  }
+  \item{rmax}{
+    Optional. Maximum desired value of the argument \eqn{r}.
+    A single numeric value. There is a sensible default.
   }
   \item{kernel}{
     Choice of smoothing kernel,

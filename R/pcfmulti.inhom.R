@@ -1,7 +1,7 @@
 #
 #   pcfmulti.inhom.R
 #
-#   $Revision: 1.20 $   $Date: 2025/09/03 03:42:03 $
+#   $Revision: 1.21 $   $Date: 2026/01/21 06:26:39 $
 #
 #   inhomogeneous multitype pair correlation functions
 #
@@ -9,7 +9,7 @@
 
 pcfcross.inhom <- 
   function(X, i, j, lambdaI=NULL, lambdaJ=NULL, ...,
-         r=NULL, breaks=NULL,
+         r=NULL, breaks=NULL, rmax=NULL,
          kernel="epanechnikov", bw=NULL, adjust.bw=1, stoyan=0.15,
          correction = c("isotropic", "Ripley", "translate"),
          sigma=NULL, adjust.sigma=1, varcov=NULL)
@@ -29,7 +29,7 @@ pcfcross.inhom <-
   Iname <- paste("points with mark i =", i)
   Jname <- paste("points with mark j =", j)
   g <- pcfmulti.inhom(X, I, J, lambdaI, lambdaJ, ...,
-                      r=r,breaks=breaks,
+                      r=r,breaks=breaks, rmax=rmax,
                       kernel=kernel, bw=bw, adjust.bw=adjust.bw, stoyan=stoyan,
                       correction=correction,
                       sigma=sigma, adjust.sigma=adjust.sigma, varcov=varcov,
@@ -49,7 +49,7 @@ pcfcross.inhom <-
 
 pcfdot.inhom <- 
 function(X, i, lambdaI=NULL, lambdadot=NULL, ...,
-         r=NULL, breaks=NULL,
+         r=NULL, breaks=NULL, rmax=NULL,
          kernel="epanechnikov", bw=NULL, adjust.bw=1, stoyan=0.15,
          correction = c("isotropic", "Ripley", "translate"),
          sigma=NULL, adjust.sigma=1, varcov=NULL)
@@ -70,7 +70,7 @@ function(X, i, lambdaI=NULL, lambdadot=NULL, ...,
   Jname <- paste("points")
 	
   g <- pcfmulti.inhom(X, I, J, lambdaI, lambdadot, ...,
-                      r=r,breaks=breaks,
+                      r=r,breaks=breaks, rmax=rmax,
                       kernel=kernel, bw=bw, adjust.bw=adjust.bw, stoyan=stoyan,
                       correction=correction,
                       sigma=sigma, adjust.sigma=adjust.sigma, varcov=varcov,
@@ -93,7 +93,7 @@ function(X, i, lambdaI=NULL, lambdadot=NULL, ...,
 
 pcfmulti.inhom <- function(X, I, J, lambdaI=NULL, lambdaJ=NULL, ...,
                            lambdaX=NULL,
-                           r=NULL, breaks=NULL, 
+                           r=NULL, breaks=NULL,  rmax=NULL,
                            kernel="epanechnikov",
                            bw=NULL, adjust.bw=1, stoyan=0.15,
                            correction=c("translate", "Ripley"),
@@ -176,7 +176,7 @@ pcfmulti.inhom <- function(X, I, J, lambdaI=NULL, lambdaJ=NULL, ...,
   ########## r values ############################
   # handle arguments r and breaks 
 
-  rmaxdefault <- rmax.rule("K", win, npts/areaW)        
+  rmaxdefault <- rmax %orifnull% rmax.rule("K", win, npts/areaW)        
   breaks <- handle.r.b.args(r, breaks, win, rmaxdefault=rmaxdefault)
   if(!(breaks$even))
     stop("r values must be evenly spaced")

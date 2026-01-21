@@ -6,7 +6,7 @@
 #' Copyright (c) 2019-2025 Adrian Baddeley and Tilman Davies
 #' GNU Public Licence >= 2.0
 #'
-#' $Revision: 1.3 $ $Date: 2025/09/28 03:23:03 $
+#' $Revision: 1.4 $ $Date: 2026/01/21 06:26:39 $
 
 tolcon <- function(X, ..., nsim=19,
                    alternative=c("greater", "less", "two.sided"),

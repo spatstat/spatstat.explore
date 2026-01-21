@@ -3,7 +3,7 @@
 #' Adapted by Adrian Baddeley
 #' Copyright (C) 2016 Kassel Hingee and Adrian Baddeley
 
-# $Revision: 1.11 $  $Date: 2024/02/04 08:04:51 $
+# $Revision: 1.12 $  $Date: 2026/01/21 06:26:39 $
 
 laslett <- function(X, ...,
                     verbose=FALSE, plotit=TRUE,

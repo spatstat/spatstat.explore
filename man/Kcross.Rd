@@ -10,8 +10,9 @@
   within a given distance of a point of type \eqn{i}.
 }
 \usage{
-Kcross(X, i, j, r=NULL, breaks=NULL, correction,
-       \dots, ratio=FALSE, from, to )
+Kcross(X, i, j, r=NULL, breaks=NULL,
+       correction = c("border", "isotropic", "Ripley", "translate"),
+       \dots, rmax=NULL, ratio=FALSE, from, to )
 }
 \arguments{
   \item{X}{The observed point pattern, 
@@ -52,6 +53,10 @@ Kcross(X, i, j, r=NULL, breaks=NULL, correction,
     Alternatively \code{correction="all"} selects all options.
   }
   \item{\dots}{Ignored.}
+  \item{rmax}{
+    Optional. Maximum desired value of the argument \eqn{r}.
+    A single numeric value. There is a sensible default.
+  }
   \item{ratio}{
     Logical. 
     If \code{TRUE}, the numerator and denominator of

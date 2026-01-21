@@ -3,7 +3,7 @@
 #
 #	Computes estimates of the empty space function
 #
-#	$Revision: 4.48 $	$Date: 2025/09/03 03:43:44 $
+#	$Revision: 4.49 $	$Date: 2026/01/21 06:26:39 $
 #
 
 Fhazard <- function(X, ...) {
@@ -32,7 +32,7 @@ Fhazard <- function(X, ...) {
   return(Z)
 }
 
-Fest <- function(X, ..., eps = NULL, r=NULL, breaks=NULL,
+Fest <- function(X, ..., eps = NULL, r=NULL, rmax=NULL, breaks=NULL,
                  correction=c("rs", "km", "cs"),
                  domain=NULL) {
   verifyclass(X, "ppp")
@@ -54,7 +54,7 @@ Fest <- function(X, ..., eps = NULL, r=NULL, breaks=NULL,
   dX <- ppp(X$x, X$y, window=dwin, check=FALSE)
   
   ## Histogram breakpoints
-  rmaxdefault <- rmax.rule("F", dwin, lambda)
+  rmaxdefault <- rmax %orifnull% rmax.rule("F", dwin, lambda)
   breaks <- handle.r.b.args(r, breaks, dwin, eps, rmaxdefault=rmaxdefault)
   rvals <- breaks$r
   rmax  <- breaks$max

@@ -5,7 +5,7 @@
 #'   Copyright (c) 1991-2023 Adrian Baddeley, Rolf Turner and Ege Rubak
 #'   GNU Public Licence (>= 2.0)
 #' 
-#'   $Revision: 1.1 $ $Date: 2023/11/04 04:45:32 $
+#'   $Revision: 1.2 $ $Date: 2026/01/21 06:26:39 $
 
 censtimeCDFest <- function(o, cc, d, breaks, ...,
                            KM=TRUE, RS=TRUE, HAN=TRUE, RAW=TRUE,

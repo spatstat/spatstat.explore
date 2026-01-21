@@ -3,7 +3,7 @@
 #
 # Line transects of pixel images
 #
-#  $Revision: 1.8 $  $Date: 2021/06/22 05:33:50 $
+#  $Revision: 1.9 $  $Date: 2026/01/21 06:26:39 $
 #
 
 transect.im <- local({

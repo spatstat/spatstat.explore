@@ -1,13 +1,13 @@
 #
 # Jinhom.R
 #
-#  $Revision: 1.23 $ $Date: 2025/09/03 03:48:38 $
+#  $Revision: 1.24 $ $Date: 2026/01/21 06:26:39 $
 #
 
 Ginhom <- function(X, lambda=NULL, lmin=NULL,
                    ...,
                    sigma=NULL, varcov=NULL,
-                   r=NULL, breaks=NULL,
+                   r=NULL, breaks=NULL, rmax=NULL,
                    ratio=FALSE, update = TRUE,
                    warn.bias=TRUE, savelambda=FALSE) {
   
@@ -20,7 +20,7 @@ Ginhom <- function(X, lambda=NULL, lmin=NULL,
   miss.update <- missing(update)
 
   # determine 'r' values
-  rmaxdefault <- rmax.rule("G", W, npts/areaW)
+  rmaxdefault <- rmax %orifnull% rmax.rule("G", W, npts/areaW)
   breaks <- handle.r.b.args(r, breaks, W, rmaxdefault=rmaxdefault)
   if(!breaks$even)
     stop("r values must be evenly spaced")
@@ -185,7 +185,7 @@ Ginhom <- function(X, lambda=NULL, lmin=NULL,
 Finhom <- function(X, lambda=NULL, lmin=NULL,
                    ...,
                    sigma=NULL, varcov=NULL,
-                   r=NULL, breaks=NULL,
+                   r=NULL, breaks=NULL, rmax=NULL,
                    ratio=FALSE, update = TRUE,
                    warn.bias=TRUE, savelambda=FALSE) {
   
@@ -204,7 +204,7 @@ Finhom <- function(X, lambda=NULL, lmin=NULL,
   testme       <- isTRUE(dotargs$testme)
 
   ## determine 'r' values
-  rmaxdefault <- rmax.rule("F", W, npts/areaW)
+  rmaxdefault <- rmax %orifnull% rmax.rule("F", W, npts/areaW)
   breaks <- handle.r.b.args(r, breaks, W, eps, rmaxdefault=rmaxdefault)
   if(!breaks$even)
     stop("r values must be evenly spaced")
@@ -391,12 +391,13 @@ Finhom <- function(X, lambda=NULL, lmin=NULL,
 Jinhom <- function(X, lambda=NULL, lmin=NULL,
                    ...,
                    sigma=NULL, varcov=NULL,
-                   r=NULL, breaks=NULL, ratio=FALSE, update = TRUE,
+                   r=NULL, breaks=NULL, rmax=NULL,
+                   ratio=FALSE, update = TRUE,
                    warn.bias=TRUE, savelambda=FALSE) {
   if(is.NAobject(X)) return(NAobject("fv"))
   ## compute inhomogeneous G (including determination of r and lmin)
   GX <- Ginhom(X, lambda=lambda, lmin=lmin, ...,
-               sigma=sigma, varcov=varcov, r=r, breaks=breaks,
+               sigma=sigma, varcov=varcov, r=r, breaks=breaks, rmax=rmax,
                ratio=FALSE, update=update,
                warn.bias=warn.bias,
                savelambda=TRUE)

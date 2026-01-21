@@ -3,7 +3,7 @@
 ##
 ## Exact 'funxy' counterpart of Smooth.ppp
 ##
-##  $Revision: 1.11 $ $Date: 2023/04/01 02:25:41 $
+##  $Revision: 1.12 $ $Date: 2026/01/21 06:26:39 $
 
 
 Smoothfun <- function(X, ...) {

@@ -10,7 +10,7 @@
   the type \eqn{i} points and the points of any type.
 }
 \usage{
-Jdot(X, i, eps=NULL, r=NULL, breaks=NULL, \dots, correction=NULL)
+Jdot(X, i, eps=NULL, r=NULL, breaks=NULL, \dots, rmax=NULL, correction=NULL)
 }
 \arguments{
   \item{X}{
@@ -41,6 +41,10 @@ Jdot(X, i, eps=NULL, r=NULL, breaks=NULL, \dots, correction=NULL)
 	This argument is for internal use only.
   }
   \item{\dots}{Ignored.}
+  \item{rmax}{
+    Optional. Maximum desired value of the argument \eqn{r}.
+    A single numeric value. There is a sensible default.
+  }
   \item{correction}{
     Optional. Character string specifying the edge correction(s)
     to be used. Options are \code{"none"}, \code{"rs"}, \code{"km"},

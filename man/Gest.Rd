@@ -11,7 +11,7 @@ window of arbitrary shape.
 }
 \usage{
 Gest(X, r=NULL, breaks=NULL, \dots,
-     correction=c("rs", "km", "han"),
+     rmax=NULL, correction=c("rs", "km", "han"),
      domain=NULL)
 }
 \arguments{
@@ -29,6 +29,10 @@ Gest(X, r=NULL, breaks=NULL, \dots,
     This argument is for internal use only.
   }
   \item{\dots}{Ignored.}
+  \item{rmax}{
+    Optional. Maximum desired value of the argument \eqn{r}.
+    A single numeric value. There is a sensible default.
+  }
   \item{correction}{
     Optional.
     The edge correction(s) to be used to estimate \eqn{G(r)}.

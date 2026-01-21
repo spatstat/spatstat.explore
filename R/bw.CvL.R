@@ -1,7 +1,7 @@
 #'
 #' bandwidth selection method of Cronie and Van Lieshout
 #' 
-#' $Revision: 1.1 $ $Date: 2019/09/30 08:01:20 $
+#' $Revision: 1.2 $ $Date: 2026/01/21 06:26:39 $
 
 bw.CvL <- function(X, ..., srange=NULL, ns=16, sigma=NULL, warn=TRUE){
   stopifnot(is.ppp(X))

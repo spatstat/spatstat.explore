@@ -1,14 +1,14 @@
 #
 #   pcfmulti.R
 #
-#   $Revision: 1.13 $   $Date: 2025/09/03 03:41:25 $
+#   $Revision: 1.14 $   $Date: 2026/01/21 06:26:39 $
 #
 #   multitype pair correlation functions
 #
 
 pcfcross <- 
   function(X, i, j, ...,
-         r=NULL, kernel="epanechnikov", bw=NULL, stoyan=0.15,
+         r=NULL, rmax=NULL, kernel="epanechnikov", bw=NULL, stoyan=0.15,
          correction = c("isotropic", "Ripley", "translate"),
          divisor=c("r","d"), ratio=FALSE)
 {
@@ -30,7 +30,7 @@ pcfcross <-
   Jname <- paste("points with mark j =", j)
   ##
   result <- pcfmulti(X, I, J, ...,
-                     r=r, 
+                     r=r, rmax=rmax,
                      kernel=kernel, bw=bw, stoyan=stoyan,
                      correction=correction,
                      divisor=divisor,
@@ -51,7 +51,7 @@ pcfcross <-
 
 pcfdot <- 
 function(X, i, ...,
-         r=NULL, kernel="epanechnikov", bw=NULL, stoyan=0.15,
+         r=NULL, rmax=NULL, kernel="epanechnikov", bw=NULL, stoyan=0.15,
          correction = c("isotropic", "Ripley", "translate"),
          divisor=c("r", "d"),
          ratio=FALSE)
@@ -73,7 +73,7 @@ function(X, i, ...,
   Jname <- "points"
 	
   result <- pcfmulti(X, I, J, ...,
-                     r=r, kernel=kernel, bw=bw, stoyan=stoyan,
+                     r=r, rmax=rmax, kernel=kernel, bw=bw, stoyan=stoyan,
                      correction=correction,
                      divisor=divisor,
                      Iname=Iname, Jname=Jname,
@@ -91,7 +91,7 @@ function(X, i, ...,
 
 
 pcfmulti <- function(X, I, J, ...,
-                     r=NULL, 
+                     r=NULL, rmax=NULL,
                      kernel="epanechnikov", bw=NULL, stoyan=0.15,
                      correction=c("translate", "Ripley"),
                      divisor=c("r","d"),
@@ -166,7 +166,7 @@ pcfmulti <- function(X, I, J, ...,
 ########## r values ############################
   # handle argument r 
 
-  rmaxdefault <- rmax.rule("K", win, lambdaJ)
+  rmaxdefault <- rmax %orifnull% rmax.rule("K", win, lambdaJ)
   breaks <- handle.r.b.args(r, NULL, win, rmaxdefault=rmaxdefault)
   if(!(breaks$even))
     stop("r values must be evenly spaced")

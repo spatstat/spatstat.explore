@@ -3,7 +3,7 @@
 #
 #  spatially sampled functions
 #
-#  $Revision: 1.22 $  $Date: 2022/05/23 02:33:06 $
+#  $Revision: 1.23 $  $Date: 2026/01/21 06:26:39 $
 #
 
 ssf <- function(loc, val) {

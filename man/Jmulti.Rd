@@ -11,8 +11,8 @@
   and those in subset \eqn{J}.
 }
 \usage{
-  Jmulti(X, I, J, eps=NULL, r=NULL, breaks=NULL, \dots, disjoint=NULL,
-         correction=NULL)
+  Jmulti(X, I, J, eps=NULL, r=NULL, breaks=NULL, \dots, rmax=NULL,
+         disjoint=NULL,  correction=NULL)
 }
 \arguments{
   \item{X}{The observed point pattern, 
@@ -42,6 +42,10 @@
 	This argument is for internal use only.
   }
   \item{\dots}{Ignored.}
+  \item{rmax}{
+    Optional. Maximum desired value of the argument \eqn{r}.
+    A single numeric value. There is a sensible default.
+  }
   \item{disjoint}{Optional flag indicating whether
     the subsets \code{I} and \code{J} are disjoint.
     If missing, this value will be computed by inspecting the

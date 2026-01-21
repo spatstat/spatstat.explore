@@ -9,7 +9,7 @@
 \usage{
 markcorr(X, f = function(m1, m2) { m1 * m2}, r=NULL,
          correction=c("isotropic", "Ripley", "translate"),
-         method="density", \dots, weights=NULL,
+         method="density", \dots, rmax=NULL, weights=NULL,
          f1=NULL, normalise=TRUE, fargs=NULL,
          fadjust=NULL, internal=NULL)
 }
@@ -41,12 +41,15 @@ markcorr(X, f = function(m1, m2) { m1 * m2}, r=NULL,
     \code{"loess"},
     \code{"sm"} and \code{"smrep"}.
   }
-  
   \item{\dots}{
     Arguments passed to the density estimation routine
     (\code{\link[stats]{density.default}},
     \code{\link[stats]{loess}} or \code{\link[sm]{sm.density}})
     selected by \code{method}.
+  }
+  \item{rmax}{
+    Optional. Maximum desired value of the argument \eqn{r}.
+    A single numeric value. There is a sensible default.
   }
   \item{weights}{
     Optional. Numeric weights associated with each data point in \code{X}. 

@@ -3,7 +3,7 @@
 #
 #   Relative risk for pairs of covariate values
 #
-#   $Revision: 1.31 $   $Date: 2022/05/23 02:33:06 $
+#   $Revision: 1.32 $   $Date: 2026/01/21 06:26:39 $
 #
 
 rho2hat <- function(object, cov1, cov2, ..., method=c("ratio", "reweight")) {

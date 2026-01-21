@@ -9,7 +9,7 @@
 }
 \usage{
 pcfcross.inhom(X, i, j, lambdaI = NULL, lambdaJ = NULL, ...,
-               r = NULL, breaks = NULL,
+               r = NULL, breaks = NULL, rmax=NULL,
                kernel="epanechnikov", bw=NULL, adjust.bw = 1, stoyan=0.15,
                correction = c("isotropic", "Ripley", "translate"),
                sigma = NULL, adjust.sigma = 1, varcov = NULL)
@@ -56,6 +56,10 @@ pcfcross.inhom(X, i, j, lambdaI = NULL, lambdaJ = NULL, ...,
   }
   \item{breaks}{
     This argument is for internal use only.
+  }
+  \item{rmax}{
+    Optional. Maximum desired value of the argument \eqn{r}.
+    A single numeric value. There is a sensible default.
   }
   \item{kernel}{
     Choice of one-dimensional smoothing kernel,

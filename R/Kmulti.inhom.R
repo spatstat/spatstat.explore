@@ -1,7 +1,7 @@
 #
 #	Kmulti.inhom.S		
 #
-#	$Revision: 1.57 $	$Date: 2025/09/03 03:36:39 $
+#	$Revision: 1.58 $	$Date: 2026/01/21 06:26:39 $
 #
 #
 # ------------------------------------------------------------------------
@@ -51,7 +51,7 @@ Ldot.inhom <- function(X, i, ..., correction) {
 
 "Kcross.inhom" <- 
 function(X, i, j, lambdaI=NULL, lambdaJ=NULL, ...,
-         r=NULL, breaks=NULL,
+         r=NULL, breaks=NULL, rmax=NULL,
          correction = c("border", "isotropic", "Ripley", "translate"),
          sigma=NULL, varcov=NULL,
          lambdaIJ=NULL,
@@ -75,7 +75,8 @@ function(X, i, j, lambdaI=NULL, lambdaJ=NULL, ...,
   Iname <- paste("points with mark i =", i)
   Jname <- paste("points with mark j =", j)
   K <- Kmulti.inhom(X, I, J, lambdaI, lambdaJ, ...,
-                    r=r,breaks=breaks,correction=correction,
+                    r=r, breaks=breaks, rmax=rmax,
+                    correction=correction,
                     sigma=sigma, varcov=varcov,
                     lambdaIJ=lambdaIJ, Iname=Iname, Jname=Jname,
                     lambdaX=lambdaX, update=update, leaveoneout=leaveoneout,
@@ -95,7 +96,7 @@ function(X, i, j, lambdaI=NULL, lambdaJ=NULL, ...,
 
 "Kdot.inhom" <- 
 function(X, i, lambdaI=NULL, lambdadot=NULL, ...,
-         r=NULL, breaks=NULL,
+         r=NULL, breaks=NULL, rmax=NULL, 
          correction = c("border", "isotropic", "Ripley", "translate"),
          sigma=NULL, varcov=NULL, 
          lambdaIdot=NULL,
@@ -120,7 +121,8 @@ function(X, i, lambdaI=NULL, lambdadot=NULL, ...,
   Jname <- paste("points")
 	
   K <- Kmulti.inhom(X, I, J, lambdaI, lambdadot, ...,
-                    r=r,breaks=breaks,correction=correction,
+                    r=r, breaks=breaks, rmax=rmax,
+                    correction=correction,
                     sigma=sigma, varcov=varcov,
                     lambdaIJ=lambdaIdot,
                     Iname=Iname, Jname=Jname,
@@ -145,7 +147,7 @@ function(X, i, lambdaI=NULL, lambdadot=NULL, ...,
 "Kmulti.inhom"<-
 function(X, I, J, lambdaI=NULL, lambdaJ=NULL, 
          ...,
-         r=NULL, breaks=NULL,
+         r=NULL, breaks=NULL, rmax=NULL, 
          correction = c("border", "isotropic", "Ripley", "translate"),
          lambdaIJ=NULL,
          sigma=NULL, varcov=NULL,
@@ -204,7 +206,7 @@ function(X, I, J, lambdaI=NULL, lambdaJ=NULL,
   if(nJ == 0) stop(paste("There are no", Jname))
 
   ## r values 
-  rmaxdefault <- rmax.rule("K", W, nJ/areaW)
+  rmaxdefault <- rmax %orifnull% rmax.rule("K", W, nJ/areaW)
   breaks <- handle.r.b.args(r, breaks, W, rmaxdefault=rmaxdefault)
   r <- breaks$r
   rmax <- breaks$max
