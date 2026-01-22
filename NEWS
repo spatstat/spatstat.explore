@@ -1,9 +1,11 @@
 
-        CHANGES IN spatstat.explore VERSION 3.6-0.007
+        CHANGES IN spatstat.explore VERSION 3.7-0
 
 OVERVIEW
 
     o Important changes to mark correlation function.
+
+    o Summary functions have argument 'rmax'.
     
     o Minor internal improvements.
 
@@ -18,18 +20,21 @@ SIGNIFICANT USER-VISIBLE CHANGES
     o markcrosscorr
     New argument 'weights'.
 
-    o psstA, psstG, psst
-    New argument 'rmax'.
+    o Gcom, Kcom, psstA, psstG, psst
+    These diagnostic functions have a new formal argument 'rmax'.
+
+    o Gres, Kres
+    These diagnostic functions accept argument 'rmax'.
     
     o plot.fasp
     Now returns a list containing the results of plot.fv for each panel.
 
     o summary functions
-    The following functions have a new argument 'rmax':
+    The following functions have a new formal argument 'rmax':
     Fest, Finhom, FmultiInhom,
-    Gcom, Gcross, Gdot, Gest, Ginhom, Gmulti, GmultiInhom,
+    Gcross, Gdot, Gest, Ginhom, Gmulti, GmultiInhom,
     Jest, Jcross, Jdot, Jinhom, Jmulti,
-    Kcom, Kcross, Kdot, Kinhom, Kmulti,
+    Kcross, Kdot, Kinhom, Kmulti,
     Kcross.inhom, Kdot.inhom, Kmulti.inhom, Kmark, Ksector,
     markconnect, markcorr, markcorrint, markcrosscorr, markequal, markvario,
     pcf.ppp, pcfcross, pcfdot, pcfmulti,
