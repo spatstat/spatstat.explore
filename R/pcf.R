@@ -3,7 +3,7 @@
 #'
 #' Calculate pair correlation function from point pattern (pcf.ppp)
 #' 
-#' $Revision: 1.79 $ $Date: 2026/01/21 06:26:39 $
+#' $Revision: 1.81 $ $Date: 2026/01/27 08:45:01 $
 #'
 #' Copyright (c) 2008-2025 Adrian Baddeley, Tilman Davies and Martin Hazelton
 
@@ -22,8 +22,8 @@ pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
                    adjust = 1,
                    correction=c("translate", "Ripley"),
                    divisor=c("r", "d", "a", "t"),
-                   zerocor=c("weighted", "reflection", "convolution",
-                             "bdrykern", "JonesFoster", "none"),
+                   zerocor=c("convolution", "reflection", "bdrykern",
+                             "JonesFoster", "weighted", "none"),
                    gref=NULL,
                    tau = 0,
                    fast=TRUE,
@@ -45,6 +45,7 @@ pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
   
   ## ...... get point pattern information .......
   verifyclass(X, "ppp")
+  if(is.NAobject(X)) return(NAobject("fv"))  #' trap explicit call to pcf.ppp
   win <- Window(X)
   areaW <- area(win)
   npts <- npoints(X)

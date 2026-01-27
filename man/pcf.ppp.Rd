@@ -12,8 +12,8 @@
                     bw.args=list(), stoyan=0.15, adjust=1, 
                     correction=c("translate", "Ripley"),
                     divisor = c("r", "d", "a", "t"),
-                    zerocor=c("weighted", "reflection", "convolution",
-                             "bdrykern", "JonesFoster", "none"),
+                    zerocor=c("convolution", "reflection", "bdrykern",
+                             "JonesFoster", "weighted", "none"),
                     gref = NULL,
                     tau = 0,
                     fast = TRUE, 
@@ -263,12 +263,8 @@
   Options include:
   \itemize{
     \item
-    \code{zerocor="none"}: no correction.
-    \item
     \code{zerocor="convolution"}: the convolution, uniform or
      renormalization kernel.
-    \item
-    \code{zerocor="weighted"}: the cut-and-normalization method.
     \item
     \code{zerocor="reflection"}:
     the reflection method.
@@ -277,7 +273,15 @@
     \item
     \code{zerocor="JonesFoster"}:
       the Jones-Foster modification of the linear boundary kernel.
+    \item
+    \code{zerocor="weighted"}: the cut-and-normalization method.
+    Not recommended.
+    \item
+    \code{zerocor="none"}: no correction.
+    Not recommended.
   }
+  For details of these corrections,
+  see the help for \code{\link[spatstat.univar]{densityBC}}.
 
   The choice of smoothing kernel is controlled by the 
   argument \code{kernel} which is passed

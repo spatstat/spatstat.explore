@@ -1,4 +1,17 @@
 
+        CHANGES IN spatstat.explore VERSION 3.7-0.001
+
+OVERVIEW
+
+    o We thank Meri Bilan for contributions.
+    
+    o Important change to default in pcf
+
+SIGNIFICANT USER-VISIBLE CHANGES
+
+    o pcf.ppp
+    Default value of 'zerocor' changed to 'convolution'.
+
         CHANGES IN spatstat.explore VERSION 3.7-0
 
 OVERVIEW
