@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.7-0.001
+        CHANGES IN spatstat.explore VERSION 3.7-0.002
 
 OVERVIEW
 
@@ -33,12 +33,6 @@ SIGNIFICANT USER-VISIBLE CHANGES
     o markcrosscorr
     New argument 'weights'.
 
-    o Gcom, Kcom, psstA, psstG, psst
-    These diagnostic functions have a new formal argument 'rmax'.
-
-    o Gres, Kres
-    These diagnostic functions accept argument 'rmax'.
-    
     o plot.fasp
     Now returns a list containing the results of plot.fv for each panel.
 

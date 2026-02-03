@@ -3,9 +3,9 @@
 #'
 #' Calculate pair correlation function from point pattern (pcf.ppp)
 #' 
-#' $Revision: 1.81 $ $Date: 2026/01/27 08:45:01 $
+#' $Revision: 1.85 $ $Date: 2026/02/03 01:07:52 $
 #'
-#' Copyright (c) 2008-2025 Adrian Baddeley, Tilman Davies and Martin Hazelton
+#' Copyright (c) 2008-2026 Adrian Baddeley, Tilman Davies and Martin Hazelton
 
 
 pcf <- function(X, ...) {
@@ -630,14 +630,16 @@ sewpcf <- function(d, w, denargs, lambda2area,
            areas <- pi * d^2
            ## interpret current density arguments
            r <- with(denargs, seq(from, to, length.out=n))
+           area.query <- pi * r^2
            ## adjust density arguments for computation
            if(convert) {
-             denargs$n <- max(8192, 4 * denargs$n)
              denargs$to <- pi * denargs$to^2
              denargs$from <- pi * denargs$from^2
+             ## denargs$n <- max(8192, 4 * denargs$n)
            }
            ## smooth on 'areas' scale
            if(adaptive) {
+             ## adaptive bandwidth kde on area scale
              kden <- do.call(densityAdaptiveKernel,
                              append(list(quote(areas),
                                          weights=quote(w),
@@ -646,6 +648,7 @@ sewpcf <- function(d, w, denargs, lambda2area,
                                     denargs)
                              )
            } else {
+             ## fixed bandwidth kde on area scale
              kden <- do.call(densityBC,
                              append(list(quote(areas),
                                          weights=quote(w),
@@ -658,11 +661,10 @@ sewpcf <- function(d, w, denargs, lambda2area,
            a.est <- kden$x
            g.est <- kden$y/lambda2area
            if(tau != 0) # shrinkage
-             g.est <- g.est + tau * 0.75/(kden$bw * sqrt(5))/lambda2area
-           a.query <- pi * r^2
+             g.est <- g.est + tau * 0.75/(mean(kden$bw) * sqrt(5))/lambda2area
            g <- approx(x = a.est,
                        y = g.est,
-                       xout = a.query,
+                       xout = area.query,
                        rule = c(2,1))$y
          },
          t = {
@@ -672,7 +674,7 @@ sewpcf <- function(d, w, denargs, lambda2area,
            r <- with(denargs, seq(from, to, length.out=n))
            ## adjust density arguments for computation
            if(convert) {
-             denargs$n <- max(8192, 4 * denargs$n)
+             ## denargs$n <- max(8192, 4 * denargs$n)
              denargs$to <- Transform(denargs$to)
              denargs$from <- Transform(denargs$from)
            }
