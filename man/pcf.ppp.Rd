@@ -11,9 +11,10 @@
                     kernel="epanechnikov", bw=NULL, h=NULL,
                     bw.args=list(), stoyan=0.15, adjust=1, 
                     correction=c("translate", "Ripley"),
-                    divisor = c("r", "d", "a", "t"),
+                    divisor=c("a", "r", "d", "t"),
                     zerocor=c("convolution", "reflection", "bdrykern",
-                             "JonesFoster", "weighted", "none"),
+                             "JonesFoster", "weighted", "none", "good", "best"),
+                    nsmall = 300,
                     gref = NULL,
                     tau = 0,
                     fast = TRUE, 
@@ -80,9 +81,8 @@
     (or choices) of edge correction. See Details.
   }
   \item{divisor}{
-    Choice of divisor in the estimation formula:
-    either \code{"r"} (the default) or \code{"d"},
-    or the new alternatives \code{"a"} or \code{"t"}. See Details.
+    String specifying the choice of estimator.
+    See Details.
   }
   \item{zerocor}{
     String (partially matched) specifying a correction for the boundary effect
@@ -90,6 +90,11 @@
     \code{"none"}, \code{"weighted"}, \code{"convolution"},
     \code{"reflection"}, \code{"bdrykern"} and \code{"JonesFoster"}.
     See Details, or help file for \code{\link[spatstat.univar]{densityBC}}.
+  }
+  \item{nsmall}{
+    Optional. Integer. The maximum number of data points
+    for which the default value of \code{zerocor} will be
+    \code{"JonesFoster"}. 
   }
   \item{gref}{
     Optional. A pair correlation function that will be used as the
@@ -192,23 +197,27 @@
   values greater than 1 suggest clustering.
 
   This routine computes an estimate of \eqn{g(r)}
-  by kernel smoothing. 
+  by kernel smoothing. The choice of estimator is
+  controlled by the arguments \code{divisor}, \code{correction}
+  and \code{zerocor}.
 
+  The argument \code{divisor} controls the type of estimator:
   \itemize{
     \item
-    If \code{divisor="r"} (the default), then the standard
+    If \code{divisor="r"}, then the classical
     kernel estimator (Stoyan and Stoyan, 1994, pages 284--285)
-    is used. By default, the recommendations of Stoyan and Stoyan (1994)
-    are followed exactly. 
+    is used. The contribution from
+    each interpoint distance \eqn{d_{ij}}{d[ij]} to the
+    estimate of \eqn{g(r)} is divided by \eqn{r}.
     \item
-    If \code{divisor="d"} then a modified estimator is used
-    (Guan, 2007): the contribution from
-    an interpoint distance \eqn{d_{ij}}{d[ij]} to the
+    If \code{divisor="d"} then the modified kernel estimator of
+    (Guan, 2007) is used. The contribution from
+    each interpoint distance \eqn{d_{ij}}{d[ij]} to the
     estimate of \eqn{g(r)} is divided by \eqn{d_{ij}}{d[ij]}
     instead of dividing by \eqn{r}. This usually improves the
     bias of the estimator when \eqn{r} is close to zero.
     \item
-    If \code{divisor="a"} then improved method of
+    If \code{divisor="a"} then the improved method of
     \smoothpcfpapercite is used. The distances \eqn{d_{ij}}{d[ij]}
     are first converted to disc areas
     \eqn{a_{ij}=\pi d_{ij}^2}{a[ij] = pi * d[ij]^2},
@@ -227,8 +236,8 @@
     which decides which estimator to use, based on the data.
   }
 
-  There is also a choice of spatial edge corrections
-  (which are needed to avoid bias due to edge effects
+  The argument \code{correction} controls the choice of spatial edge correction
+  (which is needed to avoid bias due to edge effects
   associated with the boundary of the spatial window):
 
   \itemize{
@@ -263,8 +272,9 @@
   Options include:
   \itemize{
     \item
-    \code{zerocor="convolution"}: the convolution, uniform or
-     renormalization kernel.
+    \code{zerocor="convolution"} : the convolution, uniform or
+    renormalization kernel. This is the default
+    for patterns with more than \code{nsmall} points, for efficiency.
     \item
     \code{zerocor="reflection"}:
     the reflection method.
@@ -272,18 +282,37 @@
     \code{zerocor="bdrykern"}: the linear boundary kernel.
     \item
     \code{zerocor="JonesFoster"}:
-      the Jones-Foster modification of the linear boundary kernel.
+    the Jones-Foster modification of the linear boundary kernel.
+    This is the default for patterns with at most \code{nsmall} points.
     \item
     \code{zerocor="weighted"}: the cut-and-normalization method.
     Not recommended.
     \item
     \code{zerocor="none"}: no correction.
-    Not recommended.
+    This is strongly discouraged.
   }
   For details of these corrections,
   see the help for \code{\link[spatstat.univar]{densityBC}}.
+  For compatibility, the code also recognises
+  \itemize{
+    \item
+    \code{zerocor="best"} stipulates the correction with the best
+    statistical performance regardless of computation cost. It is equivalent
+    to \code{zerocor="JonesFoster"}.
+    \item
+    \code{zerocor="good"} stipulates a correction which strikes
+    the best balance between statistical performance and computational
+    cost. It is equivalent to \code{zerocor="convolution"}.
+  }
+  The default value of \code{zerocor}
+  depends on the size of the point pattern \code{X}
+  according to the threshold \code{nsmall}.
+  If \code{npoints(X) <= nsmall} the default is
+  \code{zerocor="JonesFoster"}
+  while if \code{npoints(X) > nsmall} the default is
+  \code{zerocor="convolution"}. 
 
-  The choice of smoothing kernel is controlled by the 
+  The shape of the smoothing kernel is controlled by the 
   argument \code{kernel} which is passed
   to \code{\link[stats]{density.default}}.
   The default is the Epanechnikov kernel, recommended by

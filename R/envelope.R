@@ -3,7 +3,7 @@
 #
 #   computes simulation envelopes 
 #
-#   $Revision: 2.128 $  $Date: 2025/01/27 08:56:27 $
+#   $Revision: 2.129 $  $Date: 2026/02/08 09:38:18 $
 #
 
 
@@ -426,6 +426,7 @@ envelopeEngine <-
                "named", commasep(sQuote(expected.arg)),
                "or a", sQuote("..."), "argument"))
   usecorrection <- any(c("correction", "...") %in% fargs)
+  usezerocor <- any(c("zerocor", "...") %in% fargs)
   
   # ---------------------------------------------------------------------
   # validate other arguments
@@ -455,12 +456,14 @@ envelopeEngine <-
   # ------------------------------------------------------------------
   Xarg <- if(!clipdata) X else X[clipwin]
   corrx <- if(usecorrection) list(correction="best") else NULL
+  corrz <- if(usezerocor) list(zerocor="best") else NULL
   dont.complain.about(Xarg)
   funX <- do.call(fun,
                   resolve.defaults(list(quote(Xarg)),
                                    list(...),
                                    funYargs,
-                                   corrx))
+                                   corrx,
+                                   corrz))
                                      
   if(!inherits(funX, "fv"))
     stop(paste("The function", fname,
@@ -688,7 +691,8 @@ envelopeEngine <-
                      inferred.r.args,
                      list(...),
                      conserveargs,
-                     if(usecorrection) list(correction="best") else NULL)
+                     if(usecorrection) list(correction="best") else NULL,
+                     if(usezerocor) list(zerocor="best") else NULL)
 
   # reject simulated pattern if function values are all NA (etc)
   rejectNA <- isTRUE(rejectNA)

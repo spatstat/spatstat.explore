@@ -1,16 +1,24 @@
 
-        CHANGES IN spatstat.explore VERSION 3.7-0.002
+        CHANGES IN spatstat.explore VERSION 3.7-0.003
 
 OVERVIEW
 
-    o We thank Meri Bilan for contributions.
+    o We thank Meri Bilan, Tilman Davies and Martin Hazelton for contributions.
     
-    o Important change to default in pcf
+    o Important changes to default settings in pcf.
 
 SIGNIFICANT USER-VISIBLE CHANGES
 
     o pcf.ppp
-    Default value of 'zerocor' changed to 'convolution'.
+    The default value of 'divisor' has changed to "a",
+    so that the new area-based estimator is the default.
+
+    o pcf.ppp
+    The default value of 'zerocor' is now 'JonesFoster' for small patterns
+    and 'convolution' for larger patterns.
+
+    o pcf.ppp
+    New argument 'nsmall' determines the threshold for large patterns.
 
         CHANGES IN spatstat.explore VERSION 3.7-0
 

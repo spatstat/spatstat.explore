@@ -3,7 +3,7 @@
 #'
 #' Calculate pair correlation function from point pattern (pcf.ppp)
 #' 
-#' $Revision: 1.85 $ $Date: 2026/02/03 01:07:52 $
+#' $Revision: 1.87 $ $Date: 2026/02/08 09:54:08 $
 #'
 #' Copyright (c) 2008-2026 Adrian Baddeley, Tilman Davies and Martin Hazelton
 
@@ -21,9 +21,10 @@ pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
                    stoyan=0.15,
                    adjust = 1,
                    correction=c("translate", "Ripley"),
-                   divisor=c("r", "d", "a", "t"),
+                   divisor=c("a", "r", "d", "t"),
                    zerocor=c("convolution", "reflection", "bdrykern",
-                             "JonesFoster", "weighted", "none"),
+                             "JonesFoster", "weighted", "none", "good", "best"),
+                   nsmall = 300,
                    gref=NULL,
                    tau = 0,
                    fast=TRUE,
@@ -32,9 +33,15 @@ pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
                    close=NULL)
 {
   kernel <- match.kernel(kernel)
-  if(is.function(divisor)) divisor <- divisor(X)
-  divisor <- match.arg(divisor)
-  zerocor <- match.arg(zerocor)
+  if(divisor.given <- !missing(divisor)) {
+    if(is.function(divisor)) divisor <- divisor(X)
+    divisor <- match.arg(divisor)
+  }
+  if(zerocor.given <- !missing(zerocor)) {
+    zerocor <- match.arg(zerocor)
+    if(zerocor == "best") zerocor <- "JonesFoster"
+    if(zerocor == "good") zerocor <- "convolution"
+  }
   check.1.real(adjust)
 
   DEBUG <- isTRUE(getOption("debug.smoothpcf"))
@@ -52,18 +59,25 @@ pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
   samplesize <- npairs <- npts * (npts - 1)
   lambda <- npts/areaW
   lambda2area <- npairs/areaW
-  rmaxdefault <- rmax %orifnull% rmax.rule("K", win, lambda)        
+  rmaxdefault <- rmax %orifnull% rmax.rule("K", win, lambda)
 
   ## ....... handle argument 'domain' .......................
   if(!is.null(domain)) {
-    if(!(divisor %in% c("r", "d")))
-      stop("Sorry, option divisor =", sQuote(divisor),
-           "is not yet available when 'domain' is given",
+    ## Apply different defaults in this case
+    if(!divisor.given) {
+      divisor <- "d"
+    } else if(!(divisor %in% c("r", "d"))) {
+      stop(paste("Sorry, option divisor =", sQuote(divisor),
+                 "is not yet available when 'domain' is given"),
            call.=FALSE)
-    if(zerocor != 'none')
+    }
+    if(!zerocor.given) {
+      zerocor <- "none"
+    } else if(zerocor != 'none') {
       stop(paste0("Sorry, option zerocor=", sQuote(zerocor),
                   "is not yet available when 'domain' is given"),
            call.=FALSE)
+    }
     ## estimate based on contributions from a subdomain
     domain <- as.owin(domain)
     if(!is.subset.owin(domain, win))
@@ -95,6 +109,17 @@ pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
     if(var.approx)
       warning("var.approx is not implemented when 'domain' is given")
     return(g)
+  }
+
+  ## .............  Finally apply defaults for normal case .............
+  
+  if(!divisor.given)
+    divisor <- "a"
+
+  if(!zerocor.given) {
+    ## default depends on number of data points
+    if(!missing(nsmall)) check.1.integer(nsmall)
+    zerocor <- if(npts <= nsmall) "JonesFoster" else "convolution"
   }
 
   ## ......... edge correction .........................

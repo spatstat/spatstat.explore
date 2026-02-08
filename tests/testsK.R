@@ -41,7 +41,7 @@ local({
 #'
 #'   Various K and L functions and pcf
 #'
-#'   $Revision: 1.45 $  $Date: 2025/03/15 11:29:33 $
+#'   $Revision: 1.46 $  $Date: 2026/02/08 09:48:00 $
 #'
 #'   Assumes 'EveryStart.R' was run
 
