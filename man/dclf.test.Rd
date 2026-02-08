@@ -90,6 +90,28 @@ mad.test(X, \dots,  alternative=c("two.sided", "less", "greater"),
   \code{mad.test} performs the \sQuote{global} or
   \sQuote{Maximum Absolute Deviation} test described by Ripley (1977, 1981).
   See Baddeley et al (2014).
+
+  In the simplest case, the test statistic for \code{dclf.test} is
+  the integrated squared deviation
+  \deqn{
+    T = \int_0^R (F_{\mbox{\scriptsize obs}}(r) -
+    F_{\mbox{\scriptsize theo}}(r))^2 \, {\rm d}r
+  }{
+    T = integral_[0,R] (Fobs(r) - Ftheo(r))^2 dr
+  }
+  and the test statistic for \code{mad.test} is
+  the maximum absolute deviation
+  \deqn{
+    T = \max_{0 \le r \le R} | F_{\mbox{\scriptsize obs}}(r) -
+     F_{\mbox{\scriptsize theo}}(r)|
+  }{
+    T = max_[0,R] |Fobs(r) - Ftheo(r)|
+  }
+  where \eqn{F_{\mbox{\scriptsize obs}}(r)}{Fobs(r)} is the summary
+  function computed from the data,
+  \eqn{F_{\mbox{\scriptsize theo}}(r)}{Ftheo(r)} is the theoretical
+  value of the summary function under the null hypothesis,
+  and \eqn{R} is a specified maximum distance.
   
   The type of test depends on the type of argument \code{X}.
   \itemize{
