@@ -3,7 +3,7 @@
 #'
 #' Calculate pair correlation function from point pattern (pcf.ppp)
 #' 
-#' $Revision: 1.87 $ $Date: 2026/02/08 09:54:08 $
+#' $Revision: 1.89 $ $Date: 2026/02/09 01:10:30 $
 #'
 #' Copyright (c) 2008-2026 Adrian Baddeley, Tilman Davies and Martin Hazelton
 
@@ -113,13 +113,21 @@ pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
 
   ## .............  Finally apply defaults for normal case .............
   
-  if(!divisor.given)
-    divisor <- "a"
+  if(!divisor.given || !zerocor.given) {
 
-  if(!zerocor.given) {
-    ## default depends on number of data points
-    if(!missing(nsmall)) check.1.integer(nsmall)
-    zerocor <- if(npts <= nsmall) "JonesFoster" else "convolution"
+    warn.once("pcfDefaults",
+              "default settings have changed for pcf.ppp",
+              "in spatstat.explore >= 3.7-0.003")
+    
+    if(!divisor.given)
+      divisor <- "a"
+
+    if(!zerocor.given) {
+      ## default depends on number of data points
+      if(!missing(nsmall)) check.1.integer(nsmall)
+      zerocor <- if(npts <= nsmall) "JonesFoster" else "convolution"
+    }
+
   }
 
   ## ......... edge correction .........................
