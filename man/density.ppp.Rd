@@ -25,9 +25,9 @@
     or a function that computes an appropriate value of \code{sigma}.
   }
   \item{weights}{
-    Optional weights to be attached to the points.
-    A numeric vector, numeric matrix, an \code{expression},
-    or a pixel image.
+    Optional weights to be attached to the points of \code{x}.
+    \pointweightsAny.
+    Numerical weights may be positive, negative or zero.
   }
   \item{\dots}{
     Additional arguments passed to \code{\link[spatstat.geom]{pixellate.ppp}}

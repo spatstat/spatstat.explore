@@ -43,7 +43,7 @@
   }
   \item{weights}{
     Optional. Weights for the data points of \code{X}.
-    A numeric vector, an \code{expression}, or a pixel image.
+    \pointweightsVector.
   }
   \item{varcov}{
     Optional. Variance-covariance matrix of anisotopic Gaussian

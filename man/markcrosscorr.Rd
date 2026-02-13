@@ -49,11 +49,8 @@
     A single numeric value. There is a sensible default.
   }
   \item{weights}{
-    Optional. Numeric weights associated with each data point in \code{X}. 
-    A numeric vector, a pixel image, or a \code{function(x,y)}.
-    Alternatively, an \code{expression} to be evaluated to yield the
-    weights; the expression may involve the variables
-    \code{x,y,marks} representing the coordinates and marks of\code{X}.
+    Optional weights associated with each data point in \code{X}. 
+    \pointweightsVector.
   }
   \item{normalise}{
     If \code{normalise=FALSE},

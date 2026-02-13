@@ -43,8 +43,8 @@ markvar(X, sigma=NULL, ..., weights=NULL, varcov=NULL)
   }
   \item{weights}{
     Optional weights attached to the observations.
-    A numeric vector, a \code{function(x,y)}, a pixel image,
-    or an \code{expression}. See \code{\link{density.ppp}}.
+    \pointweightsVector.
+    See \code{\link{density.ppp}}.
   }
   \item{at}{
     String specifying whether to compute the smoothed values
