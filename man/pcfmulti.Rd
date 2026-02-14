@@ -20,10 +20,12 @@ using kernel methods.
                       "good", "best"),
             nsmall = 300,
             gref=NULL,
+            tau = 0,
             Iname = "points satisfying condition I",
             Jname = "points satisfying condition J",
             IJexclusive=FALSE,
-            ratio = FALSE)
+            ratio = FALSE,
+            close=NULL)
 }
 \arguments{
   \item{X}{The observed point pattern, 
@@ -120,6 +122,9 @@ using kernel methods.
     for which the pair correlation function
     can be computed.  
   }
+  \item{tau}{
+    Optional shrinkage coefficient. A single numeric value.
+  }
   \item{Iname,Jname}{
     Optional. Character strings describing the members of
     the subsets \code{I} and \code{J}.
@@ -133,6 +138,9 @@ using kernel methods.
     If \code{TRUE}, the numerator and denominator of
     each edge-corrected estimate will also be saved,
     for use in analysing replicated point patterns.
+  }
+  \item{close}{
+    Advanced use only. Precomputed data obtained from \code{\link[spatstat.geom]{crosspairs}}.
   }
 }
 \details{
@@ -165,11 +173,8 @@ using kernel methods.
   juvenile <- !adult
   p <- pcfmulti(longleaf, adult, juvenile)
 }
-\author{\adrian
-  
-  
-  and \rolf
-  
+\author{
+  \spatstatAuthorsComma, \tilman and \martinH.
 }
 \keyword{spatial}
 \keyword{nonparametric}

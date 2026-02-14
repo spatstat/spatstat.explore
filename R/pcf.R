@@ -3,7 +3,7 @@
 #'
 #' Calculate pair correlation function from point pattern (pcf.ppp)
 #' 
-#' $Revision: 1.89 $ $Date: 2026/02/09 01:10:30 $
+#' $Revision: 1.91 $ $Date: 2026/02/14 09:09:40 $
 #'
 #' Copyright (c) 2008-2026 Adrian Baddeley, Tilman Davies and Martin Hazelton
 
@@ -32,65 +32,62 @@ pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
                    domain=NULL, ratio=FALSE,
                    close=NULL)
 {
-  kernel <- match.kernel(kernel)
-  if(divisor.given <- !missing(divisor)) {
-    if(is.function(divisor)) divisor <- divisor(X)
-    divisor <- match.arg(divisor)
-  }
-  if(zerocor.given <- !missing(zerocor)) {
-    zerocor <- match.arg(zerocor)
-    if(zerocor == "best") zerocor <- "JonesFoster"
-    if(zerocor == "good") zerocor <- "convolution"
-  }
-  check.1.real(adjust)
+  verifyclass(X, "ppp")
+  if(is.NAobject(X)) return(NAobject("fv"))  #' trap explicit call to pcf.ppp
+  npts <- npoints(X)
 
+  ## start debug messages
   DEBUG <- isTRUE(getOption("debug.smoothpcf"))
   if(DEBUG) {
     splat("pcf")
     started <- proc.time()
   }
-  
-  ## ...... get point pattern information .......
-  verifyclass(X, "ppp")
-  if(is.NAobject(X)) return(NAobject("fv"))  #' trap explicit call to pcf.ppp
-  win <- Window(X)
-  areaW <- area(win)
-  npts <- npoints(X)
-  samplesize <- npairs <- npts * (npts - 1)
-  lambda <- npts/areaW
-  lambda2area <- npairs/areaW
-  rmaxdefault <- rmax %orifnull% rmax.rule("K", win, lambda)
 
-  ## ....... handle argument 'domain' .......................
+  ## check arguments, apply some defaults
+  kernel <- match.kernel(kernel)
+  check.1.real(adjust)
+
+  if(missing(divisor) || missing(zerocor))
+    warn.once("pcfDefaults",
+              "default settings have changed for pcf.ppp",
+              "in spatstat.explore >= 3.7-0.003")
+
+  if(is.function(divisor)) divisor <- divisor(X)
+  divisor <- match.arg(divisor)
+
+  if(missing(zerocor)) {
+    ## default depends on number of data points
+    if(!missing(nsmall)) check.1.integer(nsmall)
+    zerocor <- if(npts <= nsmall) "JonesFoster" else "convolution"
+  } else {
+    zerocor <- match.arg(zerocor)
+    if(zerocor == "best") zerocor <- "JonesFoster"
+    if(zerocor == "good") zerocor <- "convolution"
+  }
+
+  ## vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+  ## >>>>>>>>>>>>>> SPECIAL CASE <<<<<<<<<<<<<<<<<<<<<<<<<<
+  ## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
   if(!is.null(domain)) {
-    ## Apply different defaults in this case
-    if(!divisor.given) {
-      divisor <- "d"
-    } else if(!(divisor %in% c("r", "d"))) {
-      stop(paste("Sorry, option divisor =", sQuote(divisor),
-                 "is not yet available when 'domain' is given"),
-           call.=FALSE)
-    }
-    if(!zerocor.given) {
-      zerocor <- "none"
-    } else if(zerocor != 'none') {
-      stop(paste0("Sorry, option zerocor=", sQuote(zerocor),
-                  "is not yet available when 'domain' is given"),
-           call.=FALSE)
-    }
     ## estimate based on contributions from a subdomain
     domain <- as.owin(domain)
-    if(!is.subset.owin(domain, win))
-      stop(paste(dQuote("domain"),
-                 "is not a subset of the window of X"))
-    # trick pcfdot() into doing it
+    if(!is.subset.owin(domain, Window(X)))
+      stop(paste(dQuote("domain"), "is not a subset of the window of X"),
+           call.=FALSE)
+    ## trick pcfdot() into doing it
     indom <- inside.owin(X$x, X$y, domain)
     marx <- factor(indom, levels=c(FALSE,TRUE))
     g <- pcfdot(X %mark% marx,
                 i="TRUE",
-                r=r,
-                correction=correction, kernel=kernel, bw=bw, stoyan=stoyan,
-                divisor=divisor,
+                r=r, rmax=rmax,
+                adaptive=adaptive, kernel=kernel,
+                bw=bw, h=h, bw.args=bw.args,
+                stoyan=stoyan, adjust=adjust,
+                correction=correction,
+                divisor=divisor, zerocor=zerocor,
+                nsmall=nsmall, gref=gref, tau=tau,
+                ratio=ratio, close=close,
                 ...)
     if(!ratio) {
       ## relabel
@@ -101,7 +98,7 @@ pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
       samplesize <- ninside * (npts-1)
       g <- ratfv(as.data.frame(g), NULL, samplesize,
                  "r", quote(g(r)),
-                 "theo", NULL, c(0, rmaxdefault), 
+                 "theo", NULL, c(0, max(g$r)), 
                  attr(g, "labl"), attr(g, "desc"), fname="g",
                  ratio=TRUE)
     }
@@ -111,24 +108,28 @@ pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
     return(g)
   }
 
-  ## .............  Finally apply defaults for normal case .............
-  
-  if(!divisor.given || !zerocor.given) {
+  ## vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+  ## >>>>>>>>>>>>>> NORMAL CASE <<<<<<<<<<<<<<<<<<<<<<<<<<<
+  ## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    warn.once("pcfDefaults",
-              "default settings have changed for pcf.ppp",
-              "in spatstat.explore >= 3.7-0.003")
-    
-    if(!divisor.given)
-      divisor <- "a"
+  ## ...... get point pattern information .......
+  win <- Window(X)
+  areaW <- area(win)
+  samplesize <- npairs <- npts * (npts - 1)
+  lambda <- npts/areaW
+  lambda2area <- npairs/areaW
+  rmaxdefault <- rmax %orifnull% rmax.rule("K", win, lambda)
 
-    if(!zerocor.given) {
-      ## default depends on number of data points
-      if(!missing(nsmall)) check.1.integer(nsmall)
-      zerocor <- if(npts <= nsmall) "JonesFoster" else "convolution"
-    }
+  ## ........... distance values ..............................
 
-  }
+  breaks <- handle.r.b.args(r, NULL, win, rmaxdefault=rmaxdefault)
+  if(!(breaks$even))
+    stop("r values must be evenly spaced")
+  # extract r values
+  r <- breaks$r
+  rmax <- breaks$max
+  # recommended range of r values for plotting
+  alim <- c(0, min(rmax, rmaxdefault))
 
   ## ......... edge correction .........................
   correction.given <- !missing(correction)
@@ -145,8 +146,248 @@ pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
 
   correction <- implemented.for.K(correction, win$type, correction.given)
 
-  ## .... determine bandwidth ......................
+  ## .... determine smoothing arguments ......................
 
+  M <- resolve.pcf.bandwidth(X, lambda=lambda, rmax=rmax, nr=length(r),
+                             adaptive=adaptive, kernel=kernel,
+                             bw=bw, h=h, bw.args=bw.args,
+                             stoyan=stoyan, adjust=adjust,
+                             correction=correction,
+                             divisor=divisor,
+                             zerocor=zerocor,
+                             nsmall=nsmall,
+                             gref=gref,
+                             close=close)
+
+  info    <- M$info
+  denargs <- M$denargs
+
+  Transform <- info$Transform
+  dmax      <- info$dmax
+  gref      <- info$gref
+  
+  #######################################################
+  ## compute pairwise distances up to 'dmax'
+  if(npts > 1) {
+    needall <- any(correction %in% c("translate", "isotropic"))
+    if(is.null(close)) {
+      what <- if(needall) "all" else "ijd"
+      close <- closepairs(X, dmax, what=what)
+    } else {
+      #' check 'close' has correct format
+      needed <- if(!needall) c("i", "j", "d") else
+                 c("i", "j", "xi", "yi", "xj", "yj", "dx", "dy", "d")
+      if(any(is.na(match(needed, names(close)))))
+        stop(paste("Argument", sQuote("close"),
+                   "should have components named",
+                   commasep(sQuote(needed))),
+             call.=FALSE)
+    }
+    dIJ <- close$d
+  } else {
+    undefined <- rep(NaN, length(r))
+  }
+
+  # initialise fv object
+  
+  df <- data.frame(r=r, theo=rep.int(1,length(r)))
+  out <- ratfv(df,
+               NULL, samplesize,
+               "r", quote(g(r)),
+               "theo", NULL,
+               alim,
+               c("r","%s[Pois](r)"),
+               c("distance argument r", "theoretical Poisson %s"),
+               fname="g",
+               ratio=ratio)
+
+  ###### compute #######
+
+  if(DEBUG) {
+    elapsed <- proc.time() - started
+    splat("pcf: ready to compute estimates after", codetime(elapsed))
+  }
+  
+  bw.used <- bwvalues.used <- NULL
+  
+  if(any(correction=="none")) {
+    #' uncorrected
+    if(npts > 1) {
+      kdenN <- sewpcf(d=dIJ, w=1,
+                      denargs=denargs,
+                      lambda2area=lambda2area,
+                      divisor=divisor,
+                      zerocor=zerocor,
+                      fast=fast, adaptive=adaptive, tau=tau,
+                      gref=gref, Transform=Transform)
+      if(DEBUG) {
+        elapsed <- proc.time() - started
+        splat("pcf: returned from sewpcf after", codetime(elapsed))
+      }
+      gN <- kdenN$g
+      bw.used <- attr(kdenN, "bw")
+      if(adaptive)
+        bwvalues.used <- attr(kdenN, "bwvalues")
+    } else gN <- undefined
+    if(DEBUG) {
+      elapsed <- proc.time() - started
+      splat("Ready to bind.fv after", codetime(elapsed))
+    }
+    out <- bind.ratfv(out,
+                      quotient=data.frame(un=gN),
+                      denominator=samplesize,
+                      labl="hat(%s)[un](r)",
+                      desc="uncorrected estimate of %s",
+                      preferred="un",
+                      ratio=ratio)
+  }
+  
+  if(any(correction=="translate")) {
+    # translation correction
+    if(npts > 1) {
+      edgewt <- edge.Trans(dx=close$dx, dy=close$dy, W=win, paired=TRUE)
+      if(DEBUG) {
+        elapsed <- proc.time() - started
+        splat("pcf: computed edge weights after", codetime(elapsed))
+      }
+      kdenT <- sewpcf(d=dIJ, w=edgewt,
+                      denargs=denargs,
+                      lambda2area=lambda2area,
+                      divisor=divisor,
+                      zerocor=zerocor,
+                      fast=fast, adaptive=adaptive, tau=tau,
+                      gref=gref, Transform=Transform)
+      if(DEBUG) {
+        elapsed <- proc.time() - started
+        splat("pcf: returned from sewpcf after", codetime(elapsed))
+      }
+      gT <- kdenT$g
+      bw.used <- attr(kdenT, "bw")
+      if(adaptive)
+        bwvalues.used <- attr(kdenT, "bwvalues")
+    } else gT <- undefined
+    if(DEBUG) {
+      elapsed <- proc.time() - started
+      splat("Ready to bind.fv after", codetime(elapsed))
+    }
+    out <- bind.ratfv(out,
+                      quotient=data.frame(trans=gT),
+                      denominator=samplesize,
+                      labl="hat(%s)[Trans](r)",
+                      desc="translation-corrected estimate of %s",
+                      preferred="trans",
+                      ratio=ratio)
+  }
+
+  if(any(correction=="isotropic")) {
+    # Ripley isotropic correction
+    if(npts > 1) {
+      XI <- ppp(close$xi, close$yi, window=win, check=FALSE)
+      edgewt <- edge.Ripley(XI, matrix(dIJ, ncol=1))
+      if(DEBUG) {
+        elapsed <- proc.time() - started
+        splat("pcf: computed edge weights after", codetime(elapsed))
+      }
+      kdenR <- sewpcf(d=dIJ, w=edgewt,
+                      denargs=denargs,
+                      lambda2area=lambda2area,
+                      divisor=divisor,
+                      zerocor=zerocor,
+                      fast=fast, adaptive=adaptive, tau=tau,
+                      gref=gref, Transform=Transform)
+      if(DEBUG) {
+        elapsed <- proc.time() - started
+        splat("pcf: returned from sewpcf after", codetime(elapsed))
+      }
+      gR <- kdenR$g
+      bw.used <- attr(kdenR, "bw")
+      if(adaptive)
+        bwvalues.used <- attr(kdenR, "bwvalues")
+    } else gR <- undefined
+    if(DEBUG) {
+      elapsed <- proc.time() - started
+      splat("Ready to bind.fv after", codetime(elapsed))
+    }
+    out <- bind.ratfv(out,
+                      quotient=data.frame(iso=gR),
+                      denominator=samplesize,
+                      labl="hat(%s)[Ripley](r)",
+                      desc="isotropic-corrected estimate of %s",
+                      preferred="iso",
+                      ratio=ratio)
+  }
+  
+  if(DEBUG) {
+    elapsed <- proc.time() - started
+    splat("Finished bind.fv after", codetime(elapsed))
+  }
+  
+  # sanity check
+  if(is.null(out)) {
+    warning("Nothing computed - no edge corrections chosen")
+    return(NULL)
+  }
+
+  ## variance approximation
+  ## Illian et al 2008 p 234 equation 4.3.42
+  if(var.approx) {
+    gr <- if(any(correction == "isotropic")) gR else gT
+    # integral of squared kernel
+    intk2 <- kernel.squint(kernel, bw.used)
+    # isotropised set covariance of window
+    gWbar <- as.function(rotmean(setcov(win), result="fv"))
+    vest <- gr * intk2/(pi * r * gWbar(r) * lambda^2)
+    out <- bind.ratfv(out,
+                      quotient=data.frame(v=vest),
+                      denominator=samplesize,
+                      labl="v(r)", 
+                      desc="approximate variance of %s",
+                      ratio=ratio)
+  }
+
+  ## Finish off
+  ## default is to display all corrections
+  formula(out) <- . ~ r
+  fvnames(out, ".") <- setdiff(rev(colnames(out)), c("r", "v"))
+  ##
+  unitname(out) <- unitname(X)
+  ## copy to other components
+  if(ratio)
+    out <- conform.ratfv(out)
+
+  ## save information about computation
+  attr(out, "bw") <- bw.used
+  info <- append(info, list(bw.used=bw.used))
+  if(adaptive) {
+    attr(out, "bwvalues") <- bwvalues.used
+    info <- append(info, list(bwvalues.used=bwvalues.used))
+  }
+  attr(out, "info") <- info
+  if(DEBUG) {
+    elapsed <- proc.time() - started
+    splat("pcf: exiting, time taken", codetime(elapsed))
+  }
+  return(out)
+}
+
+## ...............................................................
+##           utility to determine bandwidth
+## ...............................................................
+
+resolve.pcf.bandwidth <- function(X, ...,
+                                  lambda, rmax, nr, 
+                                  adaptive=FALSE, kernel="epanechnikov",
+                                  bw=NULL, h=NULL, bw.args=list(),
+                                  stoyan=0.15, adjust=1,
+                                  correction=c("translate", "Ripley"),
+                                  divisor=c("a", "r", "d", "t"),
+                                  zerocor=c("convolution", "reflection",
+                                            "bdrykern", "JonesFoster",
+                                            "weighted", "none",
+                                            "good", "best"),
+                                  nsmall = 300,
+                                  gref=NULL,
+                                  close=NULL) {
   info <- list(kernel=kernel, divisor=divisor, zerocor=zerocor,
                h.given=h, bw.given=bw, adjust=adjust)
   how <- rule <- NULL
@@ -251,23 +492,11 @@ pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
     info <- append(info, list(bw.calc=bw, h.calc=h))
   }
 
-  ########## r values ############################
-  # handle arguments r and breaks 
-
-  breaks <- handle.r.b.args(r, NULL, win, rmaxdefault=rmaxdefault)
-  if(!(breaks$even))
-    stop("r values must be evenly spaced")
-  # extract r values
-  r <- breaks$r
-  rmax <- breaks$max
-  # recommended range of r values for plotting
-  alim <- c(0, min(rmax, rmaxdefault))
-
   # arguments for 'density.default' or 'densityAdaptiveKernel.default'
   denargs <- resolve.defaults(list(kernel=kernel, bw=bw, adjust=adjust),
                               bw.args,
                               list(...),
-                              list(n=length(r), from=0, to=rmax),
+                              list(n=nr, from=0, to=rmax),
                               .StripNull = TRUE)
 
   ############### transformation of distances ################
@@ -307,7 +536,7 @@ pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
            }
            integrand <- function(x, g) { 2 * pi * x * g(x) }
          })
-
+  
   #################################################
   ## determine an upper bound on pairwise distances that need to be collected
   hmax <- if(is.numeric(h)) h else (2*cker*stoyan/sqrt(lambda))
@@ -348,215 +577,14 @@ pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
   if(!is.null(gref)) {
     rr <- seq(0, dmax, length.out=16384)
     tt <- indefinteg(integrand, rr, g=gref, lower=0)
-    Transform <- approxfun(rr, tt, rule=2)
-    ## InvTransform <- approxfun(tt, rr, rule=2)
-  }
-  
-  #######################################################
-  ## compute pairwise distances up to 'dmax'
-  if(npts > 1) {
-    needall <- any(correction %in% c("translate", "isotropic"))
-    if(is.null(close)) {
-      what <- if(needall) "all" else "ijd"
-      close <- closepairs(X, dmax, what=what)
-    } else {
-      #' check 'close' has correct format
-      needed <- if(!needall) c("i", "j", "d") else
-                 c("i", "j", "xi", "yi", "xj", "yj", "dx", "dy", "d")
-      if(any(is.na(match(needed, names(close)))))
-        stop(paste("Argument", sQuote("close"),
-                   "should have components named",
-                   commasep(sQuote(needed))),
-             call.=FALSE)
-    }
-    dIJ <- close$d
-  } else {
-    undefined <- rep(NaN, length(r))
+    info$Transform <- approxfun(rr, tt, rule=2)
+    info$gref <- gref
   }
 
-  # initialise fv object
-  
-  df <- data.frame(r=r, theo=rep.int(1,length(r)))
-  out <- ratfv(df,
-               NULL, samplesize,
-               "r", quote(g(r)),
-               "theo", NULL,
-               alim,
-               c("r","%s[Pois](r)"),
-               c("distance argument r", "theoretical Poisson %s"),
-               fname="g",
-               ratio=ratio)
-
-  ###### compute #######
-
-  if(DEBUG) {
-    elapsed <- proc.time() - started
-    splat("pcf: ready to compute estimates after", codetime(elapsed))
-  }
-  
-  bw.used <- bwvalues.used <- NULL
-  
-  if(any(correction=="none")) {
-    #' uncorrected
-    if(npts > 1) {
-      kdenN <- sewpcf(d=dIJ, w=1,
-                         denargs=denargs,
-                         lambda2area=lambda2area,
-                         divisor=divisor,
-                         zerocor=zerocor,
-                         fast=fast, adaptive=adaptive, tau=tau,
-                         gref=gref, Transform=Transform)
-      if(DEBUG) {
-        elapsed <- proc.time() - started
-        splat("pcf: returned from sewpcf after", codetime(elapsed))
-      }
-      gN <- kdenN$g
-      bw.used <- attr(kdenN, "bw")
-      if(adaptive)
-        bwvalues.used <- attr(kdenN, "bwvalues")
-    } else gN <- undefined
-    if(DEBUG) {
-      elapsed <- proc.time() - started
-      splat("Ready to bind.fv after", codetime(elapsed))
-    }
-    out <- bind.ratfv(out,
-                      quotient=data.frame(un=gN),
-                      denominator=samplesize,
-                      labl="hat(%s)[un](r)",
-                      desc="uncorrected estimate of %s",
-                      preferred="un",
-                      ratio=ratio)
-  }
-  
-  if(any(correction=="translate")) {
-    # translation correction
-    if(npts > 1) {
-      edgewt <- edge.Trans(dx=close$dx, dy=close$dy, W=win, paired=TRUE)
-      if(DEBUG) {
-        elapsed <- proc.time() - started
-        splat("pcf: computed edge weights after", codetime(elapsed))
-      }
-      kdenT <- sewpcf(d=dIJ, w=edgewt,
-                         denargs=denargs,
-                         lambda2area=lambda2area,
-                         divisor=divisor,
-                         zerocor=zerocor,
-                         fast=fast, adaptive=adaptive, tau=tau,
-                         gref=gref, Transform=Transform)
-      if(DEBUG) {
-        elapsed <- proc.time() - started
-        splat("pcf: returned from sewpcf after", codetime(elapsed))
-      }
-      gT <- kdenT$g
-      bw.used <- attr(kdenT, "bw")
-      if(adaptive)
-        bwvalues.used <- attr(kdenT, "bwvalues")
-    } else gT <- undefined
-    if(DEBUG) {
-      elapsed <- proc.time() - started
-      splat("Ready to bind.fv after", codetime(elapsed))
-    }
-    out <- bind.ratfv(out,
-                      quotient=data.frame(trans=gT),
-                      denominator=samplesize,
-                      labl="hat(%s)[Trans](r)",
-                      desc="translation-corrected estimate of %s",
-                      preferred="trans",
-                      ratio=ratio)
-  }
-
-  if(any(correction=="isotropic")) {
-    # Ripley isotropic correction
-    if(npts > 1) {
-      XI <- ppp(close$xi, close$yi, window=win, check=FALSE)
-      edgewt <- edge.Ripley(XI, matrix(dIJ, ncol=1))
-      if(DEBUG) {
-        elapsed <- proc.time() - started
-        splat("pcf: computed edge weights after", codetime(elapsed))
-      }
-      kdenR <- sewpcf(d=dIJ, w=edgewt,
-                         denargs=denargs,
-                         lambda2area=lambda2area,
-                         divisor=divisor,
-                         zerocor=zerocor,
-                         fast=fast, adaptive=adaptive, tau=tau,
-                         gref=gref, Transform=Transform)
-      if(DEBUG) {
-        elapsed <- proc.time() - started
-        splat("pcf: returned from sewpcf after", codetime(elapsed))
-      }
-      gR <- kdenR$g
-      bw.used <- attr(kdenR, "bw")
-      if(adaptive)
-        bwvalues.used <- attr(kdenR, "bwvalues")
-    } else gR <- undefined
-    if(DEBUG) {
-      elapsed <- proc.time() - started
-      splat("Ready to bind.fv after", codetime(elapsed))
-    }
-    out <- bind.ratfv(out,
-                      quotient=data.frame(iso=gR),
-                      denominator=samplesize,
-                      labl="hat(%s)[Ripley](r)",
-                      desc="isotropic-corrected estimate of %s",
-                      preferred="iso",
-                      ratio=ratio)
-  }
-  
-  if(DEBUG) {
-    elapsed <- proc.time() - started
-    splat("Finished bind.fv after", codetime(elapsed))
-  }
-  
-  # sanity check
-  if(is.null(out)) {
-    warning("Nothing computed - no edge corrections chosen")
-    return(NULL)
-  }
-
-  ## variance approximation
-  ## Illian et al 2008 p 234 equation 4.3.42
-  if(var.approx) {
-    gr <- if(any(correction == "isotropic")) gR else gT
-    # integral of squared kernel
-    intk2 <- kernel.squint(kernel, bw.used)
-    # isotropised set covariance of window
-    gWbar <- as.function(rotmean(setcov(win), result="fv"))
-    vest <- gr * intk2/(pi * r * gWbar(r) * lambda^2)
-    out <- bind.ratfv(out,
-                      quotient=data.frame(v=vest),
-                      denominator=samplesize,
-                      labl="v(r)", 
-                      desc="approximate variance of %s",
-                      ratio=ratio)
-  }
-
-  ## Finish off
-  ## default is to display all corrections
-  formula(out) <- . ~ r
-  fvnames(out, ".") <- setdiff(rev(colnames(out)), c("r", "v"))
-  ##
-  unitname(out) <- unitname(X)
-  ## copy to other components
-  if(ratio)
-    out <- conform.ratfv(out)
-
-  ## save information about computation
-  attr(out, "bw") <- bw.used
-  info <- append(info, list(bw.used=bw.used))
-  if(adaptive) {
-    attr(out, "bwvalues") <- bwvalues.used
-    info <- append(info, list(bwvalues.used=bwvalues.used))
-  }
-  attr(out, "info") <- info
-  if(DEBUG) {
-    elapsed <- proc.time() - started
-    splat("pcf: exiting, time taken", codetime(elapsed))
-  }
-  return(out)
+  return(list(info=info, denargs=denargs))
 }
 
-
+## >>>>>>>>>>>>>>>>>>>>>> SMOOTHING ESTIMATE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 # Smoothing Estimate of Weighted Pair Correlation
 # d = vector of relevant distances
 # w = vector of edge correction weights (in normal use)

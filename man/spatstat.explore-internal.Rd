@@ -154,6 +154,7 @@
 \alias{resolve.lambda.ppp}
 \alias{resolve.lambdacross}
 \alias{resolve.lambdacross.ppp}
+\alias{resolve.pcf.bandwidth}
 \alias{resolve.reciplambda}
 \alias{resolve.reciplambda.ppp}
 \alias{resolveEinfo}
@@ -430,6 +431,9 @@ resolve.lambdacross(X, I, J, lambdaI, lambdaJ, \dots)
 \method{resolve.lambdacross}{ppp}(X, I, J, lambdaI, lambdaJ, \dots,
          lambdaX, sigma, varcov, leaveoneout, update, lambdaIJ,
          Iexplain, Jexplain)
+resolve.pcf.bandwidth(X, \dots, lambda, rmax, nr, adaptive, kernel,
+  bw, h, bw.args, stoyan, adjust, correction, divisor, zerocor, nsmall,
+  gref, close)
 resolve.reciplambda(X, lambda, reciplambda, \dots)
 \method{resolve.reciplambda}{ppp}(X, lambda, reciplambda, \dots,
                     sigma, varcov, leaveoneout, update, check)

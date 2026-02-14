@@ -6,7 +6,7 @@ OVERVIEW
     o We thank Andrew Bevan, Meri Bilan, Tilman Davies and Martin Hazelton
     for contributions.
     
-    o Important changes to default settings in pcf and pcfinhom.
+    o Important changes to default settings for pair correlation functions.
 
     o New options in pcfdot, pcfcross, pcfmulti.
 
@@ -29,14 +29,14 @@ SIGNIFICANT USER-VISIBLE CHANGES
     Default value of 'normpower' has changed to 2.
 
     o pcfcross, pcfdot, pcfmulti
-    Kernel estimation now uses the same algorithm as 'pcf.ppp' and 'pcfinhom'.
-    Default settings changed.
+    The default estimation method has changed. The new default is
+    based on squared distances (divisor="a").
 
     o pcfmulti
-    New arguments h, bw.args, adjust, zerocor, nsmall, gref.
+    New arguments h, bw.args, adjust, zerocor, nsmall, gref, tau, close.
     
     o pcfcross, pcfdot
-    Shortened list of formal arguments (pass arguments to 'pcfmulti')
+    Shortened list of formal arguments (other arguments pass to 'pcfmulti')
     
     o density.ppp
     Argument 'weights' can be logical valued.
