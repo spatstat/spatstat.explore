@@ -1,7 +1,7 @@
 #'
 #' bw.pcf.R
 #'
-#' $Revision: 1.10 $  $Date: 2025/03/15 10:57:44 $
+#' $Revision: 1.11 $  $Date: 2026/02/14 10:06:42 $
 #'
 #' bandwidth selection for pcf
 #' with least-squares cross-validation method
@@ -88,7 +88,7 @@ BWPCFengine <- function(X, ..., lambda=NULL,
 
   if(cv.method == "oracle") stopifnot(is.function(gtrue))
 
-  homogeneous <- !is.null(lambda)
+  homogeneous <- is.null(lambda)
   
   if(adaptive) warning("adaptive=TRUE is currently ignored!")
 

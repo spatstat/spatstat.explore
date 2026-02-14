@@ -5,7 +5,7 @@
 #'
 #' Copyright (c) 2008-2025 Adrian Baddeley, Tilman Davies and Martin Hazelton
 #'
-#' $Revision: 1.34 $ $Date: 2026/02/14 01:51:37 $
+#' $Revision: 1.36 $ $Date: 2026/02/14 10:43:24 $
 
 pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL, 
                      adaptive=FALSE,
@@ -30,56 +30,83 @@ pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL,
                      domain=NULL, ratio=FALSE,
                      close=NULL)
 {
+  verifyclass(X, "ppp")
   if(is.NAobject(X)) return(NAobject("fv"))
-
+  npts <- npoints(X)
+  win <- Window(X)
+  areaW <- area(win)
+  
   kernel <- match.kernel(kernel)
-  if(is.function(divisor)) divisor <- divisor(X)
-  if(divisor.given <- !missing(divisor)) {
+
+  divisor.given <- !missing(divisor) && !is.null(divisor)
+  zerocor.given <- !missing(zerocor) && !is.null(zerocor)
+  correction.given <- !missing(correction) && !is.null(correction)
+
+  if(!divisor.given || !zerocor.given) 
+    warn.once("pcfinhomDefaults",
+              paste("Default settings for pcfinhom",
+                    "have changed in spatstat.explore 3.7-0.007"))
+
+  if(divisor.given) {
     if(is.function(divisor)) divisor <- divisor(X)
     divisor <- match.arg(divisor)
+  } else {
+    divisor <- "a"
   }
-  if(zerocor.given <- !missing(zerocor)) {
+
+  if(zerocor.given) {
     zerocor <- match.arg(zerocor)
     if(zerocor == "best") zerocor <- "JonesFoster"
     if(zerocor == "good") zerocor <- "convolution"
+  } else {
+    ## default depends on number of data points
+    if(!missing(nsmall)) check.1.integer(nsmall)
+    zerocor <- if(npts <= nsmall) "JonesFoster" else "convolution"
   }
+
   check.1.real(adjust)
+
+  ## ..................................................
+  ## ....... INTENSITY VALUES .........................
+  ## ..................................................
+
+  a <- resolve.reciplambda(X, lambda=lambda, reciplambda=reciplambda,
+                           ..., sigma=sigma, adjust=adjust.sigma, varcov=varcov,
+                           leaveoneout=leaveoneout, update=update, check=TRUE)
+  reciplambda <- a$reciplambda
+  lambda      <- a$lambda
+  danger      <- a$danger
+  dangerous   <- a$dangerous
   
-  ## ...... get point pattern information .......
-  verifyclass(X, "ppp")
-  win <- Window(X)
-  areaW <- area(win)
-  npts <- npoints(X)
-  lambdaBar <- npts/areaW
-  samplesize <- npairs <- npts * (npts - 1)
-  rmaxdefault <- rmax %orifnull% rmax.rule("K", win, lambdaBar)        
+  ## renormalise?
+  if(renormalise && npts > 1) {
+    if(missing(normpower)) {
+      warn.once("pcfinhom.normpower",
+                "Default value of normpower has changed in pcfinhom")
+    } else {
+      check.1.real(normpower)
+      stopifnot(normpower %in% 1:2)
+    }
+    renorm.factor <- (areaW/sum(reciplambda))^normpower
+  } 
+  
+  ## vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+  ## >>>>>>>>>>>>>> SPECIAL CASE <<<<<<<<<<<<<<<<<<<<<<<<<<
+  ## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
   ## ....... handle argument 'domain' .......................  
   if(!is.null(domain)) {
-    ## Apply different defaults in this case    
-    if(!divisor.given) {
-      divisor <- "d"
-    } else if(!(divisor %in% c("r", "d"))) {
-      stop(paste("Sorry, option divisor =", sQuote(divisor),
-                 "is not yet available when 'domain' is given"),
-           call.=FALSE)
-    }
-    if(!zerocor.given) {
-      zerocor <- "none"
-    } else if(zerocor != 'none') {
-      stop(paste0("Sorry, option zerocor=", sQuote(zerocor),
-                  "is not yet available when 'domain' is given"),
-           call.=FALSE)
-    }
+    message("Sorry, argument 'domain' is currently not supported by pcfinhom")
+    return(NAobject("fv")) ## CURRENTLY BROKEN
     ## estimate based on contributions from a subdomain
     domain <- as.owin(domain)
-    if(!is.subset.owin(domain, win))
+    if(!is.subset.owin(domain, Window(X)))
       stop(paste(dQuote("domain"),
                  "is not a subset of the window of X"))
     # trick pcfdot() into doing it
     indom <- inside.owin(X$x, X$y, domain)
     marx <- factor(indom, levels=c(FALSE,TRUE))
-    g <- pcfdot(X %mark% marx,
+    g <- pcfdot.inhom(X %mark% marx,
                 i="TRUE",
                 r=r,
                 correction=correction, kernel=kernel, bw=bw, stoyan=stoyan,
@@ -94,7 +121,7 @@ pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL,
       samplesize <- ninside * (npts-1)
       g <- ratfv(as.data.frame(g), NULL, samplesize,
                  "r", quote(g(r)),
-                 "theo", NULL, c(0, rmaxdefault), 
+                 "theo", NULL, c(0, max(g$r)), 
                  attr(g, "labl"), attr(g, "desc"), fname="g",
                  ratio=TRUE)
     }
@@ -104,176 +131,17 @@ pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL,
     return(g)
   }
 
-  ## .............  Finally apply defaults for normal case .............
+  ## vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+  ## >>>>>>>>>>>>>> NORMAL CASE <<<<<<<<<<<<<<<<<<<<<<<<<<<
+  ## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   
-  if(!divisor.given || !zerocor.given) {
+  ## ...... get point pattern information .......
+  verifyclass(X, "ppp")
+  lambdaBar <- npts/areaW
+  samplesize <- npairs <- npts * (npts - 1)
+  rmaxdefault <- rmax %orifnull% rmax.rule("K", win, lambdaBar)        
 
-    warn.once("pcfinhomDefaults",
-              "default settings have changed for pcfinhom",
-              "in spatstat.explore >= 3.7-0.007")
-    
-    if(!divisor.given)
-      divisor <- "a"
-
-    if(!zerocor.given) {
-      ## default depends on number of data points
-      if(!missing(nsmall)) check.1.integer(nsmall)
-      zerocor <- if(npts <= nsmall) "JonesFoster" else "convolution"
-    }
-
-  }
-
-  
-  ## ......... edge correction .........................
-  correction.given <- !missing(correction)
-  correction <- pickoption("correction", correction,
-                           c(isotropic="isotropic",
-                             Ripley="isotropic",
-                             trans="translate",
-                             translate="translate",
-                             translation="translate",
-                             good="translate",
-                             best="best",
-                             none="none"),
-                           multi=TRUE)
-
-  correction <- implemented.for.K(correction, win$type, correction.given)
-
-  ## ....... intensity values .........................
-
-  a <- resolve.reciplambda(X, lambda=lambda, reciplambda=reciplambda,
-                           ..., sigma=sigma, adjust=adjust.sigma, varcov=varcov,
-                           leaveoneout=leaveoneout, update=update, check=TRUE)
-  reciplambda <- a$reciplambda
-  lambda      <- a$lambda
-  danger      <- a$danger
-  dangerous   <- a$dangerous
-  
-  ## renormalise?
-  if(renormalise && npts > 0) {
-    if(missing(normpower)) {
-      warn.once("pcfinhom.normpower",
-                "Default value of normpower has changed in pcfinhom")
-    } else {
-      check.1.real(normpower)
-      stopifnot(normpower %in% 1:2)
-    }
-    renorm.factor <- (areaW/sum(reciplambda))^normpower
-  } 
-  
-  ## .... determine bandwidth ......................
-
-  info <- list(kernel=kernel, divisor=divisor, zerocor=zerocor,
-               h.given=h, bw.given=bw, adjust=adjust)
-  how <- rule <- NULL
-  
-  if(!is.null(bw) && !is.null(h))
-    stop("Arguments 'h' and 'bw' are incompatible", call.=FALSE)
-
-  ## how the bandwidth will be determined
-  if(is.null(bw) && is.null(h)) {
-    ## default rule
-    how <- "rule"
-    rule <- bw <- if(!adaptive) "bw.stoyan" else "bw.abram"
-  } else if(!is.null(h)) {
-    ## h is given
-    if(is.character(h)) {
-      how <- "rule"
-      rule <- tolower(h)
-    } else if(is.numeric(h)) {
-      stopifnot(length(h) == 1 && h > 0)
-      how <- "h"
-    } else stop("h should be a numeric value, or a character string")
-  } else {
-    ## bw is given
-    if(is.numeric(bw) && length(bw) == 1) {
-      if(bw <= 0) stop("The bandwidth bw should be positive", call.=FALSE)
-      how <- "bw"
-    } else if(is.character(bw)) {
-      how <- "rule"
-      rule <- tolower(bw)
-    } else if(is.function(bw)) {
-      how <- "fun"
-      rule <- bw
-    } else stop("bw should be a numeric value, a string, or a function",
-                call.=FALSE)
-  }
-  info <- append(info, list(how=how, rule=rule))
-
-  ## bandwidth arguments bw.args may depend on X
-  if(is.function(bw.args)) {
-    bw.args <- bw.args(X)
-    if(!is.list(bw.args))
-      stop("When bw.args is a function, it should return a named list",
-           call.=FALSE)
-  }
-
-  
-  ## now actually determine the bandwidth from X (unless adaptive = TRUE)
-  cker <- kernel.factor(kernel)
-  switch(how,
-         bw = {
-           ## bandwidth is determined by numeric value 'bw'
-           h <- bw * cker
-         },
-         h = {
-           ## bandwidth is determined by numeric value 'h'
-           bw <- h / cker
-         },
-         fun = {
-           if(!adaptive) {
-             ## bandwidth selection *function* applied to X
-             bwformals <- names(formals(bw))
-             xtra <- list(kernel=kernel,
-                          correction=correction[1L],
-                          divisor=divisor,
-                          zerocor=zerocor,
-                          adaptive=adaptive,
-                          lambda=lambda,
-                          close=close)
-             if(!("..." %in% bwformals)) 
-               xtra <- xtra[intersect(names(xtra), bwformals)]
-             bw.args <- resolve.defaults(bw.args, xtra)
-             bw <- do.call(bw, append(list(quote(X)), bw.args))
-             check.bandwidth(bw, "bandwidth value returned by function 'bw'")
-             bw.args <- list()
-             h <- cker * bw
-           }
-         },
-         rule = {
-           ## Character argument 'rule' specifies a bandwidth selection rule
-           ## handle the spatial statistics rules now
-           switch(rule,
-                  bw.stoyan = ,
-                  stoyan = {
-                    ## Stoyan & Stoyan 1995, eq (15.16), page 285
-                    ## for Epanechnikov kernel
-                    bw <- stoyan/sqrt(5 * lambdaBar)
-                    h <- bw * cker
-                  },
-                  bw.fiksel = ,
-                  fiksel = {
-                    ## Fiksel (1988)
-                    bw <- 0.1/sqrt(lambdaBar)
-                    h <- bw * cker
-                  })
-           ## (bandwidth may still be 'character')
-         })
-
-  #' bandwidth may still be 'character' or 'function'
-  
-  if(is.numeric(bw)) {
-    ## absorb the 'adjust' factor now
-    bw <- adjust * bw
-    h <- adjust * h
-    adjust <- 1
-    info <- append(info, list(bw.calc=bw, h.calc=h))
-  }
-
-
-  ########## r values ############################
-  # handle arguments r and breaks 
-
+  ## ......... distance values .........................
   breaks <- handle.r.b.args(r, NULL, win, rmaxdefault=rmaxdefault)
   if(!(breaks$even))
     stop("r values must be evenly spaced")
@@ -283,100 +151,50 @@ pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL,
   # recommended range of r values for plotting
   alim <- c(0, min(rmax, rmaxdefault))
 
-  # arguments for 'density.default' or 'densityAdaptiveKernel.default'
-  denargs <- resolve.defaults(list(kernel=kernel, bw=bw, adjust=adjust),
-                              bw.args,
-                              list(...),
-                              list(n=length(r), from=0, to=rmax),
-                              .StripNull = TRUE)
-
-  ############### transformation of distances ################
-
-  switch(divisor,
-         r = ,
-         d = ,
-         a = {
-           if(!is.null(gref)) {
-             warning(paste("Argument gref is ignored when divisor =",
-                           dQuote(divisor)), call.=FALSE)
-             gref <- NULL
-           }
-         },
-         t = {
-           if(is.null(gref)) {
-             ## default: the pcf of the Poisson process
-             gref <- function(x) { rep.int(1, length(x)) }
-           } else {
-             ## normal case: user specified reference function or model
-             if(inherits(gref, c("kppm", "dppm", "ppm", "slrm",
-                                 "detpointprocfamily", "zclustermodel"))) {
-               model <- gref
-               if(!requireNamespace("spatstat.model")) 
-                 stop("The package spatstat.model is required when",
-                      "'gref' is a fitted model",
-                      call.=FALSE)
-               gref <- spatstat.model::pcfmodel(model)
-               if(!is.function(gref))
-                 stop("Internal error: pcfmodel() did not yield a function",
-                      call.=FALSE)
-             } else if(!is.function(gref)) {
-               stop(paste("Argument", sQuote("gref"),
-                          "should be a function or a point process model"),
-                    call.=FALSE)
-             }
-           }
-           integrand <- function(x, g) { 2 * pi * x * g(x) }
-         })
-
-  #################################################
-  ## determine an upper bound on pairwise distances that need to be collected
-  hmax <- if(is.numeric(h) && length(h) == 1) h else
-          (2*cker*stoyan/sqrt(lambdaBar))
-  dmax <- rmax + hmax * if(kernel == "gaussian") 4 else 1
-  if(is.numeric(denargs$bw)) {
-    ## compute the bandwidth on the transformed scale now
-    switch(divisor,
-           r = {},
-           d = {},
-           a = {
-             ## convert to bandwidth(s) for areas
-             ## (using same rule as in 'sewpcf')
-             bw.area <- with(denargs, pi * (from + to) * bw)
-             dmax.area <- pi * rmax^2
-             hmax.area <- cker * max(bw.area)
-             dmax.area <- dmax.area + hmax.area
-             dmax <- max(dmax, dmax.area)
-           },
-           t = {
-             ## use transformation
-             midpoint <- with(denargs, (from + to)/2)
-             ## compute derivative of transformation at midpoint of interval
-             midslope <- 2 * pi * midpoint * gref(midpoint)
-             ## convert bandwidth to transformed scale
-             bw.trans <- midslope * denargs$bw
-             dmax.trans <-
-               integrate(integrand, lower=0, upper=dmax, g=gref)$value
-             if(!is.finite(dmax.trans))
-               stop("Internal error: numerical quadrature failed",
-                    call.=FALSE)
-             hmax.trans <- cker * max(bw.trans)
-             dmax.trans <- dmax.trans + hmax.trans
-             dmax <- max(dmax, dmax.trans)
-           })
+  ## ......... edge correction .........................
+  if(correction.given) {
+    correction <- pickoption("correction", correction,
+                             c(isotropic="isotropic",
+                               Ripley="isotropic",
+                               trans="translate",
+                               translate="translate",
+                               translation="translate",
+                               good="translate",
+                               best="best",
+                               none="none"),
+                             multi=TRUE)
+  } else {
+    correction <- c("translate", "Ripley")
   }
-  info <- append(info, list(rmax=rmax, hmax=hmax, dmax=dmax))
 
-  ## Precompute transform and inverse transform
-  if(!is.null(gref)) {
-    rr <- seq(0, dmax, length.out=16384)
-    tt <- indefinteg(integrand, rr, g=gref, lower=0)
-    Transform <- approxfun(rr, tt, rule=2)
-    ## InvTransform <- approxfun(tt, rr, rule=2)
-  }
+  correction <- implemented.for.K(correction, win$type, correction.given)
+
+  ## .... determine smoothing argyments ......................
+  
+  M <- resolve.pcf.bandwidth(X,
+                             lambda=lambdaBar, ## NB
+                             rmax=rmax, nr=length(r),
+                             adaptive=adaptive, kernel=kernel,
+                             bw=bw, h=h, bw.args=bw.args,
+                             stoyan=stoyan, adjust=adjust,
+                             correction=correction,
+                             divisor=divisor,
+                             zerocor=zerocor,
+                             nsmall=nsmall,
+                             gref=gref,
+                             close=close)
+
+  info    <- M$info
+  denargs <- M$denargs
+
+  Transform <- info$Transform
+  dmax      <- info$dmax
+  gref      <- info$gref
+
   
   #######################################################
   ## compute pairwise distances up to 'dmax'
-  if(npts > 1) {
+  if(npairs > 0) {
     needall <- any(correction %in% c("translate", "isotropic"))
     if(is.null(close)) {
       what <- if(needall) "all" else "ijd"
@@ -419,14 +237,14 @@ pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL,
   
   if(any(correction=="none")) {
     #' uncorrected
-    if(npts > 1) {
+    if(npairs > 0) {
       kdenN <- sewpcf(d=dIJ, w=wIJ,
-                         denargs=denargs,
-                         lambda2area=areaW,
-                         divisor=divisor,
-                         zerocor=zerocor,
-                         fast=fast, adaptive=adaptive, tau=tau,
-                         gref=gref, Transform=Transform)
+                      denargs=denargs,
+                      lambda2area=areaW,
+                      divisor=divisor,
+                      zerocor=zerocor,
+                      fast=fast, adaptive=adaptive, tau=tau,
+                      gref=gref, Transform=Transform)
       gN <- kdenN$g
       if(renormalise) gN <- gN * renorm.factor
       bw.used <- attr(kdenN, "bw")
@@ -444,15 +262,15 @@ pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL,
   
   if(any(correction=="translate")) {
     # translation correction
-    if(npts > 1) {
+    if(npairs > 0) {
       edgewt <- edge.Trans(dx=close$dx, dy=close$dy, W=win, paired=TRUE)
       kdenT <- sewpcf(d=dIJ, w=edgewt * wIJ,
-                         denargs=denargs,
-                         lambda2area=areaW,
-                         divisor=divisor,
-                         zerocor=zerocor,
-                         fast=fast, adaptive=adaptive, tau=tau,
-                         gref=gref, Transform=Transform)
+                      denargs=denargs,
+                      lambda2area=areaW,
+                      divisor=divisor,
+                      zerocor=zerocor,
+                      fast=fast, adaptive=adaptive, tau=tau,
+                      gref=gref, Transform=Transform)
       gT <- kdenT$g
       if(renormalise) gT <- gT * renorm.factor
       bw.used <- attr(kdenT, "bw")
@@ -470,16 +288,16 @@ pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL,
 
   if(any(correction=="isotropic")) {
     # Ripley isotropic correction
-    if(npts > 1) {
+    if(npairs > 0) {
       XI <- ppp(close$xi, close$yi, window=win, check=FALSE)
       edgewt <- edge.Ripley(XI, matrix(dIJ, ncol=1))
       kdenR <- sewpcf(d=dIJ, w=edgewt * wIJ,
-                         denargs=denargs,
-                         lambda2area=areaW,
-                         divisor=divisor,
-                         zerocor=zerocor,
-                         fast=fast, adaptive=adaptive, tau=tau,
-                         gref=gref, Transform=Transform)
+                      denargs=denargs,
+                      lambda2area=areaW,
+                      divisor=divisor,
+                      zerocor=zerocor,
+                      fast=fast, adaptive=adaptive, tau=tau,
+                      gref=gref, Transform=Transform)
       gR <- kdenR$g
       if(renormalise) gR <- gR * renorm.factor
       bw.used <- attr(kdenR, "bw")
@@ -495,10 +313,13 @@ pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL,
                       ratio=ratio)
   }
   
+  # which corrections have been computed?
+  corrxns <- rev(setdiff(names(out), "r"))
+
   # sanity check
-  if(is.null(out)) {
+  if(length(corrxns) == 0) {
     warning("Nothing computed - no edge corrections chosen")
-    return(NULL)
+    return(NAobject("fv"))
   }
 
   ## variance approximation

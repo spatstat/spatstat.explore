@@ -1,7 +1,7 @@
 #
 #   pcfmulti.inhom.R
 #
-#   $Revision: 1.21 $   $Date: 2026/01/21 06:26:39 $
+#   $Revision: 1.23 $   $Date: 2026/02/14 11:06:54 $
 #
 #   inhomogeneous multitype pair correlation functions
 #
@@ -94,54 +94,60 @@ function(X, i, lambdaI=NULL, lambdadot=NULL, ...,
 pcfmulti.inhom <- function(X, I, J, lambdaI=NULL, lambdaJ=NULL, ...,
                            lambdaX=NULL,
                            r=NULL, breaks=NULL,  rmax=NULL,
+                           adaptive=FALSE, 
                            kernel="epanechnikov",
-                           bw=NULL, adjust.bw=1, stoyan=0.15,
+                           bw=NULL, h=NULL, bw.args=list(),
+                           stoyan=0.15, adjust.bw=1,
                            correction=c("translate", "Ripley"),
+                           divisor=c("a", "r", "d", "t"),
+                           zerocor=c("convolution", "reflection", "bdrykern",
+                                     "JonesFoster", "weighted", "none",
+                                     "good", "best"),
+                           nsmall = 300,
                            sigma=NULL, adjust.sigma=1, varcov=NULL,
                            update=TRUE, leaveoneout=TRUE,
+                           gref=NULL,
+                           tau = 0,
                            Iname="points satisfying condition I",
-                           Jname="points satisfying condition J")
+                           Jname="points satisfying condition J",
+                           IJexclusive=FALSE,
+                           close=NULL)
 {
   verifyclass(X, "ppp")
   if(is.NAobject(X)) return(NAobject("fv"))
-#  r.override <- !is.null(r)
-
+  
   win <- X$window
   areaW <- area(win)
   npts <- npoints(X)
   
+  divisor.given <- !missing(divisor) && !is.null(divisor)
+  zerocor.given <- !missing(zerocor) && !is.null(zerocor)
   correction.given <- !missing(correction) && !is.null(correction)
-  if(is.null(correction))
-    correction <- c("translate", "Ripley")
-  correction <- pickoption("correction", correction,
-                           c(isotropic="isotropic",
-                             Ripley="isotropic",
-                             trans="translate",
-                             translate="translate",
-                             translation="translate",
-                             best="best"),
-                           multi=TRUE)
 
-  correction <- implemented.for.K(correction, win$type, correction.given)
-  
-  # bandwidth  
-  if(is.null(bw) && kernel=="epanechnikov") {
-    # Stoyan & Stoyan 1995, eq (15.16), page 285
-    h <- stoyan /sqrt(npts/areaW)
-    hmax <- h
-    # conversion to standard deviation
-    bw <- h/sqrt(5)
-  } else if(is.numeric(bw)) {
-    # standard deviation of kernel specified
-    # upper bound on half-width
-    hmax <- 3 * bw
+  if(!divisor.given || !zerocor.given) 
+    warn.once("pcfinhomDefaults",
+              paste("Default settings for pcfinhom",
+                    "have changed in spatstat.explore 3.7-0.007"))
+
+  if(divisor.given) {
+    if(is.function(divisor)) divisor <- divisor(X)
+    divisor <- match.arg(divisor)
   } else {
-    # data-dependent bandwidth selection: guess upper bound on half-width
-    hmax <- 2 * stoyan /sqrt(npts/areaW)
+    divisor <- "a"
   }
 
-  hmax <- adjust.bw * hmax
-  
+  if(zerocor.given) {
+    zerocor <- match.arg(zerocor)
+    if(zerocor == "best") zerocor <- "JonesFoster"
+    if(zerocor == "good") zerocor <- "convolution"
+  } else {
+    ## default depends on number of data points
+    if(!missing(nsmall)) check.1.integer(nsmall)
+    zerocor <- if(npts <= nsmall) "JonesFoster" else "convolution"
+  }
+
+  check.1.real(adjust.bw)
+
   ##########  indices I and J  ########################
   
   if(!is.logical(I) || !is.logical(J))
@@ -157,9 +163,14 @@ pcfmulti.inhom <- function(X, I, J, lambdaI=NULL, lambdaJ=NULL, ...,
 
   XI <- X[I]
   XJ <- X[J]
+
+  nIJ <- if(IJexclusive) 0 else sum(I & J)
+  npairs <- nI * nJ - nIJ
+  IJexclusive <- IJexclusive || (nIJ == 0)
+
+  lambdaJbar <- nJ/areaW
   
   ########## intensity values #########################
-
   a <- resolve.lambdacross(X=X, I=I, J=J,
                            lambdaI=lambdaI,
                            lambdaJ=lambdaJ,
@@ -173,10 +184,8 @@ pcfmulti.inhom <- function(X, I, J, lambdaI=NULL, lambdaJ=NULL, ...,
   danger    <- a$danger
   dangerous <- a$dangerous
 
-  ########## r values ############################
-  # handle arguments r and breaks 
-
-  rmaxdefault <- rmax %orifnull% rmax.rule("K", win, npts/areaW)        
+  ## .........distance values r ........................
+  rmaxdefault <- rmax %orifnull% rmax.rule("K", win, lambdaJbar)        
   breaks <- handle.r.b.args(r, breaks, win, rmaxdefault=rmaxdefault)
   if(!(breaks$even))
     stop("r values must be evenly spaced")
@@ -186,8 +195,48 @@ pcfmulti.inhom <- function(X, I, J, lambdaI=NULL, lambdaJ=NULL, ...,
   # recommended range of r values for plotting
   alim <- c(0, min(rmax, rmaxdefault))
 
-  # initialise fv object
+  ## .............. edge correction .....................
+  if(correction.given) {
+    correction <- pickoption("correction", correction,
+                             c(isotropic="isotropic",
+                               Ripley="isotropic",
+                               trans="translate",
+                               translate="translate",
+                               translation="translate",
+                               good="translate",
+                               best="best"),
+                            multi=TRUE)
+  } else {
+    correction <- c("translate", "Ripley")
+  }
+  correction <- implemented.for.K(correction, win$type, correction.given)
+
+  ## .... determine smoothing argyments ......................
+
+  M <- resolve.pcf.bandwidth(X,
+                             lambda=lambdaJbar, 
+                             rmax=rmax, nr=length(r),
+                             adaptive=adaptive, kernel=kernel,
+                             bw=bw, h=h, bw.args=bw.args,
+                             stoyan=stoyan, adjust=adjust.bw,
+                             correction=correction,
+                             divisor=divisor,
+                             zerocor=zerocor,
+                             nsmall=nsmall,
+                             gref=gref,
+                             close=close)
+
+  info    <- M$info
+  denargs <- M$denargs
+
+  Transform <- info$Transform
+  dmax      <- info$dmax
+  gref      <- info$gref
+
   
+  #################################################
+  
+  ## initialise fv object
   df <- data.frame(r=r, theo=rep.int(1,length(r)))
   fname <- c("g", "list(inhom,I,J)")
   out <- fv(df, "r",
@@ -198,48 +247,70 @@ pcfmulti.inhom <- function(X, I, J, lambdaI=NULL, lambdaJ=NULL, ...,
             fname=fname,
             yexp=quote(g[list(inhom,I,J)](r)))
   
-  ########## smoothing parameters for pcf ############################  
-  # arguments for 'density'
+  ## compute I-to-J distances up to 'dmax'
 
-  denargs <- resolve.defaults(list(kernel=kernel, bw=bw, adjust=adjust.bw),
-                              list(...),
-                              list(n=length(r), from=0, to=rmax))
-  
-  #################################################
-  
-  # compute pairwise distances
-  
-# identify close pairs of points
-  close <- crosspairs(XI, XJ, rmax+hmax, what="ijd")
-# map (i,j) to original serial numbers in X
-  orig <- seq_len(npts)
-  imap <- orig[I]
-  jmap <- orig[J]
-  iX <- imap[close$i]
-  jX <- jmap[close$j]
-# eliminate any identical pairs
-  if(any(I & J)) {
-    ok <- (iX != jX)
-    if(!all(ok)) {
-      close$i  <- close$i[ok]
-      close$j  <- close$j[ok]
-      close$d  <- close$d[ok]
+ if(npairs > 0) {
+    needall <- any(correction %in% c("translate", "isotropic"))
+    if(is.null(close)) {
+      what <- if(needall) "all" else "ijd"
+      if(IJexclusive) {
+        close <- crosspairs(XI, XJ, dmax, what=what)
+      } else {
+        ## exclude pairs of identical points
+        close <- crosspairs(XI, XJ, dmax, what=what,
+                            iX=which(I), iY=which(J))
+      }
+    } else {
+      #' check 'close' has correct format
+      needed <- if(!needall) c("i", "j", "d") else
+                 c("i", "j", "xi", "yi", "xj", "yj", "dx", "dy", "d")
+      if(any(is.na(match(needed, names(close)))))
+        stop(paste("Argument", sQuote("close"),
+                   "should have components named",
+                   commasep(sQuote(needed))),
+             call.=FALSE)
     }
+    dclose <- close$d
+    icloseI  <- close$i
+    jcloseJ  <- close$j
+  } else {
+    undefined <- rep(NaN, length(r))
   }
-# extract information for these pairs (relative to orderings of XI, XJ)
-  dclose <- close$d
-  icloseI  <- close$i
-  jcloseJ  <- close$j
-
-# Form weight for each pair
+  
+  ## Form weight for each pair
   weight <- 1/(lambdaI[icloseI] * lambdaJ[jcloseJ])
 
   ###### compute #######
 
+  bw.used <- bwvalues.used <- NULL  
+
+  if(any(correction=="none")) {
+    #' uncorrected
+    if(npairs > 0) {
+      kdenN <- sewpcf(dclose, edgewt * weight, denargs, areaW)
+      gN <- kdenN$g
+      bw.used <- attr(kdenN, "bw")
+      if(adaptive) bwvalues.used <- attr(kdenN, "bwvalues")
+    } else {
+      gN <- undefined
+    }
+    out <- bind.fv(out,
+                   data.frame(un=gN),
+                   makefvlabel(NULL, "hat", fname, "un"),
+                   "uncorrected estimate of %s",
+                   "un")
+  }
   if(any(correction=="translate")) {
-    # translation correction
-    edgewt <- edge.Trans(XI[icloseI], XJ[jcloseJ], paired=TRUE)
-    gT <- sewpcf(dclose, edgewt * weight, denargs, areaW)$g
+    #' translation correction
+    if(npairs > 0) {
+      edgewt <- edge.Trans(XI[icloseI], XJ[jcloseJ], paired=TRUE)
+      kdenT <- sewpcf(dclose, edgewt * weight, denargs, areaW)
+      gT <- kdenT$g
+      bw.used <- attr(kdenT, "bw")
+      if(adaptive) bwvalues.used <- attr(kdenT, "bwvalues")
+    } else {
+      gT <- undefined
+    }
     out <- bind.fv(out,
                    data.frame(trans=gT),
                    makefvlabel(NULL, "hat", fname, "Trans"),
@@ -247,9 +318,16 @@ pcfmulti.inhom <- function(X, I, J, lambdaI=NULL, lambdaJ=NULL, ...,
                    "trans")
   }
   if(any(correction=="isotropic")) {
-    # Ripley isotropic correction
-    edgewt <- edge.Ripley(XI[icloseI], matrix(dclose, ncol=1))
-    gR <- sewpcf(dclose, edgewt * weight, denargs, areaW)$g
+    #' Ripley isotropic correction
+    if(npairs > 0) {
+      edgewt <- edge.Ripley(XI[icloseI], matrix(dclose, ncol=1))
+      kdenR <- sewpcf(dclose, edgewt * weight, denargs, areaW)
+      gR <- kdenR$g
+      bw.used <- attr(kdenR, "bw")
+      if(adaptive) bwvalues.used <- attr(kdenR, "bwvalues")
+    } else {
+      gR <- undefined
+    }
     out <- bind.fv(out,
                    data.frame(iso=gR),
                    makefvlabel(NULL, "hat", fname, "Ripley"),
@@ -257,15 +335,15 @@ pcfmulti.inhom <- function(X, I, J, lambdaI=NULL, lambdaJ=NULL, ...,
                    "iso")
   }
   
-  # sanity check
-  if(is.null(out)) {
-    warning("Nothing computed - no edge corrections chosen")
-    return(NULL)
-  }
-  
   # which corrections have been computed?
   corrxns <- rev(setdiff(names(out), "r"))
 
+  # sanity check
+  if(length(corrxns) == 0) {
+    warning("Nothing computed - no edge corrections chosen")
+    return(NAobject("fv"))
+  }
+  
   # default is to display them all
   formula(out) <- . ~ r
   fvnames(out, ".") <- corrxns

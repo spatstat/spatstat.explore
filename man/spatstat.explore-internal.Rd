@@ -375,10 +375,11 @@ nncleanEngine(kthNND, k, d, \dots, tol, maxit,
 \method{pcf}{NAobject}(X, \dots)
 pcf3engine(x, y, z, box, rmax, nrval, correction, delta)
 pcfmulti.inhom(X, I, J, lambdaI, lambdaJ, \dots,
-               lambdaX, r, breaks, rmax, kernel,
-               bw, adjust.bw, stoyan, correction,
-               sigma, adjust.sigma, varcov, update, leaveoneout, 
-               Iname, Jname)
+               lambdaX, r, breaks, rmax, adaptive, kernel,
+               bw, h, bw.args, stoyan, adjust.bw,
+               correction, divisor, zerocor, nsmall, 
+               sigma, adjust.sigma, varcov, update, leaveoneout,
+               gref, tau, Iname, Jname, IJexclusive, close)
 \method{plot}{bw.frac}(x, \dots)
 \method{plot}{bw.optim}(x, \dots, showopt, optargs)
 \method{plot}{localpcfmatrix}(x, \dots)
