@@ -288,7 +288,7 @@ pcfinhom(X, lambda = NULL, \dots,
   \code{\link{bw.pcfinhom}}
 }
 \examples{
-  g <- pcfinhom(japanesepines, divisor="a")
+  g <- pcfinhom(rescale(japanesepines), rmax=2, adjust=1.5)
 }
 \keyword{spatial}
 \keyword{nonparametric}

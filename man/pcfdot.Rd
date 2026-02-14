@@ -7,11 +7,7 @@
   for a multitype point pattern.
 }
 \usage{
-  pcfdot(X, i, \dots, r = NULL, rmax=NULL,
-         kernel = "epanechnikov", bw = NULL, stoyan = 0.15,
-         correction = c("isotropic", "Ripley", "translate"),
-         divisor = c("r", "d"),
-         ratio=FALSE)
+  pcfdot(X, i, \dots)
 }
 \arguments{
   \item{X}{The observed point pattern, 
@@ -27,39 +23,8 @@
     Defaults to the first level of \code{marks(X)}.
   }
   \item{\dots}{
-    Ignored.
-  }
-  \item{r}{
-    Vector of values for the argument \eqn{r} at which \eqn{g(r)} 
-    should be evaluated. There is a sensible default.
-  }
-  \item{rmax}{
-    Optional. Maximum desired value of the argument \eqn{r}.
-    A single numeric value. There is a sensible default.
-  }
-  \item{kernel}{
-    Choice of smoothing kernel,
-    passed to \code{\link{density.default}}.
-  }
-  \item{bw}{
-    Bandwidth for smoothing kernel, 
-    passed to \code{\link{density.default}}.
-  }
-  \item{stoyan}{
-    Coefficient for default bandwidth rule; see Details.
-  }
-  \item{correction}{
-    Choice of edge correction.
-  }
-  \item{divisor}{
-    Choice of divisor in the estimation formula:
-    either \code{"r"} (the default) or \code{"d"}. See Details.
-  }
-  \item{ratio}{
-    Logical. 
-    If \code{TRUE}, the numerator and denominator of
-    each edge-corrected estimate will also be saved,
-    for use in analysing replicated point patterns.
+    Arguments passed to \code{\link{pcfmulti}}
+    to control the computation.
   }
 }
 \details{
@@ -100,52 +65,9 @@
   the multitype pair correlation function from points of type \eqn{i}
   to points of any type.
 
-  \itemize{
-    \item
-    If \code{divisor="r"} (the default), then the multitype
-    counterpart of the standard
-    kernel estimator (Stoyan and Stoyan, 1994, pages 284--285)
-    is used. By default, the recommendations of Stoyan and Stoyan (1994)
-    are followed exactly. 
-    \item
-    If \code{divisor="d"} then a modified estimator is used:
-    the contribution from
-    an interpoint distance \eqn{d_{ij}}{d[ij]} to the
-    estimate of \eqn{g(r)} is divided by \eqn{d_{ij}}{d[ij]}
-    instead of dividing by \eqn{r}. This usually improves the
-    bias of the estimator when \eqn{r} is close to zero.
-  }
-
-  There is also a choice of spatial edge corrections
-  (which are needed to avoid bias due to edge effects
-  associated with the boundary of the spatial window):
-  \code{correction="translate"} is the Ohser-Stoyan translation
-  correction, and \code{correction="isotropic"} or \code{"Ripley"}
-  is Ripley's isotropic correction.  
-
-  The choice of smoothing kernel is controlled by the 
-  argument \code{kernel} which is passed to \code{\link{density}}.
-  The default is the Epanechnikov kernel.
-
-  The bandwidth of the smoothing kernel can be controlled by the
-  argument \code{bw}. Its precise interpretation
-  is explained in the documentation for \code{\link{density.default}}.
-  For the Epanechnikov kernel with support \eqn{[-h,h]},
-  the argument \code{bw} is equivalent to \eqn{h/\sqrt{5}}{h/sqrt(5)}.
-
-  If \code{bw} is not specified, the default bandwidth
-  is determined by Stoyan's rule of thumb (Stoyan and Stoyan, 1994, page
-  285). That is,
-  \eqn{h = c/\sqrt{\lambda}}{h = c/sqrt(lambda)},
-  where \eqn{\lambda}{lambda} is the (estimated) intensity of the
-  unmarked point process, 
-  and \eqn{c} is a constant in the range from 0.1 to 0.2.
-  The argument \code{stoyan} determines the value of \eqn{c}.
-
   The companion function \code{\link{pcfcross}} computes the
   corresponding analogue of \code{\link{Kcross}}.
 }
-
 \value{
   An object of class \code{"fv"}, see \code{\link{fv.object}},
   which can be plotted directly using \code{\link{plot.fv}}.

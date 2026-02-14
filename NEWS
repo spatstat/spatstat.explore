@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.7-0.007
+        CHANGES IN spatstat.explore VERSION 3.7-0.008
 
 OVERVIEW
 
@@ -7,6 +7,8 @@ OVERVIEW
     for contributions.
     
     o Important changes to default settings in pcf and pcfinhom.
+
+    o New options in pcfdot, pcfcross, pcfmulti.
 
     o Minor improvements.
 
@@ -25,6 +27,16 @@ SIGNIFICANT USER-VISIBLE CHANGES
 
     o pcfinhom
     Default value of 'normpower' has changed to 2.
+
+    o pcfcross, pcfdot, pcfmulti
+    Kernel estimation now uses the same algorithm as 'pcf.ppp' and 'pcfinhom'.
+    Default settings changed.
+
+    o pcfmulti
+    New arguments h, bw.args, adjust, zerocor, nsmall, gref.
+    
+    o pcfcross, pcfdot
+    Shortened list of formal arguments (pass arguments to 'pcfmulti')
     
     o density.ppp
     Argument 'weights' can be logical valued.
