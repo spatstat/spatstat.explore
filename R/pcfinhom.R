@@ -5,7 +5,7 @@
 #'
 #' Copyright (c) 2008-2025 Adrian Baddeley, Tilman Davies and Martin Hazelton
 #'
-#' $Revision: 1.32 $ $Date: 2026/01/19 09:50:14 $
+#' $Revision: 1.34 $ $Date: 2026/02/14 01:51:37 $
 
 pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL, 
                      adaptive=FALSE,
@@ -14,11 +14,13 @@ pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL,
                      stoyan=0.15,
                      adjust = 1,
                      correction=c("translate", "Ripley"),
-                     divisor=c("r", "d", "a", "t"),
-                     zerocor=c("weighted", "reflection", "convolution",
-                               "bdrykern", "JonesFoster", "none"),
+                     divisor=c("a", "r", "d", "t"),
+                     zerocor=c("convolution", "reflection", "bdrykern",
+                               "JonesFoster", "weighted", "none",
+                               "good", "best"),
+                     nsmall = 300,
                      renormalise=TRUE,
-                     normpower=1,
+                     normpower=2,
                      update=TRUE, leaveoneout=TRUE, reciplambda=NULL,
                      sigma=NULL, adjust.sigma=1, varcov=NULL,
                      gref=NULL,
@@ -32,8 +34,15 @@ pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL,
 
   kernel <- match.kernel(kernel)
   if(is.function(divisor)) divisor <- divisor(X)
-  divisor <- match.arg(divisor)
-  zerocor <- match.arg(zerocor)
+  if(divisor.given <- !missing(divisor)) {
+    if(is.function(divisor)) divisor <- divisor(X)
+    divisor <- match.arg(divisor)
+  }
+  if(zerocor.given <- !missing(zerocor)) {
+    zerocor <- match.arg(zerocor)
+    if(zerocor == "best") zerocor <- "JonesFoster"
+    if(zerocor == "good") zerocor <- "convolution"
+  }
   check.1.real(adjust)
   
   ## ...... get point pattern information .......
@@ -45,15 +54,23 @@ pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL,
   samplesize <- npairs <- npts * (npts - 1)
   rmaxdefault <- rmax %orifnull% rmax.rule("K", win, lambdaBar)        
 
+  ## ....... handle argument 'domain' .......................  
   if(!is.null(domain)) {
-    stop("Sorry, argument 'domain' is not yet supported", call.=FALSE)
-    if(divisor == "a")
-      stop("Sorry, option divisor='a' is not available when 'domain' is given",
+    ## Apply different defaults in this case    
+    if(!divisor.given) {
+      divisor <- "d"
+    } else if(!(divisor %in% c("r", "d"))) {
+      stop(paste("Sorry, option divisor =", sQuote(divisor),
+                 "is not yet available when 'domain' is given"),
            call.=FALSE)
-    if(zerocor != 'none')
+    }
+    if(!zerocor.given) {
+      zerocor <- "none"
+    } else if(zerocor != 'none') {
       stop(paste0("Sorry, option zerocor=", sQuote(zerocor),
-                  "is not available when 'domain' is given"),
+                  "is not yet available when 'domain' is given"),
            call.=FALSE)
+    }
     ## estimate based on contributions from a subdomain
     domain <- as.owin(domain)
     if(!is.subset.owin(domain, win))
@@ -87,6 +104,26 @@ pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL,
     return(g)
   }
 
+  ## .............  Finally apply defaults for normal case .............
+  
+  if(!divisor.given || !zerocor.given) {
+
+    warn.once("pcfinhomDefaults",
+              "default settings have changed for pcfinhom",
+              "in spatstat.explore >= 3.7-0.007")
+    
+    if(!divisor.given)
+      divisor <- "a"
+
+    if(!zerocor.given) {
+      ## default depends on number of data points
+      if(!missing(nsmall)) check.1.integer(nsmall)
+      zerocor <- if(npts <= nsmall) "JonesFoster" else "convolution"
+    }
+
+  }
+
+  
   ## ......... edge correction .........................
   correction.given <- !missing(correction)
   correction <- pickoption("correction", correction,
@@ -112,10 +149,15 @@ pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL,
   danger      <- a$danger
   dangerous   <- a$dangerous
   
-  # renormalise
+  ## renormalise?
   if(renormalise && npts > 0) {
-    check.1.real(normpower)
-    stopifnot(normpower %in% 1:2)
+    if(missing(normpower)) {
+      warn.once("pcfinhom.normpower",
+                "Default value of normpower has changed in pcfinhom")
+    } else {
+      check.1.real(normpower)
+      stopifnot(normpower %in% 1:2)
+    }
     renorm.factor <- (areaW/sum(reciplambda))^normpower
   } 
   

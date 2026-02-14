@@ -13,10 +13,11 @@ pcfinhom(X, lambda = NULL, \dots,
             kernel = "epanechnikov", bw = NULL, h = NULL,
             bw.args = list(), stoyan = 0.15, adjust = 1,
             correction = c("translate", "Ripley"),
-            divisor = c("r", "d", "a", "t"),
-            zerocor=c("weighted", "reflection", "convolution",
-                      "bdrykern", "JonesFoster", "none"),
-            renormalise = TRUE, normpower = 1,
+            divisor=c("a", "r", "d", "t"),
+            zerocor=c("convolution", "reflection", "bdrykern",
+                      "JonesFoster", "weighted", "none", "good", "best"),
+            nsmall = 300,
+            renormalise = TRUE, normpower = 2,
             update = TRUE, leaveoneout = TRUE,
             reciplambda = NULL, sigma = NULL, adjust.sigma = 1, varcov = NULL,
             gref = NULL, tau = 0, fast = TRUE, var.approx = FALSE,
@@ -100,6 +101,11 @@ pcfinhom(X, lambda = NULL, \dots,
     \code{"none"}, \code{"weighted"}, \code{"convolution"},
     \code{"reflection"}, \code{"bdrykern"} and \code{"JonesFoster"}.
     See Details, or help file for \code{\link[spatstat.univar]{densityBC}}.
+  }
+  \item{nsmall}{
+    Optional. Integer. The maximum number of data points
+    for which the default value of \code{zerocor} will be
+    \code{"JonesFoster"}. 
   }
   \item{renormalise}{
     Logical. Whether to renormalise the estimate. See Details.
@@ -217,7 +223,8 @@ pcfinhom(X, lambda = NULL, \dots,
   the contribution from each pair of points \eqn{X[i], X[j]} is
   weighted by
   \eqn{1/(\lambda(X[i]) \lambda(X[j]))}{1/(lambda(X[i]) lambda(X[j]))}.
-  The arguments \code{divisor}, \code{correction} and \code{zerocor}
+  The arguments \code{divisor},
+  \code{correction}, \code{zerocor} and \code{nsmall}
   are interpreted as described in the help file for \code{\link{pcf}}.
   
   If \code{renormalise=TRUE} (the default), then the estimates 
@@ -229,8 +236,8 @@ pcfinhom(X, lambda = NULL, \dots,
   }
   This rescaling reduces the variability and bias of the estimate
   in small samples and in cases of very strong inhomogeneity.
-  The default value of \code{normpower} is 1
-  but the most sensible value is 2, which would correspond to rescaling
+  The default value of \code{normpower} is 2,
+  which corresponds to rescaling
   the \code{lambda} values so that
   \eqn{
     \sum (1/\lambda(x_i)) = \mbox{area}(W).
