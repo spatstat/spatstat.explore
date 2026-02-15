@@ -3,7 +3,7 @@
 #'
 #'     original by Ege Rubak
 #' 
-#'     $Revision: 1.19 $ $Date: 2025/09/03 03:59:04 $
+#'     $Revision: 1.20 $ $Date: 2026/02/15 05:05:25 $
 
 "localLcross" <- function(X, from, to, ..., rmax = NULL, correction = "Ripley") {
   localKcross(X, from, to, ..., rmax = rmax, correction = correction, wantL = TRUE)
@@ -111,7 +111,8 @@ function(X, from, ..., rmax = NULL, correction="Ripley", verbose=TRUE, rvalue=NU
                            correction=correction,
                            sigma=sigma, varcov=varcov,
                            lambdaX=lambdaX, update=update,
-                           leaveoneout=leaveoneout)
+                           leaveoneout=leaveoneout,
+                           Ilevels=from, Jlevels=to)
     attr(K, "indices") <- list(from=from, to=to)
     return(K)
   }
@@ -129,7 +130,8 @@ localLcross.inhom <- function(X, from, to, lambdaFrom = NULL, lambdaTo = NULL, .
            Iexplain="points satisfying condition I",
            Jexplain="points satisfying condition J",
            Ikey="I",
-           Jkey="J")
+           Jkey="J",
+           Ilevels=NULL, Jlevels=NULL)
   {
     if(is.NAobject(X)) return(NAobject("fv"))
 
@@ -163,7 +165,9 @@ localLcross.inhom <- function(X, from, to, lambdaFrom = NULL, lambdaTo = NULL, .
                                      leaveoneout = leaveoneout,
                                      update = update,
                                      Iexplain=Iexplain,
-                                     Jexplain=Jexplain)
+                                     Jexplain=Jexplain,
+                                     Ilevels=Ilevels,
+                                     Jlevels=Jlevels)
       lambdaFrom <- lambdas$lambdaI
       lambdaTo <- lambdas$lambdaJ
     }

@@ -8,11 +8,7 @@
   for a multitype point pattern.
 }
 \usage{
-pcfcross.inhom(X, i, j, lambdaI = NULL, lambdaJ = NULL, ...,
-               r = NULL, breaks = NULL, rmax=NULL,
-               kernel="epanechnikov", bw=NULL, adjust.bw = 1, stoyan=0.15,
-               correction = c("isotropic", "Ripley", "translate"),
-               sigma = NULL, adjust.sigma = 1, varcov = NULL)
+pcfcross.inhom(X, i, j, lambdaI = NULL, lambdaJ = NULL, \dots) 
 }
 \arguments{
   \item{X}{The observed point pattern, 
@@ -38,57 +34,30 @@ pcfcross.inhom(X, i, j, lambdaI = NULL, lambdaJ = NULL, ...,
   \item{lambdaI}{
     Optional.
     Values of the estimated intensity function of the points of type \code{i}.
-    Either a vector giving the intensity values
-    at the points of type \code{i},
+    Either a numeric vector giving the intensity values
+    at the data points of type \code{i},
     a pixel image (object of class \code{"im"}) giving the
-    intensity values at all locations, or a \code{function(x,y)} which
-    can be evaluated to give the intensity value at any location.
+    intensity values of points of type \code{i} at all locations,
+    a \code{function(x,y)} which
+    can be evaluated to give the intensity value of points of type
+    \code{i} at any location, a fitted multitype point process model
+    (class \code{"ppm"}) 
+    which could be used to predict the
+    intensity values of points of \emph{each} type at any location,
+    or a fitted unmarked point process model
+    (class \code{"ppm"}, \code{"kppm"}, \code{"dppm"} or \code{"slrm"})
+    which could be used to predict the
+    intensity values of points of type \code{i} only at any location.
   }
   \item{lambdaJ}{
     Optional.
     Values of the estimated intensity function of the points of type \code{j}.
-    A numeric vector, pixel image or \code{function(x,y)}.
-  }
-  \item{r}{
-    Vector of values for the argument \eqn{r} at which
-    \eqn{g_{ij}(r)}{g[i,j](r)}
-    should be evaluated. There is a sensible default.
-  }
-  \item{breaks}{
-    This argument is for internal use only.
-  }
-  \item{rmax}{
-    Optional. Maximum desired value of the argument \eqn{r}.
-    A single numeric value. There is a sensible default.
-  }
-  \item{kernel}{
-    Choice of one-dimensional smoothing kernel,
-    passed to \code{\link{density.default}}.
-  }
-  \item{bw}{
-    Bandwidth for one-dimensional smoothing kernel,
-    passed to \code{\link{density.default}}.
-  }
-  \item{adjust.bw}{
-    Numeric value. \code{bw} will be multiplied by this value.
+    Numeric vector, pixel image, \code{function(x,y)} or fitted point
+    process model.
   }
   \item{\dots}{
-    Other arguments passed to the one-dimensional kernel density estimation 
-    function \code{\link{density.default}}.
-  }
-  \item{stoyan}{
-    Bandwidth coefficient; see Details.
-  }
-  \item{correction}{
-    Choice of edge correction.
-  }
-  \item{sigma,varcov}{
-    Optional arguments passed to  \code{\link{density.ppp}}
-    to control the smoothing bandwidth, when \code{lambdaI} or
-    \code{lambdaJ} is estimated by spatial kernel smoothing.
-  }
-  \item{adjust.sigma}{
-    Numeric value. \code{sigma} will be multiplied by this value.
+    Arguments passed to \code{\link{pcfmulti.inhom}} to control the
+    computation. 
   }
 }
 \details{
@@ -156,8 +125,6 @@ pcfcross.inhom(X, i, j, lambdaI = NULL, lambdaJ = NULL, ...,
   plot(pcfcross.inhom(amacrine, "on", "off", stoyan=0.1),
        legendpos="bottom")
 }
-\author{\adrian
-  and \rolf
-}
+\author{\spatstatAuthorsComma, \tilman and \martinH.}
 \keyword{spatial}
 \keyword{nonparametric}

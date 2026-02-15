@@ -30,17 +30,25 @@ Kdot.inhom(X, i, lambdaI=NULL, lambdadot=NULL, \dots,
     character string).
     Defaults to the first level of \code{marks(X)}.
   }
-  \item{lambdaI}{
+ \item{lambdaI}{
     Optional.
-    Values of the estimated intensity of the sub-process of
-    points of type \code{i}.
-    Either a pixel image (object of class \code{"im"}),
-    a numeric vector containing the intensity values
-    at each of the type \code{i} points in \code{X},
-    a fitted point process model
-    (object of class \code{"ppm"} or \code{"kppm"} or \code{"dppm"}),
-    or a \code{function(x,y)} which
-    can be evaluated to give the intensity value at any location.
+    Values of the estimated intensity function of the points
+    of type \code{i}.
+    (Ignored if \code{lambdaX} is given.)
+    Either a numeric vector giving the intensity values
+    at the data points of type \code{i},
+    a pixel image (object of class \code{"im"}) giving the
+    intensity values of points of type \code{i} at all locations,
+    a \code{function(x,y)} which
+    can be evaluated to give the intensity value of points of type \code{i}
+    at any location, or a fitted point process model
+    (class \code{"ppm"}, \code{"kppm"}, \code{"dppm"} or \code{"slrm"})
+    which could be used to predict the
+    intensity values of points of type \code{i} at all locations.
+    If \code{lambdaI} is an unmarked point process model, it is assumed
+    to have been fitted to the sub-pattern of points of type \code{i};
+    if it is a multitype point
+    process model, it is assumed to have been fitted to \code{X}.
   }
   \item{lambdadot}{
     Optional.
@@ -97,16 +105,16 @@ Kdot.inhom(X, i, lambdaI=NULL, lambdadot=NULL, \dots,
     the second of any type.
   }
   \item{lambdaX}{
-    Optional. Values of the intensity for all points of \code{X}.
-    Either a pixel image (object of class \code{"im"}),
-    a numeric vector containing the intensity values
-    at each of the points in \code{X},
-    a fitted point process model
-    (object of class \code{"ppm"} or \code{"kppm"} or \code{"dppm"}),
-    or a \code{function(x,y)} which
-    can be evaluated to give the intensity value at any location.
-    If present, this argument overrides both \code{lambdaI} and
-    \code{lambdadot}.
+    Optional.
+    Alternative to \code{lambdaI} and \code{lambdadot}.
+    Data which can be used to calculate the intensity functions
+    of points of type \code{i} and the points of any type.
+    A list of pixel images (one image for each possible type of point),
+    a \code{function(x,y,mark)} giving the intensity at each location
+    for each possible type of point, a numeric matrix with one row for
+    each point in \code{X} and one column for each possible type of
+    point, or a fitted multitype point process model (class
+    \code{"ppm"}). 
   }
   \item{update}{
     Logical value indicating what to do when

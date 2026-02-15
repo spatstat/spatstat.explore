@@ -107,7 +107,6 @@
 \alias{pairs.solist}
 \alias{pcf.NAobject}
 \alias{pcf3engine}
-\alias{pcfmulti.inhom}
 \alias{plot.bw.frac}
 \alias{plot.bw.optim}
 \alias{plot.localpcfmatrix}
@@ -351,7 +350,7 @@ localKmultiEngine(X, from, to,
            lambdaFrom, lambdaTo, \dots, rmax, wantL,
            correction, verbose, rvalue, sigma, varcov,
            lambdaX, update, leaveoneout,
-           Iexplain, Jexplain, Ikey, Jkey)
+           Iexplain, Jexplain, Ikey, Jkey, Ilevels, Jlevels)
 localpcfengine(X, \dots, delta, rmax, nr, stoyan, lambda, rvalue)
 localpcfmatrix(X, i, \dots, lambda, delta, rmax, nr, stoyan)
 lookup2DkernelInfo(kernel)
@@ -374,12 +373,6 @@ nncleanEngine(kthNND, k, d, \dots, tol, maxit,
 \method{pairs}{solist}(\dots, plot=TRUE)
 \method{pcf}{NAobject}(X, \dots)
 pcf3engine(x, y, z, box, rmax, nrval, correction, delta)
-pcfmulti.inhom(X, I, J, lambdaI, lambdaJ, \dots,
-               lambdaX, r, breaks, rmax, adaptive, kernel,
-               bw, h, bw.args, stoyan, adjust.bw,
-               correction, divisor, zerocor, nsmall, 
-               sigma, adjust.sigma, varcov, update, leaveoneout,
-               gref, tau, Iname, Jname, IJexclusive, close)
 \method{plot}{bw.frac}(x, \dots)
 \method{plot}{bw.optim}(x, \dots, showopt, optargs)
 \method{plot}{localpcfmatrix}(x, \dots)
@@ -431,7 +424,7 @@ resolve.lambda(X, lambda, \dots)
 resolve.lambdacross(X, I, J, lambdaI, lambdaJ, \dots)
 \method{resolve.lambdacross}{ppp}(X, I, J, lambdaI, lambdaJ, \dots,
          lambdaX, sigma, varcov, leaveoneout, update, lambdaIJ,
-         Iexplain, Jexplain)
+         Iexplain, Jexplain, Ilevels, Jlevels)
 resolve.pcf.bandwidth(X, \dots, lambda, rmax, nr, adaptive, kernel,
   bw, h, bw.args, stoyan, adjust, correction, divisor, zerocor, nsmall,
   gref, close)

@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.7-0.010
+        CHANGES IN spatstat.explore VERSION 3.7-0.011
 
 OVERVIEW
 
@@ -8,7 +8,10 @@ OVERVIEW
     
     o Important changes to default settings for pair correlation functions.
 
-    o New options in pcfdot, pcfcross, pcfmulti.
+    o New options for multitype pair correlation functions.
+
+    o More flexible interpretation of arguments 'lambda = <ppm>" 
+    in inhomogeneous summary statistics
 
     o Minor improvements.
 
@@ -32,11 +35,33 @@ SIGNIFICANT USER-VISIBLE CHANGES
     The default estimation method has changed. The new default is
     based on squared distances (divisor="a").
 
-    o pcfmulti
+    o pcfcross.inhom, pcfdot.inhom, pcfmulti.inhom
+    The default estimation method has changed. The new default is
+    based on squared distances (divisor="a").
+
+    o pcfmulti, pcfmulti.inhom
     New arguments h, bw.args, adjust, zerocor, nsmall, gref, tau, close.
     
+    o pcfcross.inhom, pcfdot.inhom, pcfmulti.inhom, 
+    Interpretation of arguments 'lambdaI', 'lambdaJ', 'lambdaX', 'lambdadot'
+    has changed when they are fitted point process models. If the model is
+    a multitype point process then it is assumed to be a model for the 
+    entire point pattern X, while if the model is an unmarked point process
+    then it is assumed to be a model for the relevant subset of the data.
+
+    o Kcross.inhom, Kdot.inhom, Kmulti.inhom
+    Interpretation of arguments 'lambdaI', 'lambdaJ', 'lambdaX', 'lambdadot'
+    has changed when they are fitted point process models. If the model is
+    a multitype point process then it is assumed to be a model for the 
+    entire point pattern X, while if the model is an unmarked point process
+    then it is assumed to be a model for the relevant subset of the data.
+
     o pcfcross, pcfdot
     Shortened list of formal arguments (other arguments pass to 'pcfmulti')
+    
+    o pcfcross.inhom, pcfdot.inhom
+    Shortened list of formal arguments 
+    (other arguments are passed to 'pcfmulti.inhom')
     
     o density.ppp
     Argument 'weights' can be logical valued.

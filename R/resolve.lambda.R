@@ -9,7 +9,7 @@
 #'    validate.weights
 #'    updateData (generic) (soon to be deprecated)
 #'
-#' $Revision: 1.21 $ $Date: 2024/01/10 10:58:02 $
+#' $Revision: 1.26 $ $Date: 2026/02/15 09:17:24 $
 
 resolve.lambda <- function(X, lambda=NULL, ...) {
   UseMethod("resolve.lambda")
@@ -157,13 +157,16 @@ resolve.lambdacross.ppp <- function(X, I, J,
                                     leaveoneout=TRUE, update=TRUE,
                                     lambdaIJ=NULL,
                                     Iexplain="points satisfying condition I",
-                                    Jexplain="points satisfying condition J") {
+                                    Jexplain="points satisfying condition J",
+                                    Ilevels=NULL,
+                                    Jlevels=NULL) {
   dangerous <- c("lambdaI", "lambdaJ")
   dangerI <- dangerJ <- TRUE
-  XI <- X[I]
-  XJ <- X[J]
+  XI <- unmark(X[I])
+  XJ <- unmark(X[J])
   nI <- npoints(XI)
   nJ <- npoints(XJ)
+  nX <- npoints(X)
 
   lamIname <- short.deparse(substitute(lambdaI))
   lamJname <- short.deparse(substitute(lambdaJ))
@@ -186,42 +189,50 @@ resolve.lambdacross.ppp <- function(X, I, J,
             call.=FALSE)
 
   if(givenX) {
-    ## Intensity values for all points of X
+    ## Single object must provide intensities for two processes X[I] and X[J]
+    if(!is.multitype(X))
+      stop("When lambdaX is given, X must be a multitype point pattern")
+    if(is.null(Ilevels) || is.null(Jlevels))
+      stop("When lambdaX is given, arguments Ilevels and Jlevels are required")
+    Xlevels <- levels(marks(X))
+    nM <- length(Xlevels)
+    if(anyNA(match(c(Ilevels, Jlevels), Xlevels)))
+      stop("Ilevels and Jlevels must be levels of the factor marks(X)")
     if(is.im(lambdaX)) {
+      stop("A single image is not sufficient for lambdaX")
+    } else if(is.vector(lambdaX)) {
+      stop("A single vector is not sufficient for lambdaX")
+    } else if(is.imlist(lambdaX) && length(lambdaX) == length(Xlevels)) {
       ## Look up intensity values
-      lambdaI <- safelookup(lambdaX, XI)
-      lambdaJ <- safelookup(lambdaX, XJ)
-    } else if(is.imlist(lambdaX) &&
-              is.multitype(X) &&
-              length(lambdaX) == length(levels(marks(X)))) {
-      ## Look up intensity values
-      Y <- split(X)
-      lamY <- mapply("[", x=lambdaX, i=Y, SIMPLIFY=FALSE)
-      lamX <- unsplit(lamY, marks(X))
-      lambdaI <- lamX[I]
-      lambdaJ <- lamX[J]
-    } else if(is.function(lambdaX)) {
-      ## evaluate function at locations
-      if(!is.marked(X) || length(formals(lambdaX)) == 2) {
-        lambdaI <- lambdaX(XI$x, XI$y)
-        lambdaJ <- lambdaX(XJ$x, XJ$y)
+      lamXM <- sapply(lambdaX, "[", i=unmark(X), drop=FALSE)
+      lambdaI <- rowSums(lamXM[I, match(Ilevels, Xlevels), drop=FALSE])
+      lambdaJ <- rowSums(lamXM[J, match(Jlevels, Xlevels), drop=FALSE])
+    } else if(is.function(lambdaX)) { 
+      ## evaluate function f(x,y,m) for all locations, for each possible type
+      lamXM <- matrix(, nX, nM) 
+      for(m in 1:nM) 
+        lamXM[,m] <- lambdaX(X$x, X$y, rep(Xlevels[m], nX))
+      lambdaI <- rowSums(lamXM[I, match(Ilevels, Xlevels), drop=FALSE])
+      lambdaJ <- rowSums(lamXM[J, match(Jlevels, Xlevels), drop=FALSE])
+    } else if(is.numeric(lambdaX) && !is.null(dim(lambdaX))) {
+      ## matrix of intensity values
+      if(nrow(lambdaX) == nX && ncol(lambdaX) == nM) {
+        lambdaI <- rowSums(lambdaX[I, match(Ilevels, Xlevels), drop=FALSE])
+        lambdaJ <- rowSums(lambdaX[J, match(Jlevels, Xlevels), drop=FALSE])
       } else {
-        lambdaI <- lambdaX(XI$x, XI$y, marks(XI))
-        lambdaJ <- lambdaX(XJ$x, XJ$y, marks(XJ))
+        stop(paste("Wrong dimensions for matrix lambdaX:",
+                   paste(dim(lambdaX), collapse=" x "),
+                   "should be",
+                   paste(c(nX, nM), collapse=" x ")))
       }
-    } else if(is.numeric(lambdaX) && is.vector(as.numeric(lambdaX))) {
-      ## vector of intensity values
-      if(length(lambdaX) != npoints(X))
-        stop(paste("The length of", sQuote("lambdaX"),
-                   "should equal the number of points of X"))
-      lambdaI <- lambdaX[I]
-      lambdaJ <- lambdaX[J]
-    } else if(inherits(lambdaX, c("ppm", "kppm", "dppm", "slrm"))) {
+    } else if(inherits(lambdaX, c("ppm", "kppm", "dppm"))) {
     if(!requireNamespace("spatstat.model")) 
       stop("The package spatstat.model is required when 'lambdaX' is a fitted model",
            call.=FALSE)
-      ## point process model provides intensity
+      ## point process model provides intensity of each type of point
       model <- lambdaX
+      if(!is.multitype(model))
+        stop("Argument lambdaX should be a multitype point process model")
       if(update) {
         force(X)
         env.here <- sys.frame(sys.nframe())
@@ -229,22 +240,31 @@ resolve.lambdacross.ppp <- function(X, I, J,
         dangerI <- dangerJ <- FALSE
         dangerous <- "lambdaIJ"
       }
-      if(inherits(model, "slrm")) {
-        #' predict.slrm has different syntax, 
-        #' and does not support leave-one-out prediction
-        Lambda <- predict(model)
-        lambdaI <- Lambda[XI]
-        lambdaJ <- Lambda[XJ]
-      } else {
-        ## re-fit model to data X
-        lambdaX <- fitted(model, dataonly=TRUE, leaveoneout=leaveoneout)
-        lambdaI <- lambdaX[I]
-        lambdaJ <- lambdaX[J]
+      ## predict model at observed locations for each possible mark
+      lamXM <- matrix(, nX, nM) 
+      for(m in 1:nM) 
+        lamXM[,m] <- predict(model, locations = X %mark% Xlevels[m])
+      ## overwrite values for observed locations and *observed* marks
+      ## using leave-one-out predictions
+      if(update) {
+        fitlam <- fitted(model, dataonly=TRUE, leaveoneout=leaveoneout)
+        if(length(fitlam) != nX)
+          stop(paste("Internal error: trying to overwrite",
+                     nX, "predicted values with",
+                     length(fitlam), "fitted values"),
+               call.=FALSE)
+        lamXM[cbind(1:nX, as.integer(marks(X)))] <- fitlam
       }
+      ## now compute marginal intensities
+      lambdaI <- rowSums(lamXM[I, match(Ilevels, Xlevels), drop=FALSE])
+      lambdaJ <- rowSums(lamXM[J, match(Jlevels, Xlevels), drop=FALSE])
+    } else if(inherits(lambdaX, "slrm")) {
+      ## does not (yet) support multitype processes
+      stop("lambdaX cannot be a model of class 'slrm'")
     } else stop(paste("Argument lambdaX is not understood:",
-                      "it should be a numeric vector,",
-                      "an image, a function(x,y)",
-                      "or a fitted point process model (ppm, kppm or dppm)"))
+                      "it should be a numeric matrix,",
+                      "a list of images, a function(x,y,marks)",
+                      "or a fitted multitype point process model (ppm, kppm or dppm)"))
   } else {
     ## lambdaI, lambdaJ expected
     if(!givenI) {
@@ -257,7 +277,7 @@ resolve.lambdacross.ppp <- function(X, I, J,
       ## look up intensity values
       lambdaI <- safelookup(lambdaI, XI)
     } else if(is.function(lambdaI)) {
-      ## evaluate function at locations
+      ## evaluate function at locations of X[I]
       lambdaI <- lambdaI(XI$x, XI$y)
     } else if(is.numeric(lambdaI) && is.vector(as.numeric(lambdaI))) {
       ## validate intensity vector
@@ -269,9 +289,17 @@ resolve.lambdacross.ppp <- function(X, I, J,
       ## point process model provides intensity
       model <- lambdaI
       if(update) {
-        force(X)
         env.here <- sys.frame(sys.nframe())
-        model <- update(model, X, envir=env.here)
+        if(is.multitype(model)) {
+          ## multitype model provides intensity of each type of point
+          ## assumed fitted to X
+          force(X)
+          model <- update(model, X, envir=env.here)
+        } else {
+          ## unmarked model provides intensity of subset I
+          ## assumed fitted to X[I]
+          model <- update(model, XI, envir=env.here)
+        }
         dangerI <- FALSE
         dangerous <- setdiff(dangerous, "lambdaI")
       }
@@ -279,9 +307,41 @@ resolve.lambdacross.ppp <- function(X, I, J,
         #' predict.slrm has different syntax, 
         #' and does not support leave-one-out prediction
         lambdaI <- predict(model)[XI]
+      } else if(!is.multitype(model)) {
+        ## unmarked model assumed to have been fitted to X[I]
+        if(update) {
+          lambdaI <- fitted(model, dataonly=TRUE, leaveoneout=leaveoneout)
+        } else {
+          lambdaI <- predict(model, locations=XI)
+        }
       } else {
-        lambdaX <- fitted(model, dataonly=TRUE, leaveoneout=leaveoneout)
-        lambdaI <- lambdaX[I]
+        ## multitype model assumed fitted to X
+        if(is.null(Ilevels))
+          stop(paste("When lambdaI is a multitype point process,",
+                     "argument Ilevels is required"))
+        if(!is.multitype(X))
+          stop(paste("When lambdaI is a multitype point process,",
+                     "X should be multitype"))
+        Xlevels <- levels(marks(X))
+        nM <- length(Xlevels)
+        if(anyNA(match(Ilevels, Xlevels)))
+          stop("Ilevels must contain levels of the factor marks(X)")
+        lamXM <- matrix(, nX, nM) 
+        for(m in 1:nM) 
+          lamXM[,m] <- predict(model, locations = X %mark% Xlevels[m])
+        ## overwrite values for observed locations and *observed* marks
+        ## leave-one-out predictions
+        if(update) {
+          fitlam <- fitted(model, dataonly=TRUE, leaveoneout=leaveoneout)
+          if(length(fitlam) != nX)
+            stop(paste("Internal error: trying to overwrite",
+                       nX, "predicted values with",
+                       length(fitlam), "fitted values"),
+                 call.=FALSE)
+          lamXM[cbind(1:nX, as.integer(marks(X)))] <- fitlam
+        }
+        ## sum to get intensity of subset I
+        lambdaI <- rowSums(lamXM[I, match(Ilevels, Xlevels), drop=FALSE])
       }
     } else stop(paste(sQuote("lambdaI"), "should be a vector or an image"))
     
@@ -307,9 +367,17 @@ resolve.lambdacross.ppp <- function(X, I, J,
       ## point process model provides intensity
       model <- lambdaJ
       if(update) {
-        force(X)
         env.here <- sys.frame(sys.nframe())
-        model <- update(model, X, envir=env.here)
+        force(X)
+        if(is.multitype(model)) {
+          ## multitype model provides intensity of each type of point
+          ## assumed fitted to X
+          model <- update(model, X, envir=env.here)
+        } else {
+          ## unmarked model provides intensity of subset I
+          ## assumed fitted to X[J]
+          model <- update(model, XJ, envir=env.here)
+        }
         dangerJ <- FALSE
         dangerous <- setdiff(dangerous, "lambdaJ")
       }
@@ -317,15 +385,47 @@ resolve.lambdacross.ppp <- function(X, I, J,
         #' predict.slrm has different syntax, 
         #' and does not support leave-one-out prediction
         lambdaJ <- predict(model)[XJ]
+      } else if(!is.multitype(model)) {
+        ## unmarked model assumed to have been fitted to X[J]
+        if(update) {
+          lambdaJ <- fitted(model, dataonly=TRUE, leaveoneout=leaveoneout)
+        } else {
+          lambdaJ <- predict(model, locations=XJ)
+        }
       } else {
-        lambdaX <- fitted(model, dataonly=TRUE, leaveoneout=leaveoneout)
-        lambdaJ <- lambdaX[J]
+        ## multitype model assumed fitted to X
+        if(is.null(Jlevels))
+          stop(paste("When lambdaJ is a multitype point process,",
+                     "argument Jlevels is required"))
+        if(!is.multitype(X))
+          stop(paste("When lambdaJ is a multitype point process,",
+                     "X should be multitype"))
+        Xlevels <- levels(marks(X))
+        nM <- length(Xlevels)
+        if(anyNA(match(Jlevels, Xlevels)))
+          stop("Ilevels must contain levels of the factor marks(X)")
+        lamXM <- matrix(, nX, nM) 
+        for(m in 1:nM) 
+          lamXM[,m] <- predict(model, locations = X %mark% Xlevels[m])
+        ## overwrite values for observed locations and *observed* marks
+        ## leave-one-out predictions
+        if(update) {
+          fitlam <- fitted(model, dataonly=TRUE, leaveoneout=leaveoneout)
+          if(length(fitlam) != nX)
+            stop(paste("Internal error: trying to overwrite",
+                       nX, "predicted values with",
+                       length(fitlam), "fitted values"),
+                 call.=FALSE)
+          lamXM[cbind(1:nX, as.integer(marks(X)))] <- fitlam
+        }
+        ## sum to get intensity of subset J
+        lambdaJ <- rowSums(lamXM[J, match(Jlevels, Xlevels), drop=FALSE])
       }
     } else 
       stop(paste(sQuote("lambdaJ"), "should be a vector or an image"))
   }
   
-  ## Weight for each pair
+  ## Product of weights for each pair
   if(!is.null(lambdaIJ)) {
     dangerIJ <- TRUE
     dangerous <- union(dangerous, "lambdaIJ")

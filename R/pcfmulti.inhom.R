@@ -1,24 +1,16 @@
 #
 #   pcfmulti.inhom.R
 #
-#   $Revision: 1.23 $   $Date: 2026/02/14 11:06:54 $
+#   $Revision: 1.27 $   $Date: 2026/02/15 04:31:44 $
 #
 #   inhomogeneous multitype pair correlation functions
 #
 #
 
-pcfcross.inhom <- 
-  function(X, i, j, lambdaI=NULL, lambdaJ=NULL, ...,
-         r=NULL, breaks=NULL, rmax=NULL,
-         kernel="epanechnikov", bw=NULL, adjust.bw=1, stoyan=0.15,
-         correction = c("isotropic", "Ripley", "translate"),
-         sigma=NULL, adjust.sigma=1, varcov=NULL)
-{
+pcfcross.inhom <- function(X, i, j, lambdaI=NULL, lambdaJ=NULL, ...) {
   verifyclass(X, "ppp")
   if(is.NAobject(X)) return(NAobject("fv"))
   stopifnot(is.multitype(X))
-  if(missing(correction))
-    correction <- NULL
   marx <- marks(X)
   if(missing(i))
     i <- levels(marx)[1]
@@ -28,12 +20,12 @@ pcfcross.inhom <-
   J <- (marx == j)
   Iname <- paste("points with mark i =", i)
   Jname <- paste("points with mark j =", j)
-  g <- pcfmulti.inhom(X, I, J, lambdaI, lambdaJ, ...,
-                      r=r,breaks=breaks, rmax=rmax,
-                      kernel=kernel, bw=bw, adjust.bw=adjust.bw, stoyan=stoyan,
-                      correction=correction,
-                      sigma=sigma, adjust.sigma=adjust.sigma, varcov=varcov,
-                      Iname=Iname, Jname=Jname)
+  g <- pcfmulti.inhom(X=X, I=I, J=J,
+                      lambdaI=lambdaI, lambdaJ=lambdaJ,
+                      ...,
+                      Iname=Iname, Jname=Jname,
+                      IJexclusive = (i != j),
+                      Ilevels=i, Jlevels=j)
   iname <- make.parseable(paste(i))
   jname <- make.parseable(paste(j))
   result <-
@@ -47,19 +39,10 @@ pcfcross.inhom <-
   return(result)
 }
 
-pcfdot.inhom <- 
-function(X, i, lambdaI=NULL, lambdadot=NULL, ...,
-         r=NULL, breaks=NULL, rmax=NULL,
-         kernel="epanechnikov", bw=NULL, adjust.bw=1, stoyan=0.15,
-         correction = c("isotropic", "Ripley", "translate"),
-         sigma=NULL, adjust.sigma=1, varcov=NULL)
-{
+pcfdot.inhom <- function(X, i, lambdaI=NULL, lambdadot=NULL, ...) {
   verifyclass(X, "ppp")
   if(is.NAobject(X)) return(NAobject("fv"))
   stopifnot(is.multitype(X))
-  if(missing(correction))
-    correction <- NULL
-
   marx <- marks(X)
   if(missing(i))
     i <- levels(marx)[1]
@@ -69,12 +52,13 @@ function(X, i, lambdaI=NULL, lambdadot=NULL, ...,
   Iname <- paste("points with mark i =", i)
   Jname <- paste("points")
 	
-  g <- pcfmulti.inhom(X, I, J, lambdaI, lambdadot, ...,
-                      r=r,breaks=breaks, rmax=rmax,
-                      kernel=kernel, bw=bw, adjust.bw=adjust.bw, stoyan=stoyan,
-                      correction=correction,
-                      sigma=sigma, adjust.sigma=adjust.sigma, varcov=varcov,
-                      Iname=Iname, Jname=Jname)
+  g <- pcfmulti.inhom(X=X, I=I, J=J,
+                      lambdaI=lambdaI,
+                      lambdaJ=lambdadot,
+                      ...,
+                      Iname=Iname, Jname=Jname,
+                      IJexclusive=FALSE,
+                      ilevels=i, jlevels=levels(marx))
   iname <- make.parseable(paste(i))
   result <-
     rebadge.fv(g,
@@ -104,15 +88,15 @@ pcfmulti.inhom <- function(X, I, J, lambdaI=NULL, lambdaJ=NULL, ...,
                                      "JonesFoster", "weighted", "none",
                                      "good", "best"),
                            nsmall = 300,
-                           sigma=NULL, adjust.sigma=1, varcov=NULL,
-                           update=TRUE, leaveoneout=TRUE,
                            gref=NULL,
                            tau = 0,
+                           sigma=NULL, adjust.sigma=1, varcov=NULL,
+                           update=TRUE, leaveoneout=TRUE,
                            Iname="points satisfying condition I",
                            Jname="points satisfying condition J",
                            IJexclusive=FALSE,
-                           close=NULL)
-{
+                           Ilevels=NULL, Jlevels=NULL,
+                           close=NULL) {
   verifyclass(X, "ppp")
   if(is.NAobject(X)) return(NAobject("fv"))
   
@@ -174,7 +158,6 @@ pcfmulti.inhom <- function(X, I, J, lambdaI=NULL, lambdaJ=NULL, ...,
   a <- resolve.lambdacross(X=X, I=I, J=J,
                            lambdaI=lambdaI,
                            lambdaJ=lambdaJ,
-                           lambdaX=lambdaX,
                            ...,
                            sigma=sigma, adjust=adjust.sigma, varcov=varcov,
                            leaveoneout=leaveoneout, update=update,

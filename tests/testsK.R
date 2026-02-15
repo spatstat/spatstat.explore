@@ -41,7 +41,7 @@ local({
 #'
 #'   Various K and L functions and pcf
 #'
-#'   $Revision: 1.46 $  $Date: 2026/02/08 09:48:00 $
+#'   $Revision: 1.49 $  $Date: 2026/02/15 08:40:38 $
 #'
 #'   Assumes 'EveryStart.R' was run
 
@@ -171,8 +171,10 @@ local({
     K <- Kcross(Amacrine, correction=c("none", "bord", "bord.modif"),
                           ratio=TRUE)
     #' inhomogeneous multitype
-    K2 <- Kcross.inhom(Amacrine, lambdaX=densityfun(Amacrine))
-    K3 <- Kcross.inhom(Amacrine, lambdaX=density(Amacrine, at="points"))
+    Sam <- split(Amacrine)
+    K3 <- Kcross.inhom(Amacrine, lambdaX=density(split(Amacrine)))
+    K4 <- Kcross.inhom(Amacrine, lambdaI=densityfun(Sam[[1]]),
+                       lambdaJ=densityfun(Sam[[2]]))
     K5 <- Kcross.inhom(Amacrine, correction="bord.modif")
     #' markconnect, markcorr
     M <- markconnect(Amacrine, "on", "off", normalise=TRUE)
@@ -222,7 +224,6 @@ local({
     Lum <- evaluateCovariateAtPoints(Zed, Amacrine)
     moff <- (marks(Amacrine) == "off")
     a <- localLcross.inhom(Amacrine, from="off", to="on", lambdaX=Zed)
-    a <- localLcross.inhom(Amacrine, from="off", to="on", lambdaX=Lum)
     a <- localLcross.inhom(Amacrine, from="off", to="on",
                            lambdaFrom=Lum[moff], lambdaTo=Lum[!moff])
     a <- localLcross.inhom(Amacrine, from="off", to="on", lambdaX=Zed,
@@ -232,20 +233,24 @@ local({
     #'
     #' cases of resolve.lambdacross
     #'
+    #'  (a) involving lambdaI, lambdaJ
     h <- resolve.lambdacross(Amacrine, moff, !moff)
-    h <- resolve.lambdacross(Amacrine, moff, !moff, lambdaX=Zed)
-    h <- resolve.lambdacross(Amacrine, moff, !moff, lambdaX=Lum)
     h <- resolve.lambdacross(Amacrine, moff, !moff,
                               lambdaI=Zed[["off"]], lambdaJ=Zed[["on"]])
     h <- resolve.lambdacross(Amacrine, moff, !moff,
                               lambdaI=Lum[moff], lambdaJ=Lum[!moff])
     d <- densityfun(unmark(Amacrine), sigma=0.1)
     dm <- lapply(split(Amacrine), densityfun, sigma=0.1)
-    h <- resolve.lambdacross(Amacrine, moff, !moff, lambdaX=d)
     h <- resolve.lambdacross(Amacrine, moff, !moff,
-                              lambdaI=dm[["off"]], lambdaJ=dm[["on"]])
+                             lambdaI=dm[["off"]], lambdaJ=dm[["on"]])
+    #'  (b) involving lambdaX
+    h <- resolve.lambdacross(Amacrine, moff, !moff, lambdaX=Zed,
+                             Ilevels="off", Jlevels="on")
+    h <- resolve.lambdacross(Amacrine, moff, !moff, lambdaX=d,
+                             Ilevels="off", Jlevels="on")
     h <- resolve.lambdacross(Amacrine, moff, !moff,
-                              lambdaX=function(x,y,m){ d(x,y) })
+                             lambdaX=function(x,y,m){ d(x,y) },
+                             Ilevels="off", Jlevels="on")
     #'
     #' multitype inhomogeneous pcf
     #'

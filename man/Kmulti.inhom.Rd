@@ -17,7 +17,8 @@
           correction=c("border", "isotropic", "Ripley", "translate"),
           lambdaIJ=NULL,
           sigma=NULL, varcov=NULL,
-          lambdaX=NULL, update=TRUE, leaveoneout=TRUE)
+          lambdaX=NULL, update=TRUE, leaveoneout=TRUE,
+          Ilevels=NULL, Jlevels=NULL)
 }
 \arguments{
   \item{X}{The observed point pattern, 
@@ -34,25 +35,31 @@
   }
  \item{lambdaI}{
     Optional.
-    Values of the estimated intensity of the sub-process \code{X[I]}.
-    Either a pixel image (object of class \code{"im"}),
-    a numeric vector containing the intensity values
-    at each of the points in \code{X[I]},
-    a fitted point process model
-    (object of class \code{"ppm"} or \code{"kppm"} or \code{"dppm"}),
-    or a \code{function(x,y)} which
-    can be evaluated to give the intensity value at any location.
+    Values of the estimated intensity function of the points
+    belonging to subset \code{I}.
+    (Ignored if \code{lambdaX} is given.)
+    Either a numeric vector giving the intensity values
+    at the data points of subset \code{I},
+    a pixel image (object of class \code{"im"}) giving the
+    intensity values of points of subset \code{I} at all locations,
+    a \code{function(x,y)} which
+    can be evaluated to give the intensity value of points of subset \code{I}
+    at any location, or a fitted point process model
+    (class \code{"ppm"}, \code{"kppm"}, \code{"dppm"} or \code{"slrm"})
+    which could be used to predict the
+    intensity values of points of subset \code{J} at all locations.
+    If \code{lambdaI} is an unmarked point process model, it is assumed
+    to have been fitted to \code{X[I]}; if it is a multitype point
+    process model, it is assumed to have been fitted to \code{X},
+    and the argument \code{Ilevels} is required.
   }
- \item{lambdaJ}{
+  \item{lambdaJ}{
     Optional.
-    Values of the estimated intensity of the sub-process \code{X[J]}.
-    Either a pixel image (object of class \code{"im"}),
-    a numeric vector containing the intensity values
-    at each of the points in \code{X[J]},
-    a fitted point process model
-    (object of class \code{"ppm"} or \code{"kppm"} or \code{"dppm"}),
-    or a \code{function(x,y)} which
-    can be evaluated to give the intensity value at any location.
+    Values of the estimated intensity function of the points
+    belonging to subset \code{J}.
+    A numeric vector, pixel image, \code{function(x,y)},
+    or fitted point process model.
+    Ignored if \code{lambdaX} is given.
   }
   \item{\dots}{Ignored.}
   \item{r}{Optional. Numeric vector. The values of the argument \eqn{r}
@@ -89,16 +96,17 @@
     estimated by kernel smoothing.
   }
   \item{lambdaX}{
-    Optional. Values of the intensity for all points of \code{X}.
-    Either a pixel image (object of class \code{"im"}),
-    a numeric vector containing the intensity values
-    at each of the points in \code{X},
-    a fitted point process model
-    (object of class \code{"ppm"} or \code{"kppm"} or \code{"dppm"}),
-    or a \code{function(x,y)} which
-    can be evaluated to give the intensity value at any location.
-    If present, this argument overrides both \code{lambdaI} and
-    \code{lambdaJ}.
+    Optional.
+    Alternative to \code{lambdaI} and \code{lambdaJ}.
+    Data which can be used to calculate the intensity functions
+    of both the subsets \code{I} and \code{J}.
+    A list of pixel images (one image for each possible type of point),
+    a \code{function(x,y,mark)} giving the intensity at each location
+    for each possible type of point, a numeric matrix with one row for
+    each point in \code{X} and one column for each possible type of
+    point, or a fitted multitype point process model (class
+    \code{"ppm"}). The arguments \code{Ilevels} and \code{Jlevels} are
+    required in this case.
   }
   \item{update}{
     Logical value indicating what to do when
@@ -106,16 +114,29 @@
     is a fitted point process model
     (class \code{"ppm"}, \code{"kppm"} or \code{"dppm"}).
     If \code{update=TRUE} (the default),
-    the model will first be refitted to the data \code{X}
-    (using \code{\link[spatstat.model]{update.ppm}} or \code{\link[spatstat.model]{update.kppm}})
-    before the fitted intensity is computed.
+    the model will first be updated (refitted to the data)
+    before the fitted intensity \code{lambdaI} or \code{lambdaJ}
+    at the data points is computed.
     If \code{update=FALSE}, the fitted intensity of the
-    model will be computed without re-fitting it to \code{X}.
+    model will be computed without re-fitting the model.
   }
   \item{leaveoneout}{
     Logical value (passed to \code{\link{density.ppp}} or
     \code{\link[spatstat.model]{fitted.ppm}}) specifying whether to use a
     leave-one-out rule when calculating the intensity.
+  }
+  \item{Ilevels}{
+    Character vector containing the types of points
+    (levels of \code{marks(X)}) which
+    comprise the subset \code{I}.
+    Required when \code{lambdaX} is given
+    or when \code{lambdaI} is a multitype point process model.
+  }
+  \item{Jlevels}{
+    Character vector containing the types of points
+    which comprise the subset \code{J}.
+    Required when \code{lambdaX} is given
+    or when \code{lambdaJ} is a multitype point process model.
   }
 }
 \value{
@@ -192,11 +213,20 @@ obtained by the edge corrections named.
       which can be evaluated to give values of the intensity at
       any locations.
     }
-    \item{a fitted point process model}{
-      (object of class \code{"ppm"}, \code{"kppm"} or \code{"dppm"})
-      whose fitted \emph{trend} can be used as the fitted intensity.
-      (If \code{update=TRUE} the model will first be refitted to the
-      data \code{X} before the trend is computed.)
+    \item{A fitted multitype point process model}{
+      (class \code{"ppm"})
+      that was fitted to a point pattern. If
+      \code{update=TRUE}, this model will be re-fitted to the data
+      pattern \code{X}. Then the intensity of this model for
+      the subset \code{I} will be computed (using the information
+      \code{Ilevels}).
+    }
+    \item{A fitted unmarked point process model}{
+      (class \code{"ppm"}, \code{"kppm"}, \code{"dppm"} or \code{"slrm"})
+      that was fitted to an \emph{unmarked} point pattern. If
+      \code{update=TRUE}, this model will be re-fitted to the subset of
+      the data, \code{X[I]}. Then the intensity of this fitted model
+      will be computed.
     }
     \item{omitted:}{
       if \code{lambdaI} is omitted then it will be estimated
@@ -205,8 +235,7 @@ obtained by the edge corrections named.
   }
   If \code{lambdaI} is omitted, then it will be estimated using
   a `leave-one-out' kernel smoother, as described in Baddeley,
-  \Moller 
-  and Waagepetersen (2000).  The estimate of \code{lambdaI} for a given
+  \Moller and Waagepetersen (2000).  The estimate of \code{lambdaI} for a given
   point is computed by removing the point from the
   point pattern, applying kernel smoothing to the remaining points using
   \code{\link{density.ppp}}, and evaluating the smoothed intensity
@@ -217,9 +246,24 @@ obtained by the edge corrections named.
   Similarly \code{lambdaJ} supplies the values
   of the intensity of the sub-process identified by index \code{J}.
 
-  Alternatively if the argument \code{lambdaX} is given, then it specifies
-  the intensity values for all points of \code{X}, and the
-  arguments \code{lambdaI}, \code{lambdaJ} will be ignored.
+  Alternatively if the argument \code{lambdaX} is given,
+  then it should
+  provide data giving the intensities of both subsets \code{I} and
+  \code{J}. It may be
+  \itemize{
+    \item A list of pixel images, one for each possible type of point
+    \item A \code{function(x,y,mark)} which can be evaluated to
+    give the intensity of each type of point at any location
+    \item A matrix with one row for each data point in \code{X}
+    and one column for each possible type of point, giving the estimated
+    intensity of each type of point at each data location
+    \item A fitted point process model (class \code{"ppm"})
+    that was fitted to a multitype point pattern. If
+    \code{update=TRUE}, this model will be re-fitted to the data
+    pattern \code{X}. 
+  }
+  The arguments \code{lambdaI}, \code{lambdaJ} will be ignored
+  if \code{lambdaX} is given.
 
   The argument \code{r} is the vector of values for the
   distance \eqn{r} at which \eqn{K_{IJ}(r)}{KIJ(r)} should be evaluated. 

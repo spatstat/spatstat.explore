@@ -80,7 +80,8 @@ function(X, i, j, lambdaI=NULL, lambdaJ=NULL, ...,
                     sigma=sigma, varcov=varcov,
                     lambdaIJ=lambdaIJ, Iname=Iname, Jname=Jname,
                     lambdaX=lambdaX, update=update, leaveoneout=leaveoneout,
-                    miss.update=miss.update, miss.leave=miss.leave)
+                    miss.update=miss.update, miss.leave=miss.leave,
+                    Ilevels=i, Jlevels=j)
   iname <- make.parseable(paste(i))
   jname <- make.parseable(paste(j))
   result <-
@@ -127,7 +128,8 @@ function(X, i, lambdaI=NULL, lambdadot=NULL, ...,
                     lambdaIJ=lambdaIdot,
                     Iname=Iname, Jname=Jname,
                     lambdaX=lambdaX, update=update, leaveoneout=leaveoneout,
-                    miss.update=miss.update, miss.leave=miss.leave)
+                    miss.update=miss.update, miss.leave=miss.leave,
+                    Ilevels=i, Jlevels=levels(marx))
   iname <- make.parseable(paste(i))
   result <-
     rebadge.fv(K,
@@ -151,7 +153,8 @@ function(X, I, J, lambdaI=NULL, lambdaJ=NULL,
          correction = c("border", "isotropic", "Ripley", "translate"),
          lambdaIJ=NULL,
          sigma=NULL, varcov=NULL,
-         lambdaX=NULL, update=TRUE, leaveoneout=TRUE)
+         lambdaX=NULL, update=TRUE, leaveoneout=TRUE,
+         Ilevels=NULL, Jlevels=NULL)
 {
   verifyclass(X, "ppp")
   if(is.NAobject(X)) return(NAobject("fv"))
@@ -220,7 +223,8 @@ function(X, I, J, lambdaI=NULL, lambdaJ=NULL,
                            ...,
                            sigma=sigma, varcov=varcov,
                            leaveoneout=leaveoneout, update=update,
-                           Iexplain=Iname, Jexplain=Jname)
+                           Iexplain=Iname, Jexplain=Jname,
+                           Ilevels=Ilevels, Jlevels=Jlevels)
   lambdaI <- a$lambdaI
   lambdaJ <- a$lambdaJ
   lambdaIJ <- a$lambdaIJ
