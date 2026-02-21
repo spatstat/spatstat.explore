@@ -1,7 +1,7 @@
 #
 #   quadrattest.R
 #
-#   $Revision: 1.76 $  $Date: 2025/11/17 10:32:40 $
+#   $Revision: 1.78 $  $Date: 2026/02/21 03:40:05 $
 #
 
 
@@ -67,7 +67,8 @@ quadrat.test.quadratcount <-
                       method=method, conditional=conditional, CR=CR, nsim=nsim)
 }
 
-quadrat.testEngine <- function(X, nx, ny,
+quadrat.testEngine <- function(X=NULL,
+                               nx, ny,
                                alternative = c("two.sided",
                                                 "regular", "clustered"),
                                method=c("Chisq", "MonteCarlo"),
@@ -85,40 +86,68 @@ quadrat.testEngine <- function(X, nx, ny,
     explain.ifnot(nsim > 0)
   }
   if(!is.null(df.est)) check.1.integer(df.est)
-  if(is.null(Xcount))
+  
+  ## Detect data on a linear network
+  if(inherits(X, "lpp") ||
+     inherits(tess, "lintess") ||
+     inherits(fit, c("lpp", "lppm", "linim", "linfun"))) {
+    kraever("spatstat.linnet")
+  }
+
+  ## Handle or compute quadrat counts
+  if(is.null(Xcount)) {
     Xcount <- quadratcount(X, nx=nx, ny=ny, xbreaks=xbreaks, ybreaks=ybreaks,
                            tess=tess)
+  } else if(!inherits(Xcount, c("quadratcount", "linearquadratcount"))) {
+    stop("Unrecognised format for argument 'Xcount'", call.=FALSE)
+  }
+  ## Tessellation ('quadrats')
   tess <- attr(Xcount, "tess")
-  
+
   ## determine expected values under model
   normalised <- FALSE
   df.est.implied <- 0
   if(is.null(fit)) {
+    ## Null intensity is uniform
     if(is.tess(tess)) {
       nullname <- "CSR"
       areas <- tile.areas(tess)
       fitmeans <- sum(Xcount) * areas/sum(areas)
     } else if(inherits(tess, "lintess")) {
-      if(!requireNamespace("spatstat.linnet"))
-        stop("To analyse the tessellation, the package spatstat.linnet is required",
-             call.=FALSE)
       nullname <- "CSR on a network"
       lenfs <- spatstat.linnet::tile.lengths(tess)
       fitmeans <- sum(Xcount) * lenfs/sum(lenfs)
     }
     normalised <- TRUE
     df.est.implied <- 1
-  } else if(is.im(fit) || inherits(fit, "funxy")) {
-    nullname <- "Poisson process with given intensity"
-    lambda <- as.im(fit, W=Window(tess))
+  } else if(inherits(fit, c("linim", "linfun"))) {
+    nullname <- "Poisson process with given intensity on a network"
+    lambda <- spatstat.linnet::as.linim(fit)
     means <- integral(lambda, tess)
     fitmeans <- sum(Xcount) * means/sum(means)
     normalised <- TRUE
     df.est.implied <- 1
+  } else if(is.im(fit) || is.function(fit)) {
+    if(is.tess(tess)) {
+      nullname <- "Poisson process with given intensity"
+      lambda <- as.im(fit, W=Window(tess))
+      means <- integral(lambda, tess)
+      fitmeans <- sum(Xcount) * means/sum(means)
+      normalised <- TRUE
+      df.est.implied <- 1
+    } else if(inherits(tess, "lintess")) {
+      nullname <- "Poisson process with given intensity on a network"
+      lambda <- spatstat.linnet::as.linim(fit, L=domain(tess))
+      means <- integral(lambda, tess)
+      fitmeans <- sum(Xcount) * means/sum(means)
+      normalised <- TRUE
+      df.est.implied <- 1
+    } else {
+      stop(paste("Argument 'tess' should be a tessellation",
+                 "of class 'tess' or 'lintess'"))
+    }
   } else if(inherits(fit, "ppm")) {
-    if(!requireNamespace("spatstat.model")) 
-      stop("To predict a fitted model, the package spatstat.model is required",
-           call.=FALSE)
+    kraever("spatstat.model")
     if(!is.poisson(fit))
       stop("Quadrat test only supported for Poisson point process models")
     if(is.marked(fit))
@@ -130,9 +159,7 @@ quadrat.testEngine <- function(X, nx, ny,
     normalised <- FALSE
     df.est.implied <- length(coef(fit))
   } else if(inherits(fit, "slrm")) {
-    if(!requireNamespace("spatstat.model")) 
-      stop("To predict a fitted model, the package spatstat.model is required",
-           call.=FALSE)
+    kraever("spatstat.model")
     nullname <- paste("fitted spatial logistic regression", sQuote(fitname))
     probs <- predict(fit, type="probabilities")
     ## usual case
@@ -143,9 +170,6 @@ quadrat.testEngine <- function(X, nx, ny,
     normalised <- FALSE
     df.est.implied <- length(coef(fit))
   } else if(inherits(fit, "lppm")) {
-    if(!requireNamespace("spatstat.linnet")) 
-      stop("To predict the fitted model, the package spatstat.linnet is required",
-           call.=FALSE)
     nullname <- paste("fitted Poisson model", sQuote(fitname), "on network")
     lambda <- predict(fit, type="intensity")
     means <- integral(lambda, tess)

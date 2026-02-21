@@ -254,10 +254,12 @@ pcfmulti.inhom(X, I, J, lambdaI = NULL, lambdaJ = NULL, \dots,
       \item A matrix with one row for each data point in \code{X}
       and one column for each possible type of point, giving the estimated
       intensity of each type of point at each data location
-      \item A fitted point process model (class \code{"ppm"})
+      \item A fitted point process model (class \code{"lppm"} or \code{"ppm"})
       that was fitted to a multitype point pattern. If
       \code{update=TRUE}, this model will be re-fitted to the data
-      pattern \code{X}. 
+      pattern \code{X}. Then the fitted intensities for subsets \code{I} and
+      \code{J} will be computed (using the information \code{Ilevels}
+      and \code{Jlevels}).
     }
     \item
     Otherwise if \code{lambdaI} is given, it may be
@@ -265,17 +267,17 @@ pcfmulti.inhom(X, I, J, lambdaI = NULL, lambdaJ = NULL, \dots,
       \item A pixel image
       \item A \code{function(x,y)}
       \item A numeric vector with one entry for each data point in \code{X[I]}
-      \item A fitted point process model (class \code{"ppm"})
+      \item A fitted point process model (class \code{"lppm"} or \code{"ppm"})
       that was fitted to a \emph{multitype} point pattern. If
       \code{update=TRUE}, this model will be re-fitted to the data
       pattern \code{X}. Then the intensity of this model for
       the subset \code{I} will be computed (using the information
       \code{Ilevels}).
       \item A fitted point process model
-      (class \code{"ppm"}, \code{"kppm"}, \code{"dppm"} or \code{"slrm"})
+      (class \code{"lppm"}, \code{"ppm"}, \code{"kppm"}, \code{"dppm"} or \code{"slrm"})
       that was fitted to an \emph{unmarked} point pattern. If
-      \code{update=TRUE}, this model will be re-fitted to the subset of
-      the data, \code{X[I]}. Then the intensity of this fitted model
+      \code{update=TRUE}, this model will be re-fitted to the relevant subset of
+      the data, \code{unmark(X[I])}. Then the intensity of this fitted model
       will be computed.
     }
     \item

@@ -214,18 +214,18 @@ obtained by the edge corrections named.
       any locations.
     }
     \item{A fitted multitype point process model}{
-      (class \code{"ppm"})
-      that was fitted to a point pattern. If
+      (class \code{"lppm"} or \code{"ppm"})
+      that was fitted to a multitype point pattern. If
       \code{update=TRUE}, this model will be re-fitted to the data
       pattern \code{X}. Then the intensity of this model for
       the subset \code{I} will be computed (using the information
       \code{Ilevels}).
     }
     \item{A fitted unmarked point process model}{
-      (class \code{"ppm"}, \code{"kppm"}, \code{"dppm"} or \code{"slrm"})
+      (class \code{"lppm"}, \code{"ppm"}, \code{"kppm"}, \code{"dppm"} or \code{"slrm"})
       that was fitted to an \emph{unmarked} point pattern. If
       \code{update=TRUE}, this model will be re-fitted to the subset of
-      the data, \code{X[I]}. Then the intensity of this fitted model
+      the data, \code{unmark(X[I])}. Then the intensity of this fitted model
       will be computed.
     }
     \item{omitted:}{
@@ -257,10 +257,12 @@ obtained by the edge corrections named.
     \item A matrix with one row for each data point in \code{X}
     and one column for each possible type of point, giving the estimated
     intensity of each type of point at each data location
-    \item A fitted point process model (class \code{"ppm"})
+    \item A fitted point process model (class \code{"lppm"} or \code{"ppm"})
     that was fitted to a multitype point pattern. If
     \code{update=TRUE}, this model will be re-fitted to the data
-    pattern \code{X}. 
+    pattern \code{X}. Then the fitted intensities for subsets \code{I} and
+    \code{J} will be computed (using the information \code{Ilevels}
+    and \code{Jlevels}).
   }
   The arguments \code{lambdaI}, \code{lambdaJ} will be ignored
   if \code{lambdaX} is given.

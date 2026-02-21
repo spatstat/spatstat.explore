@@ -9,7 +9,7 @@
 #'    validate.weights
 #'    updateData (generic) (soon to be deprecated)
 #'
-#' $Revision: 1.26 $ $Date: 2026/02/15 09:17:24 $
+#' $Revision: 1.27 $ $Date: 2026/02/16 01:36:51 $
 
 resolve.lambda <- function(X, lambda=NULL, ...) {
   UseMethod("resolve.lambda")
@@ -246,8 +246,8 @@ resolve.lambdacross.ppp <- function(X, I, J,
         lamXM[,m] <- predict(model, locations = X %mark% Xlevels[m])
       ## overwrite values for observed locations and *observed* marks
       ## using leave-one-out predictions
-      if(update) {
-        fitlam <- fitted(model, dataonly=TRUE, leaveoneout=leaveoneout)
+      if(update && leaveoneout) {
+        fitlam <- fitted(model, dataonly=TRUE, leaveoneout=TRUE)
         if(length(fitlam) != nX)
           stop(paste("Internal error: trying to overwrite",
                      nX, "predicted values with",
@@ -331,8 +331,8 @@ resolve.lambdacross.ppp <- function(X, I, J,
           lamXM[,m] <- predict(model, locations = X %mark% Xlevels[m])
         ## overwrite values for observed locations and *observed* marks
         ## leave-one-out predictions
-        if(update) {
-          fitlam <- fitted(model, dataonly=TRUE, leaveoneout=leaveoneout)
+        if(update && leaveoneout) {
+          fitlam <- fitted(model, dataonly=TRUE, leaveoneout=TRUE)
           if(length(fitlam) != nX)
             stop(paste("Internal error: trying to overwrite",
                        nX, "predicted values with",
@@ -409,8 +409,8 @@ resolve.lambdacross.ppp <- function(X, I, J,
           lamXM[,m] <- predict(model, locations = X %mark% Xlevels[m])
         ## overwrite values for observed locations and *observed* marks
         ## leave-one-out predictions
-        if(update) {
-          fitlam <- fitted(model, dataonly=TRUE, leaveoneout=leaveoneout)
+        if(update && leaveoneout) {
+          fitlam <- fitted(model, dataonly=TRUE, leaveoneout=TRUE)
           if(length(fitlam) != nX)
             stop(paste("Internal error: trying to overwrite",
                        nX, "predicted values with",
