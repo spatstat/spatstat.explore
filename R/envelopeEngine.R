@@ -6,7 +6,7 @@
 #'    envelopeEngine()    performs simulations and calculates summary function
 #'    envelope.matrix()   calculates envelope from function values
 #'
-#'    $Revision: 1.3 $ $Date: 2026/02/26 08:00:11 $
+#'    $Revision: 1.7 $ $Date: 2026/02/26 09:32:42 $
 #' 
 #' ............. envelopeEngine() ..................................
 #'
@@ -18,7 +18,7 @@ envelopeEngine <-
            nsim=99, nrank=1, ..., funargs=list(), funYargs=funargs,
            verbose=TRUE, clipdata=TRUE, 
            transform=NULL, global=FALSE, ginterval=NULL, use.theory=NULL,
-           theoryfun=NULL, theorydesc="theoretical value",
+           theoryfun=NULL, theory.adjective=NULL,
            alternative=c("two.sided", "less", "greater"),
            scale=NULL, clamp=FALSE,
            savefuns=FALSE, savepatterns=FALSE,
@@ -299,6 +299,7 @@ envelopeEngine <-
 
   if(compute.theo <- is.function(theoryfun)) {
     ## Theoretical value is provided by a function
+    theorydesc <- pasteN(theory.adjective, "theoretical value of %s")
     if(has.theo) {
       ## overwrite column values
       rvals <- funX[[argname]]
@@ -438,6 +439,8 @@ envelopeEngine <-
                         csr=csr,
                         csr.theo=csr.theo,
                         use.theory=use.theory,
+                        theoryfun=theoryfun,
+                        theory.adjective=theory.adjective,
                         pois=pois,
                         simtype=simtype,
                         constraints=constraints,
@@ -620,8 +623,8 @@ envelopeEngine <-
                    sQuote(valname),
                    ". Try using the argument", sQuote("correction"),
                    "to make them compatible"))
-      rfunX    <- with(funX,    ".x")
-      rfunXsim <- with(funXsim, ".x")
+      rfunX    <- with(funX,    .x)
+      rfunXsim <- with(funXsim, .x)
       if(!identical(rfunX, rfunXsim))
         stop(paste("When", fname, "is applied to a simulated pattern,",
                    "the values of the argument", sQuote(argname.sim),
@@ -718,6 +721,7 @@ envelopeEngine <-
                             type=etype, alternative=alternative,
                             scale=scale, clamp=clamp,
                             csr=csr, use.theory=use.theory,
+                            theory.adjective=theory.adjective,
                             nrank=nrank, ginterval=ginterval, nSD=nSD,
                             fname.orig=fname.orig, transform=transform,
                             Yname=Yname, do.pwrong=do.pwrong,
@@ -760,7 +764,7 @@ envelopeEngine <-
 
 envelope.matrix <- function(Y, ...,
                             argvals=rvals, rvals=NULL, ## rvals is old name
-                            observed=NULL, theory=NULL, 
+                            observed=NULL, theory=NULL,
                             funX=NULL,
                             nsim=NULL, nsim2=NULL,
                             jsim=NULL, jsim.mean=NULL,
@@ -774,6 +778,7 @@ envelope.matrix <- function(Y, ...,
                             Yname=NULL,
                             argname=NULL,
                             arg.desc=NULL,
+                            theory.adjective=NULL,
                             fname.orig=NULL,
                             transform=NULL,
                             do.pwrong=FALSE,
@@ -1193,9 +1198,9 @@ envelope.matrix <- function(Y, ...,
                makefvlabel("stdres", "hat", FNAME, argname=argname, pre=TRA),
                loCIlabel,
                hiCIlabel)
-             wted <- if(use.weights) "weighted " else NULL
-             msdesc <- c(paste0(wted, "sample mean of %s from simulations"),
-                         paste0(wted, "sample variance of %s from simulations"),
+             wted <- if(use.weights) "weighted" else NULL
+             msdesc <- c(pasteN(wted, "sample mean of %s from simulations"),
+                         pasteN(wted, "sample variance of %s from simulations"),
                          "raw residual",
                          "standardised residual",
                          loCI.name, hiCI.name)
@@ -1224,7 +1229,7 @@ envelope.matrix <- function(Y, ...,
                makefvlabel("stdres", "hat", FNAME, argname=argname, pre=TRA),
                loCIlabel,
                hiCIlabel)
-             msdesc <- c(paste0(if(use.weights) "weighted " else NULL,
+             msdesc <- c(pasteN(if(use.weights) "weighted" else NULL,
                                 "sample variance of %s from simulations"),
                          "raw residual",
                          "standardised residual",
@@ -1257,11 +1262,13 @@ envelope.matrix <- function(Y, ...,
   if(use.theory) {
     # reference is computed curve `theo'
     reflabl <- makefvlabel(NULL, NULL, FNAME, "theo", argname=argname, pre=TRA)
-    refdesc <- paste0("theoretical value of %s", if(csr) " for CSR" else NULL)
+    refdesc <- pasteN(theory.adjective,
+                      "theoretical value of %s",
+                      if(csr) "for CSR" else NULL)
   } else {
     # reference is sample mean of simulations
     reflabl <- makefvlabel(NULL, "bar", FNAME, argname=argname, pre=TRA)
-    refdesc <- paste0(if(use.weights) "weighted " else NULL,
+    refdesc <- pasteN(if(use.weights) "weighted" else NULL,
                       "sample mean of %s from simulations")
   }
 
@@ -1311,6 +1318,7 @@ envelope.matrix <- function(Y, ...,
                                 clamp = clamp,
                                 csr = csr,
                                 use.theory = use.theory,
+                                theory.adjective = theory.adjective,
                                 csr.theo = csr && use.theory,
                                 simtype = "funs",
                                 constraints = "",
