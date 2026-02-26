@@ -80,7 +80,7 @@ Tstat(X, ..., r = NULL, rmax = NULL,
 \seealso{
   \code{\link{Kest}}
 
-  \code{\link{Triplets}} is the Gibbs point process interaction
+  \code{\link[spatstat.model]{Triplets}} is the Gibbs point process interaction
   corresponding to the summary function \code{Tstat}.
 }
 \examples{
