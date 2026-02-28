@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.7-0.014
+        CHANGES IN spatstat.explore VERSION 3.7-0.015
 
 OVERVIEW
 
@@ -12,6 +12,10 @@ OVERVIEW
 
     o More flexible interpretation of arguments 'lambda = <ppm>" 
     in inhomogeneous summary statistics
+
+    o More options for 'simulate' argument in 'envelope' methods.
+
+    o Extended capability of 'envelope.pp3' 
 
     o Minor improvements and bug fixes.
 
@@ -74,6 +78,17 @@ SIGNIFICANT USER-VISIBLE CHANGES
 
     o relrisk.ppp
     Argument 'weights' can be logical valued.
+
+    o envelope.ppp
+    Argument 'simulate' can be a point process model of class
+    'ppm', 'kppm', 'dppm', 'slrm', 'clusterprocess' or 'detpointprocfamily'.
+
+    o envelope.pp3
+    Marked point patterns are now accepted.
+
+    o envelope.pp3
+    New arguments 'fix.n' and 'fix.marks' determine whether the 
+    simulated patterns have a fixed or random number of points.
 
 BUG FIXES
 

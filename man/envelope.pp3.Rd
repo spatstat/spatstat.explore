@@ -7,7 +7,8 @@
 }
 \usage{
   \method{envelope}{pp3}(Y, fun=K3est, nsim=99, nrank=1, \dots, 
-  funargs=list(), funYargs=funargs, simulate=NULL, verbose=TRUE, 
+  funargs=list(), funYargs=funargs, simulate=NULL,
+  fix.n=FALSE, fix.marks=FALSE, verbose=TRUE, 
   transform=NULL,global=FALSE,ginterval=NULL,use.theory=NULL,
   alternative=c("two.sided", "less", "greater"),
   scale=NULL, clamp=FALSE, 
@@ -58,6 +59,17 @@
     the envelopes are computed.
     Alternatively \code{simulate} may be an object produced by the
     \code{envelope} command: see Details.
+  }
+  \item{fix.n}{
+    Logical. If \code{TRUE}, simulated patterns will have the
+    same number of points as the original data pattern.
+  }
+  \item{fix.marks}{
+    Logical. If \code{TRUE}, simulated patterns will have the
+    same number of points \emph{and} the same marks as the
+    original data pattern. In a multitype point pattern this means that
+    the simulated patterns will have the same number of points
+    \emph{of each type} as the original data.
   }
   \item{verbose}{
     Logical flag indicating whether to print progress reports
@@ -198,11 +210,22 @@
   in one of the following ways. 
   \itemize{
     \item 
-    If \code{simulate=NULL},
-    then we generate \code{nsim} simulations of
-    Complete Spatial Randomness (i.e. \code{nsim} simulated point patterns
-    each being a realisation of the uniform Poisson point process)
-    with the same intensity as the pattern \code{Y}.
+    If \code{simulate=NULL} (the default), then we generate
+    \code{nsim} random patterns similar to the data pattern \code{Y}:
+    \itemize{
+      \item if \code{fix.n=FALSE} (the default),
+      then we generate \code{nsim} simulations of
+      Complete Spatial Randomness (i.e. \code{nsim} simulated point patterns
+      each being a realisation of the uniform Poisson point process)
+      with the same intensity as the pattern \code{Y}.
+      \item if \code{fix.n=TRUE},
+      then we generate \code{nsim} simulations of
+      the Binomial Process (i.e. \code{nsim} simulated point patterns
+      each containing the same number of points as the pattern
+      \code{Y}).
+    }
+    If \code{Y} is a marked point pattern, the randomisation of marks
+    is controlled by \code{fix.marks}.
     \item
     If \code{simulate} is supplied, then it determines how the
     simulated point patterns are generated.
@@ -240,12 +263,7 @@
   plot(envelope(X, nsim=4))
  }
 }
-\author{\adrian
-  
-  
-  and \rolf
-  
-}
+\author{\adrian and \rolf}
 \keyword{spatial}
 \keyword{htest}
 \keyword{hplot}

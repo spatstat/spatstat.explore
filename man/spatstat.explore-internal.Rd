@@ -90,6 +90,10 @@
 \alias{localpcfengine}
 \alias{localpcfmatrix}
 \alias{lookup2DkernelInfo}
+\alias{make.simulrecipe}
+\alias{make.simulrecipe.ppp}
+\alias{make.simulrecipe.pp3}
+\alias{make.simulrecipe.clusterprocess}
 \alias{makefvlabel}
 \alias{makeRocDesc}
 \alias{makeRocFlabel}
@@ -355,6 +359,10 @@ localKmultiEngine(X, from, to,
 localpcfengine(X, \dots, delta, rmax, nr, stoyan, lambda, rvalue)
 localpcfmatrix(X, i, \dots, lambda, delta, rmax, nr, stoyan)
 lookup2DkernelInfo(kernel)
+make.simulrecipe(object, envir, \dots)
+\method{make.simulrecipe}{ppp}(object, envir, \dots, fix.n, fix.marks)
+\method{make.simulrecipe}{pp3}(object, envir, \dots, fix.n, fix.marks)
+\method{make.simulrecipe}{clusterprocess}(object, envir, \dots, W)
 makefvlabel(op, accent, fname, sub, argname, pre, post)
 makeRocDesc(desc, leftoneout)
 makeRocFlabel(sub, leftoneout, super, f, argu)

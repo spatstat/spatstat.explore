@@ -6,7 +6,7 @@
 #'    envelopeEngine()    performs simulations and calculates summary function
 #'    envelope.matrix()   calculates envelope from function values
 #'
-#'    $Revision: 1.7 $ $Date: 2026/02/26 09:32:42 $
+#'    $Revision: 1.8 $ $Date: 2026/02/28 04:48:04 $
 #' 
 #' ............. envelopeEngine() ..................................
 #'
@@ -91,7 +91,19 @@ envelopeEngine <-
     result.depends.both <- (length(formals(saveresultof)) >= 2)
   }
 
-  # Identify type of simulation from argument 'simul'
+  #' Identify type of simulation from argument 'simul'
+  #' which is either a pre-package simulation recipe
+  #' or a user-supplied argument which has not yet been processed
+
+  #' Convert point process to simulation recipe
+  if(inherits(simul, c("ppm", "kppm", "dppm", "slrm", "lppm"))) {
+    #' fitted point process model: simulate from model
+    simul <- make.simulrecipe(simul, envir.here, ...)
+  } else if(inherits(simul, c("clusterprocess", "detpointprocfamily"))) {
+    #' theoretical point process model - simulate in data window
+    simul <- make.simulrecipe(simul, envir.here, ..., W=domain(X))
+  }
+  
   if(inherits(simul, "simulrecipe")) {
     # ..................................................
     # simulation recipe is given
@@ -102,17 +114,11 @@ envelopeEngine <-
     pois    <- simul$pois
     constraints <- simul$constraints
   } else {
-    # ...................................................
-    # simulation is specified by argument `simulate' to envelope()
+    #' ...................................................
+    #' simulation is specified by argument `simulate' to envelope()
     simulate <- simul
-    # which should be an expression, or a list of point patterns,
-    # or an envelope object, or a function to be applied to the data
-    csr <- FALSE
-    # override
-    if(!is.null(icsr <- internal$csr)) csr <- icsr
-    pois <- csr
+    pois <- csr <- isTRUE(internal$csr %orifnull% FALSE)
     constraints <- ""
-#    model <- NULL
     if(inherits(simulate, "envelope")) {
       # envelope object: see if it contains stored point patterns
       simpat <- attr(simulate, "simpatterns")

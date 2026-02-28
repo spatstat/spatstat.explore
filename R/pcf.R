@@ -3,7 +3,7 @@
 #'
 #' Calculate pair correlation function from point pattern (pcf.ppp)
 #' 
-#' $Revision: 1.91 $ $Date: 2026/02/14 09:09:40 $
+#' $Revision: 1.92 $ $Date: 2026/02/27 01:46:46 $
 #'
 #' Copyright (c) 2008-2026 Adrian Baddeley, Tilman Davies and Martin Hazelton
 
@@ -515,24 +515,26 @@ resolve.pcf.bandwidth <- function(X, ...,
            if(is.null(gref)) {
              ## default: the pcf of the Poisson process
              gref <- function(x) { rep.int(1, length(x)) }
+             greftype <- "csr"
+           } else if(is.function(gref)) {
+             greftype <- "function"
+           } else if(inherits(gref, c("kppm", "dppm", "ppm", "slrm",
+                                      "detpointprocfamily",
+                                      "clusterprocess", "zclustermodel"))) {
+             greftype <- "model"
+             model <- gref
+             if(!requireNamespace("spatstat.model")) 
+               stop("The package spatstat.model is required when",
+                    "'gref' is a point process model",
+                    call.=FALSE)
+             gref <- spatstat.model::pcfmodel(model)
+             if(!is.function(gref))
+               stop("Internal error: pcfodel() did not yield a function",
+                    call.=FALSE)
            } else {
-             ## normal case: user specified reference function or model
-             if(inherits(gref, c("kppm", "dppm", "ppm", "slrm",
-                                 "detpointprocfamily", "zclustermodel"))) {
-               model <- gref
-               if(!requireNamespace("spatstat.model")) 
-                 stop("The package spatstat.model is required when",
-                      "'gref' is a fitted model",
-                      call.=FALSE)
-               gref <- spatstat.model::pcfmodel(model)
-               if(!is.function(gref))
-                 stop("Internal error: pcfodel() did not yield a function",
-                      call.=FALSE)
-             } else if(!is.function(gref)) {
-               stop(paste("Argument", sQuote("gref"),
+             stop(paste("Argument", sQuote("gref"),
                           "should be a function or a point process model"),
                     call.=FALSE)
-             }
            }
            integrand <- function(x, g) { 2 * pi * x * g(x) }
          })
@@ -579,6 +581,7 @@ resolve.pcf.bandwidth <- function(X, ...,
     tt <- indefinteg(integrand, rr, g=gref, lower=0)
     info$Transform <- approxfun(rr, tt, rule=2)
     info$gref <- gref
+    info$greftype <- greftype
   }
 
   return(list(info=info, denargs=denargs))
