@@ -5,7 +5,7 @@
 #'
 #' Methods for plot, print, summary, envelope, pool, as.data.frame
 #' 
-#'   $Revision: 1.1 $  $Date: 2026/02/26 04:09:39 $
+#'   $Revision: 1.2 $  $Date: 2026/02/28 12:22:02 $
 
 
 as.data.frame.envelope <- function(x, ..., simfuns=FALSE) {
@@ -50,7 +50,7 @@ print.envelope <- function(x, ...) {
   if(!is.null(valname <- e$valname) && waxlyrical('extras'))
     splat("Edge correction:", dQuote(valname))
   ## determine *actual* type of simulation
-  descrip <-
+  descrip <- e$sim.realisations %orifnull% 
     if(csr) "simulations of CSR"
     else if(!is.null(simtype)) {
       switch(simtype,
@@ -131,7 +131,7 @@ summary.envelope <- function(object, ...) {
   splat(type, "critical envelopes for", fname, 
       "\nand observed value for", sQuote(e$Yname))
   # determine *actual* type of simulation
-  descrip <-
+  descrip <- e$sim.realizations %orifnull% 
     if(csr) "simulations of CSR"
     else if(!is.null(simtype)) {
       switch(simtype,

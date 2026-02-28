@@ -6,7 +6,7 @@
 #'    envelopeEngine()    performs simulations and calculates summary function
 #'    envelope.matrix()   calculates envelope from function values
 #'
-#'    $Revision: 1.8 $ $Date: 2026/02/28 04:48:04 $
+#'    $Revision: 1.10 $ $Date: 2026/02/28 12:46:25 $
 #' 
 #' ............. envelopeEngine() ..................................
 #'
@@ -91,124 +91,138 @@ envelopeEngine <-
     result.depends.both <- (length(formals(saveresultof)) >= 2)
   }
 
-  #' Identify type of simulation from argument 'simul'
-  #' which is either a pre-package simulation recipe
-  #' or a user-supplied argument which has not yet been processed
+  #' Internal communication
+  known.csr <- isTRUE(internal$csr)
 
-  #' Convert point process to simulation recipe
-  if(inherits(simul, c("ppm", "kppm", "dppm", "slrm", "lppm"))) {
+  #' Determine the simulation procedure from argument 'simul'
+  #' which is either a pre-packaged simulation recipe, or user-supplied data. 
+
+  simulate <- simul
+  if(inherits(simulate, "simulrecipe")) {
+    recette <- simulate
+  } else if(inherits(simulate, c("ppm", "kppm", "dppm", "slrm", "lppm"))) {
     #' fitted point process model: simulate from model
-    simul <- make.simulrecipe(simul, envir.here, ...)
-  } else if(inherits(simul, c("clusterprocess", "detpointprocfamily"))) {
+    recette <- make.simulrecipe(simulate, envir.here, ...)
+  } else if(inherits(simulate, c("clusterprocess", "detpointprocfamily"))) {
     #' theoretical point process model - simulate in data window
-    simul <- make.simulrecipe(simul, envir.here, ..., W=domain(X))
-  }
-  
-  if(inherits(simul, "simulrecipe")) {
-    # ..................................................
-    # simulation recipe is given
-    simtype <- simul$type
-    simexpr <- simul$expr
-    envir   <- simul$envir
-    csr     <- simul$csr
-    pois    <- simul$pois
-    constraints <- simul$constraints
+    recette <- make.simulrecipe(simulate, envir.here, ..., W=domain(X))
+  } else if(is.expression(simulate)) {
+    #' user-supplied expression
+    recette <- simulrecipe("expr",
+                           expr  = simulate,
+                           envir = envir.user,
+                           csr   = known.csr,
+                           value = "result of evaluating expression",
+                           realisations="simulations by evaluating expression")
+  } else if(is.function(simulate)) {
+    #' user-supplied function 
+    recette <- simulrecipe("func",
+                           expr  = expression(simulate(X)),
+                           envir = envir.here,
+                           csr   = known.csr,
+                           value = "result of simulate(X)",
+                           realisations="simulations by evaluating function")
+  } else if(inherits(simulate, "envelope")) {
+    #' envelope object: should contain saved point patterns
+    SimDataList <- attr(simulate, "simpatterns")
+    if(is.null(SimDataList))
+      stop(paste("The argument", sQuote("simulate"),
+                 "is an envelope object but does not contain",
+                 "any saved point patterns."),
+           call.=FALSE)
+    #'
+    einfo <- attr(simulate, "einfo")
+    csr <- known.csr || isTRUE(einfo$csr %orifnull% FALSE)
+    ## extract elements from the list of patterns
+    simexpr <- expression(SimDataList[[i+nerr]])
+    #' ensure that `i' is defined
+    i <- 1L
+    nerr <- 0L
+    maxnerr <- min(length(SimDataList)-nsim, maxnerr)
+    #' 
+    recette <- simulrecipe("list",
+                           expr  = simexpr,
+                           envir = envir.here,
+                           csr   = csr,
+                           value = "list entry",
+                           making = "extracting",
+                           realisations = "point patterns from envelope object")
+  } else if(is.list(simulate) &&
+            all(sapply(simulate, inherits, what=Xclass))) {
+    #' User-supplied list of point patterns
+    SimDataList <- simulate
+    ## extract elements from the list of patterns
+    simexpr <- expression(SimDataList[[i+nerr]])
+    #' 
+    mess <- attr(simulate, "internal")
+    csr <- known.csr || isTRUE(mess$csr %orifnull% FALSE)
+    #' ensure that `i' is defined
+    i <- 1L
+    nerr <- 0L
+    maxnerr <- min(length(SimDataList)-nsim, maxnerr)
+    #' 
+    recette <- simulrecipe("list",
+                           expr  = simexpr,
+                           envir = envir.here,
+                           csr   = csr,
+                           value = "list entry",
+                           making = "extracting",
+                           realisations = "point patterns from list")
+  } else if(is.list(simulate) &&
+            all(sapply(simulate, is.list)) &&
+            all(lengths(simulate) == 1) &&
+            all(sapply((elements <- lapply(simulate, "[[", i=1L)), inherits, what=Xclass))) {
+    #' malformed argument: list(list(ppp), list(ppp), ....) 
+    SimDataList <- elements
+    #' expression that will be evaluated
+    simexpr <- expression(SimDataList[[i+nerr]])
+    #' ensure that `i' is defined
+    i <- 1L
+    nerr <- 0L
+    maxnerr <- min(length(SimDataList)-nsim, maxnerr)
+    #' 
+    recette <- simulrecipe("list",
+                           expr  = simexpr,
+                           envir = envir.here,
+                           csr   = known.csr,
+                           value = "list entry",
+                           making = "extracting",
+                           realisations = "point patterns from list")
   } else {
-    #' ...................................................
-    #' simulation is specified by argument `simulate' to envelope()
-    simulate <- simul
-    pois <- csr <- isTRUE(internal$csr %orifnull% FALSE)
-    constraints <- ""
-    if(inherits(simulate, "envelope")) {
-      # envelope object: see if it contains stored point patterns
-      simpat <- attr(simulate, "simpatterns")
-      if(!is.null(simpat))
-        simulate <- simpat
-      else
-        stop(paste("The argument", sQuote("simulate"),
-                   "is an envelope object but does not contain",
-                   "any saved point patterns."))
-    }
-    if(is.expression(simulate)) {
-      ## The user-supplied expression 'simulate' will be evaluated repeatedly
-      simtype <- "expr"
-      simexpr <- simulate
-      envir <- envir.user
-    } else if(is.function(simulate)) {
-      ## User-supplied function 'simulate' will be repeatedly evaluated on X
-      simtype <- "func"
-      simexpr <- expression(simulate(X))
-      envir <- envir.here
-    } else if(is.list(simulate) &&
-              all(sapply(simulate, inherits, what=Xclass))) {
-      #' The user-supplied list of point patterns will be used
-      simtype <- "list"
-      SimDataList <- simulate
-      #' expression that will be evaluated
-      simexpr <- expression(SimDataList[[i+nerr]])
-      dont.complain.about(SimDataList)
-      envir <- envir.here
-      #' ensure that `i' is defined
-      i <- 1L
-      nerr <- 0L
-      maxnerr <- min(length(SimDataList)-nsim, maxnerr)
-      #' any messages?
-      if(!is.null(mess <- attr(simulate, "internal"))) {
-        # determine whether these point patterns are realisations of CSR
-        csr <- isTRUE(mess$csr)
-      }
-    } else if(is.list(simulate) &&
-              all(sapply(simulate, is.list)) &&
-              all(lengths(simulate) == 1) &&
-              all(sapply((elements <- lapply(simulate, "[[", i=1)), inherits, what=Xclass))) {
-      #' malformed argument: list(list(ppp), list(ppp), ....) 
-      SimDataList <- elements
-      simtype <- "list"
-      #' expression that will be evaluated
-      simexpr <- expression(SimDataList[[i+nerr]])
-      dont.complain.about(SimDataList)
-      envir <- envir.here
-      #' ensure that `i' is defined
-      i <- 1L
-      nerr <- 0L
-      maxnerr <- min(length(SimDataList)-nsim, maxnerr)
-      #' any messages?
-      if(!is.null(mess <- attr(simulate, "internal"))) {
-        # determine whether these point patterns are realisations of CSR
-        csr <- isTRUE(mess$csr) 
-      }
-    } else stop(paste(sQuote("simulate"),
-                      "should be an expression,",
-                      "or a list of point patterns of the same kind as X"))
+    stop(paste(sQuote("simulate"),
+               "should be an expression, a function,",
+               "a point process model, an envelope object,",
+               "or a list of point patterns of the same kind as X"))
   }
+
+  ## ............... Extract simulation info ...............
+  
+  simtype <- recette$type
+  simexpr <- recette$expr
+  envir   <- recette$envir
+  csr     <- recette$csr
+  pois    <- recette$pois
+
+  ## text for messages
+  constraints <- recette$constraints
+  sim.value <- recette$value  # e.g. 'result of simulate(X)'
+  sim.making <- recette$making   # e.g. 'generating'
+  sim.realisations <- recette$realisations.full # meaningful description
+
   # -------------------------------------------------------------------
   # Determine clipping window
   # ------------------------------------------------------------------
 
   if(clipdata) {
-    # Generate one realisation
+    #' Generate one realisation
     Xsim <- eval(simexpr, envir=envir)
     if(!inherits(Xsim, Xclass))
-      switch(simtype,
-             csr=stop(paste("Internal error:", Xobjectname, "not generated")),
-             rmh=stop(paste("Internal error: rmh did not return an",
-               Xobjectname)),
-             kppm=stop(paste("Internal error: simulate.kppm did not return an",
-               Xobjectname)),
-             slrm=stop(paste("Internal error: simulate.slrm did not return an",
-               Xobjectname)),
-             expr=stop(paste("Evaluating the expression", sQuote("simulate"),
-               "did not yield an", Xobjectname)),
-             func=stop(paste("Evaluating the function", sQuote("simulate"),
-               "did not yield an", Xobjectname)),
-             list=stop(paste("Internal error: list entry was not an",
-               Xobjectname)),
-             stop(paste("Internal error:", Xobjectname, "not generated"))
-             )
-    # Extract window
+      stop(paste(sim.value, "is not a", Xobjectname), call.=FALSE)
+    #' Extract window
     clipwin <- Xsim$window
     if(!is.subset.owin(clipwin, X$window))
-      warning("Window containing simulated patterns is not a subset of data window")
+      warning("Window containing simulated patterns is not a subset of data window",
+              call.=FALSE)
   }
   
   # ------------------------------------------------------------------
@@ -373,23 +387,11 @@ envelopeEngine <-
   if(patterns.only) {
     # generate simulated realisations and return only these patterns
     if(verbose) {
-      action <- if(simtype == "list") "Extracting" else "Generating"
-      descrip <- switch(simtype,
-                        csr = "simulations of CSR",
-                        rmh = paste("simulated realisations of fitted",
-                          if(pois) "Poisson" else "Gibbs",
-                          "model"),
-                        kppm = "simulated realisations of fitted cluster model",
-                        slrm = "simulated realisations of spatial logistic regression model",
-                        expr = "simulations by evaluating expression",
-                        func = "simulations by evaluating function",
-                        list = "point patterns from list",
-                        "simulated realisations")
-      if(!is.null(constraints) && nzchar(constraints))
-        descrip <- paste(descrip, constraints)
+      Action <- capitalise(sim.making)
+      descrip <- sim.realisations
       explan <- if(dual) paren(paste(nsim2, "to estimate the mean and",
                                      nsim, "to calculate envelopes")) else ""
-      splat(action, Nsim, descrip, explan, "...")
+      splat(Action, Nsim, descrip, explan, "...")
     }
     XsimList <- list()
   # start simulation loop
@@ -398,36 +400,7 @@ envelopeEngine <-
       if(verbose) sstate <- progressreport(i, Nsim, state=sstate)
       Xsim <- eval(simexpr, envir=envir)
       if(!inherits(Xsim, Xclass))
-        switch(simtype,
-               csr={
-                 stop(paste("Internal error:", Xobjectname, "not generated"))
-               },
-               rmh={
-                 stop(paste("Internal error: rmh did not return an",
-                            Xobjectname))
-               },
-               kppm={
-                 stop(paste("Internal error: simulate.kppm did not return an",
-                            Xobjectname))
-               },
-               slrm={
-                 stop(paste("Internal error: simulate.slrm did not return an",
-                            Xobjectname))
-               },
-               expr={
-                 stop(paste("Evaluating the expression", sQuote("simulate"),
-                            "did not yield an", Xobjectname))
-               },
-               func={
-                 stop(paste("Evaluating the function", sQuote("simulate"),
-                            "did not yield an", Xobjectname))
-               },
-               list={
-                 stop(paste("Internal error: list entry was not an",
-                            Xobjectname))
-               },
-               stop(paste("Internal error:", Xobjectname, "not generated"))
-               )
+        stop(paste(sim.value, "is not a", Xobjectname), call.=FALSE)
       XsimList[[i]] <- Xsim
     }
     if(verbose) {
@@ -450,6 +423,8 @@ envelopeEngine <-
                         pois=pois,
                         simtype=simtype,
                         constraints=constraints,
+                        sim.value=sim.value,
+                        sim.realisations=sim.realisations,
                         nrank=nrank,
                         nsim=nsim,
                         Nsim=Nsim,
@@ -470,23 +445,11 @@ envelopeEngine <-
   # ----------------------------------------
 
   if(verbose) {
-    action <- if(simtype == "list") "Extracting" else "Generating"
-    descrip <- switch(simtype,
-                      csr = "simulations of CSR",
-                      rmh = paste("simulated realisations of fitted",
-                        if(pois) "Poisson" else "Gibbs",
-                        "model"),
-                      kppm = "simulated realisations of fitted cluster model",
-                      slrm = "simulated realisations of fitted spatial logistic regression model",
-                      expr = "simulations by evaluating expression",
-                      func = "simulations by evaluating function",
-                      list = "point patterns from list",
-                      "simulated patterns")
-    if(!is.null(constraints) && nzchar(constraints))
-      descrip <- paste(descrip, constraints)
+    Action <- capitalise(sim.making)
+    descrip <- sim.realisations
     explan <- if(dual) paren(paste(nsim2, "to estimate the mean and",
                                    nsim, "to calculate envelopes")) else ""
-    splat(action, Nsim, descrip, explan, "...")
+    splat(Action, Nsim, descrip, explan, "...")
   }
   # determine whether simulated point patterns should be saved
   catchpatterns <- savepatterns && simtype != "list"
@@ -537,24 +500,7 @@ envelopeEngine <-
       Xsim <- eval(simexpr, envir=envir)
       ## check valid point pattern
       if(!inherits(Xsim, Xclass))
-        switch(simtype,
-               csr=stop(paste("Internal error:", Xobjectname, "not generated")),
-               rmh=stop(paste("Internal error: rmh did not return an",
-                 Xobjectname)),
-               kppm=stop(paste("Internal error:",
-                 "simulate.kppm did not return an",
-                 Xobjectname)),
-               slrm=stop(paste("Internal error:",
-                 "simulate.slrm did not return an",
-                 Xobjectname)),
-               expr=stop(paste("Evaluating the expression", sQuote("simulate"),
-                 "did not yield an", Xobjectname)),
-               func=stop(paste("Evaluating the function", sQuote("simulate"),
-                 "did not yield an", Xobjectname)),
-               list=stop(paste("Internal error: list entry was not an",
-                 Xobjectname)),
-               stop(paste("Internal error:", Xobjectname, "not generated"))
-               )
+        stop(paste(sim.value, "is not a", Xobjectname), call.=FALSE)
       if(catchpatterns)
         Caughtpatterns[[i]] <- Xsim
       if(savevalues && !result.depends.both)

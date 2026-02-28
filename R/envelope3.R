@@ -3,7 +3,7 @@
 #
 #   simulation envelopes for pp3 
 #
-#   $Revision: 1.15 $  $Date: 2026/02/28 05:34:10 $
+#   $Revision: 1.16 $  $Date: 2026/02/28 08:46:14 $
 #
 
 envelope.pp3 <-
@@ -98,7 +98,8 @@ make.simulrecipe.pp3 <- function(object, envir, ...,
                              expr = simexpr,
                              envir = envir,
                              csr   = TRUE,
-                             pois  = TRUE)
+                             pois  = TRUE,
+                             realisations = "simulated realisations of 3D CSR")
   } else if(fix.marks) {
     # ...................................................
     # Realisations of binomial process
@@ -109,13 +110,15 @@ make.simulrecipe.pp3 <- function(object, envir, ...,
     constraints <-
       if(is.multitype(X)) "with fixed number of points of each type" else
                           "with fixed number of points and fixed marks"
-    # evaluate in THIS environment
+    rlz <- "simulated realisations of 3D binomial process"
+    #' evaluate in THIS environment
     simrecipe <- simulrecipe(type = "csr",
                              expr = simexpr,
                              envir = envir,
                              csr   = TRUE,
                              pois  = TRUE,
-                             constraints = constraints)
+                             constraints = constraints,
+                             realisations = rlz)
   } else {
     # ...................................................
     # Realisations of binomial process
@@ -139,12 +142,14 @@ make.simulrecipe.pp3 <- function(object, envir, ...,
       })
     }
     # evaluate in THIS environment
+    rlz <- "simulated realisations of 3D binomial process"
     simrecipe <- simulrecipe(type = "csr",
                              expr = simexpr,
                              envir = envir,
                              csr   = TRUE,
                              pois  = TRUE,
-                             constraints = "with fixed number of points")
+                             constraints = "with fixed number of points",
+                             realisations = rlz)
   }
   return(simrecipe)
 }

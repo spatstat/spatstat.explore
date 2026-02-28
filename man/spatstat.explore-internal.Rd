@@ -491,7 +491,8 @@ sewsmod(d, ff, wt, Ef, rvals, method="smrep", \dots, nwtsteps=500)
 \method{shift}{quadrattest}(X, \dots)
 \method{shift}{tolcon}(X, \dots)
 \method{shift}{tolconlist}(X, \dots)
-simulrecipe(type, expr, envir, csr, pois, constraints)
+simulrecipe(type, expr, envir, csr, pois, constraints,
+            value, making, realisations)
 \method{StieltjesCalc}{fv}(M, f, \dots)
 \method{Smooth}{solist}(X, \dots)
 smoothcrossEngine(Xdata, Xquery, values, sigma, \dots,
