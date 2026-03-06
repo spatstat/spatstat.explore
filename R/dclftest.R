@@ -365,6 +365,7 @@ envelopeTest <-
                              data.name = e$Yname),
                         class="htest")
     attr(result, "rinterval") <- rinterval
+    attr(result, "nsim") <- nsim
     if(save.interpolant && interpolate)
       attr(result, "density") <- fhat
     if(save.envelope) {

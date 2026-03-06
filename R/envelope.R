@@ -42,10 +42,8 @@ simulrecipe <- function(type, expr, envir, csr, pois=csr, constraints="",
                         making="generating",
                         realisations="simulated patterns") {
   if(csr && !pois) warning("Internal error: csr=TRUE but pois=FALSE")
-  capMaking <- paste0(toupper(substring(making, 1, 1)),
-                      substring(making, 2))
-  frealiz <- if(!any(nzchar(constraints))) realisations else
-             paste(realisations, paste(constraints, collapse=", ")) 
+  freal <- if(!any(nzchar(constraints))) realisations else
+           paste(realisations, paste(constraints, collapse=", ")) 
   out <- list(type          = type,
               expr          = expr,
               envir         = envir,
@@ -54,9 +52,8 @@ simulrecipe <- function(type, expr, envir, csr, pois=csr, constraints="",
               constraints   = constraints,
               value         = value,
               making        = making,
-              capMaking     = capMaking,
               realisations  = realisations,
-              frealisations = frealiz)
+              realisations.full = freal)
   class(out) <- "simulrecipe"
   out
 }
