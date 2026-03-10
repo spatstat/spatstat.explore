@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.7-0.018
+        CHANGES IN spatstat.explore VERSION 3.7-0.019
 
 OVERVIEW
 
@@ -17,7 +17,16 @@ OVERVIEW
 
     o Extended capability of 'envelope.pp3' 
 
+    o Method of T.F. Cox for identifying dense and sparse regions of points.
+
     o Minor improvements and bug fixes.
+
+NEW FUNCTIONS
+
+    o coxmap
+    Given a point pattern, divide the spatial region into
+    areas where the pattern is dense, sparse or neither,
+    using the method of T.F. Cox (1979).
 
 SIGNIFICANT USER-VISIBLE CHANGES
 
