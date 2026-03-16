@@ -71,7 +71,9 @@ coxmap(X, \dots)
 }
 \seealso{
   \code{\link[spatstat.explore]{nnclean}},
-  \code{\link[spatstat.geom]{distmap}}.
+  \code{\link[spatstat.geom]{distmap}},
+  \code{\link[spatstat.geom]{nnmap}},
+  \code{\link[spatstat.geom]{quantess}}
 }
 \examples{
    plot(coxmap(redwoodfull, 5))

@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.7-0.021
+        CHANGES IN spatstat.explore VERSION 3.7-0.022
 
 OVERVIEW
 
@@ -98,6 +98,10 @@ SIGNIFICANT USER-VISIBLE CHANGES
     o envelope.pp3
     New arguments 'fix.n' and 'fix.marks' determine whether the 
     simulated patterns have a fixed or random number of points.
+
+    o envelope.ppp, envelope.pp3
+    New argument 'theoryfun' can be used to provide the theoretical value
+    of the summary function.
 
 BUG FIXES
 

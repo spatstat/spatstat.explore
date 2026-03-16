@@ -3,7 +3,7 @@
 #
 #   simulation envelopes for pp3 
 #
-#   $Revision: 1.16 $  $Date: 2026/02/28 08:46:14 $
+#   $Revision: 1.17 $  $Date: 2026/03/15 23:51:04 $
 #
 
 envelope.pp3 <-
@@ -12,6 +12,7 @@ envelope.pp3 <-
            simulate=NULL, fix.n=FALSE, fix.marks=FALSE,
            verbose=TRUE, 
            transform=NULL, global=FALSE, ginterval=NULL, use.theory=NULL,
+           theoryfun=NULL,
            alternative=c("two.sided", "less", "greater"),
            scale=NULL, clamp=FALSE,
            savefuns=FALSE, savepatterns=FALSE, nsim2=nsim,
@@ -50,6 +51,7 @@ envelope.pp3 <-
                  verbose=verbose, clipdata=FALSE,
                  transform=transform,
                  global=global, ginterval=ginterval, use.theory=use.theory,
+                 theoryfun=theoryfun,
                  alternative=alternative, scale=scale, clamp=clamp,
                  savefuns=savefuns, savepatterns=savepatterns, nsim2=nsim2,
                  VARIANCE=VARIANCE, nSD=nSD,

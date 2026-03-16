@@ -9,7 +9,8 @@
   \method{envelope}{pp3}(Y, fun=K3est, nsim=99, nrank=1, \dots, 
   funargs=list(), funYargs=funargs, simulate=NULL,
   fix.n=FALSE, fix.marks=FALSE, verbose=TRUE, 
-  transform=NULL,global=FALSE,ginterval=NULL,use.theory=NULL,
+  transform=NULL,global=FALSE,ginterval=NULL,
+  use.theory=NULL, theoryfun=NULL,
   alternative=c("two.sided", "less", "greater"),
   scale=NULL, clamp=FALSE, 
   savefuns=FALSE, savepatterns=FALSE,
@@ -94,6 +95,10 @@
     Logical value indicating whether to use the theoretical value,
     computed by \code{fun}, as the reference value for simultaneous
     envelopes. Applicable only when \code{global=TRUE}.
+  }
+  \item{theoryfun}{
+    Optional. A \code{function(r)} in the \R language which calculates the
+    theoretical or reference value of the summary function \code{fun}.
   }
   \item{alternative}{
     Character string determining whether the envelope corresponds
