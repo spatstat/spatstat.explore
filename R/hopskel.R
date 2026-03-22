@@ -2,16 +2,16 @@
 ## hopskel.R
 ##     Hopkins-Skellam test
 ##
-##  $Revision: 1.3 $  $Date: 2022/05/23 02:33:06 $
+##  $Revision: 1.4 $  $Date: 2026/03/16 07:31:36 $
 
 hopskel <- function(X) {
   stopifnot(is.ppp(X))
   n <- npoints(X)
   if(n < 2) return(NA)
-  dX <- nndist(X)
+  dX2 <- nndist(X, squared=TRUE)
   U <- runifpoint(n, Window(X))
-  dU <- nncross(U, X, what="dist")
-  A <- mean(dX^2)/mean(dU^2)
+  dU2 <- nncross(U, X, what="dist", squared=TRUE)
+  A <- mean(dX2)/mean(dU2)
   return(A)
 }
 

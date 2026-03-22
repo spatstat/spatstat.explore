@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.7-0.022
+        CHANGES IN spatstat.explore VERSION 3.8-0
 
 OVERVIEW
 
@@ -8,12 +8,14 @@ OVERVIEW
     
     o Important changes to default settings for pair correlation functions.
 
-    o New options for multitype pair correlation functions.
-
     o More flexible interpretation of arguments 'lambda = <ppm>" 
     in inhomogeneous summary statistics
 
+    o New options for multitype pair correlation functions.
+
     o More options for 'simulate' argument in 'envelope' methods.
+
+    o Specify the 'theoretical' value of the summary function in 'envelope'
 
     o Extended capability of 'envelope.pp3' 
 
@@ -102,6 +104,9 @@ SIGNIFICANT USER-VISIBLE CHANGES
     o envelope.ppp, envelope.pp3
     New argument 'theoryfun' can be used to provide the theoretical value
     of the summary function.
+
+    o hopskel, hopskel.test
+    Accelerated.
 
 BUG FIXES
 
