@@ -1,4 +1,15 @@
 
+        CHANGES IN spatstat.explore VERSION 3.8-0.001
+
+OVERVIEW
+
+    o Random diffusion of points
+
+NEW FUNCTIONS
+
+    o rdiffuse
+    Randomly perturb each point in a point pattern by diffusion.
+
         CHANGES IN spatstat.explore VERSION 3.8-0
 
 OVERVIEW
