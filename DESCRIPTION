@@ -1,5 +1,5 @@
 Package: spatstat.explore
-Version: 3.8-0.001
+Version: 3.8-0.002
 Date: 2026-04-10
 Title: Exploratory Data Analysis for the 'spatstat' Family
 Authors@R: c(person("Adrian", "Baddeley", 
@@ -66,7 +66,7 @@ Authors@R: c(person("Adrian", "Baddeley",
 	            role="ctb"))
 Maintainer: Adrian Baddeley <Adrian.Baddeley@curtin.edu.au>
 Depends: R (>= 3.5.0), spatstat.data (>= 3.1-9), spatstat.univar (>= 3.1-7), spatstat.geom (>= 3.7-2), spatstat.random (>= 3.4-5.001), stats, graphics, grDevices, utils, methods, nlme
-Imports: spatstat.utils (>= 3.2-2), spatstat.sparse (>= 3.1-0.001), goftest (>= 1.2-2), Matrix, abind
+Imports: spatstat.utils (>= 3.2-2), spatstat.sparse (>= 3.1-0.002), goftest (>= 1.2-2), Matrix, abind
 Suggests: sm, gsl, locfit, spatial, fftwtools (>= 0.9-8), spatstat.linnet (>= 3.4), spatstat.model (>= 3.6), spatstat (>= 3.5)
 Description: Functionality for exploratory data analysis and nonparametric analysis of
 	     spatial data, mainly spatial point patterns,
