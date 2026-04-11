@@ -64,15 +64,15 @@ densityHeat.ppp <- function(x, sigma, ..., weights=NULL,
     return(Lextrap)
   }
 
-  delayed <- !is.null(sigmaX)
+  lagged <- !is.null(sigmaX)
   setuponly <- identical(internal$setuponly, TRUE)
-  want.Xpos <- delayed || setuponly
+  want.Xpos <- lagged || setuponly
 
   if(!setuponly && (se || (at == "points" && leaveoneout))) {
     #' NEED INDIVIDUAL HEAT KERNELS FOR EACH DATA POINT
     #' to calculate estimate and standard error,
     #' or leave-one-out estimate
-    if(!is.null(sigmaX))
+    if(lagged)
       stop("variance calculation is not implemented for lagged arrivals")
     lambda <- varlam <- switch(at,
                                pixels = as.im(0, W=Window(x), ...),
@@ -139,7 +139,7 @@ densityHeat.ppp <- function(x, sigma, ..., weights=NULL,
     stop("connectivity must be 4 or 8")
 
   ## initial state for diffusion
-  if(delayed) {
+  if(lagged) {
     #' smoothing bandwidths attributed to each data point
     check.nvector(sigmaX, nX)
     stopifnot(all(is.finite(sigmaX)))
@@ -226,7 +226,7 @@ densityHeat.ppp <- function(x, sigma, ..., weights=NULL,
     if(connect == 8) pxy <- px * py
   }
   #' arrival times
-  if(!is.null(sigmaX)) 
+  if(lagged)
     iarrive <- pmax(1, pmin(Nstep, Nstep - round((sigmaX^2)/sn)))
   #' construct adjacency matrices
   dimv <- dim(v)
@@ -297,7 +297,8 @@ densityHeat.ppp <- function(x, sigma, ..., weights=NULL,
   #' run
   U <- u
   Z <- Y
-  if(!delayed) {
+  if(!lagged) {
+    #' all particles are present in initial state
     if(!show) {
       for(iblock in 1:Nblock) U <- U %*% Ak
     } else {
