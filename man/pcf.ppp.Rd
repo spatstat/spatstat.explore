@@ -20,7 +20,7 @@
                     fast = TRUE, 
                     var.approx = FALSE,
                     domain=NULL,
-                    ratio=FALSE, close=NULL)
+                    ratio=FALSE, close=NULL, convert.bw=TRUE)
 }
 \arguments{
   \item{X}{
@@ -131,6 +131,14 @@
   }
   \item{close}{
     Advanced use only. Precomputed data. See section on Advanced Use.
+  }
+  \item{convert.bw}{
+    Logical value specifying how to interpret the bandwidth argument
+    \code{bw} when \code{divisor="a"}. If \code{convert.bw=TRUE} (the default),
+    the argument \code{bw} is interpreted as a bandwidth on the scale of distances
+    \code{r}, and is transformed to the scale of areas when \code{divisor="a"}.
+    If \code{convert.bw=FALSE}, the argument \code{bw} is interpreted as a
+    bandwidth on the scale of areas, and is not transformed.
   }
 } 
 \value{
@@ -377,10 +385,44 @@
       distances as its first argument. Additional arguments to \code{bw} may be
       specified in the list \code{bw.args}. 
      }
-  }
-  Note that if \code{bw.args} is a function, it will be applied to
-  the point pattern \code{X} to determine the list of arguments
-  (whether \code{adaptive} is \code{TRUE} or \code{FALSE}).
+     If \code{bw.args} is a function, it will be applied to
+     the point pattern \code{X} to determine the list of arguments
+     (whether \code{adaptive} is \code{TRUE} or \code{FALSE}).
+   }
+
+   After these steps are completed, 
+   \bold{the bandwidth is transformed if the distances are transformed}.
+   \itemize{
+     \item 
+     When \code{divisor="a"}, kernel smoothing is performed on the area
+     scale, rather than the distance scale. The interpoint
+     distances \eqn{d_{ij}}{d[ij]} 
+     are first converted to disc areas
+     \eqn{a_{ij}=\pi d_{ij}^2}{a[ij] = pi * d[ij]^2}.
+     The bandwidth value \code{bw} is transformed to the area scale
+     by the transformation \code{bw.area = 2 * pi * midpoint * bw}
+     where \code{midpoint} is the midpoint of the interval of
+     distance values \code{r}.
+     Kernel smoothing is applied to the values \eqn{a_{ij}}{a[ij]}
+     with bandwidth \code{bw.area}.
+     Then the result is back-transformed to the original scale.
+     \item
+     When \code{divisor="t"}, kernel smoothing is performed on the transformed
+     scale (determined by the argument \code{gref}),
+     rather than on the distance scale. The interpoint
+     distances \eqn{d_{ij}}{d[ij]} 
+     are first transformed to
+     \eqn{t_{ij}=G(d_{ij})}{t[ij] = G(d[ij])} where
+     \eqn{G} is the partial integral of \code{2 * pi * x * gref(x)}.
+     The bandwidth value \code{bw} is transformed to 
+     \code{bw.trans = 2 * pi * gref(midpoint) * bw}.
+     Kernel smoothing is applied to the values \eqn{t_{ij}}{t[ij]}
+     with bandwidth \code{bw.trans}.
+     Then the result is back-transformed to the original scale.
+   }
+   This transformation can be suppressed by setting
+   \code{convert.bw=FALSE}; in that case the argument \code{bw}
+   specifies the bandwidth on the transformed scale.
 
   The argument \code{r} is the vector of values for the
   distance \eqn{r} at which \eqn{g(r)} should be evaluated.

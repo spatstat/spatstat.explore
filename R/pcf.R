@@ -30,7 +30,7 @@ pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
                    fast=TRUE,
                    var.approx=FALSE,
                    domain=NULL, ratio=FALSE,
-                   close=NULL)
+                   close=NULL, convert.bw=TRUE)
 {
   verifyclass(X, "ppp")
   if(is.NAobject(X)) return(NAobject("fv"))  #' trap explicit call to pcf.ppp
@@ -157,7 +157,8 @@ pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
                              zerocor=zerocor,
                              nsmall=nsmall,
                              gref=gref,
-                             close=close)
+                             close=close,
+                             convert.bw=convert.bw)
 
   info    <- M$info
   denargs <- M$denargs
@@ -219,7 +220,7 @@ pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
                       divisor=divisor,
                       zerocor=zerocor,
                       fast=fast, adaptive=adaptive, tau=tau,
-                      gref=gref, Transform=Transform)
+                      gref=gref, Transform=Transform, convert=convert.bw)
       if(DEBUG) {
         elapsed <- proc.time() - started
         splat("pcf: returned from sewpcf after", codetime(elapsed))
@@ -256,7 +257,7 @@ pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
                       divisor=divisor,
                       zerocor=zerocor,
                       fast=fast, adaptive=adaptive, tau=tau,
-                      gref=gref, Transform=Transform)
+                      gref=gref, Transform=Transform, convert=convert.bw)
       if(DEBUG) {
         elapsed <- proc.time() - started
         splat("pcf: returned from sewpcf after", codetime(elapsed))
@@ -294,7 +295,7 @@ pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
                       divisor=divisor,
                       zerocor=zerocor,
                       fast=fast, adaptive=adaptive, tau=tau,
-                      gref=gref, Transform=Transform)
+                      gref=gref, Transform=Transform, convert=convert.bw)
       if(DEBUG) {
         elapsed <- proc.time() - started
         splat("pcf: returned from sewpcf after", codetime(elapsed))
@@ -387,10 +388,15 @@ resolve.pcf.bandwidth <- function(X, ...,
                                             "good", "best"),
                                   nsmall = 300,
                                   gref=NULL,
-                                  close=NULL) {
+                                  close=NULL,
+                                  convert.bw=TRUE  # logical or function
+                                  ) {
   info <- list(kernel=kernel, divisor=divisor, zerocor=zerocor,
                h.given=h, bw.given=bw, adjust=adjust)
   how <- rule <- NULL
+
+  if(is.null(convert.bw)) convert.bw <- TRUE
+  stopifnot(is.logical(convert.bw) || is.function(convert.bw))
   
   if(!is.null(bw) && !is.null(h))
     stop("Arguments 'h' and 'bw' are incompatible", call.=FALSE)
@@ -544,7 +550,14 @@ resolve.pcf.bandwidth <- function(X, ...,
   hmax <- if(is.numeric(h)) h else (2*cker*stoyan/sqrt(lambda))
   sker <- if(kernel == "gaussian") 4 else 1
   dmax <- rmax + sker * hmax
-  if(is.numeric(denargs$bw)) {
+  if(is.function(convert.bw)) {
+    bwmap <- convert.bw
+    convert <- TRUE
+  } else {
+    bwmap <- NULL
+    convert <- !isFALSE(convert.bw)
+  }
+  if(convert && is.numeric(denargs$bw)) {
     ## compute the bandwidth on the transformed scale now
     switch(divisor,
            r = {},
@@ -552,7 +565,12 @@ resolve.pcf.bandwidth <- function(X, ...,
            a = {
              ## convert to bandwidth(s) for areas
              ## (using same rule as in 'sewpcf')
-             bw.area <- with(denargs, pi * (from + to) * bw)
+             bw.area <- with(denargs,
+                             if(is.function(bwmap)) {
+                               bwmap(bw, from, to)
+                             } else {
+                               pi * (from + to) * bw
+                             })
              hmax.area <- cker * max(bw.area)
              ## determine the maximum value of area that needs to be observed
              area.max <- pi * rmax^2
@@ -561,12 +579,17 @@ resolve.pcf.bandwidth <- function(X, ...,
              dmax <- max(dmax, sqrt(area.max/pi))
            },
            t = {
-             ## use transformation
-             midpoint <- with(denargs, (from + to)/2)
-             ## compute derivative of transformation at midpoint of interval
-             midslope <- 2 * pi * midpoint * gref(midpoint)
-             ## convert bandwidth to transformed scale
-             bw.trans <- midslope * denargs$bw
+             ## transform bandwidth
+             if(is.function(bwmap)) {
+               bw.trans <- with(denargs, bwmap(bw, from, to))
+             } else {
+               ## use transformation
+               midpoint <- with(denargs, (from + to)/2)
+               ## compute derivative of transformation at midpoint of interval
+               midslope <- 2 * pi * midpoint * gref(midpoint)
+               ## convert bandwidth to transformed scale
+               bw.trans <- midslope * denargs$bw
+             }
              hmax.trans <- cker * max(bw.trans)
              ## Taylor approx to T^{-1}(T(dmax) + hmax)
              dmax.trans <- dmax + sker * hmax.trans/(2 * pi * dmax * gref(dmax))
@@ -606,6 +629,14 @@ sewpcf <- function(d, w, denargs, lambda2area,
     splat("sewpcf")
   }
 
+  if(is.function(convert)) {
+    bwmap <- convert
+    convert <- TRUE
+  } else {
+    bwmap <- NULL
+    convert <- !isFALSE(convert)
+  }
+  
   ## trap outdated usage
   if(identical(as.character(divisor), c("r", "d"))) divisor <- "r" 
   divisor <- match.arg(divisor)
@@ -631,15 +662,19 @@ sewpcf <- function(d, w, denargs, lambda2area,
   }
   if(convert && divisor %in% c("a", "t") && is.numeric(denargs$bw)) {
     ## convert bandwidth value from 'distance' scale to 'area' scale
-    switch(divisor,
-           a = {
-             denargs$bw <- with(denargs, pi * (from + to) * bw)
-           },
-           t = {
-             midpoint <- with(denargs, (from + to)/2)
-             midslope <- 2 * pi * midpoint * gref(midpoint)  # the integrand
-             denargs$bw <- midslope * denargs$bw
-           })
+    if(is.function(bwmap)) {
+      denargs$bw <- with(denargs, bwmap(bw, from, to))
+    } else {
+      switch(divisor,
+             a = {
+               denargs$bw <- with(denargs, pi * (from + to) * bw)
+             },
+             t = {
+               midpoint <- with(denargs, (from + to)/2)
+               midslope <- 2 * pi * midpoint * gref(midpoint)  # the integrand
+               denargs$bw <- midslope * denargs$bw
+             })
+    }
   }
   switch(divisor,
          r = {
