@@ -298,7 +298,7 @@ densityHeat.ppp <- function(x, sigma, ..., weights=NULL,
   U <- u
   Z <- Y
   if(!lagged) {
-    #' all particles are present in initial state
+    #' all particles are present at initial state
     if(!show) {
       for(iblock in 1:Nblock) U <- U %*% Ak
     } else {

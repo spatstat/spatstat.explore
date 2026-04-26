@@ -7,7 +7,8 @@
   for a multitype point pattern.
 }
 \usage{
-  pcfdot(X, i, \dots)
+  pcfdot(X, i, \dots,
+         correction=NULL, divisor=NULL, zerocor=NULL)
 }
 \arguments{
   \item{X}{The observed point pattern, 
@@ -22,7 +23,7 @@
     character string).
     Defaults to the first level of \code{marks(X)}.
   }
-  \item{\dots}{
+  \item{correction, divisor, zerocor, \dots}{
     Arguments passed to \code{\link{pcfmulti}}
     to control the computation.
   }

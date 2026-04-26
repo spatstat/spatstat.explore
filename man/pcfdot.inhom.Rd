@@ -9,7 +9,8 @@
   for a multitype point pattern.
 }
 \usage{
-pcfdot.inhom(X, i, lambdaI = NULL, lambdadot = NULL, \dots)
+pcfdot.inhom(X, i, lambdaI = NULL, lambdadot = NULL, \dots,
+             correction=NULL, divisor=NULL, zerocor=NULL)
 }
 \arguments{
   \item{X}{The observed point pattern, 
@@ -51,7 +52,7 @@ pcfdot.inhom(X, i, lambdaI = NULL, lambdadot = NULL, \dots)
     A numeric vector, pixel image, \code{function(x,y)} or fitted point
     process model.
   }
-  \item{\dots}{
+  \item{correction, divisor, zerocor, \dots}{
     Arguments passed to \code{\link{pcfmulti.inhom}}
     to control the computation.
   }

@@ -1,10 +1,17 @@
 
-        CHANGES IN spatstat.explore VERSION 3.8-0.003
+        CHANGES IN spatstat.explore VERSION 3.8-0.004
 
 OVERVIEW
 
-    o Nothing yet!
+    o We thank Hamid Ghorbani for contributions.
 
+BUG FIXES
+
+    o pcfdot, pcfcross, pcfdot.inhom, pcfcross.inhom
+    Envelopes for these functions were sometimes incorrect.
+    [Spotted by Hamid Ghorbani.]
+    Fixed.
+    
         CHANGES IN spatstat.explore VERSION 3.8-0
 
 OVERVIEW

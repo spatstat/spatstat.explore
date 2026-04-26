@@ -1,12 +1,13 @@
 #
 #   pcfmulti.R
 #
-#   $Revision: 1.17 $   $Date: 2026/02/14 09:04:30 $
+#   $Revision: 1.19 $   $Date: 2026/04/26 00:16:13 $
 #
 #   multitype pair correlation functions
 #
 
-pcfcross <- function(X, i, j, ...) {
+pcfcross <- function(X, i, j, ...,
+                     correction=NULL, divisor=NULL, zerocor=NULL) {
   verifyclass(X, "ppp")
   if(is.NAobject(X)) return(NAobject("fv"))
   stopifnot(is.multitype(X))
@@ -21,6 +22,7 @@ pcfcross <- function(X, i, j, ...) {
   Jname <- paste("points with mark j =", j)
   ##
   result <- pcfmulti(X, I, J, ...,
+                     correction=correction, divisor=divisor, zerocor=zerocor,
                      Iname=Iname, Jname=Jname,
                      IJexclusive=(i != j))
   ##
@@ -37,7 +39,8 @@ pcfcross <- function(X, i, j, ...) {
 }
 
 pcfdot <- 
-function(X, i, ...) {
+function(X, i, ...,
+         correction=NULL, divisor=NULL, zerocor=NULL) {
   verifyclass(X, "ppp")
   if(is.NAobject(X)) return(NAobject("fv"))
   stopifnot(is.multitype(X))
@@ -51,6 +54,7 @@ function(X, i, ...) {
   Jname <- "points"
 	
   result <- pcfmulti(X, I, J, ...,
+                     correction=correction, divisor=divisor, zerocor=zerocor,
                      Iname=Iname, Jname=Jname,
                      IJexclusive=FALSE)
 
@@ -98,7 +102,7 @@ pcfmulti <- function(X, I, J, ...,
   if(!divisor.given || !zerocor.given) 
     warn.once("pcfmultiDefaults",
               paste("Default settings for pcfmulti, pcfdot, pcfcross",
-                    "have changed in spatstat.explore 3.7-0.007"))
+                    "have changed in spatstat.explore 3.8-0"))
 
   if(divisor.given) {
     if(is.function(divisor)) divisor <- divisor(X)

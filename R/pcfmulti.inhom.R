@@ -1,13 +1,14 @@
 #
 #   pcfmulti.inhom.R
 #
-#   $Revision: 1.27 $   $Date: 2026/02/15 04:31:44 $
+#   $Revision: 1.28 $   $Date: 2026/04/26 00:07:21 $
 #
 #   inhomogeneous multitype pair correlation functions
 #
 #
 
-pcfcross.inhom <- function(X, i, j, lambdaI=NULL, lambdaJ=NULL, ...) {
+pcfcross.inhom <- function(X, i, j, lambdaI=NULL, lambdaJ=NULL, ...,
+                           correction=NULL, divisor=NULL, zerocor=NULL) {
   verifyclass(X, "ppp")
   if(is.NAobject(X)) return(NAobject("fv"))
   stopifnot(is.multitype(X))
@@ -23,6 +24,7 @@ pcfcross.inhom <- function(X, i, j, lambdaI=NULL, lambdaJ=NULL, ...) {
   g <- pcfmulti.inhom(X=X, I=I, J=J,
                       lambdaI=lambdaI, lambdaJ=lambdaJ,
                       ...,
+                      correction=correction, divisor=divisor, zerocor=zerocor,
                       Iname=Iname, Jname=Jname,
                       IJexclusive = (i != j),
                       Ilevels=i, Jlevels=j)
@@ -39,7 +41,8 @@ pcfcross.inhom <- function(X, i, j, lambdaI=NULL, lambdaJ=NULL, ...) {
   return(result)
 }
 
-pcfdot.inhom <- function(X, i, lambdaI=NULL, lambdadot=NULL, ...) {
+pcfdot.inhom <- function(X, i, lambdaI=NULL, lambdadot=NULL, ...,
+                         correction=NULL, divisor=NULL, zerocor=NULL) {
   verifyclass(X, "ppp")
   if(is.NAobject(X)) return(NAobject("fv"))
   stopifnot(is.multitype(X))
@@ -56,6 +59,7 @@ pcfdot.inhom <- function(X, i, lambdaI=NULL, lambdadot=NULL, ...) {
                       lambdaI=lambdaI,
                       lambdaJ=lambdadot,
                       ...,
+                      correction=correction, divisor=divisor, zerocor=zerocor,
                       Iname=Iname, Jname=Jname,
                       IJexclusive=FALSE,
                       ilevels=i, jlevels=levels(marx))
@@ -111,7 +115,7 @@ pcfmulti.inhom <- function(X, I, J, lambdaI=NULL, lambdaJ=NULL, ...,
   if(!divisor.given || !zerocor.given) 
     warn.once("pcfinhomDefaults",
               paste("Default settings for pcfinhom",
-                    "have changed in spatstat.explore 3.7-0.007"))
+                    "have changed in spatstat.explore 3.8-0"))
 
   if(divisor.given) {
     if(is.function(divisor)) divisor <- divisor(X)

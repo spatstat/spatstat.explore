@@ -6,7 +6,8 @@
   for a multitype point pattern.
 }
 \usage{
-  pcfcross(X, i, j, \dots) 
+  pcfcross(X, i, j, \dots,
+           correction=NULL, divisor=NULL, zerocor=NULL) 
 }
 \arguments{
   \item{X}{The observed point pattern, 
@@ -27,7 +28,7 @@
     converted to a character string).
     Defaults to the second level of \code{marks(X)}.
   }
-  \item{\dots}{
+  \item{correction, divisor, zerocor, \dots}{
     Arguments passed to \code{\link{pcfmulti}}
     to control the computation.
   }
