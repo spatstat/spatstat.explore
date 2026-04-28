@@ -1,9 +1,21 @@
 
-        CHANGES IN spatstat.explore VERSION 3.8-0.006
+        CHANGES IN spatstat.explore VERSION 3.8-0.007
 
 OVERVIEW
 
-    o We thank Hamid Ghorbani for contributions.
+    o We thank Mario D'Antuono and Hamid Ghorbani for contributions.
+
+    o Rose diagrams now accept data expressed in any units with any period.
+    
+    o Bug fixes.
+    
+SIGNIFICANT USER-VISIBLE CHANGES
+
+    o rose.default, rose.histogram, rose.density, rose.fv, circdensity
+    Rose diagrams can now be computed and plotted for data
+    expressed in any units with any period (such as hours in a 24-hour day).
+    More options for argument 'unit'.
+    New argument 'fullcircle'.
 
 BUG FIXES
 

@@ -22,6 +22,7 @@
 \alias{calc.SAVE}
 \alias{calc.SIR}
 \alias{calc.TSE}
+\alias{calcFullCircle}
 \alias{censtimeCDFest}
 \alias{check.testfun}
 \alias{circticks}
@@ -227,7 +228,7 @@
 \method{[}{localpcfmatrix}(x, i, \dots)
 \method{[}{rat}(x, \dots)
 adjust.ratfv(f, columns, numfactor, denfactor)
-ang2rad(ang, unit, start, clockwise)
+ang2rad(ang, unit, fullcircle, start, clockwise)
 \method{as.data.frame}{bw.optim}(x, \dots)
 \method{as.data.frame}{fv}(x, \dots)
 as.roc.data.frame(x, method, covtype, CI, leftoneout)
@@ -251,10 +252,11 @@ calc.NNIR(COV, z, pos, Dim)
 calc.SAVE(COV, z, Dim)
 calc.SIR(COV, z)
 calc.TSE(COV, z, pos, Dim1, Dim2)
+calcFullCircle(unit, fullcircle)
 censtimeCDFest(o, cc, d, breaks, \dots,
      KM, RS, HAN, RAW, han.denom, tt, pmax, fname, fexpr)
 check.testfun(f, f1, X)
-circticks(R, at, unit, start, clockwise, labels)
+circticks(R, at, unit, fullcircle, start, clockwise, labels)
 clarkevansCalc(X, correction, clipregion, working)
 \method{compatible}{rat}(A, B, \dots)
 conform.ratfv(x)
@@ -473,8 +475,8 @@ rocIm(X, covariate, \dots, high, p, plength)
 rocSmoothCalc(ZX, ZU,\dots, weightsX, weightsU,
               high, kernel, bw, adjust, alpha, nGrid, p, plength,
               doCI, degfreeU)
-roseContinuous(ang, rad, unit, \dots,
-               start, clockwise, main, labels, at, do.plot)
+roseContinuous(ang, rad, unit, \dots, fullcircle,
+               start, clockwise, main, labels, at, do.plot, do.ticks)
 scanmeasure(X, \dots)
 \method{scanmeasure}{ppp}(X, r, \dots, method) 
 \method{scanmeasure}{im}(X, r, \dots)
@@ -529,7 +531,7 @@ twostage.envelope(X, \dots, nsim, nsimsub, nrank,
 updateData(model, X, \dots)
 \method{updateData}{default}(model, X, \dots, warn)
 validate2Dkernel(kernel, fatal)
-validate.angles(angles, unit, guess)
+validate.angles(angles, unit, fullcircle, guess)
 validate.weights(x, recip, how, allowzero, allowinf)
 vanilla.fv(x)
 VarOfWtdMean(marx, weights)

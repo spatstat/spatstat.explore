@@ -10,7 +10,9 @@
 \usage{
 circdensity(x, sigma = "nrd0", \dots,
                bw = NULL,
-               weights=NULL, unit = c("degree", "radian"))
+               weights=NULL,
+               unit = c("degree", "radian", "hour", "minute", "other"),
+               fullcircle=NULL)
 }
 \arguments{
   \item{x}{
@@ -31,6 +33,11 @@ circdensity(x, sigma = "nrd0", \dots,
   }
   \item{unit}{
     The unit of angle in which \code{x} is expressed.
+    Character string (partially matched).
+  }
+  \item{fullcircle}{
+    The period (the value of \code{x} that corresponds to one full circle)
+    if \code{unit="other"}.
   }
 }
 \details{

@@ -15,24 +15,31 @@ rose(x, \dots)
 \method{rose}{default}(x, breaks = NULL, \dots,
                        weights=NULL,
                        nclass = NULL,
-                       unit = c("degree", "radian"),
+                       unit = c("degree", "radian", "hour", "minute", "other"),
+                       fullcircle = NULL, 
                        start=0, clockwise=FALSE,
                        main)
 
 \method{rose}{histogram}(x, \dots,
-                       unit = c("degree", "radian"),
+                       unit = c("degree", "radian", "hour", "minute", "other"),
+                       fullcircle = NULL, 
                        start=0, clockwise=FALSE,
-                       main, labels=TRUE, at=NULL, do.plot = TRUE)
+                       main, labels=TRUE, at=NULL,
+                       do.plot = TRUE, do.ticks=TRUE)
 
 \method{rose}{density}(x, \dots, 
-                  unit = c("degree", "radian"), 
+                       unit = c("degree", "radian", "hour", "minute", "other"),
+                       fullcircle = NULL, 
                   start=0, clockwise=FALSE,
-                  main, labels=TRUE, at=NULL, do.plot = TRUE)
+                  main, labels=TRUE, at=NULL,
+                  do.plot = TRUE, do.ticks=TRUE)
 
 \method{rose}{fv}(x, \dots, 
-                  unit = c("degree", "radian"),
+                       unit = c("degree", "radian", "hour", "minute", "other"),
+                       fullcircle = NULL, 
                   start=0, clockwise=FALSE,
-                  main, labels=TRUE, at=NULL, do.plot = TRUE)
+                  main, labels=TRUE, at=NULL,
+                  do.plot = TRUE, do.ticks = TRUE)
 }
 \arguments{
   \item{x}{
@@ -56,6 +63,11 @@ rose(x, \dots)
   }
   \item{unit}{
     The unit in which the angles are expressed.
+    Character string (partially matched).
+  }
+  \item{fullcircle}{
+    The period (the value of \code{x} that corresponds to one full circle)
+    if \code{unit="other"}.
   }
   \item{start}{
     The starting direction for measurement of angles,
@@ -86,10 +98,13 @@ rose(x, \dots)
   }
   \item{at}{
     Optional vector of angles at which tick marks should be plotted.
-    Set \code{at=numeric(0)} to suppress tick marks.
+    Set \code{do.ticks=FALSE} to suppress tick marks.
   }
   \item{do.plot}{
     Logical value indicating whether to really perform the plot.
+  }
+  \item{do.ticks}{
+    Logical value indicating whether to plot tick marks on the outer circle.
   }
 }
 \details{
@@ -103,8 +118,13 @@ rose(x, \dots)
   
   If \code{x} is a numeric vector, it must contain angular values
   in the range 0 to 360 (if \code{unit="degree"})
-  or in the range 0 to \code{2 * pi} (if \code{unit="radian"}).
-  A histogram of the data will first be computed using
+  or 0 to \code{2 * pi} (if \code{unit="radian"})
+  or 0 to \code{24} (if \code{unit="hour"})
+  or 0 to \code{60} (if \code{unit="minute"})
+  or 0 to \code{fullcircle} (if \code{unit="other"}).
+  For data expressed in hours but in a 12-hour day,
+  use \code{unit="other"} and \code{fullcircle=12}.
+  A histogram of the data will first be computed (without plotting) using
   \code{\link[graphics]{hist}}. Then the rose diagram of this histogram
   will be plotted by \code{rose.histogram}.
 
@@ -130,14 +150,7 @@ rose(x, \dots)
   \code{start="N"} and \code{clockwise=TRUE}.  
 }
 \value{A window (class \code{"owin"}) containing the plotted region.}
-\author{\adrian
-  
-  
-  \rolf
-  
-  and \ege
-  
-}
+\author{\spatstatAuthors}
 \seealso{
   \code{\link{fv}}, \code{\link[graphics]{hist}},
   \code{\link{circdensity}},
