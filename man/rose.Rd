@@ -17,29 +17,29 @@ rose(x, \dots)
                        nclass = NULL,
                        unit = c("degree", "radian", "hour", "minute", "other"),
                        fullcircle = NULL, 
-                       start=0, clockwise=FALSE,
+                       start=NULL, clockwise=NULL,
                        main)
 
 \method{rose}{histogram}(x, \dots,
                        unit = c("degree", "radian", "hour", "minute", "other"),
                        fullcircle = NULL, 
-                       start=0, clockwise=FALSE,
-                       main, labels=TRUE, at=NULL,
-                       do.plot = TRUE, do.ticks=TRUE)
+                       start=NULL, clockwise=NULL,
+                       main, col="lightgray", labels=TRUE, at=NULL,
+                       do.plot = TRUE, do.rings=TRUE, do.ticks=TRUE)
 
 \method{rose}{density}(x, \dots, 
                        unit = c("degree", "radian", "hour", "minute", "other"),
                        fullcircle = NULL, 
-                  start=0, clockwise=FALSE,
-                  main, labels=TRUE, at=NULL,
-                  do.plot = TRUE, do.ticks=TRUE)
+                       start=NULL, clockwise=NULL,
+                       main, labels=TRUE, at=NULL,
+                       do.plot = TRUE, do.rings=TRUE, do.ticks=TRUE)
 
 \method{rose}{fv}(x, \dots, 
                        unit = c("degree", "radian", "hour", "minute", "other"),
                        fullcircle = NULL, 
-                  start=0, clockwise=FALSE,
-                  main, labels=TRUE, at=NULL,
-                  do.plot = TRUE, do.ticks = TRUE)
+                       start=NULL, clockwise=NULL,
+                       main, labels=TRUE, at=NULL,
+                       do.plot = TRUE, do.rings=TRUE, do.ticks = TRUE)
 }
 \arguments{
   \item{x}{
@@ -53,7 +53,9 @@ rose(x, \dots)
   }
   \item{breaks, nclass}{
     Arguments passed to \code{\link[graphics]{hist}} to determine
-    the histogram breakpoints.
+    the histogram breakpoints. Note that \code{nclass} is the number
+    of \bold{breakpoints}, so that the number of histogram bins
+    is \code{nclass-1}.
   }
   \item{\dots}{
     Additional arguments passed to \code{\link[graphics]{polygon}}
@@ -79,18 +81,33 @@ rose(x, \dots)
     if \code{unit="degree"} and \code{clockwise=FALSE},
     then \code{start=90} and \code{start="N"} are equivalent.
     The default is to measure angles anti-clockwise from the
-    horizontal axis (East direction).
+    horizontal axis (East direction) if \code{unit="degree"} or
+    \code{unit="radian"} or \code{unit="other"},
+    and to measure angles clockwise from top
+    (North direction) if \code{unit="hour"} or \code{unit="minute"}.
   }
   \item{clockwise}{
     Logical value indicating whether angles increase in the clockwise
     direction (\code{clockwise=TRUE}) or anti-clockwise,
-    counter-clockwise direction (\code{clockwise=FALSE}, the default).
+    counter-clockwise direction (\code{clockwise=FALSE}).
+    The default is \code{clockwise=TRUE} if
+    \code{unit="hour"} or \code{unit="minute"},
+    and \code{clockwise=FALSE} otherwise.
   }
   \item{weights}{
     Optional vector of numeric weights associated with \code{x}.
   }
   \item{main}{
     Optional main title for the plot.
+  }
+  \item{col}{
+    Fill colour for the histogram polygons.
+    A colour value, or a vector of colour values assigning different
+    colours to each polygon (recycled to the required length).
+    A colour value can be the string name of a colour
+    like \code{"red"}, or an integers that refers to
+    a colour in the standard palette, or a string containing
+    six-letter hexadecimal codes like \code{"#F0A0FF"}.
   }
   \item{labels}{
     Either a logical value indicating whether to plot labels
@@ -102,6 +119,10 @@ rose(x, \dots)
   }
   \item{do.plot}{
     Logical value indicating whether to really perform the plot.
+  }
+  \item{do.rings}{
+    Logical value indicating whether to draw concentric rings
+    for scale inside the plot.
   }
   \item{do.ticks}{
     Logical value indicating whether to plot tick marks on the outer circle.
@@ -123,7 +144,7 @@ rose(x, \dots)
   or 0 to \code{60} (if \code{unit="minute"})
   or 0 to \code{fullcircle} (if \code{unit="other"}).
   For data expressed in hours but in a 12-hour day,
-  use \code{unit="other"} and \code{fullcircle=12}.
+  use \code{unit="hour"} and \code{fullcircle=12}.
   A histogram of the data will first be computed (without plotting) using
   \code{\link[graphics]{hist}}. Then the rose diagram of this histogram
   will be plotted by \code{rose.histogram}.
@@ -142,12 +163,55 @@ rose(x, \dots)
   then the argument of the function will be interpreted as an angle,
   and the value of the function will be interpreted as the radius.
 
-  By default, angles are interpreted using the mathematical convention
-  where the zero angle is the horizontal \eqn{x} axis, and angles
-  increase anti-clockwise. Other conventions can be specified
+  The arguments \code{start} and \code{clockwise} determine how angles
+  are plotted.
+  \itemize{
+    \item 
+    \code{start} is the spatial direction which corresponds to a measured angle
+    of zero. It may be either a character string giving a compass direction
+    (\code{"N"} for north, \code{"S"} for south, \code{"E"} for east,
+    or \code{"W"} for west) or a number giving the angle from the
+    the horizontal (East) axis to the starting direction. For example,
+    if \code{unit="degree"} and \code{clockwise=FALSE},
+    then \code{start=90} and \code{start="N"} are equivalent.
+    \item
+    \code{clockwise} is a logical value indicating
+    whether angles increase in the clockwise
+    direction (\code{clockwise=TRUE}) or anti-clockwise,
+    counter-clockwise direction (\code{clockwise=FALSE}).
+  }
+  The default values of \code{start} and \code{clockwise}
+  depend on \code{unit}:
+  \itemize{
+    \item
+    If \code{unit="degree"} or \code{unit="radian"} or \code{unit="other"},
+    by default the angles are interpreted using the mathematical convention
+    where the zero angle is the horizontal \eqn{x} axis, and angles
+    increase anti-clockwise. The default values
+    are \code{start=0} and \code{clockwise=FALSE}.
+    \item
+    If \code{unit="hour"} or \code{unit="minute"},
+    by default the angles are interpreted using the usual clock convention
+    where the zero angle is the vertical \eqn{y} axis,
+    and angles increase clockwise.
+    The default values are \code{start="N"} and \code{clockwise=TRUE}.
+  }
+  Other conventions can be specified
   using the arguments \code{start} and \code{clockwise}.
-  Standard compass directions are obtained by setting \code{unit="degree"},
-  \code{start="N"} and \code{clockwise=TRUE}.  
+
+  Tick marks are drawn around the outer circle if \code{do.ticks=TRUE}.
+  The angular positions of the tick marks are determined
+  by the argument \code{at} (in the same units as \code{x}).
+  Corresponding labels are drawn at the tick marks if
+  \code{labels=TRUE} (the default), and are not drawn if
+  \code{labels=FALSE}. Alternatively \code{labels} can be a vector
+  of labels (character strings, expressions etc) to be plotted at the
+  tick marks. 
+  If \code{at} is missing and \code{labels} is a vector,
+  the tick marks will be equally spaced,
+  with the number of tick marks equal to the length of \code{labels}.
+  If \code{at} and \code{labels} are both missing,
+  there is a sensible default for the tick marks and their labels.
 }
 \value{A window (class \code{"owin"}) containing the plotted region.}
 \author{\spatstatAuthors}
@@ -157,9 +221,16 @@ rose(x, \dots)
   \code{\link[stats]{density.default}}.
 }
 \examples{
-  ang <- runif(1000, max=360)
-  rose(ang, col="grey")
-  rose(ang, col="grey", start="N", clockwise=TRUE)
+  ang <- runif(200, max=360)
+  rose(ang)
+  rose(ang, col=c("grey", "lightgrey"), start="N", clockwise=TRUE)
+
+  ## hours in a 120-hour day
+  hrs <- runif(200, max=12)
+  Nbars <- 30
+  rose(hrs, unit="h", fullcircle=12,
+       labels=as.roman(c(12, 1:11)),
+       nclass=Nbars+1, col=rainbow(Nbars))
 }
 \keyword{spatial}
 \keyword{hplot}

@@ -1,11 +1,13 @@
 
-        CHANGES IN spatstat.explore VERSION 3.8-0.007
+        CHANGES IN spatstat.explore VERSION 3.8-0.008
 
 OVERVIEW
 
     o We thank Mario D'Antuono and Hamid Ghorbani for contributions.
 
     o Rose diagrams now accept data expressed in any units with any period.
+
+    o More graphical options for rose diagrams.
     
     o Bug fixes.
     
@@ -17,11 +19,27 @@ SIGNIFICANT USER-VISIBLE CHANGES
     More options for argument 'unit'.
     New argument 'fullcircle'.
 
+    o rose.default, rose.histogram
+    Polygons are now filled, by default, in light grey.
+    New formal argument 'col' specifies the fill colour(s).
+
+    o rose.default, rose.histogram, rose.density, rose.fv
+    New argument 'do.ticks' controls whether tick marks are drawn.
+
+    o rose.default, rose.histogram, rose.density, rose.fv
+    Concentric rings are now drawn inside the circle, for scale.
+    New argument 'do.rings'.
+
 BUG FIXES
 
     o pcfdot, pcfcross, pcfdot.inhom, pcfcross.inhom
     Envelopes for these functions were sometimes incorrect.
     [Spotted by Hamid Ghorbani.]
+    Fixed.
+
+    o rose.default, rose.histogram
+    Crashed if argument 'labels' was given.
+    [Spotted by Mario D'Antuono.]
     Fixed.
     
         CHANGES IN spatstat.explore VERSION 3.8-0

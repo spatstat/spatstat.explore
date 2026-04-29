@@ -3,7 +3,7 @@
 #'
 #' Kernel smoothing for circular data
 #'
-#'   $Revision: 1.8 $ $Date: 2026/04/28 03:43:26 $
+#'   $Revision: 1.9 $ $Date: 2026/04/29 04:20:12 $
 
 circdensity <- function(x, sigma="nrd0", ..., bw=NULL,
                         weights=NULL,
@@ -15,7 +15,7 @@ circdensity <- function(x, sigma="nrd0", ..., bw=NULL,
     sigma <- bw
   unit <- match.arg(unit)
   unit <- validate.angles(x, unit, fullcircle=fullcircle, guess=missu)
-  fullcircle <- calcFullCircle(unit, fullcircle)
+  fullcircle <- resolve.rose.args(unit, fullcircle)$fullcircle
   if(is.character(sigma)) {
     sigma <- switch(sigma,
                      bcv  = bw.bcv,

@@ -3,7 +3,7 @@
 #'
 #'   Rose diagrams
 #'
-#'   $Revision: 1.18 $  $Date: 2026/04/28 03:43:35 $
+#'   $Revision: 1.22 $  $Date: 2026/04/29 07:23:14 $
 #'
 
 rose <- function(x, ...) UseMethod("rose")
@@ -15,26 +15,29 @@ rose.default <- local({
                            nclass=NULL,
                            unit=c("degree", "radian",
                                   "hour", "minute", "other"),
-                           fullcircle=NULL,
-                           start=0, clockwise=FALSE,
+                           fullcircle=NULL, start=NULL, clockwise=NULL,
                            main) {
     if(missing(main) || is.null(main))
       main <- short.deparse(substitute(x))
     stopifnot(is.numeric(x))
     if(!is.null(weights))
       check.nvector(weights, length(x), things="observations", vname="weights")
-    #' determine units
+    #' determine units and resolve auxiliary arguments
     missu <- missing(unit)
     unit <- match.arg(unit)
     unit <- validate.angles(x, unit, fullcircle=fullcircle, guess=missu)
-    fullcircle <- calcFullCircle(unit, fullcircle)
+    a <- resolve.rose.args(unit, fullcircle=fullcircle,
+                           start=start, clockwise=clockwise)
+    fullcircle <- a$fullcircle
+    start      <- a$start
+    clockwise  <- a$clockwise
     #' reduce to [0, 2pi]
     x <- x %% fullcircle
     #' determine breakpoints strictly inside full circle
     breaks <- makebreaks(x, c(0, fullcircle), breaks, nclass)
     #' histogram without weights
     h <- do.call.matched(hist.default,
-                         list(x=x, breaks=breaks, ..., plot=FALSE),
+                         list(x=quote(x), breaks=breaks, ..., plot=FALSE),
                          skipargs=graphicsAargh,
                          sieve=TRUE)
     result <- h$result
@@ -60,7 +63,7 @@ rose.default <- local({
     use.br <- !is.null(breaks)
     if (use.br) {
       if (!is.null(nclass)) 
-        warning("'nclass' not used when 'breaks' is specified")
+        warning("'nclass' is not used when 'breaks' is specified")
     } else if (!is.null(nclass) && length(nclass) == 1L) {
       breaks <- nclass
     } else breaks <- "Sturges"
@@ -108,18 +111,22 @@ rose.histogram <- function(x, ...,
                            unit=c("degree", "radian",
                                   "hour", "minute", "other"),
                            fullcircle = NULL,
-                           start=0, clockwise=FALSE,
-                           main, labels=TRUE, at=NULL,
-                           do.plot=TRUE, do.ticks=TRUE) {
+                           start=NULL, clockwise=NULL,
+                           main, col="lightgray", labels=TRUE, at=NULL,
+                           do.plot=TRUE, do.rings=TRUE, do.ticks=TRUE) {
   if(missing(main) || is.null(main))
     main <- short.deparse(substitute(x))
   #' determine units
   missu <- missing(unit)
   unit <- match.arg(unit)
-  #' validate
+  #' validate and resolve arguments
   bks <- x$breaks
   unit <- validate.angles(bks, unit, fullcircle=fullcircle, guess=missu)
-  fullcircle <- calcFullCircle(unit, fullcircle)
+  a <- resolve.rose.args(unit, fullcircle=fullcircle,
+                         start=start, clockwise=clockwise)
+  fullcircle <- a$fullcircle
+  start      <- a$start
+  clockwise  <- a$clockwise
   #' get sector sizes
   y <- x$density
   ymax <- max(y)
@@ -143,20 +150,37 @@ rose.histogram <- function(x, ...,
                                         hatch=FALSE,
                                         add=TRUE),
                                    list(...)),
-                  extrargs=graphicsPars("owin"),
-                  skipargs="col")
+                  extrargs=graphicsPars("owin"))
   if(do.plot) {
     #' draw sectors
     ang <- ang2rad(bks, unit=unit, fullcircle=fullcircle,
                    start=start, clockwise=clockwise)
-    eps <- min(diff(ang), pi/128)/2
-    for(i in seq_along(y)) {
-      aa <- seq(ang[i], ang[i+1], by=eps)
-      aa[length(aa)] <- ang[i+1]
+    eps <- min(abs(diff(ang)), pi/128)/2
+    ## determine colours
+    if(length(col) == 0) col <- "lightgray"
+    nc <- length(col)
+    ny <- length(y)
+    if(nc != ny) {
+      ## recycle colours
+      col <- rep(col, ny)[seq_len(ny)]
+    }
+    if(do.rings) {
+      rad <- prettyinside(c(0, ymax), n=6)
+      rad <- rad[rad > 0]
+      for(radi in rad)
+        plot(disc(radi), add=TRUE, border="grey", lty=2)
+      attr(result, "radii") <- rad
+    }
+    for(i in seq_len(ny)) {
       yi <- y[i]
+      ci <- col[i]
+      ## make sector coordinates
+      delta <- eps * sign(ang[i+1] - ang[i])
+      aa <- seq(ang[i], ang[i+1], by=delta)
+      aa[length(aa)] <- ang[i+1]
       xx <- c(0, yi * cos(aa), 0)
       yy <- c(0, yi * sin(aa), 0)
-      do.call.matched(polygon, list(x=xx, y=yy, ...))
+      do.call.matched(polygon, list(x=xx, y=yy, ..., col=ci))
     }
     if(do.ticks) {
       #' add tick marks
@@ -166,61 +190,75 @@ rose.histogram <- function(x, ...,
     }
   }
   #'
+  attr(result, "histogram") <- x
   return(invisible(result))
 }
 
 rose.density <- function(x, ...,
                          unit=c("degree", "radian", "hour", "minute", "other"),
                          fullcircle=NULL,
-                         start=0, clockwise=FALSE,
+                         start=NULL, clockwise=NULL,
                          main, labels=TRUE, at=NULL,
-                         do.plot=TRUE, do.ticks=TRUE) {
+                         do.plot=TRUE, do.rings=TRUE, do.ticks=TRUE) {
   if(missing(main) || is.null(main))
     main <- short.deparse(substitute(x))
   ang <- x$x
   rad <- x$y
   missu <- missing(unit)
   unit <- match.arg(unit)
+  ## validate and resolve arguments
   unit <- validate.angles(ang, unit, fullcircle=fullcircle, guess=missu)
-  fullcircle <- calcFullCircle(unit, fullcircle)
+  a <- resolve.rose.args(unit, fullcircle=fullcircle,
+                         start=start, clockwise=clockwise)
+  fullcircle <- a$fullcircle
+  start      <- a$start
+  clockwise  <- a$clockwise
   #'
   result <- roseContinuous(ang, rad, unit, ...,
                            fullcircle=fullcircle,
                            start=start, clockwise=clockwise,
                            main=main, labels=labels, at=at,
-                           do.plot=do.plot, do.ticks=do.ticks)
+                           do.plot=do.plot,
+                           do.rings=do.rings,
+                           do.ticks=do.ticks)
   return(invisible(result))
 }
 
 rose.fv <- function(x, ..., unit=c("degree", "radian",
                                    "hour", "minute", "other"),
                     fullcircle=NULL, 
-                    start=0, clockwise=FALSE,
+                    start=NULL, clockwise=NULL,
                     main, labels=TRUE, at=NULL,
-                    do.plot=TRUE, do.ticks=TRUE) {
+                    do.plot=TRUE, do.rings=TRUE, do.ticks=TRUE) {
   if(missing(main) || is.null(main))
     main <- short.deparse(substitute(x))
   ang <- with(x, .x)
   rad <- with(x, .y)
   missu <- missing(unit)
   unit <- match.arg(unit)
+  #' validate and resolve arguments
   unit <- validate.angles(ang, unit, fullcircle=fullcircle, guess=missu)
-  fullcircle <- calcFullCircle(unit, fullcircle)
+  a <- resolve.rose.args(unit, fullcircle=fullcircle,
+                         start=start, clockwise=clockwise)
+  fullcircle <- a$fullcircle
+  start      <- a$start
+  clockwise  <- a$clockwise
   #'
   result <- roseContinuous(ang, rad, unit, ...,
                            fullcircle=fullcircle,
                            start=start, clockwise=clockwise,
                            main=main, labels=labels, at=at,
-                           do.plot=do.plot, do.ticks=do.ticks)
+                           do.plot=do.plot, do.rings=do.rings,
+                           do.ticks=do.ticks)
   return(invisible(result))
 }
 
 roseContinuous <- function(ang, rad, unit, ...,
                            fullcircle=NULL,
-                           start=0, clockwise=FALSE,
+                           start=NULL, clockwise=NULL,
                            main,
                            labels=TRUE, at=NULL,
-                           do.plot=TRUE, do.ticks=TRUE) {
+                           do.plot=TRUE, do.rings=TRUE, do.ticks=TRUE) {
   rmax <- max(rad)
   do.ticks <- !isFALSE(do.ticks) && (is.null(at) || length(at) > 0)
   #' draw disc
@@ -246,6 +284,13 @@ roseContinuous <- function(ang, rad, unit, ...,
                   skipargs="col")
   #' draw plot
   if(do.plot) {
+    if(do.rings) {
+      rad <- prettyinside(c(0, max(ang)), n=6)
+      rad <- rad[rad > 0]
+      for(radi in rad)
+        plot(disc(radi), add=TRUE, border="grey", lty=2)
+      attr(result, "radii") <- rad
+    }
     ang <- ang2rad(ang, unit=unit, fullcircle=fullcircle,
                    start=start, clockwise=clockwise)
     xx <- rad * cos(ang)
@@ -265,12 +310,17 @@ ang2rad <- local({
   
   ang2rad <- function(ang,
                       unit=c("degree", "radian", "hour", "minute", "other"),
-                      fullcircle=NULL, start=0, clockwise=FALSE) {
-    ## convert angular values in 'units' to radians
+                      fullcircle=NULL, start=NULL, clockwise=NULL) {
+    ## Function to convert angular values in 'units' to radians
+    ## validate arguments and resolve defaults
     unit <- match.arg(unit)
-    clocksign <- if(clockwise) -1 else 1
-    fullcircle <- calcFullCircle(unit, fullcircle)
+    a <- resolve.rose.args(unit, fullcircle=fullcircle,
+                           start=start, clockwise=clockwise)
+    fullcircle <- a$fullcircle
+    start      <- a$start
+    clockwise  <- a$clockwise
     ## adjust 'ang' relative to start position (expressed in 'units')
+    clocksign <- if(clockwise) -1 else 1
     if(is.character(start)) {
       if(is.na(match(toupper(start), names(compasspoints))))
         stop(paste("Unrecognised compass point", sQuote(start)), call.=FALSE)
@@ -305,14 +355,42 @@ ang2rad <- local({
 circticks <- function(R, at=NULL,
                       unit=c("degree", "radian", "hour", "minute", "other"),
                       fullcircle=NULL,
-                      start=0, clockwise=FALSE, labels=TRUE) {
+                      start=NULL, clockwise=NULL, labels=TRUE) {
   unit <- match.arg(unit)
-  fullcircle <- calcFullCircle(unit, fullcircle)
+  a <- resolve.rose.args(unit, fullcircle, start, clockwise)
+  fullcircle <- a$fullcircle
+  start      <- a$start
+  clockwise  <- a$clockwise
   if(is.null(at)) {
-    at <- fullcircle * (0:23)/24
-    major <- ((0:23) %% 6 == 0)
+    ## default rules for position of tick marks
+    if((nlab <- length(labels)) > 1) {
+      ## make 'nlab' evenly-spaced ticks
+      at <- fullcircle * (0:(nlab-1))/nlab
+      nat <- (at/fullcircle) * 4
+      major <- abs(nat - round(nat)) < 0.01
+    } else {
+      ## no information - use ticks appropriate to unit
+      switch(unit,
+             degree = ,
+             radian = ,
+             hour = {
+               at <- fullcircle * (0:23)/24
+               major <- ((0:23) %% 6 == 0)
+             },
+             minute = {
+               at <- seq(0, 55, by=15)
+               major <- (at %% 15 == 0)
+             },
+             other = {
+               at <- prettyinside(c(0, fullcircle), n=4)
+               at <- at[at < fullcircle]
+               nat <- (at/fullcircle) * 4
+               major <- abs(nat - round(nat)) < 0.01
+             })
+    }
   } else {
     if(length(at) == 0) return(invisible(NULL))
+    ## user specified positions of tick marks
     nat <- (at/fullcircle) * 4
     major <- abs(nat - round(nat)) < 0.01
   }
@@ -334,7 +412,9 @@ circticks <- function(R, at=NULL,
                        other = paste(signif(at, 3)))
     } else {
       ## user-specified labels
-      stopifnot(is.vector(labels) && length(labels) == length(at))
+      if(!is.expression(labels))
+        labels <- as.character(labels)
+      stopifnot(length(labels) == length(at))
     }
     big <- expan + 0.1
     text(big * tx, big * ty, labels=labels)
@@ -358,24 +438,31 @@ validate.angles <- function(angles,
   } else {
     unit <- "degree"
   }
-  fullcircle <- calcFullCircle(unit, fullcircle)
+  fullcircle <- resolve.rose.args(unit, fullcircle)$fullcircle
   if(width > 1.002 * fullcircle)
     stop("Range of angles exceeds a full circle")
   return(unit)
 }
 
-calcFullCircle <- function(unit=c("degree", "radian",
-                                  "hour", "minute", "other"),
-                           fullcircle=NULL) {
+resolve.rose.args <- function(unit=c("degree", "radian",
+                                     "hour", "minute", "other"),
+                              fullcircle=NULL,
+                              start=NULL, clockwise=NULL) {
   unit <- match.arg(unit)
-  if(unit == "other") {
+  if(unit == "other" || !is.null(fullcircle)) {
     check.1.real(fullcircle)
     stopifnot(fullcircle > 0)
   }
-  switch(unit,
-         degree = 360,
-         radian = 2 * pi,
-         hour   = 24,
-         minute = 60,
-         other = fullcircle)
+  if(is.null(fullcircle)) 
+    fullcircle <- switch(unit,
+                         degree = 360,
+                         radian = 2 * pi,
+                         hour   = 24,
+                         minute = 60,
+                         other = fullcircle)
+  is.clock <- (unit %in% c("hour", "minute"))
+  clockwise <- clockwise %orifnull% is.clock
+  start <- start %orifnull% (if(is.clock) "N" else 0)
+  out <- list(fullcircle=fullcircle, start=start, clockwise=clockwise)
+  return(out)
 }

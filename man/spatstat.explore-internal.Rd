@@ -22,7 +22,6 @@
 \alias{calc.SAVE}
 \alias{calc.SIR}
 \alias{calc.TSE}
-\alias{calcFullCircle}
 \alias{censtimeCDFest}
 \alias{check.testfun}
 \alias{circticks}
@@ -161,6 +160,7 @@
 \alias{resolve.pcf.bandwidth}
 \alias{resolve.reciplambda}
 \alias{resolve.reciplambda.ppp}
+\alias{resolve.rose.args}
 \alias{resolveEinfo}
 \alias{resolveNullModel}
 \alias{rhohatEngine}
@@ -252,7 +252,6 @@ calc.NNIR(COV, z, pos, Dim)
 calc.SAVE(COV, z, Dim)
 calc.SIR(COV, z)
 calc.TSE(COV, z, pos, Dim1, Dim2)
-calcFullCircle(unit, fullcircle)
 censtimeCDFest(o, cc, d, breaks, \dots,
      KM, RS, HAN, RAW, han.denom, tt, pmax, fname, fexpr)
 check.testfun(f, f1, X)
@@ -442,6 +441,7 @@ resolve.pcf.bandwidth(X, \dots, lambda, rmax, nr, adaptive, kernel,
 resolve.reciplambda(X, lambda, reciplambda, \dots)
 \method{resolve.reciplambda}{ppp}(X, lambda, reciplambda, \dots,
                     sigma, varcov, leaveoneout, update, check)
+resolve.rose.args(unit, fullcircle, start, clockwise)
 resolveEinfo(x, what, fallback, warn, atomic)
 resolveNullModel(baseline, X, observations, \dots)
 rhohatEngine(model, covariate, reference, volume, \dots,
@@ -476,7 +476,8 @@ rocSmoothCalc(ZX, ZU,\dots, weightsX, weightsU,
               high, kernel, bw, adjust, alpha, nGrid, p, plength,
               doCI, degfreeU)
 roseContinuous(ang, rad, unit, \dots, fullcircle,
-               start, clockwise, main, labels, at, do.plot, do.ticks)
+               start, clockwise, main, labels, at,
+               do.plot, do.rings, do.ticks)
 scanmeasure(X, \dots)
 \method{scanmeasure}{ppp}(X, r, \dots, method) 
 \method{scanmeasure}{im}(X, r, \dots)
