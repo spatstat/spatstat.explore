@@ -213,7 +213,14 @@ rose(x, \dots)
   If \code{at} and \code{labels} are both missing,
   there is a sensible default for the tick marks and their labels.
 }
-\value{A window (class \code{"owin"}) containing the plotted region.}
+\value{
+  (Invisibly) A window (class \code{"owin"}) containing the plotted
+  region. The result also has attribute \code{"R"} giving the radius of
+  the outer circle of the plot, and attribute \code{"rings"} giving the
+  radii of the concentric scale rings. For \code{rose.default} and
+  \code{rose.histogram}, the result also has attribute
+  \code{"histogram"} giving the histogram.
+}
 \author{\spatstatAuthors}
 \seealso{
   \code{\link{fv}}, \code{\link[graphics]{hist}},

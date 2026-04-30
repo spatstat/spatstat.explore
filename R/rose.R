@@ -3,7 +3,7 @@
 #'
 #'   Rose diagrams
 #'
-#'   $Revision: 1.22 $  $Date: 2026/04/29 07:23:14 $
+#'   $Revision: 1.23 $  $Date: 2026/04/30 01:45:47 $
 #'
 
 rose <- function(x, ...) UseMethod("rose")
@@ -130,28 +130,34 @@ rose.histogram <- function(x, ...,
   #' get sector sizes
   y <- x$density
   ymax <- max(y)
-  #' draw disc
+  #' determine size of circle
   insideclearance <- 0.1
   do.ticks <- !isFALSE(do.ticks) && (is.null(at) || length(at) > 0)
   outsidespace <- if(!do.ticks) 0 else
                   if(identical(labels, FALSE)) 0.1 else 0.25
   R <- (1+insideclearance) * ymax
-  DD <- disc(R)
+  DD <- disc(R) # circle drawn outside the sectors
   Rout <- (1 + outsidespace) * R
-  disco <- disc(Rout)
+  disco <- disc(Rout) # larger disc containing the required space
   dont.complain.about(DD, disco)
+  ## create space for plot and save it as the (invisible) result
   result <- do.call.matched(plot.owin,
                             resolve.defaults(list(x=quote(disco),
                                                   main=main,
-                                                  type="n"), 
+                                                  type="n",
+                                                  do.plot=do.plot), 
                                              list(...)))
-  do.call.matched(plot.owin,
-                  resolve.defaults(list(x=quote(DD),
-                                        hatch=FALSE,
-                                        add=TRUE),
-                                   list(...)),
-                  extrargs=graphicsPars("owin"))
+  attr(result, "histogram") <- x
+  attr(result, "R") <- R
+  ## 
   if(do.plot) {
+    ## actually plot the circle
+    do.call.matched(plot.owin,
+                    resolve.defaults(list(x=quote(DD),
+                                          hatch=FALSE,
+                                          add=TRUE),
+                                     list(...)),
+                    extrargs=graphicsPars("owin"))
     #' draw sectors
     ang <- ang2rad(bks, unit=unit, fullcircle=fullcircle,
                    start=start, clockwise=clockwise)
@@ -169,7 +175,7 @@ rose.histogram <- function(x, ...,
       rad <- rad[rad > 0]
       for(radi in rad)
         plot(disc(radi), add=TRUE, border="grey", lty=2)
-      attr(result, "radii") <- rad
+      attr(result, "rings") <- rad
     }
     for(i in seq_len(ny)) {
       yi <- y[i]
@@ -190,7 +196,6 @@ rose.histogram <- function(x, ...,
     }
   }
   #'
-  attr(result, "histogram") <- x
   return(invisible(result))
 }
 
@@ -261,35 +266,38 @@ roseContinuous <- function(ang, rad, unit, ...,
                            do.plot=TRUE, do.rings=TRUE, do.ticks=TRUE) {
   rmax <- max(rad)
   do.ticks <- !isFALSE(do.ticks) && (is.null(at) || length(at) > 0)
-  #' draw disc
+  #' determine size of circle
   insideclearance <- 0.1
   outsidespace <- if(!is.null(at) && length(at) == 0) 0 else
                   if(identical(labels, FALSE)) 0.1 else 0.25
   R <- (1+insideclearance) * rmax
-  DD <- disc(R)
+  DD <- disc(R) # circle drawn outside the curve
   Rout <- (1 + outsidespace) * R
-  disco <- disc(Rout)
+  disco <- disc(Rout) # larger disc containing the require space
   dont.complain.about(DD, disco)
+  ## create space for plot and save it as the (invisible) result
   result <- do.call.matched(plot.owin,
                             resolve.defaults(list(x=quote(disco),
                                                   main=main,
-                                                  type="n"), 
+                                                  type="n",
+                                                  do.plot=do.plot), 
                                              list(...)))
-  do.call.matched(plot.owin,
-                  resolve.defaults(list(x=quote(DD),
-                                        add=TRUE,
-                                        hatch=FALSE),
-                                   list(...)),
-                  extrargs=graphicsPars("owin"),
-                  skipargs="col")
-  #' draw plot
+  attr(result, "R") <- R
   if(do.plot) {
+    ## actually plot the circle
+    do.call.matched(plot.owin,
+                    resolve.defaults(list(x=quote(DD),
+                                          add=TRUE,
+                                          hatch=FALSE),
+                                     list(...)),
+                    extrargs=graphicsPars("owin"),
+                    skipargs="col")
     if(do.rings) {
       rad <- prettyinside(c(0, max(ang)), n=6)
       rad <- rad[rad > 0]
       for(radi in rad)
         plot(disc(radi), add=TRUE, border="grey", lty=2)
-      attr(result, "radii") <- rad
+      attr(result, "rings") <- rad
     }
     ang <- ang2rad(ang, unit=unit, fullcircle=fullcircle,
                    start=start, clockwise=clockwise)
@@ -301,7 +309,7 @@ roseContinuous <- function(ang, rad, unit, ...,
                 start=start, clockwise=clockwise,
                 labels=labels)
   }
-  return(result)
+  return(invisible(result))
 }
 
 ang2rad <- local({

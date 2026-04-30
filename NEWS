@@ -1,13 +1,11 @@
 
-        CHANGES IN spatstat.explore VERSION 3.8-0.008
+        CHANGES IN spatstat.explore VERSION 3.8-0.009
 
 OVERVIEW
 
     o We thank Mario D'Antuono and Hamid Ghorbani for contributions.
 
-    o Rose diagrams now accept data expressed in any units with any period.
-
-    o More graphical options for rose diagrams.
+    o Improvements to rose diagrams.
     
     o Bug fixes.
     
@@ -30,6 +28,11 @@ SIGNIFICANT USER-VISIBLE CHANGES
     Concentric rings are now drawn inside the circle, for scale.
     New argument 'do.rings'.
 
+    o rose.default, rose.histogram, rose.density, rose.fv
+    The return value now has attribute "R" giving the
+    radius of the outer circle of the diagram, and attribute "rings"
+    giving the radii of the concentric scale rings.
+
 BUG FIXES
 
     o pcfdot, pcfcross, pcfdot.inhom, pcfcross.inhom
@@ -40,6 +43,16 @@ BUG FIXES
     o rose.default, rose.histogram
     Crashed if argument 'labels' was given.
     [Spotted by Mario D'Antuono.]
+    Fixed.
+
+    o rose.default, rose.histogram
+    Geometry of plot was sometimes incorrect when clockwise=FALSE.
+    [Spotted by Mario D'Antuono.]
+    Fixed.
+
+    o rose.default, rose.histogram, rose.density, rose.fv
+    Argument 'do.plot=FALSE' was partially ignored (i.e. a graphics device
+    was opened and some graphical commands were issued).
     Fixed.
     
         CHANGES IN spatstat.explore VERSION 3.8-0
