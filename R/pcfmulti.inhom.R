@@ -201,7 +201,8 @@ pcfmulti.inhom <- function(X, I, J, lambdaI=NULL, lambdaJ=NULL, ...,
   ## .... determine smoothing argyments ......................
 
   M <- resolve.pcf.bandwidth(X,
-                             lambda=lambdaJbar, 
+                             lambda=lambdaJbar,
+                             npts=nJ,
                              rmax=rmax, nr=length(r),
                              adaptive=adaptive, kernel=kernel,
                              bw=bw, h=h, bw.args=bw.args,

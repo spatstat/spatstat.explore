@@ -63,9 +63,9 @@
   }
   \item{bw.args}{
     Optional. List of additional arguments to be passed to \code{bw}
-    when \code{bw} is a function. Alternatively, \code{bw} may be a
-    function that should be applied to \code{X} to produce a list of
-    additional arguments.
+    when \code{bw} is a function. Alternatively, \code{bw.args} may
+    itself be a function that should be applied to \code{X},
+    to produce a list of additional arguments for the function \code{bw}.
   }
   \item{stoyan}{
     Coefficient for Stoyan's bandwidth selection rule; see Details.

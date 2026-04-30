@@ -1,13 +1,21 @@
 
-        CHANGES IN spatstat.explore VERSION 3.8-0.009
+        CHANGES IN spatstat.explore VERSION 3.8-0.010
 
 OVERVIEW
 
     o We thank Mario D'Antuono and Hamid Ghorbani for contributions.
 
     o Improvements to rose diagrams.
+
+    o Fiksel's bandwidth rule.
     
     o Bug fixes.
+
+NEW FUNCTIONS
+
+    o bw.fiksel
+    Fiksel's (1988) rule for smoothing bandwidth for
+    estimating the pair correlation function.
     
 SIGNIFICANT USER-VISIBLE CHANGES
 

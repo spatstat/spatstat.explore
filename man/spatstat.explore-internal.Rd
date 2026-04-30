@@ -435,7 +435,7 @@ resolve.lambdacross(X, I, J, lambdaI, lambdaJ, \dots)
 \method{resolve.lambdacross}{ppp}(X, I, J, lambdaI, lambdaJ, \dots,
          lambdaX, sigma, varcov, leaveoneout, update, lambdaIJ,
          Iexplain, Jexplain, Ilevels, Jlevels)
-resolve.pcf.bandwidth(X, \dots, lambda, rmax, nr, adaptive, kernel,
+resolve.pcf.bandwidth(X, \dots, lambda, npts, rmax, nr, adaptive, kernel,
   bw, h, bw.args, stoyan, adjust, correction, divisor, zerocor, nsmall,
   gref, close, convert.bw)
 resolve.reciplambda(X, lambda, reciplambda, \dots)

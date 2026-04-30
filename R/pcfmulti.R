@@ -175,7 +175,8 @@ pcfmulti <- function(X, I, J, ...,
   ## .... determine smoothing arguments ......................
 
   M <- resolve.pcf.bandwidth(X,
-                             lambda=lambdaJ, 
+                             lambda=lambdaJ,
+                             npts=nJ,
                              rmax=rmax, nr=length(r),
                              adaptive=adaptive, kernel=kernel,
                              bw=bw, h=h, bw.args=bw.args,

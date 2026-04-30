@@ -173,6 +173,7 @@ pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL,
   
   M <- resolve.pcf.bandwidth(X,
                              lambda=lambdaBar, ## NB
+                             npts = npts,
                              rmax=rmax, nr=length(r),
                              adaptive=adaptive, kernel=kernel,
                              bw=bw, h=h, bw.args=bw.args,

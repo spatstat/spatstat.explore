@@ -3,7 +3,7 @@
 #'
 #' Calculate pair correlation function from point pattern (pcf.ppp)
 #' 
-#' $Revision: 1.92 $ $Date: 2026/02/27 01:46:46 $
+#' $Revision: 1.93 $ $Date: 2026/04/30 06:40:55 $
 #'
 #' Copyright (c) 2008-2026 Adrian Baddeley, Tilman Davies and Martin Hazelton
 
@@ -148,7 +148,7 @@ pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
 
   ## .... determine smoothing arguments ......................
 
-  M <- resolve.pcf.bandwidth(X, lambda=lambda, rmax=rmax, nr=length(r),
+  M <- resolve.pcf.bandwidth(X, lambda=lambda, npts=npts, rmax=rmax, nr=length(r),
                              adaptive=adaptive, kernel=kernel,
                              bw=bw, h=h, bw.args=bw.args,
                              stoyan=stoyan, adjust=adjust,
@@ -376,7 +376,7 @@ pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
 ## ...............................................................
 
 resolve.pcf.bandwidth <- function(X, ...,
-                                  lambda, rmax, nr, 
+                                  lambda, npts, rmax, nr, 
                                   adaptive=FALSE, kernel="epanechnikov",
                                   bw=NULL, h=NULL, bw.args=list(),
                                   stoyan=0.15, adjust=1,
@@ -476,13 +476,18 @@ resolve.pcf.bandwidth <- function(X, ...,
                   stoyan = {
                     ## Stoyan & Stoyan 1995, eq (15.16), page 285
                     ## for Epanechnikov kernel
-                    bw <- stoyan/sqrt(5 * lambda)
-                    h <- bw * cker
+                    h <- stoyan/sqrt(lambda)
+                    if(isTRUE(bw.args$extrapolate))
+                      h <- h * ((100/npts)^(1/5))
+                    bw <- h / cker
                   },
                   bw.fiksel = ,
                   fiksel = {
-                    ## Fiksel (1988)
+                    ## Fiksel (1988) Statistics 19, #1, 67-75
+                    ## equation (3.6) p 70 
                     bw <- 0.1/sqrt(lambda)
+                    if(isTRUE(bw.args$extrapolate))
+                      bw <- bw * ((100/npts)^(1/5))
                     h <- bw * cker
                   })
            ## (bandwidth may still be 'character')
