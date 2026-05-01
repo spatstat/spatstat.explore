@@ -2,7 +2,7 @@
 ##
 ##     markcorr.R
 ##
-##     $Revision: 1.99 $ $Date: 2026/01/21 06:26:39 $
+##     $Revision: 1.100 $ $Date: 2026/05/01 02:29:02 $
 ##
 ##    Estimate the mark correlation function
 ##    and related functions 
@@ -587,7 +587,8 @@ markcorr <-
   }
   if(any(correction == "isotropic")) {
     ## Ripley isotropic correction
-    edgewt <- edge.Ripley(XI, matrix(dIJ, ncol=1))
+    bI <- bdist.points(X)[I]
+    edgewt <- edge.Ripley(XI, matrix(dIJ, ncol=1), bdistX=bI)
     if(!is.null(weights))
       edgewt <- edgewt * ww
     ## get smoothed estimate of mark covariance

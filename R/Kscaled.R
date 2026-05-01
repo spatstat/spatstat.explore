@@ -1,7 +1,7 @@
 #
 #	Kscaled.R	Estimation of K function for locally-scaled process
 #
-#	$Revision: 1.20 $	$Date: 2025/09/03 04:31:12 $
+#	$Revision: 1.21 $	$Date: 2026/05/01 02:29:02 $
 #
 
 "Lscaled" <- function(...) {
@@ -109,6 +109,8 @@
   DIJ <- absDIJ * lamIJ
   ## first point of each pair
   XI <- if(needXI) ppp(close$xi, close$yi, window=W, check=FALSE) else NULL
+
+  bdistX <- NULL
   
   if(any(correction == "none")) {
     ## uncorrected! For demonstration purposes only!
@@ -122,7 +124,8 @@
   if(any(correction == "border")) {
     ## border method
     ## Compute SCALED distances to boundary
-    b <- bdist.points(X) * sqrtLambda
+    b <- bdistX %orifnull% bdist.points(X)
+    b <- b * sqrtLambda
     bI <- b[I]
     ## apply reduced sample algorithm to scaled distances
     RS <- Kount(DIJ, bI, b, breaks)
@@ -146,7 +149,9 @@
   }
   if(any(correction == "isotropic")) {
     ## Ripley isotropic correction (using UN-SCALED distances)
-    edgewt <- edge.Ripley(XI, matrix(absDIJ, ncol=1))
+    b <- bdistX %orifnull% bdist.points(X)
+    bI <- b[I]
+    edgewt <- edge.Ripley(XI, matrix(absDIJ, ncol=1), bdistX=bI)
     wh <- whist(DIJ, breaks$val, edgewt)
     Kiso <- cumsum(wh)/npts
     Kiso[r >= rthresh] <- NA

@@ -1,7 +1,7 @@
 #'
 #' bw.pcf.R
 #'
-#' $Revision: 1.11 $  $Date: 2026/02/14 10:06:42 $
+#' $Revision: 1.12 $  $Date: 2026/05/01 01:17:20 $
 #'
 #' bandwidth selection for pcf
 #' with least-squares cross-validation method
@@ -152,7 +152,8 @@ BWPCFengine <- function(X, ..., lambda=NULL,
     if(leaveoneout) {
       switch(correction,
              translate = edge.Trans(dx=cp$dx, dy=cp$dy, W=win, paired=TRUE),
-             isotropic = edge.Ripley(X[cp$i], ds, W=win))
+             isotropic = edge.Ripley(X[cp$i], ds, W=win,
+                                     bdistX=bdist.points(X)[cp$i]))
     } else 1
 
   #' normalisation factors

@@ -1,7 +1,7 @@
 #
 #	Kmulti.inhom.S		
 #
-#	$Revision: 1.58 $	$Date: 2026/01/21 06:26:39 $
+#	$Revision: 1.59 $	$Date: 2026/05/01 02:29:02 $
 #
 #
 # ------------------------------------------------------------------------
@@ -286,6 +286,8 @@ function(X, I, J, lambdaI=NULL, lambdaJ=NULL,
   else 
     weight <- 1/lambdaIJ[cbind(icloseI, jcloseJ)]
 
+  bdistXI <- bdist.points(XI)
+    
 # Compute estimates by each of the selected edge corrections.
 
   if(any(correction == "none")) {
@@ -302,8 +304,8 @@ function(X, I, J, lambdaI=NULL, lambdaJ=NULL,
   
   if(any(correction == "border" | correction == "bord.modif")) {
     # border method
-    # Compute distances to boundary
-    b <- bdist.points(XI)
+    # Compute distances to boundary from points of type I
+    b <- bdistXI %orifnull% bdist.points(XI)
     bI <- b[icloseI]
     # apply reduced sample algorithm
     RS <- Kwtsum(dclose, bI, weight, b, 1/lambdaI, breaks)
@@ -337,7 +339,9 @@ function(X, I, J, lambdaI=NULL, lambdaJ=NULL,
   }
   if(any(correction == "isotropic")) {
     ## Ripley isotropic correction
-    edgewt <- edge.Ripley(XI[icloseI], matrix(dclose, ncol=1))
+    b <- bdistXI %orifnull% bdist.points(XI)
+    bI <- b[icloseI]
+    edgewt <- edge.Ripley(XI[icloseI], matrix(dclose, ncol=1), bdistX=bI)
     allweight <- edgewt * weight
     wh <- whist(dclose, breaks$val, allweight)
     Kiso <- cumsum(wh)/areaW

@@ -1,7 +1,7 @@
 #
 #	localK.R		Getis-Franklin neighbourhood density function
 #
-#	$Revision: 1.26 $	$Date: 2025/09/03 03:50:23 $
+#	$Revision: 1.27 $	$Date: 2026/05/01 02:29:02 $
 #
 #
 
@@ -149,8 +149,9 @@
            df[r >= h, ] <- NA
          },
          isotropic={
-           # Ripley isotropic correction
-           edgewt <- edge.Ripley(XI, matrix(DIJ, ncol=1))
+           ## Ripley isotropic correction
+           bI <- bdist.points(X)[I]
+           edgewt <- edge.Ripley(XI, matrix(DIJ, ncol=1), bdistX=bI)
            if(weighted)
              edgewt <- edgewt * weightJ
            for(i in 1:npts) {

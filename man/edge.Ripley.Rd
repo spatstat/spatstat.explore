@@ -10,7 +10,7 @@
 }
 \usage{
 edge.Ripley(X, r, W = Window(X), method = c("C", "interpreted"),
-            maxweight = 100, internal=list())
+            maxweight = 100, bdistX=NULL, internal=list())
 
 rmax.Ripley(W)
 }
@@ -31,6 +31,10 @@ rmax.Ripley(W)
   }
   \item{maxweight}{
     Maximum permitted value of the edge correction weight.
+  }
+  \item{bdistX}{
+    Optional. Numeric vector containing the pre-computed values of
+    \code{\link{bdist.points}(X)}, for computational efficiency.
   }
   \item{internal}{For developer use only.}
 }
@@ -97,12 +101,7 @@ rmax.Ripley(W)
 
   rmax.Ripley(Window(cells))
 }
-\author{\adrian
-  
-  
-  and \rolf
-  
-}
+\author{\adrian and \rolf}
 \keyword{spatial}
 \keyword{nonparametric}
 

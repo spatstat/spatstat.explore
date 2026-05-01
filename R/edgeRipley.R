@@ -29,7 +29,7 @@ edge.Ripley <- local({
 
   edge.Ripley <- function(X, r, W=Window(X),
                           method=c("C", "interpreted"),
-                          maxweight=100, internal=list()) {
+                          maxweight=100, bdistX=NULL, internal=list()) {
     # X is a point pattern, or equivalent
     X <- as.ppp(X, W)
     W <- X$window
@@ -165,7 +165,15 @@ edge.Ripley <- local({
                     },
                     polygonal={
                       Y <- edges(W)
-                      bd <- bdist.points(X)
+                      nbX <- length(bdistX)
+                      if(nbX > 0 && nbX != n) {
+                        warning(paste("Internal error in call to edge.Ripley:",
+                                      "bdistX had wrong length",
+                                      paren(paste(nbX, "!=", n))),
+                                call.=FALSE)
+                        bdistX <- NULL
+                      }
+                      bd <- bdistX %orifnull% bdist.points(X)
                       if(!debug) {
                         z <- .C(SE_ripleypoly,
                                 nc=as.integer(n),

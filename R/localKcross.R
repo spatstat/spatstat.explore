@@ -3,7 +3,7 @@
 #'
 #'     original by Ege Rubak
 #' 
-#'     $Revision: 1.20 $ $Date: 2026/02/15 05:05:25 $
+#'     $Revision: 1.21 $ $Date: 2026/05/01 02:29:02 $
 
 "localLcross" <- function(X, from, to, ..., rmax = NULL, correction = "Ripley") {
   localKcross(X, from, to, ..., rmax = rmax, correction = correction, wantL = TRUE)
@@ -288,8 +288,9 @@ localLcross.inhom <- function(X, from, to, lambdaFrom = NULL, lambdaTo = NULL, .
              df[r >= h, ] <- NA
            },
            isotropic={
-             # Ripley isotropic correction
-             edgewt <- edge.Ripley(XI, matrix(DIJ, ncol=1))
+             ## Ripley isotropic correction
+             bI <- bdist.points(X_from)[close$i]
+             edgewt <- edge.Ripley(XI, matrix(DIJ, ncol=1), bdistX=bI)
              if(weighted)
                edgewt <- edgewt * weightJ
              for(i in 1:n_from) {

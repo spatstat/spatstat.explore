@@ -8,7 +8,7 @@
 ##
 ##     and its derivative estimated by kernel smoothing
 ##
-##  $Revision: 1.12 $ $Date: 2022/06/27 07:45:30 $
+##  $Revision: 1.14 $ $Date: 2026/05/01 03:04:08 $
 
 pairorient <- function(X, r1, r2, ...,
                        cumulative=FALSE,
@@ -57,7 +57,6 @@ pairorient <- function(X, r1, r2, ...,
   ## retain only corrections that are implemented for the window
   correction <- implemented.for.K(correction, W$type, correction.given)
 
-  
   ## Find close pairs in range [r1, r2]
   close <- as.data.frame(closepairs(X, r2))
   ok <- with(close, r1 <= d & d <= r2)
@@ -97,6 +96,8 @@ pairorient <- function(X, r1, r2, ...,
 
   ## ^^^^^^^^^^^^^^^  Compute edge corrected estimates ^^^^^^^^^^^^^^^^
 
+  bdistX <- NULL
+  
   if(any(correction == "none")) {
     ## uncorrected! For demonstration purposes only!
     if(cumulative) {
@@ -118,7 +119,7 @@ pairorient <- function(X, r1, r2, ...,
 
   if(any(c("border", "bord.modif") %in% correction)) {
     ## border type corrections
-    bX <- bdist.points(X)
+    bX <- bdistX %orifnull% bdist.points(X)
     bI <- bX[close$i]
     if("border" %in% correction) {
       bok <- (bI > r2)
@@ -192,7 +193,9 @@ pairorient <- function(X, r1, r2, ...,
     ## Ripley isotropic correction
     XI <- ppp(close$xi, close$yi, window=W, check=FALSE)
     DIJ <- close$d
-    edgewt <- edge.Ripley(XI, matrix(DIJ, ncol=1))
+    bX <- bdistX %orifnull% bdist.points(X)
+    bI <- bX[close$i]
+    edgewt <- edge.Ripley(XI, matrix(DIJ, ncol=1), bdistX=bI)
     if(cumulative) {
       wh <- whist(ANGLE, breaks$val, edgewt)
       num.iso <- cumsum(wh)/mean(edgewt)

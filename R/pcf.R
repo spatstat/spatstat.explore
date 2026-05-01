@@ -3,7 +3,7 @@
 #'
 #' Calculate pair correlation function from point pattern (pcf.ppp)
 #' 
-#' $Revision: 1.93 $ $Date: 2026/04/30 06:40:55 $
+#' $Revision: 1.94 $ $Date: 2026/05/01 02:29:02 $
 #'
 #' Copyright (c) 2008-2026 Adrian Baddeley, Tilman Davies and Martin Hazelton
 
@@ -284,7 +284,8 @@ pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
     # Ripley isotropic correction
     if(npts > 1) {
       XI <- ppp(close$xi, close$yi, window=win, check=FALSE)
-      edgewt <- edge.Ripley(XI, matrix(dIJ, ncol=1))
+      bXI <- bdist.points(X)[close$i]
+      edgewt <- edge.Ripley(XI, matrix(dIJ, ncol=1), bdistX=bXI)
       if(DEBUG) {
         elapsed <- proc.time() - started
         splat("pcf: computed edge weights after", codetime(elapsed))
@@ -477,9 +478,10 @@ resolve.pcf.bandwidth <- function(X, ...,
                     ## Stoyan & Stoyan 1995, eq (15.16), page 285
                     ## for Epanechnikov kernel
                     h <- stoyan/sqrt(lambda)
-                    if(isTRUE(bw.args$extrapolate))
+                    if(isTRUE(bw.args$extrapolate)) 
                       h <- h * ((100/npts)^(1/5))
                     bw <- h / cker
+                    bw.args <- list()
                   },
                   bw.fiksel = ,
                   fiksel = {
@@ -489,6 +491,7 @@ resolve.pcf.bandwidth <- function(X, ...,
                     if(isTRUE(bw.args$extrapolate))
                       bw <- bw * ((100/npts)^(1/5))
                     h <- bw * cker
+                    bw.args <- list()
                   })
            ## (bandwidth may still be 'character')
          })

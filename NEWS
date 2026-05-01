@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.8-0.010
+        CHANGES IN spatstat.explore VERSION 3.8-0.011
 
 OVERVIEW
 
@@ -8,8 +8,10 @@ OVERVIEW
     o Improvements to rose diagrams.
 
     o Fiksel's bandwidth rule.
-    
-    o Bug fixes.
+
+    o Faster calculation of Ripley's isotropic correction.
+
+    o Minor improvements and bug fixes.
 
 NEW FUNCTIONS
 
@@ -41,10 +43,22 @@ SIGNIFICANT USER-VISIBLE CHANGES
     radius of the outer circle of the diagram, and attribute "rings"
     giving the radii of the concentric scale rings.
 
+    o Summary functions
+    Calculation of Ripley's isotropic edge correction has been accelerated,
+    and responds more quickly to user interrupts.
+
+    o edge.Ripley
+    New optional argument 'bdistX'. 
+
+    o edge.Ripley
+    Responds more quickly to user interrupts
+    (STOP command, Ctrl-C signal).
+    
 BUG FIXES
 
     o pcfdot, pcfcross, pcfdot.inhom, pcfcross.inhom
-    Envelopes for these functions were sometimes incorrect.
+    Envelopes for these functions were sometimes incorrect in the sense that
+    the summary functions were not all calculated with the same settings.
     [Spotted by Hamid Ghorbani.]
     Fixed.
 

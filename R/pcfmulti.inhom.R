@@ -1,7 +1,7 @@
 #
 #   pcfmulti.inhom.R
 #
-#   $Revision: 1.28 $   $Date: 2026/04/26 00:07:21 $
+#   $Revision: 1.29 $   $Date: 2026/05/01 02:29:02 $
 #
 #   inhomogeneous multitype pair correlation functions
 #
@@ -308,7 +308,9 @@ pcfmulti.inhom <- function(X, I, J, lambdaI=NULL, lambdaJ=NULL, ...,
   if(any(correction=="isotropic")) {
     #' Ripley isotropic correction
     if(npairs > 0) {
-      edgewt <- edge.Ripley(XI[icloseI], matrix(dclose, ncol=1))
+      bXI <- bdist.points(XI)
+      edgewt <- edge.Ripley(XI[icloseI], matrix(dclose, ncol=1),
+                            bdistX=bXI[icloseI])
       kdenR <- sewpcf(dclose, edgewt * weight, denargs, areaW)
       gR <- kdenR$g
       bw.used <- attr(kdenR, "bw")

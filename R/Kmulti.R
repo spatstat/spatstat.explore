@@ -4,7 +4,7 @@
 #	Compute estimates of cross-type K functions
 #	for multitype point patterns
 #
-#	$Revision: 5.63 $	$Date: 2026/01/21 06:26:39 $
+#	$Revision: 5.64 $	$Date: 2026/05/01 02:29:02 $
 #
 #
 # -------- functions ----------------------------------------
@@ -238,6 +238,8 @@ function(X, I, J, r=NULL, breaks=NULL,
     jcloseJ  <- close$j
   }
 
+  bdistXI <- NULL
+  
   ## ...........................................................
   ## Compute estimates by each of the selected edge corrections.
   ## ...........................................................
@@ -278,11 +280,11 @@ function(X, I, J, r=NULL, breaks=NULL,
   if(any(correction == "border" | correction == "bord.modif")) {
     # border method
     # distance to boundary from each point of type I
-    bI <- bdist.points(XI)
+    bXI <- bdistXI %orifnull% bdist.points(XI)
     # distance to boundary from first element of each (i, j) pair
-    bcloseI <- bI[icloseI]
+    bcloseI <- bXI[icloseI]
     # apply reduced sample algorithm
-    RS <- Kount(dcloseIJ, bcloseI, bI, breaks)
+    RS <- Kount(dcloseIJ, bcloseI, bXI, breaks)
     if(any(correction == "bord.modif")) {
       denom.area <- eroded.areas(W, r)
       Kbm <- RS$numerator/(denom.area * npairs)
@@ -325,8 +327,10 @@ function(X, I, J, r=NULL, breaks=NULL,
                     ratio=ratio)
   }
   if(any(correction == "isotropic")) {
-    # Ripley isotropic correction
-    edgewt <- edge.Ripley(XI[icloseI], matrix(dcloseIJ, ncol=1))
+    ## Ripley isotropic correction
+    bXI <- bdistXI %orifnull% bdist.points(XI)
+    edgewt <- edge.Ripley(XI[icloseI], matrix(dcloseIJ, ncol=1),
+                          bdistX=bXI[icloseI])
     wh <- whist(dcloseIJ, breaks$val, edgewt)
     Kiso <- cumsum(wh)/(lambdaI * lambdaJ * areaI)
     rmax <- diameter(W)/2

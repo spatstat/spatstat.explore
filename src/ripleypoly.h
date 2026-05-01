@@ -14,7 +14,7 @@
   *CHUNKLOOP     defined in chunkloop.h
   TWOPI          defined in Rmath.h
 
-  $Revision: 1.22 $     $Date: 2022/10/20 10:57:43 $
+  $Revision: 1.23 $     $Date: 2026/05/01 03:26:42 $
 
   Copyright (C) Adrian Baddeley, Ege Rubak and Rolf Turner 2001-2019
   Licence: GNU Public Licence >= 2
@@ -58,7 +58,7 @@ void RIPLEYFUN(
      /* output */
      double *out
 ) {
-  int n, m, i, j, k, l, nradperpt, ncut, nchanges, maxchunk;
+  int n, m, i, j, k, l, nradperpt, ncut, nchanges, maxchunk, chunksize;
   double xcentre, ycentre, xx0, yy0, xx1, yy1, xx01, yy01;
   double bdisti;
   double x, y, radius, radius2, dx0, dx1, dy0;
@@ -75,10 +75,18 @@ void RIPLEYFUN(
 #elif (DEBUGLEVEL > 0)
   Rprintf("/// Debug level %d ///\n", (int) DEBUGLEVEL);
 #endif
+
+  chunksize = 262144/m;
+  if(chunksize < 2) chunksize = 2;
   
-  OUTERCHUNKLOOP(i, n, maxchunk, 16384) {
+  /* 
+     i.e. at most a quarter of a million pairs of (data point, boundary segment)
+     are considered between each check for interrupts
+  */
+    
+  OUTERCHUNKLOOP(i, n, maxchunk, chunksize) {
     R_CheckUserInterrupt();
-    INNERCHUNKLOOP(i, n, maxchunk, 16384) {
+    INNERCHUNKLOOP(i, n, maxchunk, chunksize) {
       xcentre = xc[i];
       ycentre = yc[i];
       bdisti  = bd[i];

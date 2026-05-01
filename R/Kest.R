@@ -1,7 +1,7 @@
 #
 #	Kest.R		Estimation of K function
 #
-#	$Revision: 5.140 $	$Date: 2025/09/03 03:30:04 $
+#	$Revision: 5.141 $	$Date: 2026/05/01 02:29:02 $
 #
 #
 # -------- functions ----------------------------------------
@@ -216,10 +216,13 @@ function(X, ..., r=NULL, rmax=NULL, breaks=NULL,
       DIJ <- close$d
     }
     
+    ## For efficiency
     ## precompute set covariance of window
     gW <- NULL
     if(any(correction %in% c("translate", "rigid", "isotropic")))
       gW <- setcov(W)
+
+    bdistX <- NULL
     
     if(any(correction == "none")) {
       ## uncorrected! For demonstration purposes only!
@@ -258,7 +261,7 @@ function(X, ..., r=NULL, rmax=NULL, breaks=NULL,
     if(any(correction == "border" | correction == "bord.modif")) {
       ## border method
       ## Compute distances to boundary
-      b <- bdist.points(X)
+      b <- bdistX %orifnull% bdist.points(X)
       I <- close$i
       bI <- b[I]
       ## apply reduced sample algorithm
@@ -328,7 +331,9 @@ function(X, ..., r=NULL, rmax=NULL, breaks=NULL,
     if(any(correction == "isotropic")) {
       ## Ripley isotropic correction
       XI <- ppp(close$xi, close$yi, window=W, check=FALSE)
-      edgewt <- edge.Ripley(XI, matrix(DIJ, ncol=1))
+      b <- bdistX %orifnull% bdist.points(X)
+      bI <- b[close$i]
+      edgewt <- edge.Ripley(XI, matrix(DIJ, ncol=1), bdistX=bI)
       wh <- whist(DIJ, breaks$val, edgewt)
       Kiso <- cumsum(wh)/lambda2area
       h <- boundingradius(W)

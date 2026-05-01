@@ -1,7 +1,7 @@
 #
 #	Kinhom.S	Estimation of K function for inhomogeneous patterns
 #
-#	$Revision: 1.106 $	$Date: 2026/01/19 09:51:22 $
+#	$Revision: 1.107 $	$Date: 2026/05/01 02:29:02 $
 #
 #	Kinhom()	compute estimate of K_inhom
 #
@@ -292,11 +292,13 @@
         reciplambda2[cbind(I,J)]
     # 
 
+    bdistX <- NULL
+    
     # compute edge corrected estimates
     if(any(correction == "border" | correction == "bord.modif")) {
       # border method
       # Compute distances to boundary
-      b <- bdist.points(X)
+      b <- bdistX %orifnull% bdist.points(X)
       bI <- b[I]
       # apply reduced sample algorithm
       RS <- Kwtsum(dIJ, bI, wIJ, b, w=reciplambda, breaks)
@@ -344,8 +346,10 @@
 		      ratio=ratio)
     }
     if(any(correction == "isotropic" | correction == "Ripley")) {
-      # Ripley isotropic correction
-      edgewt <- edge.Ripley(X[I], matrix(dIJ, ncol=1))
+      ## Ripley isotropic correction
+      b <- bdistX %orifnull% bdist.points(X)
+      bI <- b[I]
+      edgewt <- edge.Ripley(X[I], matrix(dIJ, ncol=1), bdistX=bI)
       allweight <- edgewt * wIJ
       wh <- whist(dIJ, breaks$val, allweight)
       Kiso <- cumsum(wh)/areaW

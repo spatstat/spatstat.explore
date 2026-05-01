@@ -1,7 +1,7 @@
 #'
 #'  wtdclosepair.R
 #'
-#'  $Revision: 1.1 $ $Date: 2022/05/22 10:52:22 $
+#'  $Revision: 1.2 $ $Date: 2026/05/01 02:29:02 $
 
 weightedclosepairs <- function(X, r, correction,
                                what=c("all", "indices", "ijd")) {
@@ -15,13 +15,14 @@ weightedclosepairs <- function(X, r, correction,
          },
          isotropic = ,
          Ripley = {
+           bX <- bdist.points(X)
            if(what == "indices") {
              cl <- closepairs(X, r, what="ijd")
-             weight <- edge.Ripley(X[cl$i], cl$d)
+             weight <- edge.Ripley(X[cl$i], cl$d, bdistX=bX[cl$i])
              cl <- cl[c("i", "j")]
            } else {
              cl <- closepairs(X, r, what=what)
-             weight <- edge.Ripley(X[cl$i], cl$d)
+             weight <- edge.Ripley(X[cl$i], cl$d, bdistX=bX[cl$i])
            }
          },
          translate = {

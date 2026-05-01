@@ -1,7 +1,7 @@
 #
 #   pcfmulti.R
 #
-#   $Revision: 1.19 $   $Date: 2026/04/26 00:16:13 $
+#   $Revision: 1.20 $   $Date: 2026/05/01 02:29:02 $
 #
 #   multitype pair correlation functions
 #
@@ -303,7 +303,9 @@ pcfmulti <- function(X, I, J, ...,
   if(any(correction=="isotropic")) {
     ## Ripley isotropic correction
     if(npairs > 0) {
-      edgewt <- edge.Ripley(XI[icloseI], matrix(dclose, ncol=1))
+      bXI <- bdist.points(XI)
+      edgewt <- edge.Ripley(XI[icloseI], matrix(dclose, ncol=1),
+                            bdistX=bXI[icloseI])
       kdenR <- sewpcf(d=dclose,
                       w=edgewt,
                       denargs=denargs,

@@ -5,7 +5,7 @@
 #'
 #' Copyright (c) 2008-2025 Adrian Baddeley, Tilman Davies and Martin Hazelton
 #'
-#' $Revision: 1.36 $ $Date: 2026/02/14 10:43:24 $
+#' $Revision: 1.37 $ $Date: 2026/05/01 02:29:02 $
 
 pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL, 
                      adaptive=FALSE,
@@ -291,7 +291,8 @@ pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL,
     # Ripley isotropic correction
     if(npairs > 0) {
       XI <- ppp(close$xi, close$yi, window=win, check=FALSE)
-      edgewt <- edge.Ripley(XI, matrix(dIJ, ncol=1))
+      bXI <- bdist.points(X)[close$i]
+      edgewt <- edge.Ripley(XI, matrix(dIJ, ncol=1), bdistX=bXI)
       kdenR <- sewpcf(d=dIJ, w=edgewt * wIJ,
                       denargs=denargs,
                       lambda2area=areaW,

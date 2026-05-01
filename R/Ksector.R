@@ -1,7 +1,7 @@
 #
 #	Ksector.R	Estimation of 'sector K function'
 #
-#	$Revision: 1.8 $	$Date: 2026/01/21 06:26:39 $
+#	$Revision: 1.9 $	$Date: 2026/05/01 02:29:02 $
 #
 
 Ksector <- function(X, begin=0, end=360, ...,
@@ -134,6 +134,8 @@ Ksector <- function(X, begin=0, end=360, ...,
   ## pairwise distances
   DIJ <- close$d
 
+  bdistX <- NULL
+  
   if(any(correction == "none")) {
     # uncorrected! For demonstration purposes only!
     wh <- whist(DIJ, breaks$val)  # no weights
@@ -151,7 +153,7 @@ Ksector <- function(X, begin=0, end=360, ...,
   if(any(correction == "border" | correction == "bord.modif")) {
   # border method
   # Compute distances to boundary
-    b <- bdist.points(X)
+    b <- bdistX %orifnull% bdist.points(X)
     I <- close$i
     bI <- b[I]
     if(!is.null(domain))
@@ -200,7 +202,9 @@ Ksector <- function(X, begin=0, end=360, ...,
   if(any(correction == "isotropic")) {
     ## Ripley isotropic correction
     XI <- ppp(close$xi, close$yi, window=W, check=FALSE)
-    edgewt <- edge.Ripley(XI, matrix(DIJ, ncol=1))
+    b <- bdistX %orifnull% bdist.points(X)
+    bI <- b[close$i]
+    edgewt <- edge.Ripley(XI, matrix(DIJ, ncol=1), bdistX=bI)
     wh <- whist(DIJ, breaks$val, edgewt)
     Kiso <- cumsum(wh)/(lambda2 * areaW)
     h <- diameter(W)/2
