@@ -246,6 +246,8 @@
   \tabular{ll}{
     \code{\link[spatstat.explore]{bw.stoyan}} \tab Stoyan's rule of thumb for bandwidth
                                for \code{\link[spatstat.explore]{pcf}}\cr
+    \code{\link[spatstat.explore]{bw.fiksel}} \tab Fiksel's rule of thumb for bandwidth
+                               for \code{\link[spatstat.explore]{pcf}}\cr
     \code{\link[spatstat.explore]{bw.pcf}} \tab cross-validated bandwidth selection
                                for \code{\link[spatstat.explore]{pcf}} \cr
     \code{\link[spatstat.explore]{bw.pcfinhom}} \tab cross-validated bandwidth selection

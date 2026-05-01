@@ -390,8 +390,8 @@ envelopeEngine <-
       Action <- capitalise(sim.making)
       descrip <- sim.realisations
       explan <- if(dual) paren(paste(nsim2, "to estimate the mean and",
-                                     nsim, "to calculate envelopes")) else ""
-      splat(Action, Nsim, descrip, explan, "...")
+                                     nsim, "to calculate envelopes")) else NULL
+      splat(Action, Nsim, descrip, explan, "and processing ...")
     }
     XsimList <- list()
   # start simulation loop

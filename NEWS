@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.8-0.011
+        CHANGES IN spatstat.explore VERSION 3.8-0.012
 
 OVERVIEW
 
@@ -60,8 +60,13 @@ BUG FIXES
     Envelopes for these functions were sometimes incorrect in the sense that
     the summary functions were not all calculated with the same settings.
     [Spotted by Hamid Ghorbani.]
+    Affected spatstat.envelope 3.8-0 only.
     Fixed.
 
+    o plot.fv
+    Occasionally gave a warning message about 'distmap' methods.
+    Fixed.
+    
     o rose.default, rose.histogram
     Crashed if argument 'labels' was given.
     [Spotted by Mario D'Antuono.]
@@ -76,7 +81,7 @@ BUG FIXES
     Argument 'do.plot=FALSE' was partially ignored (i.e. a graphics device
     was opened and some graphical commands were issued).
     Fixed.
-    
+
         CHANGES IN spatstat.explore VERSION 3.8-0
 
 OVERVIEW
