@@ -291,9 +291,12 @@ envelopeEngine <-
                                    corrx,
                                    corrz))
                                      
-  if(!inherits(funX, "fv"))
-    stop(paste("The function", fname,
-               "must return an object of class", sQuote("fv")))
+  if(!inherits(funX, "fv")) {
+    funX <- try(as.fv(funX))
+    if(inherits(funX, "try-error")) 
+      stop(paste("The function", fname,
+                 "must return an object of class", sQuote("fv")))
+  }
 
   ## catch 'conservation' parameters
   conserveargs <- attr(funX, "conserve")
@@ -515,11 +518,14 @@ envelopeEngine <-
       }
       ## apply function safely
       funXsim <- try(do.call(fun, c(list(Xsim), funargs)), silent=silent)
+      success <- !inherits(funXsim, "try-error")
 
-      success <-
-        !inherits(funXsim, "try-error") &&
-        inherits(funXsim, "fv") &&
-        (!rejectNA || any(is.finite(funXsim[[valname]])))
+      if(success && !inherits(funXsim, "fv")) {
+        funXsim <- try(as.fv(funXsim), silent=silent)
+        success <- !inherits(funXsim, "try-error")
+      }
+
+      success <- success && (!rejectNA || any(is.finite(funXsim[[valname]])))
 
       if(!success) {
         #' error in computing summary function
@@ -682,6 +688,9 @@ envelopeEngine <-
   ## tack on envelope information
   attr(result, "einfo") <- resolve.defaults(envelopeInfo,
                                             attr(result, "einfo"))
+
+  ## catch information about circular data, if present
+  attr(result, "circinfo") <- attr(funX, "circinfo")
 
   if(!gaveup) {
     ## tack on functions and/or patterns if so commanded   

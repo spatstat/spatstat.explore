@@ -240,7 +240,9 @@ rose.density <- function(x, ...,
   return(invisible(result))
 }
 
-rose.fv <- function(x, ..., unit=c("degree", "radian",
+rose.fv <- function(x, ...,
+                    fmla = NULL, 
+                    unit=c("degree", "radian",
                                    "hour", "minute", "other"),
                     fullcircle=NULL, 
                     start=NULL, clockwise=NULL,
@@ -249,8 +251,11 @@ rose.fv <- function(x, ..., unit=c("degree", "radian",
                     do.circle=!add, do.rings=!add, do.ticks=!add) {
   if(missing(main) || is.null(main))
     main <- short.deparse(substitute(x))
-  ang <- with(x, .x)
-  rad <- with(x, .y)
+  #' get plot coordinates
+  D <- plot(x, fmla, ..., spill=TRUE)
+  ang <- D$rhsdata
+  rad <- D$lhsdata # vector or matrix
+  shi <- D$shind   # integer indices, length 0 or 2
   #' validate and resolve arguments
   missu <- missing(unit)
   ci <- attr(x, "circinfo")
@@ -267,6 +272,7 @@ rose.fv <- function(x, ..., unit=c("degree", "radian",
   clockwise  <- a$clockwise
   #'
   result <- roseContinuous(ang, rad, unit, ...,
+                           shind=shi,
                            fullcircle=fullcircle,
                            start=start, clockwise=clockwise,
                            main=main, labels=labels, at=at,
@@ -281,6 +287,7 @@ roseContinuous <- function(ang, rad, unit, ...,
                            start=NULL, clockwise=NULL,
                            main,
                            labels=TRUE, at=NULL,
+                           shind=NULL,
                            add=FALSE, do.plot=TRUE,
                            do.circle=!add, do.rings=!add, do.ticks=!add) {
   do.ticks <- !isFALSE(do.ticks) && (is.null(at) || length(at) > 0)
@@ -312,7 +319,7 @@ roseContinuous <- function(ang, rad, unit, ...,
                     extrargs=graphicsPars("owin"),
                     skipargs="col")
     if(do.rings) {
-      ringrad <- prettyinside(c(0, max(ang)), n=6)
+      ringrad <- prettyinside(c(0, max(rad)), n=6)
       ringrad <- ringrad[ringrad > 0]
       for(radi in ringrad)
         plot(disc(radi), add=TRUE, border="grey", lty=2)
@@ -322,7 +329,39 @@ roseContinuous <- function(ang, rad, unit, ...,
                    start=start, clockwise=clockwise)
     xx <- rad * cos(ang)
     yy <- rad * sin(ang)
-    do.call.matched(polygon, list(x=xx, y=yy, ...), extrargs="lwd")
+    ncurves <- NCOL(yy)
+    if(ncurves == 1) {
+      do.call.matched(polygon, list(x=xx, y=yy, ...), extrargs="lwd")
+    } else {
+      todo <- seq_len(ncurves)
+      if(length(shind) == 2) {
+        ## first draw shaded region
+        s1 <- shind[1]
+        s2 <- shind[2]
+        p1 <- list(x=xx[,s1], y=yy[,s1])
+        p2 <- list(x=xx[,s2], y=yy[,s2])
+        if(all(rad[,s1] <= rad[,s2])) {
+          Pinside  <- p1
+          Poutside <- p2
+        } else {
+          Pinside <- p2
+          Poutside <- p1
+        }
+        if(Area.xypolygon(Pinside) > 0)
+          Pinside <- reverse.xypolygon(Pinside)
+        if(Area.xypolygon(Poutside) < 0)
+          Poutside <- reverse.xypolygon(Poutside)
+        SH <- owinInternalPoly(poly=list(Poutside, Pinside))
+        plot(SH, add=TRUE, col="lightgrey", border="lightgrey")
+        todo <- setdiff(todo, shind)
+      }
+      ## now draw other curves
+      for(j in todo) {
+        do.call.matched(lines.default,
+                        list(x=xx[,j], y=yy[,j], ...),
+                        extrargs=c("lwd", "col", "lty"))
+      }
+    }
     if(do.ticks) 
       circticks(R, at=at, unit=unit, fullcircle=fullcircle,
                 start=start, clockwise=clockwise,

@@ -4,6 +4,7 @@
 \alias{as.fv.fasp}
 \alias{as.fv.data.frame}
 \alias{as.fv.matrix}
+\alias{as.fv.density}
 \alias{as.fv.bw.optim}
 \title{Convert Data To Class fv}
 \description{
@@ -17,6 +18,8 @@
   \method{as.fv}{data.frame}(x)
 
   \method{as.fv}{matrix}(x)
+
+  \method{as.fv}{density}(x)
 
   \method{as.fv}{fasp}(x)
 
@@ -42,13 +45,15 @@
     \item
     a matrix or data frame with at least two columns;
     \item
+    a kernel density estimate (object of class \code{"density"}
+    produced by \code{\link[stats]{density.default}});
+    \item
     an object of class \code{"fasp"}, representing an array of
-    \code{"fv"} objects.
+    \code{"fv"} objects;
     \item
     an object of class \code{"minconfit"}, giving the results
     of a minimum contrast fit by
-    the command \code{\link[spatstat.model]{mincontrast}}.
-    The 
+    the command \code{\link[spatstat.model]{mincontrast}};
     \item
     an object of class \code{"kppm"}, representing a fitted
     Cox or cluster point process model, obtained from the
@@ -73,6 +78,11 @@
     the first column is interpreted
     as the function argument, and subsequent columns are interpreted as
     values of the function computed by different methods.
+    \item
+    If \code{x} is a kernel density estimate (object of class \code{"density"}
+    produced by \code{\link[stats]{density.default}}), the 
+    values of the function argument \eqn{x} and corresponding
+    density estimates \eqn{y=f(x)} are extracted.
     \item
     If \code{x} is an object of class \code{"fasp"}
     representing an array of \code{"fv"} objects, 

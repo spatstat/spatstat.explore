@@ -40,10 +40,13 @@ circdensity <- function(x, sigma="nrd0", ..., bw=NULL,
     weights <- rep(weights, 3)/3
   }
   #' smooth
-  z <- do.call(density.default,
-               resolve.defaults(list(x=xx, bw=sigma, weights=weights),
+  z <- do.call.matched(density.default,
+                       resolve.defaults(list(x=quote(xx),
+                                             bw=sigma,
+                                             weights=weights),
                                 list(...),
-                                list(from=0, to=fullcircle, warnWbw=FALSE)))
+                                list(from=0, to=fullcircle,
+                                     warnWbw=FALSE, na.rm=TRUE)))
   z$y <- 3 * z$y
   z$data.name <- xname
   z$call <- match.call()

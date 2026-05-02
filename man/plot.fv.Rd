@@ -13,7 +13,7 @@
            shade=fvnames(x, ".s"), shadecol="grey",
            add=FALSE, log="",
            mathfont=c("italic", "plain", "bold", "bolditalic"), 
-           limitsonly=FALSE, do.plot=TRUE)
+           limitsonly=FALSE, do.plot=TRUE, spill=FALSE)
 }
 \arguments{
   \item{x}{
@@ -135,6 +135,7 @@
     giving the meaning of the different line types and colours,
     without plotting them.
   }
+  \item{spill}{Developer use only.}
 }
 \value{
   Invisible: either \code{NULL}, or a data frame giving the meaning of the

@@ -479,7 +479,7 @@ rocSmoothCalc(ZX, ZU,\dots, weightsX, weightsU,
               high, kernel, bw, adjust, alpha, nGrid, p, plength,
               doCI, degfreeU)
 roseContinuous(ang, rad, unit, \dots, fullcircle,
-               start, clockwise, main, labels, at,
+               start, clockwise, main, labels, at, shind,
                add, do.plot, do.circle, do.rings, do.ticks)
 scanmeasure(X, \dots)
 \method{scanmeasure}{ppp}(X, r, \dots, method) 

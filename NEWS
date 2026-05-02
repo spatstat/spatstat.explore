@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.8-0.013
+        CHANGES IN spatstat.explore VERSION 3.8-0.014
 
 OVERVIEW
 
@@ -9,7 +9,7 @@ OVERVIEW
 
     o Fiksel's bandwidth rule.
 
-    o Faster calculation of Ripley's isotropic correction.
+    o Faster calculation of Ripley's isotropic edge correction.
 
     o Minor improvements and bug fixes.
 
@@ -42,6 +42,13 @@ SIGNIFICANT USER-VISIBLE CHANGES
     The return value now has attribute "R" giving the
     radius of the outer circle of the diagram, and attribute "rings"
     giving the radii of the concentric scale rings.
+
+    o rose.fv
+    Now plots multiple curves, if there are multiple columns of values.
+    New argument 'fmla' controls which columns of values are plotted.
+
+    o rose.fv
+    Now handles envelopes (objects of class 'envelope') as well.
 
     o Summary functions
     Calculation of Ripley's isotropic edge correction has been accelerated,

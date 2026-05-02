@@ -97,13 +97,15 @@
 \examples{
   rose(nnorient(redwood, adjust=0.6), col="grey")
   plot(CDF <- nnorient(redwood, cumulative=TRUE))
+
+  if(interactive()) {
+    rose(envelope(bdspots[[1]], nnorient, nsim=199, nrank=5))
+  } else {
+    rose(envelope(redwood, nnorient, nsim=19))
+  }
 }
-\author{\adrian
-  
-  \rolf
-  
-  and \ege
-  
+\author{
+  \spatstatAuthors
 }
 \keyword{spatial}
 \keyword{nonparametric}

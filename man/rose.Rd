@@ -36,7 +36,7 @@ rose(x, \dots)
                        add=FALSE, do.plot=TRUE,
                        do.circle=!add, do.rings=!add, do.ticks=!add)
 
-\method{rose}{fv}(x, \dots, 
+\method{rose}{fv}(x, \dots, fmla = NULL,
                        unit = c("degree", "radian", "hour", "minute", "other"),
                        fullcircle = NULL, 
                        start=NULL, clockwise=NULL,
@@ -102,6 +102,11 @@ rose(x, \dots)
   }
   \item{main}{
     Optional main title for the plot.
+  }
+  \item{fmla}{
+    Optional. A \code{formula} specifying the curves that should be
+    plotted. This formula is interpreted as described in
+    the help for \code{\link{plot.fv}}.
   }
   \item{col}{
     Fill colour for the histogram polygons.

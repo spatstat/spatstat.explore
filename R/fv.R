@@ -4,7 +4,7 @@
 ##
 ##    class "fv" of function value objects
 ##
-##    $Revision: 1.191 $   $Date: 2025/11/19 06:16:52 $
+##    $Revision: 1.192 $   $Date: 2026/05/02 10:27:10 $
 ##
 ##
 ##    An "fv" object represents one or more related functions
@@ -146,6 +146,12 @@ as.fv.matrix <- function(x)  {
   if(any(bad <- is.na(names(y))))
     names(y)[bad] <- paste0("V", which(bad))
   return(as.fv.data.frame(y))
+}
+
+as.fv.density <- function(x) {
+  result <- as.fv.data.frame(as.data.frame(x[c("x", "y")]))
+  attr(result, "circinfo") <- attr(x, "circinfo")
+  return(result)
 }
 
 ## other methods for as.fv are described in the files for the relevant classes.

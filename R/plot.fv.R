@@ -1,7 +1,7 @@
 #
 #       plot.fv.R   (was: conspire.S)
 #
-#  $Revision: 1.147 $    $Date: 2026/05/01 08:04:50 $
+#  $Revision: 1.149 $    $Date: 2026/05/02 09:14:10 $
 #
 #
 
@@ -57,7 +57,7 @@ plot.fv <- local({
                       shade=fvnames(x, ".s"), shadecol="grey", add=FALSE,
                       log="",
                       mathfont=c("italic", "plain", "bold", "bolditalic"), 
-                      limitsonly=FALSE, do.plot=TRUE) {
+                      limitsonly=FALSE, do.plot=TRUE, spill=FALSE) {
 
     xname <-
       if(is.language(substitute(x))) short.deparse(substitute(x)) else ""
@@ -324,6 +324,16 @@ plot.fv <- local({
     ## return x, y limits only?
     if(limitsonly)
       return(list(xlim=xlim, ylim=ylim))
+
+    ## spill the beans?
+    if(isTRUE(spill)) {
+      result <- list(rhsdata = rhsdata,
+                     lhsdata = lhsdata,
+                     xlim    = xlim,
+                     ylim    = ylim,
+                     shind   = if(!is.null(shade)) shind else integer(0))
+      return(result)
+    }
 
     ## -------------  work out how to label the plot --------------------
 
