@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.8-0.012
+        CHANGES IN spatstat.explore VERSION 3.8-0.013
 
 OVERVIEW
 
@@ -77,6 +77,10 @@ BUG FIXES
     [Spotted by Mario D'Antuono.]
     Fixed.
 
+    o rose.default, rose.histogram
+    Ignored arguments 'freq' and 'probability'.
+    Fixed.
+    
     o rose.default, rose.histogram, rose.density, rose.fv
     Argument 'do.plot=FALSE' was partially ignored (i.e. a graphics device
     was opened and some graphical commands were issued).

@@ -18,28 +18,31 @@ rose(x, \dots)
                        unit = c("degree", "radian", "hour", "minute", "other"),
                        fullcircle = NULL, 
                        start=NULL, clockwise=NULL,
-                       main)
+                       main, add=FALSE)
 
 \method{rose}{histogram}(x, \dots,
                        unit = c("degree", "radian", "hour", "minute", "other"),
                        fullcircle = NULL, 
                        start=NULL, clockwise=NULL,
                        main, col="lightgray", labels=TRUE, at=NULL,
-                       do.plot = TRUE, do.rings=TRUE, do.ticks=TRUE)
+                       add=FALSE, do.plot=TRUE,
+                       do.circle=!add, do.rings=!add, do.ticks=!add)
 
 \method{rose}{density}(x, \dots, 
                        unit = c("degree", "radian", "hour", "minute", "other"),
                        fullcircle = NULL, 
                        start=NULL, clockwise=NULL,
                        main, labels=TRUE, at=NULL,
-                       do.plot = TRUE, do.rings=TRUE, do.ticks=TRUE)
+                       add=FALSE, do.plot=TRUE,
+                       do.circle=!add, do.rings=!add, do.ticks=!add)
 
 \method{rose}{fv}(x, \dots, 
                        unit = c("degree", "radian", "hour", "minute", "other"),
                        fullcircle = NULL, 
                        start=NULL, clockwise=NULL,
                        main, labels=TRUE, at=NULL,
-                       do.plot = TRUE, do.rings=TRUE, do.ticks = TRUE)
+                       add=FALSE, do.plot=TRUE,
+                       do.circle=!add, do.rings=!add, do.ticks = !add)
 }
 \arguments{
   \item{x}{
@@ -60,16 +63,16 @@ rose(x, \dots)
   \item{\dots}{
     Additional arguments passed to \code{\link[graphics]{polygon}}
     controlling the appearance of the plot
-    (or passed from \code{rose.default} to \code{\link[graphics]{hist}}
-    to control the calculation of the histogram).
+    (or passed to \code{\link[graphics]{hist}}
+    to control the calculation and plotting of the histogram).
   }
   \item{unit}{
     The unit in which the angles are expressed.
     Character string (partially matched).
   }
   \item{fullcircle}{
-    The period (the value of \code{x} that corresponds to one full circle)
-    if \code{unit="other"}.
+    The period (the value of \code{x} that corresponds to one full
+    circle). Required if \code{unit="other"} and optional otherwise.
   }
   \item{start}{
     The starting direction for measurement of angles,
@@ -105,7 +108,7 @@ rose(x, \dots)
     A colour value, or a vector of colour values assigning different
     colours to each polygon (recycled to the required length).
     A colour value can be the string name of a colour
-    like \code{"red"}, or an integers that refers to
+    like \code{"red"}, or an integer that refers to
     a colour in the standard palette, or a string containing
     six-letter hexadecimal codes like \code{"#F0A0FF"}.
   }
@@ -117,8 +120,17 @@ rose(x, \dots)
     Optional vector of angles at which tick marks should be plotted.
     Set \code{do.ticks=FALSE} to suppress tick marks.
   }
+  \item{add}{
+    Logical value specifying whether the graphics should be added to
+    the existing plot (\code{add=TRUE}) or should be drawn on a new plot
+    (\code{add=FALSE}, the default).
+  }
   \item{do.plot}{
     Logical value indicating whether to really perform the plot.
+  }
+  \item{do.circle}{
+    Logical value indicating whether to draw a circle outside the rose
+    diagram.
   }
   \item{do.rings}{
     Logical value indicating whether to draw concentric rings
@@ -151,12 +163,14 @@ rose(x, \dots)
 
   If \code{x} is an object of class \code{"histogram"} produced by
   the function \code{\link[graphics]{hist}}, representing the histogram
-  of angular data, then the rose diagram of the densities
-  (rather than the counts) in this histogram object will be plotted. 
+  of angular data, then the rose diagram of the counts 
+  in this histogram object will be plotted. To plot probabilities
+  instead of counts, set \code{probability=TRUE} or
+  \code{freq=FALSE}.
 
   If \code{x} is an object of class \code{"density"} produced by
   \code{\link{circdensity}} or \code{\link[stats]{density.default}},
-  representing a kernel smoothed density estimate of angular data,
+  representing a kernel smoothed probability density estimate of angular data,
   then the rose diagram of the density estimate will be plotted. 
   
   If \code{x} is a function value table (object of class \code{"fv"})
@@ -232,12 +246,19 @@ rose(x, \dots)
   rose(ang)
   rose(ang, col=c("grey", "lightgrey"), start="N", clockwise=TRUE)
 
-  ## hours in a 120-hour day
+  ## hours in a 12-hour day
   hrs <- runif(200, max=12)
+  ## plot histogram of probability densities
+  ## annotate as a clock face
   Nbars <- 30
   rose(hrs, unit="h", fullcircle=12,
+       probability=TRUE,
        labels=as.roman(c(12, 1:11)),
        nclass=Nbars+1, col=rainbow(Nbars))
+  ## add kernel estimate of probability density
+  hd <- circdensity(hrs, unit="h", fullcircle=12, adjust=0.5) 
+  rose(hd, add=TRUE,
+       border="blue", lwd=3)
 }
 \keyword{spatial}
 \keyword{hplot}

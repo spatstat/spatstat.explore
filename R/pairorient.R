@@ -216,5 +216,7 @@ pairorient <- function(X, r1, r2, ...,
   unitname(OO) <- switch(unit,
                          degree = c("degree", "degrees"),
                          radian = c("radian", "radians"))
+
+  attr(OO, "circinfo") <- list(unit=unit, fullcircle=FullCircle)
   return(OO)
 }

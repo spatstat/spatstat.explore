@@ -42,12 +42,17 @@ circdensity(x, sigma = "nrd0", \dots,
 }
 \details{
   The angular values \code{x} are smoothed using
-  (by default) the wrapped Gaussian kernel with standard deviation \code{sigma}.
+  (by default) the wrapped Gaussian kernel with standard deviation
+  \code{sigma}.
 }
 \value{
   An object of class \code{"density"} (produced by
   \code{\link[stats]{density.default}}) which can be plotted
-  by \code{plot} or by \code{\link{rose}}.
+  by \code{plot} or by \code{\link{rose.density}}.
+
+  The result also contains information about the arguments
+  \code{unit} and \code{fullcircle} which can be used by
+  \code{\link{rose.density}}.
 }
 \author{
   \spatstatAuthors.

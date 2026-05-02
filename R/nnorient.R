@@ -6,7 +6,7 @@
 ## Function \vartheta(phi) defined in
 ## Illian et al (2008) equ (4.5.3) page 253
 ##
-##  $Revision: 1.4 $ $Date: 2018/10/02 01:21:40 $
+##  $Revision: 1.5 $ $Date: 2026/05/02 04:37:13 $
 
 nnorient <- function(X, ..., cumulative=FALSE, correction, k = 1,
                      unit=c("degree", "radian"),
@@ -141,5 +141,7 @@ nnorient <- function(X, ..., cumulative=FALSE, correction, k = 1,
   unitname(NNO) <- switch(unit,
                          degree = c("degree", "degrees"),
                          radian = c("radian", "radians"))
+
+  attr(NNO, "circinfo") <- list(unit=unit, fullcircle=FullCircle)
   return(NNO)
 }

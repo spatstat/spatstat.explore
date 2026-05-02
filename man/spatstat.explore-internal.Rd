@@ -152,7 +152,9 @@
 \alias{RelevantDeviation}
 \alias{rename.fv}
 \alias{resolve.2D.kernel}
+\alias{resolve.angular.unit}        
 \alias{resolve.foxall.window}
+\alias{resolve.hist.args}
 \alias{resolve.lambda}
 \alias{resolve.lambda.ppp}
 \alias{resolve.lambdacross}
@@ -209,7 +211,6 @@
 \alias{updateData}
 \alias{updateData.default}
 \alias{validate2Dkernel}
-\alias{validate.angles}        
 \alias{validate.weights}        
 \alias{vanilla.fv}
 \alias{VarOfWtdMean}
@@ -427,7 +428,9 @@ RelevantDeviation(x, alternative, clamp, scaling)
 rename.fv(x, fname, ylab, yexp)
 resolve.2D.kernel(\dots,
             sigma, varcov, x, mindist, adjust, bwfun, allow.zero)
+resolve.angular.unit(angles, unit, fullcircle, guess, circinfo)
 resolve.foxall.window(X, Y, W, warn.trim)
+resolve.hist.args(x, \dots, freq, probability)
 resolve.lambda(X, lambda, \dots)
 \method{resolve.lambda}{ppp}(X, lambda, \dots,
                sigma, varcov, leaveoneout, update, check)
@@ -441,7 +444,7 @@ resolve.pcf.bandwidth(X, \dots, lambda, npts, rmax, nr, adaptive, kernel,
 resolve.reciplambda(X, lambda, reciplambda, \dots)
 \method{resolve.reciplambda}{ppp}(X, lambda, reciplambda, \dots,
                     sigma, varcov, leaveoneout, update, check)
-resolve.rose.args(unit, fullcircle, start, clockwise)
+resolve.rose.args(unit, fullcircle, start, clockwise, circinfo)
 resolveEinfo(x, what, fallback, warn, atomic)
 resolveNullModel(baseline, X, observations, \dots)
 rhohatEngine(model, covariate, reference, volume, \dots,
@@ -477,7 +480,7 @@ rocSmoothCalc(ZX, ZU,\dots, weightsX, weightsU,
               doCI, degfreeU)
 roseContinuous(ang, rad, unit, \dots, fullcircle,
                start, clockwise, main, labels, at,
-               do.plot, do.rings, do.ticks)
+               add, do.plot, do.circle, do.rings, do.ticks)
 scanmeasure(X, \dots)
 \method{scanmeasure}{ppp}(X, r, \dots, method) 
 \method{scanmeasure}{im}(X, r, \dots)
@@ -532,7 +535,6 @@ twostage.envelope(X, \dots, nsim, nsimsub, nrank,
 updateData(model, X, \dots)
 \method{updateData}{default}(model, X, \dots, warn)
 validate2Dkernel(kernel, fatal)
-validate.angles(angles, unit, fullcircle, guess)
 validate.weights(x, recip, how, allowzero, allowinf)
 vanilla.fv(x)
 VarOfWtdMean(marx, weights)
