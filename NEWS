@@ -1,10 +1,12 @@
 
-        CHANGES IN spatstat.explore VERSION 3.8-0.014
+        CHANGES IN spatstat.explore VERSION 3.8-0.015
 
 OVERVIEW
 
     o We thank Mario D'Antuono and Hamid Ghorbani for contributions.
 
+    o Changed rule for converting bandwidths in pcf.ppp
+    
     o Improvements to rose diagrams.
 
     o Fiksel's bandwidth rule.
@@ -21,6 +23,10 @@ NEW FUNCTIONS
     
 SIGNIFICANT USER-VISIBLE CHANGES
 
+    o pcf.ppp
+    The rule for converting bandwidth 'bw' from the distance scale to the
+    area scale (when divisor="a") has changed.
+    
     o rose.default, rose.histogram, rose.density, rose.fv, circdensity
     Rose diagrams can now be computed and plotted for data
     expressed in any units with any period (such as hours in a 24-hour day).

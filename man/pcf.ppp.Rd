@@ -135,8 +135,9 @@
   \item{convert.bw}{
     Logical value specifying how to interpret the bandwidth argument
     \code{bw} when \code{divisor="a"}. If \code{convert.bw=TRUE} (the default),
-    the argument \code{bw} is interpreted as a bandwidth on the scale of distances
-    \code{r}, and is transformed to the scale of areas when \code{divisor="a"}.
+    the argument \code{bw} is interpreted as a bandwidth on the scale of
+    distances \code{r}, and is transformed to the scale of areas when
+    \code{divisor="a"}. 
     If \code{convert.bw=FALSE}, the argument \code{bw} is interpreted as a
     bandwidth on the scale of areas, and is not transformed.
   }
@@ -168,8 +169,10 @@
   containing the numerators and denominators of each
   estimate of \eqn{g(r)}.
 
-  The return value also has an attribute \code{"bw"} giving the
-  smoothing bandwidth that was used, and an attribute \code{"info"}
+  The return value also has an attribute \code{"bw.used"} giving the
+  smoothing bandwidth that was used in the actual calculation,
+  the corresponding bandwidth value
+  \code{"bw.distance"} on the distance scale, and an attribute \code{"info"}
   containing details of the algorithm parameters.
 }
 \details{
@@ -400,9 +403,8 @@
      are first converted to disc areas
      \eqn{a_{ij}=\pi d_{ij}^2}{a[ij] = pi * d[ij]^2}.
      The bandwidth value \code{bw} is transformed to the area scale
-     by the transformation \code{bw.area = 2 * pi * midpoint * bw}
-     where \code{midpoint} is the midpoint of the interval of
-     distance values \code{r}.
+     by the transformation \code{bw.area = 9 * pi * bw^2} (the area of
+     a circle of radius \code{3 * bw}).
      Kernel smoothing is applied to the values \eqn{a_{ij}}{a[ij]}
      with bandwidth \code{bw.area}.
      Then the result is back-transformed to the original scale.
@@ -415,12 +417,12 @@
      \eqn{t_{ij}=G(d_{ij})}{t[ij] = G(d[ij])} where
      \eqn{G} is the partial integral of \code{2 * pi * x * gref(x)}.
      The bandwidth value \code{bw} is transformed to 
-     \code{bw.trans = 2 * pi * gref(midpoint) * bw}.
+     \code{bw.trans = G(3 * bw)}.
      Kernel smoothing is applied to the values \eqn{t_{ij}}{t[ij]}
      with bandwidth \code{bw.trans}.
      Then the result is back-transformed to the original scale.
    }
-   This transformation can be suppressed by setting
+   The transformation of \code{bw} can be suppressed by setting
    \code{convert.bw=FALSE}; in that case the argument \code{bw}
    specifies the bandwidth on the transformed scale.
 
@@ -457,11 +459,12 @@
   analytic formulas written in \code{C} code.
 }
 \section{Advanced Use}{
-  To perform the same computation using several different bandwidths \code{bw},
+  To perform the same computation using several different
+  parameters (different values of \code{divisor}, \code{zerocor} or \code{bw}),
   it is efficient to use the argument \code{close}.
-  This should be the result of \code{\link[spatstat.geom]{closepairs}(X, rmax)}
-  for a suitably large value of \code{rmax}, namely
-  \code{rmax >= max(r) + 3 * bw}.
+  This should be the result of \code{\link[spatstat.geom]{closepairs}(X, Rmax)}
+  for a suitably large value of \code{Rmax}, namely
+  \code{Rmax >= max(r) + 3 * bw}.
 }
 \references{
   \smoothpcfpaper

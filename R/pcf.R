@@ -3,7 +3,7 @@
 #'
 #' Calculate pair correlation function from point pattern (pcf.ppp)
 #' 
-#' $Revision: 1.94 $ $Date: 2026/05/01 02:29:02 $
+#' $Revision: 1.98 $ $Date: 2026/05/03 09:17:02 $
 #'
 #' Copyright (c) 2008-2026 Adrian Baddeley, Tilman Davies and Martin Hazelton
 
@@ -163,9 +163,12 @@ pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
   info    <- M$info
   denargs <- M$denargs
 
-  Transform <- info$Transform
   dmax      <- info$dmax
   gref      <- info$gref
+  Transform <- info$Transform
+  InvTran   <- info$InvTran
+  BWmap     <- info$BWmap 
+  InvBWmap  <- info$InvBWmap
   
   #######################################################
   ## compute pairwise distances up to 'dmax'
@@ -220,7 +223,9 @@ pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
                       divisor=divisor,
                       zerocor=zerocor,
                       fast=fast, adaptive=adaptive, tau=tau,
-                      gref=gref, Transform=Transform, convert=convert.bw)
+                      gref=gref,
+                      Transform=Transform,
+                      convert=convert.bw)
       if(DEBUG) {
         elapsed <- proc.time() - started
         splat("pcf: returned from sewpcf after", codetime(elapsed))
@@ -257,7 +262,9 @@ pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
                       divisor=divisor,
                       zerocor=zerocor,
                       fast=fast, adaptive=adaptive, tau=tau,
-                      gref=gref, Transform=Transform, convert=convert.bw)
+                      gref=gref,
+                      Transform=Transform, 
+                      convert=convert.bw)
       if(DEBUG) {
         elapsed <- proc.time() - started
         splat("pcf: returned from sewpcf after", codetime(elapsed))
@@ -296,7 +303,9 @@ pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
                       divisor=divisor,
                       zerocor=zerocor,
                       fast=fast, adaptive=adaptive, tau=tau,
-                      gref=gref, Transform=Transform, convert=convert.bw)
+                      gref=gref,
+                      Transform=Transform, 
+                      convert=convert.bw)
       if(DEBUG) {
         elapsed <- proc.time() - started
         splat("pcf: returned from sewpcf after", codetime(elapsed))
@@ -358,11 +367,19 @@ pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
     out <- conform.ratfv(out)
 
   ## save information about computation
-  attr(out, "bw") <- bw.used
-  info <- append(info, list(bw.used=bw.used))
+  attr(out, "bw.used") <- bw.used
+  bw.distance <- InvBWmap(bw.used, denargs$from, denargs$to)
+  attr(out, "bw.distance") <- bw.distance
+  info <- append(info,
+                 list(bw.used=bw.used,
+                      bw.distance=bw.distance))
   if(adaptive) {
-    attr(out, "bwvalues") <- bwvalues.used
-    info <- append(info, list(bwvalues.used=bwvalues.used))
+    attr(out, "bwvalues.used") <- bwvalues.used
+    bwvalues.distance <- InvBWmap(bwvalues.used, denargs$from, denargs$to)
+    attr(out, "bwvalues.distance") <- bwvalues.distance
+    info <- append(info,
+                   list(bwvalues.used=bwvalues.used,
+                        bwvalues.distance=bwvalues.distance))
   }
   attr(out, "info") <- info
   if(DEBUG) {
@@ -515,15 +532,28 @@ resolve.pcf.bandwidth <- function(X, ...,
 
   ############### transformation of distances ################
 
+  dfrom <- denargs$from
+  dto   <- denargs$to
+  
   switch(divisor,
          r = ,
-         d = ,
-         a = {
-           if(!is.null(gref)) {
+         d = {
+           Transform <- InvTran <- function(x) { x }
+           BWmap <- InvBWmap <- function(x, from=dfrom, to=dto) { x }
+           if(!is.null(gref)) 
              warning(paste("Argument gref is ignored when divisor =",
-                           dQuote(divisor)), call.=FALSE)
-             gref <- NULL
-           }
+                           sQuote(divisor)), call.=FALSE)
+           gref <- greftype <- NULL
+         },
+         a = {
+           Transform <- function(x) { pi * x^2 }
+           InvTran <- function(x) { sqrt(x/pi) }
+           BWmap <- function(x, from=dfrom, to=dto) { 9 * pi * x^2 }
+           InvBWmap <- function(x, from=dfrom, to=dto) { sqrt(x/(9*pi)) }
+           if(!is.null(gref)) 
+             warning("Argument gref is ignored when divisor = 'a'",
+                     call.=FALSE)
+           gref <- greftype <- NULL
          },
          t = {
            if(is.null(gref)) {
@@ -531,10 +561,12 @@ resolve.pcf.bandwidth <- function(X, ...,
              gref <- function(x) { rep.int(1, length(x)) }
              greftype <- "csr"
            } else if(is.function(gref)) {
+             ## user-supplied function
              greftype <- "function"
            } else if(inherits(gref, c("kppm", "dppm", "ppm", "slrm",
                                       "detpointprocfamily",
                                       "clusterprocess", "zclustermodel"))) {
+             ## fitted or theoretical model
              greftype <- "model"
              model <- gref
              if(!requireNamespace("spatstat.model")) 
@@ -547,24 +579,65 @@ resolve.pcf.bandwidth <- function(X, ...,
                     call.=FALSE)
            } else {
              stop(paste("Argument", sQuote("gref"),
-                          "should be a function or a point process model"),
-                    call.=FALSE)
+                        "should be a function or a point process model"),
+                  call.=FALSE)
            }
            integrand <- function(x, g) { 2 * pi * x * g(x) }
+           ## Precompute transform and inverse transform
+           if(greftype == "csr") {
+             Transform <- function(x) { pi * x^2 }
+             InvTran   <- function(x) { sqrt(x/pi) }
+           } else {
+             rr <- seq(0, dmax, length.out=16384)
+             tt <- indefinteg(integrand, rr, g=gref, lower=0)
+             Transform <- approxfun(rr, tt, rule=2)
+             InvTran   <- approxfun(tt, rr, rule=2)
+           }
+           BWmap <- function(x, from=dfrom, to=dto) { Transform(3 * x) }
+           InvBWmap <- function(x, from=dfrom, to=dto) { InvTran(x)/3 }
          })
-  
+
+  ############### conversion of bandwidths   ################
+
+  if(is.function(convert.bw)) {
+    convert <- TRUE
+    ## overwrite previous definition of BWmap
+    BWmap <- function(x, from=dfrom, to=dto) { convert.bw(x, from, to) }
+    ## inverse by root-finding
+    discrep <- function(x, y, from, to) { y - BWmap(x, from, to) }
+    InvBWmap <- function(x, from=dfrom, to=dto) {
+      n <- length(x)
+      z <- numeric(n)
+      lower <- from
+      upper <- to
+      for(i in seq_len(n)) {
+        z[i] <- there.is.no.try(
+          uniroot(discrep, lower, upper, y=x[i], from=from, to=to)$root
+        ) %orifnull% NA
+      }
+      return(z)
+    }
+  } else if(isFALSE(convert.bw)) {
+    ## do not convert bandwidths
+    BWmap <- InvBWmap <- function(x, from=dfrom, to=dto) { x }
+  } else {
+    ## do convert bandwidths, using default rule
+    convert <- TRUE
+  }
+         
+  ## save for inclusion in result
+  info$gref      <- gref
+  info$greftype  <- greftype
+  info$Transform <- Transform
+  info$InvTran   <- InvTran
+  info$BWmap     <- BWmap
+  info$InvBWmap  <- InvBWmap
+
   #################################################
   ## determine an upper bound on pairwise distances that need to be collected
   hmax <- if(is.numeric(h)) h else (2*cker*stoyan/sqrt(lambda))
   sker <- if(kernel == "gaussian") 4 else 1
   dmax <- rmax + sker * hmax
-  if(is.function(convert.bw)) {
-    bwmap <- convert.bw
-    convert <- TRUE
-  } else {
-    bwmap <- NULL
-    convert <- !isFALSE(convert.bw)
-  }
   if(convert && is.numeric(denargs$bw)) {
     ## compute the bandwidth on the transformed scale now
     switch(divisor,
@@ -573,47 +646,28 @@ resolve.pcf.bandwidth <- function(X, ...,
            a = {
              ## convert to bandwidth(s) for areas
              ## (using same rule as in 'sewpcf')
-             bw.area <- with(denargs,
-                             if(is.function(bwmap)) {
-                               bwmap(bw, from, to)
-                             } else {
-                               pi * (from + to) * bw
-                             })
+             bw.area <- with(denargs, BWmap(bw, from, to))
+             ## halfwidth of kernel on area scale
              hmax.area <- cker * max(bw.area)
              ## determine the maximum value of area that needs to be observed
-             area.max <- pi * rmax^2
-             area.max <- area.max + sker * hmax.area
+             area.max <- pi * rmax^2 + sker * hmax.area
              ## convert back to a bound on distance
-             dmax <- max(dmax, sqrt(area.max/pi))
+             dmax.trans <- sqrt(area.max/pi)
+             dmax <- max(dmax, dmax.trans)
            },
            t = {
-             ## transform bandwidth
-             if(is.function(bwmap)) {
-               bw.trans <- with(denargs, bwmap(bw, from, to))
-             } else {
-               ## use transformation
-               midpoint <- with(denargs, (from + to)/2)
-               ## compute derivative of transformation at midpoint of interval
-               midslope <- 2 * pi * midpoint * gref(midpoint)
-               ## convert bandwidth to transformed scale
-               bw.trans <- midslope * denargs$bw
-             }
+             ## transform bandwidth(s)
+             bw.trans <- with(denargs, BWmap(bw, from, to))
+             ## halfwidth of kernel on transformed scale
              hmax.trans <- cker * max(bw.trans)
-             ## Taylor approx to T^{-1}(T(dmax) + hmax)
-             dmax.trans <- dmax + sker * hmax.trans/(2 * pi * dmax * gref(dmax))
+             ## maximum value that needs to be observed on transformed scale
+             tmax <- Transform(rmax) + sker * hmax.trans
+             ## convert back to a bound on distance
+             dmax.trans <- InvTran(tmax)
              dmax <- max(dmax, dmax.trans)
            })
   }
   info <- append(info, list(rmax=rmax, hmax=hmax, dmax=dmax))
-
-  ## Precompute transform ## and inverse transform
-  if(!is.null(gref)) {
-    rr <- seq(0, dmax, length.out=16384)
-    tt <- indefinteg(integrand, rr, g=gref, lower=0)
-    info$Transform <- approxfun(rr, tt, rule=2)
-    info$gref <- gref
-    info$greftype <- greftype
-  }
 
   return(list(info=info, denargs=denargs))
 }
@@ -638,7 +692,10 @@ sewpcf <- function(d, w, denargs, lambda2area,
   }
 
   if(is.function(convert)) {
-    bwmap <- convert
+    convertfun <- convert
+    dfrom <- denargs$from
+    dto <- denargs$to
+    bwmap <- function(x, from=dfrom, to=dto) { convertfun(x, from, to) }
     convert <- TRUE
   } else {
     bwmap <- NULL
@@ -670,19 +727,11 @@ sewpcf <- function(d, w, denargs, lambda2area,
   }
   if(convert && divisor %in% c("a", "t") && is.numeric(denargs$bw)) {
     ## convert bandwidth value from 'distance' scale to 'area' scale
-    if(is.function(bwmap)) {
-      denargs$bw <- with(denargs, bwmap(bw, from, to))
-    } else {
-      switch(divisor,
-             a = {
-               denargs$bw <- with(denargs, pi * (from + to) * bw)
-             },
-             t = {
-               midpoint <- with(denargs, (from + to)/2)
-               midslope <- 2 * pi * midpoint * gref(midpoint)  # the integrand
-               denargs$bw <- midslope * denargs$bw
-             })
-    }
+    denargs$bw <- if(is.function(bwmap)) {
+                    with(denargs, bwmap(bw, from, to))
+                  } else {
+                    with(denargs, Transform(3 * bw))
+                  }
   }
   switch(divisor,
          r = {
