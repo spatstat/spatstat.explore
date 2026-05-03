@@ -3,7 +3,7 @@
 #'
 #' Calculate pair correlation function from point pattern (pcf.ppp)
 #' 
-#' $Revision: 1.98 $ $Date: 2026/05/03 09:17:02 $
+#' $Revision: 1.99 $ $Date: 2026/05/03 09:48:37 $
 #'
 #' Copyright (c) 2008-2026 Adrian Baddeley, Tilman Davies and Martin Hazelton
 
@@ -50,7 +50,7 @@ pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
   if(missing(divisor) || missing(zerocor))
     warn.once("pcfDefaults",
               "default settings have changed for pcf.ppp",
-              "in spatstat.explore >= 3.7-0.003")
+              "in spatstat.explore >= 3.8-0.015")
 
   if(is.function(divisor)) divisor <- divisor(X)
   divisor <- match.arg(divisor)
