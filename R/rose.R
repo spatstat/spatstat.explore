@@ -16,6 +16,7 @@ rose.default <- local({
                            unit=c("degree", "radian",
                                   "hour", "minute", "other"),
                            fullcircle=NULL, start=NULL, clockwise=NULL,
+                           root=FALSE,
                            main, add=FALSE) {
     if(missing(main) || is.null(main))
       main <- short.deparse(substitute(x))
@@ -37,7 +38,7 @@ rose.default <- local({
     #' histogram without weights
     h <- do.call.matched(hist.default,
                          list(x=quote(x), breaks=breaks, ..., plot=FALSE),
-                         skipargs=graphicsAargh,
+                         skipargs=c(graphicsAargh, "freq", "probability"),
                          sieve=TRUE)
     result <- h$result
     otherargs <- h$otherargs
@@ -51,13 +52,14 @@ rose.default <- local({
     do.call(rose.histogram,
             c(list(x=result, main=main,
                    unit=unit, fullcircle=fullcircle,
-                   start=start, clockwise=clockwise, add=add),
+                   start=start, clockwise=clockwise, 
+                   root=root,
+                   add=add),
               otherargs))
   }
 
   graphicsAargh <- c("density", "angle", "col", "border",
-                     "xlim", "ylim", "xlab", "ylab", "axes",
-                     "labels", "freq", "probability")
+                     "xlim", "ylim", "xlab", "ylab", "axes", "labels")
 
   makebreaks <- function(x, r, breaks=NULL, nclass=NULL) {
     use.br <- !is.null(breaks)
@@ -112,6 +114,7 @@ rose.histogram <- function(x, ...,
                                   "hour", "minute", "other"),
                            fullcircle = NULL,
                            start=NULL, clockwise=NULL,
+                           root=FALSE,
                            main, col="lightgray", labels=TRUE, at=NULL,
                            add=FALSE,
                            do.plot=TRUE,
@@ -122,6 +125,9 @@ rose.histogram <- function(x, ...,
   a <- resolve.hist.args(x, ...)
   freq    <- a$freq
   dotargs <- a$otherargs
+  #' square root transform?
+  root <- isTRUE(root) 
+  physical <- function(x, wortel=root) { if(wortel) sqrt(x) else x }
   #' determine units, validate and resolve arguments
   missu <- missing(unit)
   bks <- x$breaks
@@ -140,8 +146,8 @@ rose.histogram <- function(x, ...,
   outsidespace <- if(!do.ticks) 0 else
                   if(identical(labels, FALSE)) 0.1 else 0.25
   R <- (1+insideclearance) * ymax
-  DD <- disc(R) # circle drawn outside the sectors
-  Rout <- (1 + outsidespace) * R
+  DD <- disc(physical(R)) # circle drawn outside the sectors
+  Rout <- (1 + outsidespace) * physical(R)
   disco <- disc(Rout) # larger disc containing the required space
   dont.complain.about(DD, disco)
   ## create space for plot and save it as the (invisible) result
@@ -175,27 +181,27 @@ rose.histogram <- function(x, ...,
       col <- rep(col, ny)[seq_len(ny)]
     }
     if(do.rings) {
-      rad <- prettyinside(c(0, ymax), n=6)
-      rad <- rad[rad > 0]
-      for(radi in rad)
-        plot(disc(radi), add=TRUE, border="grey", lty=2)
-      attr(result, "rings") <- rad
+      ringradii <- prettyinside(c(0, ymax), n=6)
+      ringradii <- ringradii[ringradii > 0]
+      for(rr in ringradii)
+        plot(disc(physical(rr)), add=TRUE, border="grey", lty=2)
+      attr(result, "rings") <- ringradii
     }
     for(i in seq_len(ny)) {
-      yi <- y[i]
+      ri <- physical(y[i])
       ci <- col[i]
       ## make sector coordinates
       delta <- eps * sign(ang[i+1] - ang[i])
       aa <- seq(ang[i], ang[i+1], by=delta)
       aa[length(aa)] <- ang[i+1]
-      xx <- c(0, yi * cos(aa), 0)
-      yy <- c(0, yi * sin(aa), 0)
+      xx <- c(0, ri * cos(aa), 0)
+      yy <- c(0, ri * sin(aa), 0)
       do.call.matched(polygon, c(list(x=xx, y=yy, col=ci), dotargs))
     }
     if(do.ticks) {
       #' add tick marks
       circticks(R, at=at, unit=unit, fullcircle=fullcircle,
-                start=start, clockwise=clockwise,
+                start=start, clockwise=clockwise, root=root,
                 labels=labels)
     }
   }
@@ -207,6 +213,7 @@ rose.density <- function(x, ...,
                          unit=c("degree", "radian", "hour", "minute", "other"),
                          fullcircle=NULL,
                          start=NULL, clockwise=NULL,
+                         root=FALSE,
                          main, labels=TRUE, at=NULL,
                          add=FALSE, do.plot=TRUE,
                          do.circle=!add, do.rings=!add, do.ticks=!add) {
@@ -232,6 +239,7 @@ rose.density <- function(x, ...,
   result <- roseContinuous(ang, rad, unit, ...,
                            fullcircle=fullcircle,
                            start=start, clockwise=clockwise,
+                           root=root,
                            main=main, labels=labels, at=at,
                            add=add, do.plot=do.plot,
                            do.circle=do.circle,
@@ -246,7 +254,7 @@ rose.fv <- function(x, ...,
                                    "hour", "minute", "other"),
                     fullcircle=NULL, 
                     start=NULL, clockwise=NULL,
-                    main, labels=TRUE, at=NULL,
+                    root=FALSE, main, labels=TRUE, at=NULL,
                     add=FALSE, do.plot=TRUE,
                     do.circle=!add, do.rings=!add, do.ticks=!add) {
   if(missing(main) || is.null(main))
@@ -275,6 +283,7 @@ rose.fv <- function(x, ...,
                            shind=shi,
                            fullcircle=fullcircle,
                            start=start, clockwise=clockwise,
+                           root=root,
                            main=main, labels=labels, at=at,
                            add=add, do.plot=do.plot,
                            do.circle=do.circle, do.rings=do.rings,
@@ -285,20 +294,24 @@ rose.fv <- function(x, ...,
 roseContinuous <- function(ang, rad, unit, ...,
                            fullcircle=NULL,
                            start=NULL, clockwise=NULL,
+                           root=FALSE,
                            main,
                            labels=TRUE, at=NULL,
                            shind=NULL,
                            add=FALSE, do.plot=TRUE,
                            do.circle=!add, do.rings=!add, do.ticks=!add) {
   do.ticks <- !isFALSE(do.ticks) && (is.null(at) || length(at) > 0)
+  #' square root transform?
+  root <- isTRUE(root)
+  physical <- function(x, wortel=root) { if(wortel) sqrt(x) else x }
   #' determine size of circle
   insideclearance <- 0.1
   outsidespace <- if(!is.null(at) && length(at) == 0) 0 else
                   if(identical(labels, FALSE)) 0.1 else 0.25
   rmax <- max(rad)
   R <- (1+insideclearance) * rmax
-  DD <- disc(R) # circle drawn outside the curve
-  Rout <- (1 + outsidespace) * R
+  DD <- disc(physical(R)) # circle drawn outside the curve
+  Rout <- (1 + outsidespace) * physical(R)
   disco <- disc(Rout) # larger disc containing the require space
   dont.complain.about(DD, disco)
   ## create space for plot and save it as the (invisible) result
@@ -319,16 +332,16 @@ roseContinuous <- function(ang, rad, unit, ...,
                     extrargs=graphicsPars("owin"),
                     skipargs="col")
     if(do.rings) {
-      ringrad <- prettyinside(c(0, max(rad)), n=6)
-      ringrad <- ringrad[ringrad > 0]
-      for(radi in ringrad)
-        plot(disc(radi), add=TRUE, border="grey", lty=2)
-      attr(result, "rings") <- ringrad
+      ringradii <- prettyinside(c(0, max(rad)), n=6)
+      ringradii <- ringradii[ringradii > 0]
+      for(rr in ringradii)
+        plot(disc(physical(rr)), add=TRUE, border="grey", lty=2)
+      attr(result, "rings") <- ringradii
     }
     ang <- ang2rad(ang, unit=unit, fullcircle=fullcircle,
                    start=start, clockwise=clockwise)
-    xx <- rad * cos(ang)
-    yy <- rad * sin(ang)
+    xx <- physical(rad) * cos(ang)
+    yy <- physical(rad) * sin(ang)
     ncurves <- NCOL(yy)
     if(ncurves == 1) {
       do.call.matched(polygon, list(x=xx, y=yy, ...), extrargs="lwd")
@@ -364,7 +377,7 @@ roseContinuous <- function(ang, rad, unit, ...,
     }
     if(do.ticks) 
       circticks(R, at=at, unit=unit, fullcircle=fullcircle,
-                start=start, clockwise=clockwise,
+                start=start, clockwise=clockwise, root=root,
                 labels=labels)
   }
   return(invisible(result))
@@ -422,14 +435,17 @@ ang2rad <- local({
 circticks <- function(R, at=NULL,
                       unit=c("degree", "radian", "hour", "minute", "other"),
                       fullcircle=NULL,
-                      start=NULL, clockwise=NULL, labels=TRUE) {
+                      start=NULL, clockwise=NULL, root=FALSE, labels=TRUE) {
   unit <- match.arg(unit)
   a <- resolve.rose.args(unit, fullcircle, start, clockwise)
   fullcircle <- a$fullcircle
   start      <- a$start
   clockwise  <- a$clockwise
+  #' square root transform?
+  root <- isTRUE(root)
+  physical <- function(x, wortel=root) { if(wortel) sqrt(x) else x }
   if(is.null(at)) {
-    ## default rules for position of tick marks
+    ## default rules for angular position of tick marks
     if((nlab <- length(labels)) > 1) {
       ## make 'nlab' evenly-spaced ticks
       at <- fullcircle * (0:(nlab-1))/nlab
@@ -470,8 +486,8 @@ circticks <- function(R, at=NULL,
   }
   atradians <- ang2rad(ang=at, unit=unit, fullcircle=fullcircle,
                        start=start, clockwise=clockwise)
-  tx <- R * cos(atradians)
-  ty <- R * sin(atradians)
+  tx <- physical(R) * cos(atradians)
+  ty <- physical(R) * sin(atradians)
   expan <- ifelse(major, 1.1, 1.05)
   segments(tx, ty, expan * tx, expan * ty, lwd=major+1)
   if(!isFALSE(labels)) {

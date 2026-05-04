@@ -18,12 +18,14 @@ rose(x, \dots)
                        unit = c("degree", "radian", "hour", "minute", "other"),
                        fullcircle = NULL, 
                        start=NULL, clockwise=NULL,
+                       root=FALSE,
                        main, add=FALSE)
 
 \method{rose}{histogram}(x, \dots,
                        unit = c("degree", "radian", "hour", "minute", "other"),
                        fullcircle = NULL, 
                        start=NULL, clockwise=NULL,
+                       root=FALSE,
                        main, col="lightgray", labels=TRUE, at=NULL,
                        add=FALSE, do.plot=TRUE,
                        do.circle=!add, do.rings=!add, do.ticks=!add)
@@ -32,6 +34,7 @@ rose(x, \dots)
                        unit = c("degree", "radian", "hour", "minute", "other"),
                        fullcircle = NULL, 
                        start=NULL, clockwise=NULL,
+                       root=FALSE,
                        main, labels=TRUE, at=NULL,
                        add=FALSE, do.plot=TRUE,
                        do.circle=!add, do.rings=!add, do.ticks=!add)
@@ -40,6 +43,7 @@ rose(x, \dots)
                        unit = c("degree", "radian", "hour", "minute", "other"),
                        fullcircle = NULL, 
                        start=NULL, clockwise=NULL,
+                       root=FALSE,
                        main, labels=TRUE, at=NULL,
                        add=FALSE, do.plot=TRUE,
                        do.circle=!add, do.rings=!add, do.ticks = !add)
@@ -96,6 +100,10 @@ rose(x, \dots)
     The default is \code{clockwise=TRUE} if
     \code{unit="hour"} or \code{unit="minute"},
     and \code{clockwise=FALSE} otherwise.
+  }
+  \item{root}{
+    Logical value specifying whether to apply the square root
+    to the histogram heights or curve heights.
   }
   \item{weights}{
     Optional vector of numeric weights associated with \code{x}.
@@ -232,13 +240,33 @@ rose(x, \dots)
   If \code{at} and \code{labels} are both missing,
   there is a sensible default for the tick marks and their labels.
 }
+\section{Square root transformation}{
+  By default, the radial coordinates drawn
+  in the rose diagram are proportional to the histogram counts,
+  histogram densities or function values in \code{x}. Since the
+  area of a circular sector is proportional to the \emph{square} of its
+  radius, this means that the areas of the sectors drawn in the rose
+  diagram are proportional to the \emph{squares} of the histogram counts or
+  function values. 
+  
+  If \code{root=TRUE}, the histogram counts, histogram densities
+  or function values in \code{x} are first transformed by taking the square
+  root before the rose diagram is drawn. This ensures that
+  the areas are proportional to the histogram counts or densities
+  or the function values. The square root transform is also the
+  variance-stabilising transformation for the Poisson distribution
+  (so that if \code{root=TRUE}, the sampling variability is
+  approximately equal for each sector in the rose diagram).
+}
 \value{
   (Invisibly) A window (class \code{"owin"}) containing the plotted
   region. The result also has attribute \code{"R"} giving the radius of
   the outer circle of the plot, and attribute \code{"rings"} giving the
   radii of the concentric scale rings. For \code{rose.default} and
   \code{rose.histogram}, the result also has attribute
-  \code{"histogram"} giving the histogram.
+  \code{"histogram"} giving the histogram. The attributes
+  \code{"R"}, \code{"rings"} and \code{"histogram"} are the values
+  calculated before any transformation is applied.
 }
 \author{\spatstatAuthors}
 \seealso{
@@ -249,7 +277,7 @@ rose(x, \dots)
 \examples{
   ang <- runif(200, max=360)
   rose(ang)
-  rose(ang, col=c("grey", "lightgrey"), start="N", clockwise=TRUE)
+  rose(ang, col=c("grey", "lightgrey"), start="N", clockwise=TRUE, root=TRUE)
 
   ## hours in a 12-hour day
   hrs <- runif(200, max=12)

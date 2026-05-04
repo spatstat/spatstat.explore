@@ -256,7 +256,7 @@ calc.TSE(COV, z, pos, Dim1, Dim2)
 censtimeCDFest(o, cc, d, breaks, \dots,
      KM, RS, HAN, RAW, han.denom, tt, pmax, fname, fexpr)
 check.testfun(f, f1, X)
-circticks(R, at, unit, fullcircle, start, clockwise, labels)
+circticks(R, at, unit, fullcircle, start, clockwise, root, labels)
 clarkevansCalc(X, correction, clipregion, working)
 \method{compatible}{rat}(A, B, \dots)
 conform.ratfv(x)
@@ -479,7 +479,7 @@ rocSmoothCalc(ZX, ZU,\dots, weightsX, weightsU,
               high, kernel, bw, adjust, alpha, nGrid, p, plength,
               doCI, degfreeU)
 roseContinuous(ang, rad, unit, \dots, fullcircle,
-               start, clockwise, main, labels, at, shind,
+               start, clockwise, root, main, labels, at, shind,
                add, do.plot, do.circle, do.rings, do.ticks)
 scanmeasure(X, \dots)
 \method{scanmeasure}{ppp}(X, r, \dots, method) 

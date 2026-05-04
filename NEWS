@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.8-0.015
+        CHANGES IN spatstat.explore VERSION 3.8-0.016
 
 OVERVIEW
 
@@ -55,6 +55,9 @@ SIGNIFICANT USER-VISIBLE CHANGES
 
     o rose.fv
     Now handles envelopes (objects of class 'envelope') as well.
+
+    o rose.default, rose.histogram, rose.density, rose.fv
+    New argument 'root' specifies whether to apply a square root transformation.
 
     o Summary functions
     Calculation of Ripley's isotropic edge correction has been accelerated,
