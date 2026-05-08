@@ -25,7 +25,8 @@ using kernel methods.
             Jname = "points satisfying condition J",
             IJexclusive=FALSE,
             ratio = FALSE,
-            close=NULL)
+            close=NULL,
+            convert.bw=TRUE)
 }
 \arguments{
   \item{X}{The observed point pattern, 
@@ -141,6 +142,15 @@ using kernel methods.
   }
   \item{close}{
     Advanced use only. Precomputed data obtained from \code{\link[spatstat.geom]{crosspairs}}.
+  }
+  \item{convert.bw}{
+    Logical value specifying how to interpret the bandwidth argument
+    \code{bw} when \code{divisor="a"}. If \code{convert.bw=TRUE} (the default),
+    the argument \code{bw} is interpreted as a bandwidth on the scale of
+    distances \code{r}, and is transformed to the scale of areas when
+    \code{divisor="a"}. 
+    If \code{convert.bw=FALSE}, the argument \code{bw} is interpreted as a
+    bandwidth on the scale of areas, and is not transformed.
   }
 }
 \details{

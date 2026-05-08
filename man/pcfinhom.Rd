@@ -11,7 +11,8 @@
 pcfinhom(X, lambda = NULL, \dots,
             r = NULL, rmax=NULL, adaptive = FALSE,
             kernel = "epanechnikov", bw = NULL, h = NULL,
-            bw.args = list(), stoyan = 0.15, adjust = 1,
+            bw.args = list(), stoyan = 0.15,
+            adjust.bw = adjust, adjust=1,
             correction = c("translate", "Ripley"),
             divisor=c("a", "r", "d", "t"),
             zerocor=c("convolution", "reflection", "bdrykern",
@@ -21,7 +22,7 @@ pcfinhom(X, lambda = NULL, \dots,
             update = TRUE, leaveoneout = TRUE,
             reciplambda = NULL, sigma = NULL, adjust.sigma = 1, varcov = NULL,
             gref = NULL, tau = 0, fast = TRUE, var.approx = FALSE,
-            domain = NULL, ratio = FALSE, close = NULL)
+            domain = NULL, ratio = FALSE, close = NULL, convert.bw=TRUE)
 }
 \arguments{
   \item{X}{
@@ -58,9 +59,10 @@ pcfinhom(X, lambda = NULL, \dots,
     Choice of smoothing kernel, passed to \code{\link{density.default}}.
   }
   \item{bw}{
-    Bandwidth for smoothing kernel.
+    Bandwidth for smoothing kernel used to estimate pair correlation function.
     Either a single numeric value giving the standard deviation of the
-    kernel, or a character string specifying a bandwidth selection rule,
+    one-dimensional kernel,
+    or a character string specifying a bandwidth selection rule,
     or a function that computes the selected bandwidth.
     See Details.
   }
@@ -68,7 +70,8 @@ pcfinhom(X, lambda = NULL, \dots,
     Kernel halfwidth \eqn{h} (incompatible with argument \code{bw}).
     A numerical value.
     The parameter \code{h} is defined as the
-    half-width of the support of the kernel, except for the Gaussian
+    half-width of the support of the one-dimensional kernel,
+    except for the Gaussian
     kernel where \code{h} is the standard deviation.
   }
   \item{bw.args}{
@@ -80,9 +83,9 @@ pcfinhom(X, lambda = NULL, \dots,
   \item{stoyan}{
     Coefficient for Stoyan's bandwidth selection rule; see Details.
   }
-  \item{adjust}{
-     Numerical adjustment factor for the bandwidth.
-     The bandwidth actually used is \code{adjust * bw}.
+  \item{adjust, adjust.bw}{
+     Numerical adjustment factor for the bandwidth \code{bw}.
+     The bandwidth actually used is \code{adjust.bw * bw}.
      This makes it easy to specify choices like \sQuote{half the
      selected bandwidth}.
   }
@@ -142,11 +145,14 @@ pcfinhom(X, lambda = NULL, \dots,
   }
   \item{sigma,varcov}{
     Optional arguments passed to  \code{\link{density.ppp}}
-    to control the smoothing bandwidth, when \code{lambda} is
+    to control the spatial smoothing bandwidth, when \code{lambda} is
     estimated by kernel smoothing.
   }
   \item{adjust.sigma}{
-    Numeric value. \code{sigma} will be multiplied by this value.
+    Numeric value. The spatial smoothing bandwidth \code{sigma}
+    will be multiplied by this value.
+    This makes it easy to specify choices like \sQuote{half the
+      selected bandwidth}.
   }
   \item{gref}{
     Optional. A pair correlation function that will be used as the
@@ -183,6 +189,15 @@ pcfinhom(X, lambda = NULL, \dots,
   }
   \item{close}{
     Advanced use only. Precomputed data. See section on Advanced Use.
+  }
+  \item{convert.bw}{
+    Logical value specifying how to interpret the bandwidth argument
+    \code{bw} when \code{divisor="a"}. If \code{convert.bw=TRUE} (the default),
+    the argument \code{bw} is interpreted as a bandwidth on the scale of
+    distances \code{r}, and is transformed to the scale of areas when
+    \code{divisor="a"}. 
+    If \code{convert.bw=FALSE}, the argument \code{bw} is interpreted as a
+    bandwidth on the scale of areas, and is not transformed.
   }
 }
 \details{
@@ -288,7 +303,7 @@ pcfinhom(X, lambda = NULL, \dots,
   \code{\link{bw.pcfinhom}}
 }
 \examples{
-  g <- pcfinhom(rescale(japanesepines), rmax=2, adjust=1.5)
+  g <- pcfinhom(rescale(japanesepines), rmax=2, adjust.bw=1.5)
 }
 \keyword{spatial}
 \keyword{nonparametric}

@@ -1,7 +1,7 @@
 #
 #   pcfmulti.R
 #
-#   $Revision: 1.20 $   $Date: 2026/05/01 02:29:02 $
+#   $Revision: 1.21 $   $Date: 2026/05/08 06:47:28 $
 #
 #   multitype pair correlation functions
 #
@@ -86,7 +86,8 @@ pcfmulti <- function(X, I, J, ...,
                      Jname="points satisfying condition J",
                      IJexclusive=FALSE,
                      ratio=FALSE,
-                     close=NULL)
+                     close=NULL,
+                     convert.bw=TRUE)
 {
   verifyclass(X, "ppp")
   if(is.NAobject(X)) return(NAobject("fv"))
@@ -186,14 +187,18 @@ pcfmulti <- function(X, I, J, ...,
                              zerocor=zerocor,
                              nsmall=nsmall,
                              gref=gref,
-                             close=close)
+                             close=close,
+                             convert.bw=convert.bw)
 
   info    <- M$info
   denargs <- M$denargs
 
-  Transform <- info$Transform
   dmax      <- info$dmax
   gref      <- info$gref
+  Transform <- info$Transform
+  InvTran   <- info$InvTran
+  BWmap     <- info$BWmap 
+  InvBWmap  <- info$InvBWmap
   
   ## .......................................................
   ##  initialise fv object
@@ -345,6 +350,24 @@ pcfmulti <- function(X, I, J, ...,
 
   # 
   unitname(out) <- unitname(X)
+
+  ## save information about computation
+  attr(out, "bw.used") <- bw.used
+  bw.distance <- InvBWmap(bw.used, denargs$from, denargs$to)
+  attr(out, "bw.distance") <- bw.distance
+  info <- append(info,
+                 list(bw.used=bw.used,
+                      bw.distance=bw.distance))
+  if(adaptive) {
+    attr(out, "bwvalues.used") <- bwvalues.used
+    bwvalues.distance <- InvBWmap(bwvalues.used, denargs$from, denargs$to)
+    attr(out, "bwvalues.distance") <- bwvalues.distance
+    info <- append(info,
+                   list(bwvalues.used=bwvalues.used,
+                        bwvalues.distance=bwvalues.distance))
+  }
+  attr(out, "info") <- info
+  
   return(out)
 }
 

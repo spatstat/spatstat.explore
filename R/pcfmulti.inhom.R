@@ -1,7 +1,7 @@
 #
 #   pcfmulti.inhom.R
 #
-#   $Revision: 1.29 $   $Date: 2026/05/01 02:29:02 $
+#   $Revision: 1.31 $   $Date: 2026/05/08 07:30:39 $
 #
 #   inhomogeneous multitype pair correlation functions
 #
@@ -85,7 +85,7 @@ pcfmulti.inhom <- function(X, I, J, lambdaI=NULL, lambdaJ=NULL, ...,
                            adaptive=FALSE, 
                            kernel="epanechnikov",
                            bw=NULL, h=NULL, bw.args=list(),
-                           stoyan=0.15, adjust.bw=1,
+                           stoyan=0.15, adjust.bw=adjust, adjust=1,
                            correction=c("translate", "Ripley"),
                            divisor=c("a", "r", "d", "t"),
                            zerocor=c("convolution", "reflection", "bdrykern",
@@ -100,7 +100,8 @@ pcfmulti.inhom <- function(X, I, J, lambdaI=NULL, lambdaJ=NULL, ...,
                            Jname="points satisfying condition J",
                            IJexclusive=FALSE,
                            Ilevels=NULL, Jlevels=NULL,
-                           close=NULL) {
+                           close=NULL,
+                           convert.bw=TRUE) {
   verifyclass(X, "ppp")
   if(is.NAobject(X)) return(NAobject("fv"))
   
@@ -212,15 +213,18 @@ pcfmulti.inhom <- function(X, I, J, lambdaI=NULL, lambdaJ=NULL, ...,
                              zerocor=zerocor,
                              nsmall=nsmall,
                              gref=gref,
-                             close=close)
+                             close=close,
+                             convert.bw=convert.bw)
 
   info    <- M$info
   denargs <- M$denargs
 
-  Transform <- info$Transform
   dmax      <- info$dmax
   gref      <- info$gref
-
+  Transform <- info$Transform
+  InvTran   <- info$InvTran
+  BWmap     <- info$BWmap 
+  InvBWmap  <- info$InvBWmap
   
   #################################################
   
@@ -343,6 +347,24 @@ pcfmulti.inhom <- function(X, I, J, lambdaI=NULL, lambdaJ=NULL, ...,
 
   if(danger)
     attr(out, "dangerous") <- dangerous
+
+  ## save information about computation
+  attr(out, "bw.used") <- bw.used
+  bw.distance <- InvBWmap(bw.used, denargs$from, denargs$to)
+  attr(out, "bw.distance") <- bw.distance
+  info <- append(info,
+                 list(bw.used=bw.used,
+                      bw.distance=bw.distance))
+  if(adaptive) {
+    attr(out, "bwvalues.used") <- bwvalues.used
+    bwvalues.distance <- InvBWmap(bwvalues.used, denargs$from, denargs$to)
+    attr(out, "bwvalues.distance") <- bwvalues.distance
+    info <- append(info,
+                   list(bwvalues.used=bwvalues.used,
+                        bwvalues.distance=bwvalues.distance))
+  }
+  attr(out, "info") <- info
+  
   return(out)
 }
 

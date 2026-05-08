@@ -5,13 +5,14 @@
 #'
 #' Copyright (c) 2008-2025 Adrian Baddeley, Tilman Davies and Martin Hazelton
 #'
-#' $Revision: 1.37 $ $Date: 2026/05/01 02:29:02 $
+#' $Revision: 1.39 $ $Date: 2026/05/08 07:23:43 $
 
 pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL, 
                      adaptive=FALSE,
                      kernel="epanechnikov", bw=NULL, h=NULL,
                      bw.args=list(),
                      stoyan=0.15,
+                     adjust.bw = adjust,
                      adjust = 1,
                      correction=c("translate", "Ripley"),
                      divisor=c("a", "r", "d", "t"),
@@ -28,7 +29,8 @@ pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL,
                      fast=TRUE,
                      var.approx=FALSE,
                      domain=NULL, ratio=FALSE,
-                     close=NULL)
+                     close=NULL,
+                     convert.bw=TRUE)
 {
   verifyclass(X, "ppp")
   if(is.NAobject(X)) return(NAobject("fv"))
@@ -64,7 +66,8 @@ pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL,
     zerocor <- if(npts <= nsmall) "JonesFoster" else "convolution"
   }
 
-  check.1.real(adjust)
+  check.1.real(adjust.bw)
+  check.1.real(adjust.sigma)
 
   ## ..................................................
   ## ....... INTENSITY VALUES .........................
@@ -177,21 +180,24 @@ pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL,
                              rmax=rmax, nr=length(r),
                              adaptive=adaptive, kernel=kernel,
                              bw=bw, h=h, bw.args=bw.args,
-                             stoyan=stoyan, adjust=adjust,
+                             stoyan=stoyan, adjust=adjust.bw,
                              correction=correction,
                              divisor=divisor,
                              zerocor=zerocor,
                              nsmall=nsmall,
                              gref=gref,
-                             close=close)
+                             close=close,
+                             convert.bw=convert.bw)
 
   info    <- M$info
   denargs <- M$denargs
 
-  Transform <- info$Transform
   dmax      <- info$dmax
   gref      <- info$gref
-
+  Transform <- info$Transform
+  InvTran   <- info$InvTran
+  BWmap     <- info$BWmap 
+  InvBWmap  <- info$InvBWmap
   
   #######################################################
   ## compute pairwise distances up to 'dmax'
@@ -352,11 +358,19 @@ pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL,
     out <- conform.ratfv(out)
 
   ## save information about computation
-  attr(out, "bw") <- bw.used
-  info <- append(info, list(bw.used=bw.used))
+  attr(out, "bw.used") <- bw.used
+  bw.distance <- InvBWmap(bw.used, denargs$from, denargs$to)
+  attr(out, "bw.distance") <- bw.distance
+  info <- append(info,
+                 list(bw.used=bw.used,
+                      bw.distance=bw.distance))
   if(adaptive) {
-    attr(out, "bwvalues") <- bwvalues.used
-    info <- append(info, list(bwvalues.used=bwvalues.used))
+    attr(out, "bwvalues.used") <- bwvalues.used
+    bwvalues.distance <- InvBWmap(bwvalues.used, denargs$from, denargs$to)
+    attr(out, "bwvalues.distance") <- bwvalues.distance
+    info <- append(info,
+                   list(bwvalues.used=bwvalues.used,
+                        bwvalues.distance=bwvalues.distance))
   }
   attr(out, "info") <- info
   return(out)

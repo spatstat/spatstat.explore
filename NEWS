@@ -1,11 +1,11 @@
 
-        CHANGES IN spatstat.explore VERSION 3.8-0.016
+        CHANGES IN spatstat.explore VERSION 3.8-0.017
 
 OVERVIEW
 
     o We thank Mario D'Antuono and Hamid Ghorbani for contributions.
 
-    o Changed rule for converting bandwidths in pcf.ppp
+    o Changed rule for converting bandwidths in pair correlation.
     
     o Improvements to rose diagrams.
 
@@ -23,10 +23,16 @@ NEW FUNCTIONS
     
 SIGNIFICANT USER-VISIBLE CHANGES
 
-    o pcf.ppp
+    o pair correlation functions
+    (pcf.ppp, pcfinhom, pcfcross, pcfdot, pcfmulti,
+    pcfcross.inhom, pcfdot.inhom, pcfmulti.inhom)
     The rule for converting bandwidth 'bw' from the distance scale to the
     area scale (when divisor="a") has changed.
-    
+
+    o pcfinhom
+    Argument 'adjust' has been renamed 'adjust.bw' to avoid confusion.
+    However 'adjust' is still accepted.
+
     o rose.default, rose.histogram, rose.density, rose.fv, circdensity
     Rose diagrams can now be computed and plotted for data
     expressed in any units with any period (such as hours in a 24-hour day).
@@ -76,11 +82,11 @@ BUG FIXES
     Envelopes for these functions were sometimes incorrect in the sense that
     the summary functions were not all calculated with the same settings.
     [Spotted by Hamid Ghorbani.]
-    Affected spatstat.envelope 3.8-0 only.
+    Affected spatstat.explore 3.8-0 only.
     Fixed.
 
     o plot.fv
-    Occasionally gave a warning message about 'distmap' methods.
+    Occasionally gave a strange warning about 'distmap' methods.
     Fixed.
     
     o rose.default, rose.histogram

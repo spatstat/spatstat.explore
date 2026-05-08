@@ -13,7 +13,7 @@ pcfmulti.inhom(X, I, J, lambdaI = NULL, lambdaJ = NULL, \dots,
                r = NULL, breaks = NULL, rmax = NULL,
                adaptive = FALSE,
                kernel = "epanechnikov", bw = NULL, h = NULL, bw.args = list(),
-               stoyan = 0.15, adjust.bw = 1,
+               stoyan = 0.15, adjust.bw = adjust, adjust=1,
                correction = c("translate", "Ripley"),
                divisor = c("a", "r", "d", "t"),
                zerocor = c("convolution", "reflection",
@@ -26,7 +26,7 @@ pcfmulti.inhom(X, I, J, lambdaI = NULL, lambdaJ = NULL, \dots,
                Iname = "points satisfying condition I",
                Jname = "points satisfying condition J",
                IJexclusive = FALSE, Ilevels=NULL, Jlevels=NULL,
-               close = NULL)
+               close = NULL, convert.bw=TRUE)
 }
 \arguments{
   \item{X}{The observed point pattern, 
@@ -128,8 +128,9 @@ pcfmulti.inhom(X, I, J, lambdaI = NULL, lambdaJ = NULL, \dots,
   \item{stoyan}{
     Coefficient for default bandwidth rule.
   }
-  \item{adjust.bw}{
-    Numerical adjustment factor for the bandwidth.
+  \item{adjust,adjust.bw}{
+    Numerical adjustment factor for the bandwidth of the
+    one-dimensional kernel used to estimate the pair correlation function.
     The bandwidth actually used is \code{bw * adjust.bw}.
     This makes it easy to specify choices like
     \sQuote{half the selected bandwidth}.
@@ -176,7 +177,9 @@ pcfmulti.inhom(X, I, J, lambdaI = NULL, lambdaJ = NULL, \dots,
     estimated by kernel smoothing.
   }
   \item{adjust.sigma}{
-    Numeric value. \code{sigma} will be multiplied by this value.
+    Numeric value used to adjust the two-dimensional spatial smoothing bandwidth
+    \code{sigma} used when \code{lambda} is estimated by kernel smoothing.
+    The actual bandwidth used will be \code{sigma * adjust.sigma}.
   }
   \item{update}{
     Logical value indicating what to do when
@@ -220,6 +223,15 @@ pcfmulti.inhom(X, I, J, lambdaI = NULL, lambdaJ = NULL, \dots,
   \item{close}{
     Advanced use only.
     Precomputed data obtained from \code{\link[spatstat.geom]{crosspairs}}.
+  }
+  \item{convert.bw}{
+    Logical value specifying how to interpret the bandwidth argument
+    \code{bw} when \code{divisor="a"}. If \code{convert.bw=TRUE} (the default),
+    the argument \code{bw} is interpreted as a bandwidth on the scale of
+    distances \code{r}, and is transformed to the scale of areas when
+    \code{divisor="a"}. 
+    If \code{convert.bw=FALSE}, the argument \code{bw} is interpreted as a
+    bandwidth on the scale of areas, and is not transformed.
   }
 }
 \details{

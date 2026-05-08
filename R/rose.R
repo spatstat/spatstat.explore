@@ -3,111 +3,63 @@
 #'
 #'   Rose diagrams
 #'
-#'   $Revision: 1.32 $  $Date: 2026/05/02 05:13:29 $
+#'   $Revision: 1.33 $  $Date: 2026/05/05 01:07:27 $
 #'
 
 rose <- function(x, ...) UseMethod("rose")
 
-rose.default <- local({
-
-  rose.default <- function(x, breaks = NULL, ...,
-                           weights=NULL,
-                           nclass=NULL,
-                           unit=c("degree", "radian",
-                                  "hour", "minute", "other"),
-                           fullcircle=NULL, start=NULL, clockwise=NULL,
-                           root=FALSE,
-                           main, add=FALSE) {
-    if(missing(main) || is.null(main))
-      main <- short.deparse(substitute(x))
-    stopifnot(is.numeric(x))
-    if(!is.null(weights))
-      check.nvector(weights, length(x), things="observations", vname="weights")
-    #' determine units and resolve auxiliary arguments
-    missu <- missing(unit)
-    unit <- resolve.angular.unit(x, unit, fullcircle=fullcircle, guess=missu)
-    a <- resolve.rose.args(unit, fullcircle=fullcircle,
-                           start=start, clockwise=clockwise)
-    fullcircle <- a$fullcircle
-    start      <- a$start
-    clockwise  <- a$clockwise
-    #' reduce to [0, 2pi]
-    x <- x %% fullcircle
-    #' determine breakpoints strictly inside full circle
-    breaks <- makebreaks(x, c(0, fullcircle), breaks, nclass)
-    #' histogram without weights
-    h <- do.call.matched(hist.default,
-                         list(x=quote(x), breaks=breaks, ..., plot=FALSE),
-                         skipargs=c(graphicsAargh, "freq", "probability"),
-                         sieve=TRUE)
-    result <- h$result
-    otherargs <- h$otherargs
-    #' redo weights, if given
-    if(!is.null(weights)) {
-      wh <- whist(x=x, breaks=breaks, weights=weights)
-      result$count <- wh
-      result$density <- wh/diff(breaks)
-    }
-    #
-    do.call(rose.histogram,
-            c(list(x=result, main=main,
-                   unit=unit, fullcircle=fullcircle,
-                   start=start, clockwise=clockwise, 
-                   root=root,
-                   add=add),
-              otherargs))
+rose.default <- function(x, breaks = NULL, ...,
+                         weights=NULL,
+                         nclass=NULL,
+                         unit=c("degree", "radian",
+                                "hour", "minute", "other"),
+                         fullcircle=NULL, start=NULL, clockwise=NULL,
+                         root=FALSE,
+                         main, add=FALSE) {
+  if(missing(main) || is.null(main))
+    main <- short.deparse(substitute(x))
+  stopifnot(is.numeric(x))
+  if(!is.null(weights))
+    check.nvector(weights, length(x), things="observations", vname="weights")
+  #' determine units and resolve auxiliary arguments
+  missu <- missing(unit)
+  unit <- resolve.angular.unit(x, unit, fullcircle=fullcircle, guess=missu)
+  a <- resolve.rose.args(unit, fullcircle=fullcircle,
+                         start=start, clockwise=clockwise)
+  fullcircle <- a$fullcircle
+  start      <- a$start
+  clockwise  <- a$clockwise
+  #' reduce to [0, 2pi]
+  x <- x %% fullcircle
+  #' determine breakpoints strictly inside full circle
+  breaks <- makebreaksinside(x, c(0, fullcircle), breaks, nclass)
+  #' histogram without weights
+  h <- do.call.matched(hist.default,
+                       list(x=quote(x),
+                            breaks=breaks,
+                            ...,
+                            plot=FALSE),
+                       skipargs = c("density", "angle", "col", "border",
+                                    "xlim", "ylim", "xlab", "ylab", "axes",
+                                    "labels", "freq", "probability"),
+                       sieve=TRUE)
+  result <- h$result
+  otherargs <- h$otherargs
+  #' redo weights, if given
+  if(!is.null(weights)) {
+    wh <- whist(x=x, breaks=breaks, weights=weights)
+    result$count <- wh
+    result$density <- wh/diff(breaks)
   }
-
-  graphicsAargh <- c("density", "angle", "col", "border",
-                     "xlim", "ylim", "xlab", "ylab", "axes", "labels")
-
-  makebreaks <- function(x, r, breaks=NULL, nclass=NULL) {
-    use.br <- !is.null(breaks)
-    if (use.br) {
-      if (!is.null(nclass)) 
-        warning("'nclass' is not used when 'breaks' is specified")
-    } else if (!is.null(nclass) && length(nclass) == 1L) {
-      breaks <- nclass
-    } else breaks <- "Sturges"
-    use.br <- use.br && (nB <- length(breaks)) > 1L
-    if (use.br) 
-      breaks <- sort(breaks)
-    else {
-      if (is.character(breaks)) {
-        breaks <- match.arg(tolower(breaks),
-                            c("sturges", 
-                              "fd",
-                              "freedman-diaconis",
-                              "scott"))
-        breaks <- switch(breaks,
-                         sturges = nclass.Sturges(x), 
-                         `freedman-diaconis` = ,
-                         fd = nclass.FD(x),
-                         scott = nclass.scott(x), 
-                         stop("unknown 'breaks' algorithm"))
-      }
-      else if (is.function(breaks)) {
-        breaks <- breaks(x)
-      }
-      if (length(breaks) == 1) {
-        if (!is.numeric(breaks) || !is.finite(breaks) || 
-            breaks < 1L) 
-          stop("invalid number of 'breaks'")
-        breaks <- seq(r[1], r[2], length.out=breaks)
-      }
-      else {
-        if (!is.numeric(breaks) || length(breaks) <= 1) 
-          stop(gettextf("Invalid breakpoints produced by 'breaks(x)': %s", 
-                        format(breaks)), domain = NA)
-        breaks <- sort(breaks)
-      }
-    }
-    return(breaks)
-  }
-  
-  rose.default
-})
-
+  #'
+  do.call(rose.histogram,
+          c(list(x=result, main=main,
+                 unit=unit, fullcircle=fullcircle,
+                 start=start, clockwise=clockwise, 
+                 root=root,
+                 add=add),
+            otherargs))
+}
 
 rose.histogram <- function(x, ...,
                            unit=c("degree", "radian",
@@ -291,6 +243,8 @@ rose.fv <- function(x, ...,
   return(invisible(result))
 }
 
+### ................. internal graphical functions ..................................
+
 roseContinuous <- function(ang, rad, unit, ...,
                            fullcircle=NULL,
                            start=NULL, clockwise=NULL,
@@ -383,55 +337,6 @@ roseContinuous <- function(ang, rad, unit, ...,
   return(invisible(result))
 }
 
-ang2rad <- local({
-
-  compasspoints <- c(E=0,N=90,W=180,S=270)
-  
-  ang2rad <- function(ang,
-                      unit=c("degree", "radian", "hour", "minute", "other"),
-                      fullcircle=NULL, start=NULL, clockwise=NULL) {
-    ## Function to convert angular values in 'units' to radians
-    ## validate arguments and resolve defaults
-    unit <- match.arg(unit)
-    a <- resolve.rose.args(unit, fullcircle=fullcircle,
-                           start=start, clockwise=clockwise)
-    fullcircle <- a$fullcircle
-    start      <- a$start
-    clockwise  <- a$clockwise
-    ## adjust 'ang' relative to start position (expressed in 'units')
-    clocksign <- if(clockwise) -1 else 1
-    if(is.character(start)) {
-      if(is.na(match(toupper(start), names(compasspoints))))
-        stop(paste("Unrecognised compass point", sQuote(start)), call.=FALSE)
-      startdegrees <- compasspoints[[start]]
-      start <- switch(unit,
-                      degree = startdegrees,
-                      radian = pi * (startdegrees/180),
-                      hour   = ,
-                      minute = ,
-                      other  = fullcircle * (startdegrees/360))
-      # start is measured anticlockwise
-      ang <- start + clocksign * ang
-    } else {
-      check.1.real(start)
-      # start is measured according to value of 'clockwise'
-      ang <- clocksign * (start + ang)
-    }
-    ## convert 'ang' to radians
-    rad <- switch(unit,
-                  degree = pi * (ang/180),
-                  radian = ang,
-                  hour   =,
-                  minute =,
-                  other  = 2 * pi * (ang/fullcircle))
-    return(rad)
-  }
-
-  ang2rad
-})
-
-### ................. utilities ..................................
-
 circticks <- function(R, at=NULL,
                       unit=c("degree", "radian", "hour", "minute", "other"),
                       fullcircle=NULL,
@@ -512,6 +417,50 @@ circticks <- function(R, at=NULL,
   invisible(NULL)
 }
 
+### ................. utilities ...............................
+
+ang2rad <- function(ang,
+                    unit=c("degree", "radian", "hour", "minute", "other"),
+                    fullcircle=NULL, start=NULL, clockwise=NULL) {
+  ## Function to convert angular values in 'units' to radians
+  ## validate arguments and resolve defaults
+  unit <- match.arg(unit)
+  a <- resolve.rose.args(unit, fullcircle=fullcircle,
+                         start=start, clockwise=clockwise)
+  fullcircle <- a$fullcircle
+  start      <- a$start
+  clockwise  <- a$clockwise
+  ## adjust 'ang' relative to start position (expressed in 'units')
+  clocksign <- if(clockwise) -1 else 1
+  compasspoints <- c(E=0,N=90,W=180,S=270)
+  if(is.character(start)) {
+    if(is.na(match(toupper(start), names(compasspoints))))
+      stop(paste("Unrecognised compass point", sQuote(start)), call.=FALSE)
+    startdegrees <- compasspoints[[start]]
+    start <- switch(unit,
+                    degree = startdegrees,
+                    radian = pi * (startdegrees/180),
+                    hour   = ,
+                    minute = ,
+                    other  = fullcircle * (startdegrees/360))
+    #' start is an angle in 'units', anticlockwise from x-axis
+    ang <- start + clocksign * ang
+  } else {
+    check.1.real(start)
+    #' start is an angle in 'units', clockwise or anticlockwise from x-axis
+    ang <- clocksign * (start + ang)
+  }
+  #' ang is angular position in 'units' anticlockwise from axis
+  #' convert to radians
+  rad <- switch(unit,
+                degree = pi * (ang/180),
+                radian = ang,
+                hour   =,
+                minute =,
+                other  = 2 * pi * (ang/fullcircle))
+  return(rad)
+}
+
 resolve.angular.unit <- function(angles,
                                  unit=c("degree", "radian",
                                         "hour", "minute", "other"),
@@ -576,3 +525,48 @@ resolve.hist.args <- function(x, ..., freq=NULL, probability=NULL) {
                    isFALSE(probability %orifnull% isFALSE(x$equidist)))
   return(list(freq=freq, otherargs=list(...)))
 }
+
+#' determine histogram breakpoints strictly inside specified range
+
+makebreaksinside <- function(x, r, breaks=NULL, nclass=NULL) {
+  use.br <- !is.null(breaks)
+  if (use.br) {
+    if (!is.null(nclass)) 
+      warning("'nclass' is not used when 'breaks' is specified")
+  } else if (!is.null(nclass) && length(nclass) == 1L) {
+    breaks <- nclass
+  } else breaks <- "Sturges"
+  use.br <- use.br && (nB <- length(breaks)) > 1L
+  if (use.br) 
+    breaks <- sort(breaks)
+  else {
+    if (is.character(breaks)) {
+      breaks <- match.arg(tolower(breaks),
+                          c("sturges", 
+                            "fd",
+                            "freedman-diaconis",
+                            "scott"))
+      breaks <- switch(breaks,
+                       sturges = nclass.Sturges(x), 
+                       `freedman-diaconis` = ,
+                       fd = nclass.FD(x),
+                       scott = nclass.scott(x), 
+                       stop("unknown 'breaks' algorithm"))
+    } else if (is.function(breaks)) {
+      breaks <- breaks(x)
+    }
+    if (length(breaks) == 1) {
+      if (!is.numeric(breaks) || !is.finite(breaks) || 
+          breaks < 1L) 
+        stop("invalid number of 'breaks'")
+      breaks <- seq(r[1], r[2], length.out=breaks)
+    } else {
+      if (!is.numeric(breaks) || length(breaks) <= 1) 
+        stop(gettextf("Invalid breakpoints produced by 'breaks(x)': %s", 
+                      format(breaks)), domain = NA)
+      breaks <- sort(breaks)
+    }
+  }
+  return(breaks)
+}
+  

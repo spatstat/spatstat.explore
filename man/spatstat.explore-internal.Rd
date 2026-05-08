@@ -94,6 +94,7 @@
 \alias{make.simulrecipe.ppp}
 \alias{make.simulrecipe.pp3}
 \alias{make.simulrecipe.clusterprocess}
+\alias{makebreaksinside}
 \alias{makefvlabel}
 \alias{makeRocDesc}
 \alias{makeRocFlabel}
@@ -331,9 +332,9 @@ findcbind(root, depth, maxdepth)
 flatfname(x)
 FormatFaspFormulae(f, argname)
 fvexprmap(x)
-fvlabels(x, expand=FALSE)
+fvlabels(x, expand)
 fvlabels(x) <- value
-fvlabelmap(x, dot=TRUE)
+fvlabelmap(x, dot)
 fvlegend(object, elang)
 g3engine(x, y, z, box, rmax, nrval, correction)
 g3Cengine(x, y, z, box, rmax, nrval)
@@ -365,6 +366,7 @@ make.simulrecipe(object, envir, \dots)
 \method{make.simulrecipe}{ppp}(object, envir, \dots, fix.n, fix.marks)
 \method{make.simulrecipe}{pp3}(object, envir, \dots, fix.n, fix.marks)
 \method{make.simulrecipe}{clusterprocess}(object, envir, \dots, W)
+makebreaksinside(x, r, breaks, nclass)
 makefvlabel(op, accent, fname, sub, argname, pre, post)
 makeRocDesc(desc, leftoneout)
 makeRocFlabel(sub, leftoneout, super, f, argu)
@@ -380,8 +382,8 @@ monotonicRhoFunCalc(x, z, massx, weightz, increasing)
 needROC(\dots)
 nncleanEngine(kthNND, k, d, \dots, tol, maxit,
               plothist, lineargs, verbose, Xname)
-\method{pairs}{listof}(\dots, plot=TRUE)
-\method{pairs}{solist}(\dots, plot=TRUE)
+\method{pairs}{listof}(\dots, plot)
+\method{pairs}{solist}(\dots, plot)
 \method{pcf}{NAobject}(X, \dots)
 pcf3engine(x, y, z, box, rmax, nrval, correction, delta)
 \method{plot}{bw.frac}(x, \dots)
@@ -493,7 +495,7 @@ second.moment.engine(x, sigma, edge, what, \dots,
       obswin, varcov, npts, debug, fastgauss)
 sewpcf(d, w, denargs, lambda2area, divisor,
        zerocor, fast, convert, adaptive, tau, gref, Transform)
-sewsmod(d, ff, wt, Ef, rvals, method="smrep", \dots, nwtsteps=500)
+sewsmod(d, ff, wt, Ef, rvals, method, \dots, nwtsteps)
 \method{shift}{quadrattest}(X, \dots)
 \method{shift}{tolcon}(X, \dots)
 \method{shift}{tolconlist}(X, \dots)
@@ -521,7 +523,7 @@ spatialCovariateEvidence(model, covariate, \dots)
 \method{spatialCovariateEvidence}{ppp}(model, covariate, \dots, lambdatype,
           dimyx, eps, rule.eps, interpolate, jitter, jitterfactor,
           modelname, covname, dataname, subset, clip.predict, raster.action)
-sphere.volume(range, nval = 10)
+sphere.volume(range, nval)
 \method{summary}{bw.optim}(object, \dots)
 \method{summary}{envelope}(object,\dots)
 tweak.fv.entry(x, current.tag, new.labl, new.desc, new.tag)
