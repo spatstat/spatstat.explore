@@ -1,7 +1,7 @@
 #
 #           Kmeasure.R
 #
-#           $Revision: 1.76 $    $Date: 2025/09/22 01:38:02 $
+#           $Revision: 1.78 $    $Date: 2026/05/16 05:59:48 $
 #
 #     Kmeasure()         compute an estimate of the second order moment measure
 #
@@ -64,8 +64,7 @@ second.moment.calc <- function(x, sigma=NULL, edge=TRUE,
                     ppp = 1,
                     im = 1,
                     imlist = length(x))
-
-  win <- if(nimages == 1) as.owin(x) else as.owin(x[[1]])
+  win <- as.owin(if(nimages == 1) x else x[[1]])
   win <- rescue.rectangle(win)
   rec <- as.rectangle(win)
   across <- min(diff(rec$xrange), diff(rec$yrange))
@@ -82,16 +81,19 @@ second.moment.calc <- function(x, sigma=NULL, edge=TRUE,
   bigger <- grow.rectangle(rec, wid)
   switch(xtype,
          ppp = {
-           # pixellate first (to preserve pixel resolution)
+           #' pixellate first (to preserve pixel resolution)
            X <- pixellate(x, ..., padzero=TRUE)
+           Xwin <- Window(X)
            np <- npoints(x)
          },
          im = {
            X <- x
+           Xwin <- Window(x)
            np <- NULL
          },
          imlist = {
            X <- x
+           Xwin <- Window(x[[1]])
            np <- NULL
          })
 
@@ -115,35 +117,35 @@ second.moment.calc <- function(x, sigma=NULL, edge=TRUE,
   if(nimages == 1) {
     result <- switch(what,
                      kernel   = out[fbox],
-                     smooth   = out[win],
+                     smooth   = out[Xwin],
                      Kmeasure = out[fbox],
                      Bartlett = out[fbox],
-                     edge     = out[win],
-                     smoothedge = list(smooth=out$smooth[win],
-                       edge  =out$edge[win]),
+                     edge     = out[Xwin],
+                     smoothedge = list(smooth=out$smooth[Xwin],
+                       edge  =out$edge[Xwin]),
                      all      =
                      list(kernel=out$kernel[fbox],
-                          smooth=out$smooth[win],
+                          smooth=out$smooth[Xwin],
                           Kmeasure=out$Kmeasure[fbox],
                           Bartlett=out$Bartlett[fbox],
-                          edge=out$edge[win]))
+                          edge=out$edge[Xwin]))
   } else {
     result <-
       switch(what,
              kernel     = out[fbox], 
-             smooth     = lapply(out, "[", i=win),
+             smooth     = lapply(out, "[", i=Xwin),
              Kmeasure   = lapply(out, "[", i=fbox),
              Bartlett   = lapply(out, "[", i=fbox),
-             edge       = out[win],
+             edge       = out[Xwin],
              smoothedge = list(
-               smooth = lapply(out$smooth, "[", i=win),
-               edge   = out$edge[win]),
+               smooth = lapply(out$smooth, "[", i=Xwin),
+               edge   = out$edge[Xwin]),
              all        = list(
                kernel=out$kernel[fbox],
-               smooth=lapply(out$smooth, "[", i=win),
+               smooth=lapply(out$smooth, "[", i=Xwin),
                Kmeasure=lapply(out$Kmeasure, "[", i=fbox),
                Bartlett=lapply(out$Bartlett, "[", i=fbox),
-               edge=out$edge[win]))
+               edge=out$edge[Xwin]))
   }
   return(result)
 }
@@ -434,8 +436,12 @@ second.moment.engine <-
   }
   # edge correction
   if(edge || what %in% c("edge", "all", "smoothedge")) {
-    M <- as.mask(obswin, xy=list(x=X$xcol, y=X$yrow))$m
-    # previous line ensures M has same dimensions and scale as Y 
+    M <- do.call.matched(owin2mask,
+                         resolve.defaults(list(w=obswin,
+                                               xy=list(x=X$xcol, y=X$yrow),
+                                               ...)),
+                         extrargs="xy")$m
+    #' logical matrix M is a mask of the window, on same raster as Y 
     Mpad <- matrix(0, ncol=2*nc, nrow=2*nr)
     Mpad[1:nr, 1:nc] <- M
     lengthMpad <- 4 * nc * nr

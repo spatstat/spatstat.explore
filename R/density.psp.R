@@ -2,7 +2,7 @@
 #
 #  density.psp.R
 #
-#  $Revision: 1.21 $    $Date: 2022/05/21 08:55:03 $
+#  $Revision: 1.22 $    $Date: 2026/05/16 04:11:22 $
 #
 #
 
@@ -25,10 +25,10 @@ density.psp <- function(x, sigma, ..., weights=NULL, edge=TRUE,
   #' determine locations for evaluation of density
   if(is.null(at)) {
     atype <- "window"
-    w <- do.call.matched(as.mask, resolve.defaults(list(w=quote(w), ...)))
+    w <- do.call(owin2mask, resolve.defaults(list(w=quote(w), ...)))
   } else if(is.owin(at)) {
     atype <- "window"
-    w <- do.call.matched(as.mask, resolve.defaults(list(w=quote(at), ...)))
+    w <- do.call(owin2mask, resolve.defaults(list(w=quote(at), ...)))
   } else {  
     atype <- "points"
     atY <- try(as.ppp(at, W=w))

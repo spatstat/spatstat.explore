@@ -19,7 +19,9 @@
     Standard deviation of isotropic Gaussian smoothing kernel.
   }
   \item{\dots}{
-    Extra arguments, including arguments passed to \code{\link[spatstat.geom]{as.mask}}
+    Extra arguments, including arguments passed to
+    \code{\link[spatstat.geom]{as.mask}}
+    and \code{\link[spatstat.geom]{owin2mask}}
     to determine the resolution of the resulting image.
   }
   \item{weights}{
@@ -40,6 +42,17 @@
     should be computed. Either a window (object of class \code{"owin"})
     or a point pattern (object of class \code{"ppp"} or \code{"lpp"}).
   }
+}
+\section{Boundary pixels}{
+  When \code{Window(x)} is a rectangle or a polygonal window,
+  the default behaviour is to represent the window as the set of pixels
+  whose \emph{centres} fall inside the polygon. A pixel which contains
+  part of the interior of the polygon, but whose centre falls outside
+  the polygon, is excluded by default, for the sake of efficiency.
+
+  To ensure that all pixels which intersect the interior of the
+  polygon are included in the pixel image, use the argument
+  \code{op="cover"} which will be passed to \code{owin2mask}.
 }
 \value{
   A pixel image (object of class \code{"im"})
