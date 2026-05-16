@@ -89,9 +89,9 @@ local({
   }
 
   ## check conservation of mass
-  checkconserve <- function(X, xname, sigma, toler=0.01) {
+  checkconserve <- function(X, xname, sigma, toler=0.01, ...) {
     veritas <- npoints(X)
-    vino <- integral(density(X, sigma, diggle=TRUE))
+    vino <- integral(density(X, sigma, diggle=TRUE, ...))
     relerr <- abs(vino - veritas)/veritas
     if(relerr > toler)
       stop(paste("density.ppp(diggle=TRUE) fails to conserve mass:",
@@ -100,11 +100,14 @@ local({
            call.=FALSE)
     return(relerr)
   }
-  if(FULLTEST) {
+  if(ALWAYS) {
     checkconserve(cells, "cells", 0.15)
   }
-  if(ALWAYS) {
-    checkconserve(split(chorley)[["lung"]], "lung", 2)
+  if(FULLTEST) {
+    checkconserve(cells, "cellsCover", 0.15, op="cover")
+    checkconserve(split(chorley)[["lung"]], "chorleyLung", 2)
+    checkconserve(humberside, "humberside", 300)
+    checkconserve(humberside, "humbersideCover", 300, op="cover")
   }
   
   ## run C algorithm 'denspt'
