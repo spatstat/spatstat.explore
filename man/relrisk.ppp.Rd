@@ -300,6 +300,18 @@
   of \code{relrisk.ppp} (in \pkg{spatstat.explore} versions
   \code{3.1-0} and earlier) effectively used \code{wtype="multiplicity"}.
 }
+\section{Boundary pixels}{
+  When \code{Window(x)} is a rectangle or a polygonal window,
+  the default behaviour is to represent the window as the set of pixels
+  whose \emph{centres} fall inside the polygon. A pixel which contains
+  part of the interior of the polygon, but whose centre falls outside
+  the polygon, is excluded by default, for the sake of efficiency.
+
+  To ensure that all pixels which intersect the interior of the
+  polygon are included in the pixel image, use the argument
+  \code{rule.pix="cover"} which will be passed to
+  \code{\link[spatstat.geom]{owin2mask}}.
+}
 \seealso{
   There is another method \code{\link[spatstat.model]{relrisk.ppm}} for point process
   models which computes \emph{parametric}

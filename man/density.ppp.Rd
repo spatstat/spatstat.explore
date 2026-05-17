@@ -370,6 +370,18 @@
   probability map or relative risk surface (the spatially-varying
   probability of a given type), use \code{\link{relrisk}}.
 }
+\section{Boundary pixels}{
+  When \code{Window(x)} is a rectangle or a polygonal window,
+  the default behaviour is to represent the window as the set of pixels
+  whose \emph{centres} fall inside the polygon. A pixel which contains
+  part of the interior of the polygon, but whose centre falls outside
+  the polygon, is excluded by default, for the sake of efficiency.
+
+  To ensure that all pixels which intersect the interior of the
+  polygon are included in the pixel image, use the argument
+  \code{rule.pix="cover"} which will be passed to
+  \code{\link[spatstat.geom]{owin2mask}}.
+}
 \section{Technical issue: Negative Values}{
   Negative and zero values of the density estimate are possible
   when \code{at="pixels"} because of numerical errors in finite-precision
@@ -425,10 +437,15 @@
   plot(density(cells, sigma=0.4, kernel="epanechnikov"))
 
   if(interactive()) {
-    # see effect of changing pixel resolution
     opa <- par(mfrow=c(1,2))
+    # see effect of changing pixel resolution
     plot(density(cells, sigma=0.4))
     plot(density(cells, sigma=0.4, eps=0.05))
+    # see effect of pixel inclusion rule
+    plot(density(humberside,                   sigma=200, dimyx=32))
+    plot(Window(humberside), add=TRUE)
+    plot(density(humberside, rule.pix="cover", sigma=200, dimyx=32))
+    plot(Window(humberside), add=TRUE)
     par(opa)
   }
 

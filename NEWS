@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.8-0.021
+        CHANGES IN spatstat.explore VERSION 3.8-0.022
 
 OVERVIEW
 
@@ -36,13 +36,13 @@ SIGNIFICANT USER-VISIBLE CHANGES
     However 'adjust' is still accepted.
 
     o density.ppp, density.psp
-    These methods now accept the argument 'op' which is passed to 'owin2mask'.
+    These methods now accept the argument 'rule.pix' passed to 'owin2mask'.
     This makes it possible to ensure that boundary pixels which partially
     intersect the window are included in the resulting pixel image,
     by setting op="cover".
 
     o relrisk.ppp
-    Now accepts the argument 'op' which is passed to 'owin2mask'.
+    Now accepts the argument 'rule.pix' which is passed to 'owin2mask'.
     This makes it possible to ensure that boundary pixels which partially
     intersect the window are included in the resulting pixel image,
     by setting op="cover".
