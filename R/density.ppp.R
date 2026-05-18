@@ -3,7 +3,7 @@
 #'
 #'  Method for 'density' for point patterns
 #'
-#'  $Revision: 1.138 $    $Date: 2026/05/16 09:28:06 $
+#'  $Revision: 1.139 $    $Date: 2026/05/18 05:18:22 $
 #'
 
 density.ppp <- local({
@@ -181,9 +181,9 @@ density.ppp <- function(x, sigma=NULL, ...,
   }
 
   #' clip to appropriate window
-  op <- list(...)$op
-  result <- if(is.im(smo)) smo[x$window, drop=FALSE, op=op]
-            else solapply(smo, "[", i=x$window, drop=FALSE, op=op)
+  rule.pix <- list(...)$rule.pix
+  result <- if(is.im(smo)) smo[x$window, drop=FALSE, rule.pix=rule.pix]
+            else solapply(smo, "[", i=x$window, drop=FALSE, rule.pix=rule.pix)
 
   # internal use only
   spill <- resolve.1.default(list(spill=FALSE), list(...))
