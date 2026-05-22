@@ -1,13 +1,15 @@
 
-        CHANGES IN spatstat.explore VERSION 3.8-0.023
+        CHANGES IN spatstat.explore VERSION 3.8-0.024
 
 OVERVIEW
 
     o We thank Mario D'Antuono and Hamid Ghorbani for contributions.
 
+    o Reverted to previous default choice of estimator in pair correlation.
+    
     o Changed rule for converting bandwidths in pair correlation.
 
-    o Improved handling of boundary pixels in density() and relrisk()
+    o Improved handling of boundary pixels in density(), relrisk(), Smooth()
     
     o Improvements to rose diagrams.
 
@@ -28,6 +30,13 @@ SIGNIFICANT USER-VISIBLE CHANGES
     o pair correlation functions
     (pcf.ppp, pcfinhom, pcfcross, pcfdot, pcfmulti,
     pcfcross.inhom, pcfdot.inhom, pcfmulti.inhom)
+    The default value of 'divisor' has been changed to "r"
+    (reverting to the behaviour in spatstat.explore 3.7-0 and earlier)
+    until some technical problems are resolved.
+
+    o pair correlation functions
+    (pcf.ppp, pcfinhom, pcfcross, pcfdot, pcfmulti,
+    pcfcross.inhom, pcfdot.inhom, pcfmulti.inhom)
     The rule for converting bandwidth 'bw' from the distance scale to the
     area scale (when divisor="a") has changed.
 
@@ -35,18 +44,12 @@ SIGNIFICANT USER-VISIBLE CHANGES
     Argument 'adjust' has been renamed 'adjust.bw' to avoid confusion.
     However 'adjust' is still accepted.
 
-    o density.ppp, density.psp
+    o density.ppp, density.psp, relrisk.ppp, Smooth.ppp
     These methods now accept the argument 'rule.pix' passed to 'owin2mask'.
     This makes it possible to ensure that boundary pixels which partially
     intersect the window are included in the resulting pixel image,
     by setting op="cover".
 
-    o relrisk.ppp
-    Now accepts the argument 'rule.pix' which is passed to 'owin2mask'.
-    This makes it possible to ensure that boundary pixels which partially
-    intersect the window are included in the resulting pixel image,
-    by setting op="cover".
-    
     o rose.default, rose.histogram, rose.density, rose.fv, circdensity
     Rose diagrams can now be computed and plotted for data
     expressed in any units with any period (such as hours in a 24-hour day).

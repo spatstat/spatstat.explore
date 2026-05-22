@@ -5,7 +5,7 @@
 #'
 #' Copyright (c) 2008-2025 Adrian Baddeley, Tilman Davies and Martin Hazelton
 #'
-#' $Revision: 1.39 $ $Date: 2026/05/08 07:23:43 $
+#' $Revision: 1.40 $ $Date: 2026/05/22 02:08:21 $
 
 pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL, 
                      adaptive=FALSE,
@@ -15,7 +15,7 @@ pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL,
                      adjust.bw = adjust,
                      adjust = 1,
                      correction=c("translate", "Ripley"),
-                     divisor=c("a", "r", "d", "t"),
+                     divisor=c("r", "d", "a", "t"),
                      zerocor=c("convolution", "reflection", "bdrykern",
                                "JonesFoster", "weighted", "none",
                                "good", "best"),
@@ -47,13 +47,13 @@ pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL,
   if(!divisor.given || !zerocor.given) 
     warn.once("pcfinhomDefaults",
               paste("Default settings for pcfinhom",
-                    "have changed in spatstat.explore 3.7-0.007"))
+                    "have changed in spatstat.explore 3.8-1"))
 
   if(divisor.given) {
     if(is.function(divisor)) divisor <- divisor(X)
     divisor <- match.arg(divisor)
   } else {
-    divisor <- "a"
+    divisor <- "r"
   }
 
   if(zerocor.given) {

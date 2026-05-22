@@ -3,7 +3,7 @@
 #'
 #' Calculate pair correlation function from point pattern (pcf.ppp)
 #' 
-#' $Revision: 1.99 $ $Date: 2026/05/03 09:48:37 $
+#' $Revision: 1.100 $ $Date: 2026/05/22 02:06:34 $
 #'
 #' Copyright (c) 2008-2026 Adrian Baddeley, Tilman Davies and Martin Hazelton
 
@@ -21,7 +21,7 @@ pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
                    stoyan=0.15,
                    adjust = 1,
                    correction=c("translate", "Ripley"),
-                   divisor=c("a", "r", "d", "t"),
+                   divisor=c("r", "d", "a", "t"),
                    zerocor=c("convolution", "reflection", "bdrykern",
                              "JonesFoster", "weighted", "none", "good", "best"),
                    nsmall = 300,
@@ -50,7 +50,7 @@ pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
   if(missing(divisor) || missing(zerocor))
     warn.once("pcfDefaults",
               "default settings have changed for pcf.ppp",
-              "in spatstat.explore >= 3.8-0.015")
+              "in spatstat.explore >= 3.8-1")
 
   if(is.function(divisor)) divisor <- divisor(X)
   divisor <- match.arg(divisor)
@@ -399,7 +399,7 @@ resolve.pcf.bandwidth <- function(X, ...,
                                   bw=NULL, h=NULL, bw.args=list(),
                                   stoyan=0.15, adjust=1,
                                   correction=c("translate", "Ripley"),
-                                  divisor=c("a", "r", "d", "t"),
+                                  divisor=c("r", "d", "a", "t"),
                                   zerocor=c("convolution", "reflection",
                                             "bdrykern", "JonesFoster",
                                             "weighted", "none",

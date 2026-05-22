@@ -1,7 +1,7 @@
 #
 #   pcfmulti.R
 #
-#   $Revision: 1.21 $   $Date: 2026/05/08 06:47:28 $
+#   $Revision: 1.22 $   $Date: 2026/05/22 02:08:57 $
 #
 #   multitype pair correlation functions
 #
@@ -75,7 +75,7 @@ pcfmulti <- function(X, I, J, ...,
                      kernel="epanechnikov", bw=NULL, h=NULL,
                      bw.args=list(), stoyan=0.15, adjust=1,
                      correction=c("translate", "Ripley"),
-                     divisor=c("a", "r", "d", "t"),
+                     divisor=c("r", "d", "a", "t"),
                      zerocor=c("convolution", "reflection", "bdrykern",
                                "JonesFoster", "weighted", "none",
                                "good", "best"),
@@ -109,7 +109,7 @@ pcfmulti <- function(X, I, J, ...,
     if(is.function(divisor)) divisor <- divisor(X)
     divisor <- match.arg(divisor)
   } else {
-    divisor <- "a"
+    divisor <- "r"
   }
 
   if(zerocor.given) {

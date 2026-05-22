@@ -1,7 +1,7 @@
 #
 #   pcfmulti.inhom.R
 #
-#   $Revision: 1.31 $   $Date: 2026/05/08 07:30:39 $
+#   $Revision: 1.32 $   $Date: 2026/05/22 02:09:30 $
 #
 #   inhomogeneous multitype pair correlation functions
 #
@@ -87,7 +87,7 @@ pcfmulti.inhom <- function(X, I, J, lambdaI=NULL, lambdaJ=NULL, ...,
                            bw=NULL, h=NULL, bw.args=list(),
                            stoyan=0.15, adjust.bw=adjust, adjust=1,
                            correction=c("translate", "Ripley"),
-                           divisor=c("a", "r", "d", "t"),
+                           divisor=c("r", "d", "a", "t"),
                            zerocor=c("convolution", "reflection", "bdrykern",
                                      "JonesFoster", "weighted", "none",
                                      "good", "best"),
@@ -122,7 +122,7 @@ pcfmulti.inhom <- function(X, I, J, lambdaI=NULL, lambdaJ=NULL, ...,
     if(is.function(divisor)) divisor <- divisor(X)
     divisor <- match.arg(divisor)
   } else {
-    divisor <- "a"
+    divisor <- "r"
   }
 
   if(zerocor.given) {

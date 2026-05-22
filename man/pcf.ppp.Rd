@@ -11,7 +11,7 @@
                     kernel="epanechnikov", bw=NULL, h=NULL,
                     bw.args=list(), stoyan=0.15, adjust=1, 
                     correction=c("translate", "Ripley"),
-                    divisor=c("a", "r", "d", "t"),
+                    divisor=c("r", "d", "a", "t"),
                     zerocor=c("convolution", "reflection", "bdrykern",
                              "JonesFoster", "weighted", "none", "good", "best"),
                     nsmall = 300,
