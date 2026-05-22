@@ -38,8 +38,10 @@ markvar(X, sigma=NULL, ..., weights=NULL, varcov=NULL)
   \item{\dots}{
     Further arguments passed to
     \code{\link{bw.smoothppp}} and \code{\link{density.ppp}}
-    to control the kernel smoothing and
-    the pixel resolution of the result.
+    to control the kernel smoothing, and arguments
+    passed to \code{\link[spatstat.geom]{as.mask}} and
+    \code{\link[spatstat.geom]{owin2mask}}
+    to control the pixel resolution of the result.
   }
   \item{weights}{
     Optional weights attached to the observations.
@@ -184,6 +186,18 @@ markvar(X, sigma=NULL, ..., weights=NULL, varcov=NULL)
   by taking the average mark. This is
   unless \code{at="points"} and \code{leaveoneout=FALSE},
   when the original mark values are returned.
+}
+\section{Boundary pixels}{
+  When \code{Window(X)} is a rectangle or a polygonal window,
+  the default behaviour is to represent the window as the set of pixels
+  whose \emph{centres} fall inside the polygon. A pixel which contains
+  part of the interior of the polygon, but whose centre falls outside
+  the polygon, is excluded by default, for the sake of efficiency.
+
+  To ensure that all pixels which intersect the interior of the
+  polygon are included in the pixel image, use the argument
+  \code{rule.pix="cover"} which will be passed to
+  \code{\link[spatstat.geom]{owin2mask}}.
 }
 \value{
   \emph{If \code{X} has a single column of marks:}
