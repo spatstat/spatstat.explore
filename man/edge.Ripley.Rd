@@ -34,7 +34,7 @@ rmax.Ripley(W)
   }
   \item{bdistX}{
     Optional. Numeric vector containing the pre-computed values of
-    \code{\link{bdist.points}(X)}, for computational efficiency.
+    distance to boundary, \code{\link[spatstat.geom]{bdist.points}(X)}, for computational efficiency.
   }
   \item{internal}{For developer use only.}
 }
@@ -72,7 +72,7 @@ rmax.Ripley(W)
   then the result is a matrix whose \code{i,j} entry gives the
   edge correction weight \code{e(X[i], r[i,j])}.
   For example \code{edge.Ripley(X, pairdist(X))} computes all the
-  edge corrections required for the \eqn{K}-function.
+  edge correction terms required for the \eqn{K}-function.
 
   If any value of the edge correction weight exceeds \code{maxwt},
   it is set to \code{maxwt}.
@@ -80,7 +80,8 @@ rmax.Ripley(W)
   The function \code{rmax.Ripley} computes the smallest distance \eqn{r}
   such that it is possible to draw a circle of radius \eqn{r}, centred
   at a point of \code{W}, such that the circle does not intersect the
-  interior of \code{W}. 
+  interior of \code{W}. This is the maximum value of \eqn{r} for which
+  Ripley's isotropic correction is valid.
 }
 \value{
   A numeric vector or matrix.
@@ -94,7 +95,8 @@ rmax.Ripley(W)
 \seealso{
   \code{\link{edge.Trans}},
   \code{\link{rmax.Trans}},
-  \code{\link{Kest}}
+  \code{\link{Kest}},
+  \code{\link[spatstat.geom]{bdist.points}}
 }
 \examples{
   v <- edge.Ripley(cells, pairdist(cells))

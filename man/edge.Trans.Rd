@@ -112,7 +112,8 @@ rmax.Trans(W, g=setcov(W))
   such that the vector difference between \code{X[i]} and \code{Y[j]} is
   \code{c(dx[i,j], dy[i,j])}. The argument \code{W} is needed.
 
-  The value of \code{rmax.Trans} is the shortest distance from the
+  The value of \code{rmax.Trans} is the largest value of \eqn{r} for
+  which the translation correction is valid. It is defined as the shortest distance from the
   origin \eqn{(0,0)} to the boundary of the support of
   the set covariance function of \code{W}. It is computed by pixel
   approximation using \code{\link[spatstat.geom]{setcov}}, unless \code{W} is a
