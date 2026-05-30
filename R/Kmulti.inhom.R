@@ -1,7 +1,7 @@
 #
 #	Kmulti.inhom.S		
 #
-#	$Revision: 1.59 $	$Date: 2026/05/01 02:29:02 $
+#	$Revision: 1.61 $	$Date: 2026/05/30 08:33:17 $
 #
 #
 # ------------------------------------------------------------------------
@@ -154,10 +154,12 @@ function(X, I, J, lambdaI=NULL, lambdaJ=NULL,
          lambdaIJ=NULL,
          sigma=NULL, varcov=NULL,
          lambdaX=NULL, update=TRUE, leaveoneout=TRUE,
-         Ilevels=NULL, Jlevels=NULL)
+         Ilevels=NULL, Jlevels=NULL, ratio=FALSE)
 {
   verifyclass(X, "ppp")
   if(is.NAobject(X)) return(NAobject("fv"))
+
+  ratio <- isTRUE(ratio)
 
   dflt <- list(Iname="points satisfying condition I",
                Jname="points satisfying condition J",
@@ -208,6 +210,9 @@ function(X, I, J, lambdaI=NULL, lambdaJ=NULL,
   if(nI == 0) stop(paste("There are no", Iname))
   if(nJ == 0) stop(paste("There are no", Jname))
 
+  nIJ <- sum(I & J)
+  samplesize <- npairs <- nI * nJ - nIJ
+  
   ## r values 
   rmaxdefault <- rmax %orifnull% rmax.rule("K", W, nJ/areaW)
   breaks <- handle.r.b.args(r, breaks, W, rmaxdefault=rmaxdefault)
@@ -251,12 +256,17 @@ function(X, I, J, lambdaI=NULL, lambdaJ=NULL,
   K <- data.frame(r=r, theo= pi * r^2)
   desc <- c("distance argument r", "theoretical Poisson %s")
   fname <- c("K", "list(inhom,I,J)")
-  K <- fv(K, "r", quote(K[inhom, I, J](r)),
-          "theo", , alim,
-          c("r", makefvlabel(NULL, NULL, fname, "pois")),
-          desc,
-          fname=fname,
-          yexp=quote(K[list(inhom,I,J)](r)))
+  K <- ratfv(K, NULL,
+             denom = samplesize,
+             argu  = "r",
+             ylab  = quote(K[inhom, I, J](r)),
+             valu  = "theo",
+             alim  = alim,
+             labl  = c("r", makefvlabel(NULL, NULL, fname, "pois")),
+             desc  = desc,
+             fname = fname,
+             yexp  = quote(K[list(inhom,I,J)](r)),
+             ratio = ratio)
 
 # identify close pairs of points
   close <- crosspairs(XI, XJ, max(r), what="ijd")
@@ -296,10 +306,13 @@ function(X, I, J, lambdaI=NULL, lambdaJ=NULL,
     Kun <- cumsum(wh)/areaW
     rmax <- diameter(W)/2
     Kun[r >= rmax] <- NA
-    K <- bind.fv(K, data.frame(un=Kun),
-                 makefvlabel(NULL, "hat", fname, "un"),
-                 "uncorrected estimate of %s",
-                 "un")
+    K <- bind.ratfv(K,
+                    quotient    = data.frame(un=Kun),
+                    denominator = samplesize,
+                    labl        = makefvlabel(NULL, "hat", fname, "un"),
+                    desc        = "uncorrected estimate of %s",
+                    preferred   = "un",
+                    ratio       = ratio)
   }
   
   if(any(correction == "border" | correction == "bord.modif")) {
@@ -311,17 +324,23 @@ function(X, I, J, lambdaI=NULL, lambdaJ=NULL,
     RS <- Kwtsum(dclose, bI, weight, b, 1/lambdaI, breaks)
     if(any(correction == "border")) {
       Kb <- RS$ratio
-      K <- bind.fv(K, data.frame(border=Kb),
-                   makefvlabel(NULL, "hat", fname, "bord"),
-                   "border-corrected estimate of %s",
-                   "border")
+      K <- bind.ratfv(K,
+                      quotient    = data.frame(border=Kb),
+                      denominator = samplesize,
+                      labl         = makefvlabel(NULL, "hat", fname, "bord"),
+                      desc        = "border-corrected estimate of %s",
+                      preferred   = "border",
+                      ratio       = ratio)
     }
     if(any(correction == "bord.modif")) {
       Kbm <- RS$numerator/eroded.areas(W, r)
-      K <- bind.fv(K, data.frame(bord.modif=Kbm),
-                   makefvlabel(NULL, "hat", fname, "bordm"),
-                   "modified border-corrected estimate of %s",
-                   "bord.modif")
+      K <- bind.ratfv(K,
+                      quotient    = data.frame(bord.modif=Kbm),
+                      denominator = samplesize,
+                      labl        = makefvlabel(NULL, "hat", fname, "bordm"),
+                      desc        = "modified border-corrected estimate of %s",
+                      preferred   = "bord.modif",
+                      ratio       = ratio)
     }
   }
   if(any(correction == "translate")) {
@@ -332,10 +351,13 @@ function(X, I, J, lambdaI=NULL, lambdaJ=NULL,
     Ktrans <- cumsum(wh)/areaW
     rmax <- diameter(W)/2
     Ktrans[r >= rmax] <- NA
-    K <- bind.fv(K, data.frame(trans=Ktrans),
-                 makefvlabel(NULL, "hat", fname, "trans"),
-                 "translation-corrected estimate of %s",
-                 "trans")
+    K <- bind.ratfv(K,
+                    quotient    = data.frame(trans=Ktrans),
+                    denominator = samplesize,
+                    labl        = makefvlabel(NULL, "hat", fname, "trans"),
+                    desc        = "translation-corrected estimate of %s",
+                    preferred   = "trans",
+                    ratio       = ratio)
   }
   if(any(correction == "isotropic")) {
     ## Ripley isotropic correction
@@ -347,10 +369,13 @@ function(X, I, J, lambdaI=NULL, lambdaJ=NULL,
     Kiso <- cumsum(wh)/areaW
     rmax <- diameter(W)/2
     Kiso[r >= rmax] <- NA
-    K <- bind.fv(K, data.frame(iso=Kiso), 
-                 makefvlabel(NULL, "hat", fname, "iso"),
-                 "Ripley isotropic correction estimate of %s",
-                 "iso")
+    K <- bind.ratfv(K,
+                 quotient    = data.frame(iso=Kiso), 
+                 denominator = samplesize,
+                 labl        = makefvlabel(NULL, "hat", fname, "iso"),
+                 desc        = "Ripley isotropic correction estimate of %s",
+                 preferred   = "iso",
+                 ratio       = ratio)
   }
   ## default is to display them all
   formula(K) <- . ~ r

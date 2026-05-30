@@ -1,7 +1,7 @@
 #
 #   pcfmulti.inhom.R
 #
-#   $Revision: 1.32 $   $Date: 2026/05/22 02:09:30 $
+#   $Revision: 1.33 $   $Date: 2026/05/30 08:24:49 $
 #
 #   inhomogeneous multitype pair correlation functions
 #
@@ -100,10 +100,12 @@ pcfmulti.inhom <- function(X, I, J, lambdaI=NULL, lambdaJ=NULL, ...,
                            Jname="points satisfying condition J",
                            IJexclusive=FALSE,
                            Ilevels=NULL, Jlevels=NULL,
+                           ratio=FALSE,
                            close=NULL,
                            convert.bw=TRUE) {
   verifyclass(X, "ppp")
   if(is.NAobject(X)) return(NAobject("fv"))
+  ratio <- isTRUE(ratio)
   
   win <- X$window
   areaW <- area(win)
@@ -156,7 +158,8 @@ pcfmulti.inhom <- function(X, I, J, lambdaI=NULL, lambdaJ=NULL, ...,
   nIJ <- if(IJexclusive) 0 else sum(I & J)
   npairs <- nI * nJ - nIJ
   IJexclusive <- IJexclusive || (nIJ == 0)
-
+  samplesize <- npairs
+  
   lambdaJbar <- nJ/areaW
   
   ########## intensity values #########################
@@ -231,13 +234,16 @@ pcfmulti.inhom <- function(X, I, J, lambdaI=NULL, lambdaJ=NULL, ...,
   ## initialise fv object
   df <- data.frame(r=r, theo=rep.int(1,length(r)))
   fname <- c("g", "list(inhom,I,J)")
-  out <- fv(df, "r",
-            quote(g[inhom,I,J](r)), "theo", ,
-            alim,
-            c("r", makefvlabel(NULL, NULL, fname, "pois")),            
-            c("distance argument r", "theoretical Poisson %s"),
-            fname=fname,
-            yexp=quote(g[list(inhom,I,J)](r)))
+  out <- ratfv(df, NULL,
+               denom = samplesize,
+               argu  = "r",
+               ylab  = quote(g[inhom,I,J](r)), "theo", ,
+               alim  = alim,
+               labl  = c("r", makefvlabel(NULL, NULL, fname, "pois")),
+               desc  = c("distance argument r", "theoretical Poisson %s"),
+               fname = fname,
+               yexp  = quote(g[list(inhom,I,J)](r)),
+               ratio = ratio)
   
   ## compute I-to-J distances up to 'dmax'
 
@@ -286,11 +292,13 @@ pcfmulti.inhom <- function(X, I, J, lambdaI=NULL, lambdaJ=NULL, ...,
     } else {
       gN <- undefined
     }
-    out <- bind.fv(out,
-                   data.frame(un=gN),
-                   makefvlabel(NULL, "hat", fname, "un"),
-                   "uncorrected estimate of %s",
-                   "un")
+    out <- bind.ratfv(out,
+                      quotient    = data.frame(un=gN),
+                      denominator = samplesize,
+                      labl        = makefvlabel(NULL, "hat", fname, "un"),
+                      desc        = "uncorrected estimate of %s",
+                      preferred   = "un",
+                      ratio       = ratio)
   }
   if(any(correction=="translate")) {
     #' translation correction
@@ -303,11 +311,13 @@ pcfmulti.inhom <- function(X, I, J, lambdaI=NULL, lambdaJ=NULL, ...,
     } else {
       gT <- undefined
     }
-    out <- bind.fv(out,
-                   data.frame(trans=gT),
-                   makefvlabel(NULL, "hat", fname, "Trans"),
-                   "translation-corrected estimate of %s",
-                   "trans")
+    out <- bind.ratfv(out,
+                      quotient    = data.frame(trans=gT),
+                      denominator = samplesize,
+                      labl        = makefvlabel(NULL, "hat", fname, "Trans"),
+                      desc        = "translation-corrected estimate of %s",
+                      preferred   = "trans",
+                      ratio       = ratio)
   }
   if(any(correction=="isotropic")) {
     #' Ripley isotropic correction
@@ -322,11 +332,13 @@ pcfmulti.inhom <- function(X, I, J, lambdaI=NULL, lambdaJ=NULL, ...,
     } else {
       gR <- undefined
     }
-    out <- bind.fv(out,
-                   data.frame(iso=gR),
-                   makefvlabel(NULL, "hat", fname, "Ripley"),
-                   "isotropic-corrected estimate of %s",
-                   "iso")
+    out <- bind.ratfv(out,
+                      quotient    = data.frame(iso=gR),
+                      denominator = samplesize,
+                      labl        = makefvlabel(NULL, "hat", fname, "Ripley"),
+                      desc        = "isotropic-corrected estimate of %s",
+                      preferred   = "iso",
+                      ratio       = ratio)
   }
   
   # which corrections have been computed?

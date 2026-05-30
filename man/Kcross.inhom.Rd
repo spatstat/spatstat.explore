@@ -90,7 +90,7 @@ Kcross.inhom(X, i, j, lambdaI=NULL, lambdaJ=NULL, \dots,
     Alternatively \code{correction="all"} selects all options.
   }
   \item{\dots}{
-    Ignored.
+    Additional arguments passed to \code{\link[spatstat.explore]{Kmulti.inhom}}.
   }
   \item{sigma}{
     Standard deviation of isotropic Gaussian smoothing kernel,

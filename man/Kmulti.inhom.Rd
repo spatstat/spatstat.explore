@@ -18,7 +18,8 @@
           lambdaIJ=NULL,
           sigma=NULL, varcov=NULL,
           lambdaX=NULL, update=TRUE, leaveoneout=TRUE,
-          Ilevels=NULL, Jlevels=NULL)
+          Ilevels=NULL, Jlevels=NULL,
+          ratio=FALSE)
 }
 \arguments{
   \item{X}{The observed point pattern, 
@@ -137,6 +138,12 @@
     which comprise the subset \code{J}.
     Required when \code{lambdaX} is given
     or when \code{lambdaJ} is a multitype point process model.
+  }
+  \item{ratio}{
+    Logical. 
+    If \code{TRUE}, the numerator and denominator of
+    each edge-corrected estimate will also be saved,
+    for use in analysing replicated point patterns.
   }
 }
 \value{

@@ -26,6 +26,7 @@ pcfmulti.inhom(X, I, J, lambdaI = NULL, lambdaJ = NULL, \dots,
                Iname = "points satisfying condition I",
                Jname = "points satisfying condition J",
                IJexclusive = FALSE, Ilevels=NULL, Jlevels=NULL,
+               ratio = FALSE, 
                close = NULL, convert.bw=TRUE)
 }
 \arguments{
@@ -219,6 +220,12 @@ pcfmulti.inhom(X, I, J, lambdaI = NULL, lambdaJ = NULL, \dots,
     comprise the subset \code{J}.
     Required when \code{lambdaX} is given
     or when \code{lambdaJ} is a multitype point process model.
+  }
+  \item{ratio}{
+    Logical. 
+    If \code{TRUE}, the numerator and denominator of
+    each edge-corrected estimate will also be saved,
+    for use in analysing replicated point patterns.
   }
   \item{close}{
     Advanced use only.

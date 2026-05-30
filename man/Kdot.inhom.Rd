@@ -61,7 +61,7 @@ Kdot.inhom(X, i, lambdaI=NULL, lambdadot=NULL, \dots,
     can be evaluated to give the intensity value at any location.
   }
   \item{\dots}{
-    Ignored.
+    Additional arguments passed to \code{\link[spatstat.explore]{Kmulti.inhom}}.
   }
   \item{r}{
       Optional. Numeric vector giving the values of the argument \eqn{r}
