@@ -17,7 +17,7 @@ cat(paste("--------- Executing",
 #'
 #'     Tests of 3D code 
 #'
-#'      $Revision: 1.8 $ $Date: 2020/05/02 01:32:58 $
+#'      $Revision: 1.9 $ $Date: 2026/05/30 02:52:11 $
 #'
 
 local({
@@ -39,11 +39,15 @@ local({
     h <- has.close(X, 0.2, Y=Y, periodic=TRUE)
     #' code blocks not otherwise reached
     rmax <- 0.6 * max(nndist(X))
+    dmax <- 0.7
     g <- G3est(X, rmax=rmax, correction="rs")
     g <- G3est(X, rmax=rmax, correction="km")
     g <- G3est(X, rmax=rmax, correction="Hanisch")
-    g <- G3est(X, rmax=rmax, sphere="ideal")
-    g <- G3est(X, rmax=rmax, sphere="digital")
+    f <- F3est(X, rmax=dmax, correction="km")
+    f <- F3est(X, rmax=dmax, correction="cs")
+    f <- F3est(X, rmax=dmax, sphere="ideal")
+    f <- F3est(X, rmax=dmax, sphere="digital")
+    f <- F3est(X, rmax=dmax, nrval=32, vside=0.1)
     v <- sphere.volume()
     v <- digital.volume()
     #' older code
