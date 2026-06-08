@@ -1,9 +1,11 @@
 
-        CHANGES IN spatstat.explore VERSION 3.8-1.001
+        CHANGES IN spatstat.explore VERSION 3.8-1.002
 
 OVERVIEW
 
-    o Minor improvements.
+    o We thank Lindsay Clark for contributions.
+    
+    o Minor improvements and bug fixes.
 
 SIGNIFICANT USER-VISIBLE CHANGES
 
@@ -17,6 +19,12 @@ SIGNIFICANT USER-VISIBLE CHANGES
     If 'ratio=TRUE', the numerator and denominator of each estimate
     are saved, for use in analysing replicated point patterns.
 
+BUG FIXES
+
+    o pcfinhom
+    The result was incorrectly labelled (in the internal function labels)
+    as if it were the result of 'pcf' rather than 'pcfinhom'.
+    Fixed.
 
 
         CHANGES IN spatstat.explore VERSION 3.8-1

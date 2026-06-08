@@ -5,7 +5,7 @@
 #'
 #' Copyright (c) 2008-2025 Adrian Baddeley, Tilman Davies and Martin Hazelton
 #'
-#' $Revision: 1.40 $ $Date: 2026/05/22 02:08:21 $
+#' $Revision: 1.41 $ $Date: 2026/06/08 00:58:22 $
 
 pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL, 
                      adaptive=FALSE,
@@ -117,15 +117,20 @@ pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL,
                 ...)
     if(!ratio) {
       ## relabel
-      g <- rebadge.fv(g, quote(g(r)), "g")
+      g <- rebadge.fv(g, quote(g[inhom](r)), c("g", "inhom"))
     } else {
       ## construct ratfv object
       ninside <- sum(indom)
       samplesize <- ninside * (npts-1)
       g <- ratfv(as.data.frame(g), NULL, samplesize,
-                 "r", quote(g(r)),
-                 "theo", NULL, c(0, max(g$r)), 
-                 attr(g, "labl"), attr(g, "desc"), fname="g",
+                 argu="r",
+                 ylab=quote(g[inhom](r)),
+                 valu="theo",
+                 fmla=NULL,
+                 alim=c(0, max(g$r)), 
+                 labl=attr(g, "labl"),
+                 desc=attr(g, "desc"),
+                 fname=c("g", "inhom"),
                  ratio=TRUE)
     }
     unitname(g) <- unitname(X)
@@ -228,14 +233,15 @@ pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL,
   # initialise fv object
   
   df <- data.frame(r=r, theo=rep.int(1,length(r)))
-  out <- ratfv(df,
-               NULL, samplesize,
-               "r", quote(g(r)),
-               "theo", NULL,
-               alim,
-               c("r","%s[Pois](r)"),
-               c("distance argument r", "theoretical Poisson %s"),
-               fname="g",
+  out <- ratfv(df, NULL, samplesize,
+               argu="r",
+               ylab=quote(g[inhom](r)),
+               valu="theo",
+               fmla=NULL,
+               alim=alim,
+               labl=c("r", "{%s[%s]^{pois}}(r)"),
+               desc=c("distance argument r", "theoretical Poisson %s"),
+               fname=c("g", "inhom"),
                ratio=ratio)
 
   ###### compute #######
@@ -261,7 +267,7 @@ pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL,
     out <- bind.ratfv(out,
                       quotient=data.frame(un=gN),
                       denominator=samplesize,
-                      labl="hat(%s)[un](r)",
+                      labl = "{hat(%s)[%s]^{un}}(r)",
                       desc="uncorrected estimate of %s",
                       preferred="un",
                       ratio=ratio)
@@ -287,7 +293,7 @@ pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL,
     out <- bind.ratfv(out,
                       quotient=data.frame(trans=gT),
                       denominator=samplesize,
-                      labl="hat(%s)[Trans](r)",
+                      labl = "{hat(%s)[%s]^{Trans}}(r)",
                       desc="translation-corrected estimate of %s",
                       preferred="trans",
                       ratio=ratio)
@@ -315,7 +321,7 @@ pcfinhom <- function(X, lambda=NULL, ..., r=NULL, rmax=NULL,
     out <- bind.ratfv(out,
                       quotient=data.frame(iso=gR),
                       denominator=samplesize,
-                      labl="hat(%s)[Ripley](r)",
+                      labl = "{hat(%s)[%s]^{Ripley}}(r)",
                       desc="isotropic-corrected estimate of %s",
                       preferred="iso",
                       ratio=ratio)
