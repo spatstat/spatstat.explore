@@ -271,7 +271,7 @@
                valu="theo",
 	       fmla=NULL,
 	       alim=alim,
-	       labl=c("r","{%s[%s]^{pois}}(r)"),
+	       labl=c("r", "{%s[%s]^{pois}}(r)"),
 	       desc=desc,
                fname=c("K", "inhom"),
 	       ratio=ratio)

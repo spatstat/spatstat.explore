@@ -1,7 +1,7 @@
 #'
 #'  rhohat.R
 #'
-#'  $Revision: 1.117 $  $Date: 2026/01/21 06:26:39 $
+#'  $Revision: 1.119 $  $Date: 2026/06/16 07:15:53 $
 #'
 #'  Non-parametric estimation of a function rho(z) determining
 #'  the intensity function lambda(u) of a point process in terms of a
@@ -31,7 +31,8 @@ rhohat.ppp <- rhohat.quad <-
            dimyx=NULL, eps=NULL,
            rule.eps = c("adjust.eps", "grow.frame", "shrink.frame"), 
            n=512, bw="nrd0", adjust=1, from=NULL, to=NULL, 
-           bwref=bw, covname, confidence=0.95, positiveCI, breaks=NULL) {
+           bwref=bw, covname, confidence=0.95, positiveCI,
+           breaks=NULL, delta=NULL) {
   callstring <- short.deparse(sys.call())
   smoother <- match.arg(smoother)
   method <- match.arg(method)
@@ -102,7 +103,7 @@ rhohat.ppp <- rhohat.quad <-
                bwref=bwref, covname=covname, covunits=covunits,
                confidence=confidence,
                positiveCI=positiveCI,
-               breaks=breaks,
+               breaks=breaks, delta=delta,
                modelcall=modelcall, callstring=callstring)
   }
 
@@ -127,7 +128,7 @@ rhohatEngine <- function(model, covariate,
                          spatCovarArgs=list(),
                          n=512, bw="nrd0", adjust=1, from=NULL, to=NULL, 
                          bwref=bw, covname, covunits=NULL, confidence=0.95,
-                         breaks=NULL,
+                         breaks=NULL, delta=NULL,
                          modelcall=NULL, callstring="rhohat") {
   reference <- match.arg(reference)
   #' evaluate the covariate at data points and at pixels
@@ -177,7 +178,7 @@ rhohatEngine <- function(model, covariate,
                        smoother=smoother,
                        n=n, bw=bw, adjust=adjust, from=from, to=to,
                        bwref=bwref, covname=covname, confidence=confidence,
-                       breaks=breaks,
+                       breaks=breaks, delta=delta,
                        covunits=covunits,
                        modelcall=modelcall, callstring=callstring,
                        savestuff=savestuff)
@@ -288,7 +289,7 @@ rhohatCalc <- local({
                          do.CI=TRUE,
                          n=512, bw="nrd0", adjust=1, from=NULL, to=NULL, 
                          bwref=bw, covname, confidence=0.95,
-                         breaks=NULL,
+                         breaks=NULL, delta=NULL,
                          positiveCI=(smoother == "local"),
                          markovCI=TRUE,
                          covunits = NULL, modelcall=NULL, callstring=NULL,
@@ -601,11 +602,23 @@ rhohatCalc <- local({
     },
     piecewise = {
       ## .................. piecewise constant ............
-      if(is.null(breaks)) {
-        breaks <- pretty(c(from, to))
-      } else {
+      got.breaks <- (length(breaks) > 0)
+      got.delta <- (length(delta) > 0)
+      if(got.breaks && got.delta) {
+        warning(paste("Arguments 'breaks' and 'delta' are incompatible;",
+                      "ignoring 'delta'"),
+                call.=FALSE)
+      }
+      if(got.breaks) {
         stopifnot(is.numeric(breaks))
         breaks <- exactCutBreaks(c(from, to), breaks)
+      } else if(got.delta) {
+        check.1.real(delta)
+        stopifnot(delta > 0)
+        breaks <- seq(from=from, to=to, by=delta)
+        if(max(breaks) < to) breaks <- c(breaks, to)
+      } else {
+        breaks <- pretty(c(from, to))
       }
       if(method != "ratio") {
         warning(paste("Argument method =", sQuote(method),

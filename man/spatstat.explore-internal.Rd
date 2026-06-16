@@ -454,13 +454,13 @@ rhohatEngine(model, covariate, reference, volume, \dots,
                resolution, spatCovarArgs,
                n, bw, adjust, from, to, 
                bwref, covname, covunits, confidence,
-               breaks,
+               breaks, delta,
                modelcall, callstring)
 rhohatCalc(ZX, Zvalues, lambda, denom, \dots,
            weights, lambdaX,
            method, horvitz, smoother, do.CI, 
            n, bw, adjust, from, to, 
-           bwref, covname, confidence, breaks, positiveCI, markovCI,
+           bwref, covname, confidence, breaks, delta, positiveCI, markovCI,
            covunits, modelcall, callstring, savestuff)
 rmax.Rigid(X, g)
 rmax.rule(fun, W, lambda)

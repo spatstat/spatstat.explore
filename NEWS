@@ -1,5 +1,5 @@
 
-        CHANGES IN spatstat.explore VERSION 3.8-1.002
+        CHANGES IN spatstat.explore VERSION 3.8-1.003
 
 OVERVIEW
 
@@ -9,6 +9,10 @@ OVERVIEW
 
 SIGNIFICANT USER-VISIBLE CHANGES
 
+    o rhohat.ppp, rhohat.quad
+    Methods for 'rhohat' now recognise the argument 'delta'
+    as an alternative to argument 'breaks' when smoother="piecewise".
+    
     o pcfcross.inhom, pcfdot.inhom, pcfmulti.inhom
     Now recognise argument 'ratio'.
     If 'ratio=TRUE', the numerator and denominator of each estimate
