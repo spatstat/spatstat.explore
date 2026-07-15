@@ -101,13 +101,19 @@
 
       \tabular{ll}{
 	\code{\link[spatstat.explore]{density.ppp}} \tab
-	kernel estimation of point pattern intensity\cr
+	kernel estimate of point pattern intensity\cr
+	\code{\link[spatstat.explore]{densityAdaptiveKernel.ppp}} \tab
+	adaptive (variable-bandwidth) kernel estimate of point pattern intensity\cr
 	\code{\link[spatstat.explore]{densityHeat.ppp}} \tab
-	diffusion kernel estimation of point pattern intensity\cr
+	diffusion estimate of point pattern intensity\cr
 	\code{\link[spatstat.explore]{Smooth.ppp}} \tab
 	kernel smoothing of marks of point pattern\cr
+	\code{\link[spatstat.explore]{SmoothAdaptiveKernel.ppp}} \tab
+	adaptive kernel smoothing of marks of point pattern\cr
+	\code{\link[spatstat.explore]{SmoothHeat.ppp}} \tab
+	diffusion smoothing of marks of point pattern\cr
 	\code{\link[spatstat.explore]{sharpen.ppp}} \tab
-	data sharpening\cr
+	Choi-Hall data sharpening\cr
       }
 
       \bold{Manipulation of pixel images:}
@@ -175,9 +181,11 @@
 
   \bold{Smoothing:}
   \tabular{ll}{
-    \code{\link[spatstat.explore]{density.ppp}} \tab kernel smoothed density/intensity\cr
+    \code{\link[spatstat.explore]{density.ppp}} \tab kernel estimate of density/intensity\cr
     \code{\link[spatstat.explore]{relrisk}} \tab kernel estimate of relative risk\cr
-    \code{\link[spatstat.explore]{Smooth.ppp}} \tab spatial interpolation of marks  \cr
+    \code{\link[spatstat.explore]{Smooth.ppp}} \tab spatial smoothing of marks  \cr
+    \code{\link[spatstat.explore]{SmoothAdaptiveKernel.ppp}} \tab adaptive spatial smoothing of marks  \cr
+    \code{\link[spatstat.explore]{SmoothHeat.ppp}} \tab diffusion smoothing of marks  \cr
     \code{\link[spatstat.explore]{bw.diggle}} \tab cross-validated bandwidth selection
                                for \code{\link[spatstat.explore]{density.ppp}}\cr
     \code{\link[spatstat.explore]{bw.ppl}} \tab likelihood cross-validated bandwidth selection
