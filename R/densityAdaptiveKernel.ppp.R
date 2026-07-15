@@ -86,6 +86,7 @@ densityAdaptiveKernel.ppp <- function(X, bw, ...,
   ZZ <- switch(at,
                pixels = im.apply(Z, "sum"),
                points = unsplit(Z, group))
+  attr(ZZ, "bw") <- bw
   return(ZZ)
 }
 
@@ -94,14 +95,14 @@ densityAdaptiveKernel.ppplist <-
 densityAdaptiveKernel.splitppp <- function(X, bw=NULL, ...,
                                            weights=NULL) {
   n <- length(X)
-  bw      <- ensure.listarg(bw,
-                            n=n,
-                            singletypes=c("NULL", "im", "funxy"),
-                            xtitle="bw")
-  weights <- ensure.listarg(weights,
-                            n=n,
-                            singletypes=c("NULL", "im", "funxy", "expression"),
-                            xtitle="weights")
+  bw      <- ensure.nlist(bw,
+                          n=n,
+                          singletypes=c("NULL", "im", "funxy"),
+                          xtitle="bw")
+  weights <- ensure.nlist(weights,
+                          n=n,
+                          singletypes=c("NULL", "im", "funxy", "expression"),
+                          xtitle="weights")
   y <- mapply(densityAdaptiveKernel.ppp, X=X, bw=bw, weights=weights,
               MoreArgs=list(...),
               SIMPLIFY=FALSE)
@@ -109,40 +110,3 @@ densityAdaptiveKernel.splitppp <- function(X, bw=NULL, ...,
 }
 
 
-## move this to spatstat.data when stable
-
-ensure.listarg <- function(x, n, singletypes=character(0), 
-                           xtitle=NULL, things="point patterns") {
-  if(inherits(x, singletypes)) {
-    ## single object: replicate it
-    x <- rep(list(x), n)
-    return(x)
-  } 
-  if(!is.list(x)) {
-    ## error 
-    if(is.null(xtitle)) xtitle <- short.deparse(substitute(x))
-    whinge <- paste(xtitle, "should be a list")
-    if(length(singletypes)) {
-      otypes <- setdiff(singletypes, "NULL")
-      if(length(otypes))
-        whinge <- paste(whinge,
-                        "or an object of class",
-                        commasep(dQuote(otypes), "or"))
-      if("NULL" %in% singletypes)
-        whinge <- paste(whinge, "or NULL")
-    }
-    stop(whinge, call.=FALSE)
-  }
-  nx <- length(x)
-  if(nx != n) {
-    if(is.null(xtitle)) xtitle <- short.deparse(substitute(x))
-    whinge <- paste("The length of",
-                    sQuote(xtitle), 
-                    "should equal the number of",
-                    things,
-                    paren(paste(nx, "!=", n)))
-    stop(whinge, call.=FALSE)
-  }
-  return(x)
-}
-  

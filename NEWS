@@ -1,12 +1,19 @@
 
-        CHANGES IN spatstat.explore VERSION 3.8-1.003
+        CHANGES IN spatstat.explore VERSION 3.8-1.004
 
 OVERVIEW
 
     o We thank Lindsay Clark for contributions.
+
+    o Adaptive kernel smoothing of mark values.
     
     o Minor improvements and bug fixes.
 
+NEW FUNCTIONS
+
+    o SmoothAdaptiveKernel.ppp
+    Adaptive kernel smoothing of mark values of a point pattern.
+    
 SIGNIFICANT USER-VISIBLE CHANGES
 
     o rhohat.ppp, rhohat.quad

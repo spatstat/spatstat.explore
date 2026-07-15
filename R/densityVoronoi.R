@@ -1,7 +1,7 @@
 #'
 #'  densityVoronoi.R
 #'
-#'  $Revision: 1.22 $   $Date: 2022/03/11 03:21:01 $
+#'  $Revision: 1.23 $   $Date: 2026/07/13 03:56:09 $
 #'
 
 densityVoronoi <- function(X, ...) {
@@ -13,6 +13,7 @@ densityVoronoi.ppp <- function(X, f=1, ...,
                                fixed=FALSE,
                                nrep=1, verbose=TRUE) {
   stopifnot(is.ppp(X))
+  if(is.NAobject(X)) return(NAobject("im"))
   nX <- npoints(X)
   check.1.real(f)
   if(badprobability(f))
