@@ -4,7 +4,7 @@
 \title{Intensity Estimate of Point Pattern Using Voronoi-Dirichlet Tessellation}
 \description{
   Computes an adaptive estimate of the intensity function of a point
-  pattern using the Dirichlet-Voronoi tessellation.
+  pattern using the Dirichlet-\Voronoi tessellation.
 }
 \usage{
 densityVoronoi(X, \dots)
@@ -43,9 +43,10 @@ densityVoronoi(X, \dots)
   computes an estimate of the intensity function of a point pattern
   dataset. The result is a pixel image giving the estimated intensity.
 
-  If \code{f=1} (the default), the Voronoi estimate (Barr and Schoenberg, 2010)
+  If \code{f=1} (the default), the \Voronoi estimate (Brown, 1964;
+  Ord, 1978; Barr and Schoenberg, 2010)
   is computed: the point pattern \code{X} is used to construct
-  a Voronoi/Dirichlet tessellation (see \code{\link[spatstat.geom]{dirichlet}});
+  a \Voronoi/Dirichlet tessellation (see \code{\link[spatstat.geom]{dirichlet}});
   the areas of the Dirichlet tiles are computed; the estimated intensity
   in each tile is the reciprocal of the tile area.
   The result is a pixel image
@@ -78,8 +79,8 @@ densityVoronoi(X, \dots)
   \itemize{
     \item if \code{counting = FALSE} (the default), the thinned pattern
     is used to construct a Dirichlet tessellation and form the
-    Voronoi estimate (Barr and Schoenberg, 2010) which is then
-    adjusted by a factor \code{1/f} or \code{n/m} as appropriate.
+    \Voronoi estimate (Brown, 1964; Ord, 1978; Barr and Schoenberg, 2010) 
+    which is then adjusted by a factor \code{1/f} or \code{n/m} as appropriate.
     to obtain an estimate
     of the intensity of \code{X} in the tile.
     \item if \code{counting = TRUE},
@@ -97,16 +98,18 @@ densityVoronoi(X, \dots)
     to obtain an estimate of the intensity of \code{X} in the tile.
   }
 
+
+  The \Voronoi estimator (corresponding to \code{f=1})
+  was introduced by Brown (1964) and Ord (1978) and its statistical
+  properties were analysed by Barr and Schoenberg (2010).
   Ogata et al. (2003) and Ogata (2004) estimated intensity using the
-  Dirichlet-Voronoi tessellation in a modelling context.
+  Dirichlet-\Voronoi tessellation in a modelling context.
   Baddeley (2007) proposed intensity estimation by subsampling
   with \code{0 < f < 1}, and used the  technique described above 
   with \code{fixed=TRUE} and \code{counting=TRUE}.
-  Barr and Schoenberg (2010) described and analysed the
-  Voronoi estimator (corresponding to \code{f=1}).
   Moradi et al (2019) developed the subsampling technique with
   \code{fixed=FALSE} and \code{counting=FALSE} and called it the
-  \emph{smoothed Voronoi estimator}.
+  \emph{smoothed \Voronoi estimator}.
 }
 \value{
   A pixel image (object of class \code{"im"}) whose values are
@@ -130,6 +133,11 @@ densityVoronoi(X, \dots)
   On the Voronoi estimator for the intensity of an inhomogeneous
   planar Poisson process. \emph{Biometrika} \bold{97} (4), 977--984.
 
+  Brown, G. S. (1964)
+  Point density in stems per acre.
+  \emph{Forest Research Institute Silvicultural Report} 15,
+  New Zealand Forest Service.
+
   Moradi, M., Cronie, 0., Rubak, E., Lachieze-Rey, R.,
   Mateu, J. and Baddeley, A. (2019)
   Resample-smoothing of Voronoi intensity estimators.
@@ -144,6 +152,10 @@ densityVoronoi(X, \dots)
   Modelling heterogeneous space-time occurrences of earthquakes and its
   residual analysis.
   \emph{Applied Statistics} \bold{52} 499--509.
+
+  Ord, J.K. (1978) 
+  How many trees in a forest?
+  \emph{Mathematical Scientist} \bold{3}, 23--33.
 }
 \examples{
   plot(densityVoronoi(nztrees, 1, f=1), main="Voronoi estimate")

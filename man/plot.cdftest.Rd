@@ -45,8 +45,7 @@
   An object of this class represents the outcome of
   a spatial distribution test, computed by \code{\link{cdf.test}},
   and based on either the Kolmogorov-Smirnov,
-  \ifelse{latex}{\out{Cram\'er}}{Cramer}-von Mises
-  or Anderson-Darling test.
+  \Cramer-von Mises or Anderson-Darling test.
 
   If \code{style="cdf"} (the default), 
   the plot displays the two cumulative distribution functions
