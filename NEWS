@@ -1,4 +1,18 @@
 
+        CHANGES IN spatstat.explore VERSION 3.8-2.001
+
+OVERVIEW
+
+    o Bug fix.
+
+BUG FIXES
+
+    o densityVoronoi.ppp
+    Result was incorrect if the randomly-selected subsample of the point pattern
+    consisted of exactly one point. This occurred only when the argument 'f'
+    was very small.
+    Fixed.
+
         CHANGES IN spatstat.explore VERSION 3.8-2
 
 OVERVIEW
