@@ -1,7 +1,7 @@
 #'
 #'  densityVoronoi.R
 #'
-#'  $Revision: 1.25 $   $Date: 2026/07/30 14:53:25 $
+#'  $Revision: 1.29 $   $Date: 2026/07/31 03:06:40 $
 #'
 
 densityVoronoi <- function(X, ...) {
@@ -14,6 +14,7 @@ densityVoronoi.ppp <- function(X, f=1, ...,
                                nrep=1, verbose=TRUE) {
   stopifnot(is.ppp(X))
   if(is.NAobject(X)) return(NAobject("im"))
+  X <- unmark(X)
   nX <- npoints(X)
   check.1.real(f)
   if(badprobability(f))
@@ -78,73 +79,85 @@ densityVoronoi.ppp <- function(X, f=1, ...,
   }
   ## ------ This is the main calculation -------
   ## perform thinning 
-  if(!fixed) {
+  if(fixed) {
+    #' random sample of fixed size 'ntess' (not equal to 0 or nX)
+    itess <- sample(seq_len(nX), ntess, replace=FALSE)
+    nXT <- ntess
+    tessfrac <- as.numeric(ntess)/nX
+  } else {
     #' random thinning, retention probability f
     itess <- seq_len(nX)[thinjump(nX, f)]
     nXT <- length(itess)
     tessfrac <- f
-  } else {
-    #' random sample of size 'ntess' (not equal to 0 or nX)
-    itess <- sample(seq_len(nX), ntess, replace=FALSE)
-    nXT <- ntess
-    tessfrac <- as.numeric(ntess)/nX
   }
-  if(nXT >= 1) {
-    #' form the subsample and remove duplicate points
+  nCount <- if(counting) nX - nXT else NULL
+  #' number of points forming the tessellation
+  nT <- nXT
+  if(nT > 0) {
+    #' form the subsample and remove duplicate points for tessellation
     Xtess <- X[itess]
+    anydupesNow <- FALSE
     if(anydupes) {
-      dupes2 <- duplicated(Xtess, rule="deldir")
-      if(any(dupes2)) {
-        Xtess <- Xtess[!dupes2]
-        nXT <- npoints(Xtess)
-        tessfrac <- mean(!dupes2) * tessfrac
+      XtessU <- unique(Xtess, rule="deldir")
+      nTU <- npoints(XtessU)
+      anydupesNow <- (nTU < nT)
+      if(anydupesNow) {
+        XtessDup <- Xtess
+        Xtess    <- XtessU
+        nT <- nTU
       }
     }
   }
-  if(nXT >= 2) {
-    ## make tessellation
+  ## determine estimation rule
+  if(!counting) {
+    #' Voronoi estimator of intensity of *subsample*
+    totaltilemass <- nXT
+    #' multiply by 1/(sampling fraction) to get intensity of X
+    expansion <- 1/tessfrac
+  } else {
+    #' counting estimator of intensity of *un-sampled points*
+    totaltilemass <- nCount
+    #' multiply by 1/(*complement* of sampling fraction) to get intensity of X
+    expansion <- 1/(1-tessfrac)
+  }
+  ## ----------- compute estimate ----------------------------
+  validrule <- (nT > 0) && (totaltilemass > 0) && is.finite(expansion)
+  if(!validrule) {
+    ## rule collapses (tessellation undefined, divide-by-zero, etc)
+    ## fall back to uniform estimate
+    lam <- nX/areaW
+    result <- as.im(lam, W, ...)
+  } else if(nXT == 1) {
+    ## rule is valid
+    ## tessellation is a single tile - handle separately for efficiency
+    ## spatially constant intensity estimate for X
+    lam <- expansion * totaltilemass/areaW
+    result <- as.im(lam, W, ...)
+  } else {
+    ## rule is valid
+    ## general case
     tes <- dirichlet(Xtess)
-    ## estimate intensity in each tile
+    ## determine un-expanded mass in each tile
     if(!counting) {
       #' Voronoi estimator of intensity of *subsample*
-      tilemass <- 1
-      #' divide by sampling fraction to get intensity of X
-      expansion <- 1/tessfrac
+      if(!anydupesNow) {
+        tilemass <- 1 # each tile has 1 point
+      } else {
+        ## each tile may contain several points at the same location
+        idx <- nncross(XtessDup, Xtess, what="which")
+        tilemass <- as.integer(table(factor(idx, levels=seq_len(nT))))
+      }
     } else {
       #' counting estimator of intensity of *un-sampled points*
       Xcount <- X[-itess]
       tilemap <- tileindex(Xcount$x, Xcount$y, tes)
       tilemass <- as.numeric(table(tilemap))
-      #' divide by *complement* of sampling fraction to get intensity of X
-      expansion <- 1/(1-tessfrac)
     }
-    ## intensity in each tile
+    ## expand to give final intensity estimate for X in each tile
     lami <- expansion * tilemass/tile.areas(tes)
-    ## estimate of intensity at each location
+    ## estimate of intensity of X at each location
     tesim <- nnmap(Xtess, what="which", ...)
     result <- eval.im(lami[tesim])
-  } else if(nXT == 1) {
-    ## tessellation is a single tile - handle separately for efficiency
-    if(!counting) {
-      #' Voronoi estimator of intensity of *subsample*
-      tilemass <- 1
-      #' divide by sampling fraction to get intensity of X
-      expansion <- 1/tessfrac
-    } else {
-      #' counting estimator of intensity of *un-sampled points*
-      tilemass <- nX - length(itess)
-      #' divide by *complement* of sampling fraction to get intensity of X
-      expansion <- 1/(1-tessfrac)
-    }
-    ## spatially constant intensity estimate
-    lam <- expansion * tilemass/areaW
-    if(!is.finite(lam))
-      lam <- nX/areaW
-    result <- as.im(lam, W, ...)
-  } else {
-    ## nXT = 0; subsample was empty: Voronoi tessellation undefined
-    lam <- nX/areaW
-    result <- as.im(lam, W, ...)
   }
   return(result)
 }
