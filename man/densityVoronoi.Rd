@@ -41,9 +41,41 @@ densityVoronoi(X, \dots)
 \details{
   This function is an alternative to \code{\link{density.ppp}}. It
   computes an estimate of the intensity function of a point pattern
-  dataset. The result is a pixel image giving the estimated intensity.
+  dataset using the Dirichlet/\Voronoi tessellation.
+  The result is a pixel image giving the estimated intensity.
 
-  If \code{f=1} (the default), the \Voronoi estimate (Brown, 1964;
+  Several versions are supported:
+  \itemize{
+    \item
+    the original \Voronoi estimate
+    (Brown, 1964; Ord, 1978; Barr and Schoenberg, 2010) selected by
+    \code{f=1};
+    see the section on \emph{Voronoi estimate};
+    \item
+    the resample-smoothing estimate of Baddeley (2007) selected by
+    \code{0 < f < 1},
+    \code{fixed=TRUE} and \code{counting=TRUE};
+    see the section on \emph{Resample-smoothing estimates};
+    \item
+    the resample-smoothing estimate of Moradi et al (2019) selected by
+    \code{0 < f < 1},
+    \code{fixed=FALSE} and \code{counting=FALSE};
+  }
+  The \Voronoi estimator (corresponding to \code{f=1})
+  was introduced by Brown (1964) and Ord (1978) and its statistical
+  properties were analysed by Barr and Schoenberg (2010).
+  Ogata et al. (2003) and Ogata (2004) estimated intensity using the
+  Dirichlet-\Voronoi tessellation in a modelling context.
+  Baddeley (2007) proposed intensity estimation by subsampling
+  with \code{0 < f < 1}, and used the  technique described above 
+  with \code{fixed=TRUE} and \code{counting=TRUE}.
+  Moradi et al (2019) developed the subsampling technique with
+  \code{fixed=FALSE} and \code{counting=FALSE} and called it the
+  \emph{smoothed \Voronoi estimator}.
+}
+\section{\Voronoi estimate}{
+  If 
+  \code{f=1} (the default), the \Voronoi estimate (Brown, 1964;
   Ord, 1978; Barr and Schoenberg, 2010)
   is computed: the point pattern \code{X} is used to construct
   a \Voronoi/Dirichlet tessellation (see \code{\link[spatstat.geom]{dirichlet}});
@@ -52,12 +84,15 @@ densityVoronoi(X, \dots)
   The result is a pixel image
   of intensity estimates which are constant on each tile of the tessellation.
 
+  If 
   If \code{f=0}, the intensity estimate at every location is
   equal to the average intensity (number of points divided by window area).
   The result is a pixel image
   of intensity estimates which are constant.
-  
-  If \code{f} is strictly between 0 and 1,
+}
+\section{Resample-smoothing estimates}{
+  If 
+  \code{f} is strictly between 0 and 1,
   the estimation method is applied to a random subset of \code{X}.
   This randomised procedure is repeated \code{nrep} times,
   and the results are averaged.
@@ -97,19 +132,6 @@ densityVoronoi(X, \dots)
     or \code{n/(n-m)} as appropriate 
     to obtain an estimate of the intensity of \code{X} in the tile.
   }
-
-
-  The \Voronoi estimator (corresponding to \code{f=1})
-  was introduced by Brown (1964) and Ord (1978) and its statistical
-  properties were analysed by Barr and Schoenberg (2010).
-  Ogata et al. (2003) and Ogata (2004) estimated intensity using the
-  Dirichlet-\Voronoi tessellation in a modelling context.
-  Baddeley (2007) proposed intensity estimation by subsampling
-  with \code{0 < f < 1}, and used the  technique described above 
-  with \code{fixed=TRUE} and \code{counting=TRUE}.
-  Moradi et al (2019) developed the subsampling technique with
-  \code{fixed=FALSE} and \code{counting=FALSE} and called it the
-  \emph{smoothed \Voronoi estimator}.
 }
 \value{
   A pixel image (object of class \code{"im"}) whose values are
@@ -156,11 +178,18 @@ densityVoronoi(X, \dots)
   Ord, J.K. (1978) 
   How many trees in a forest?
   \emph{Mathematical Scientist} \bold{3}, 23--33.
+
+  Rakshit, S., Baddeley, A. and Nair, G. (2027)
+  Bagging improves the performance of intensity estimators of spatial
+  point patterns. \emph{Submitted for publication}.
 }
 \examples{
+  opa <- par(mfrow=c(1,3))
+  plot(nztrees)
   plot(densityVoronoi(nztrees, 1, f=1), main="Voronoi estimate")
   nr <- if(interactive()) 100 else 5
   plot(densityVoronoi(nztrees, f=0.5, nrep=nr), main="smoothed Voronoi estimate")
+  par(opa)
 }
 \author{
   \spatstatAuthors and \mehdi.
