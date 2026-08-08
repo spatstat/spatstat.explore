@@ -12,7 +12,7 @@ densityVoronoi(X, \dots)
 \method{densityVoronoi}{ppp}(X, f = 1, \dots,
                           counting=FALSE,
                           fixed=FALSE,
-                          nrep = 1, verbose=TRUE)
+                          nrep = 1, verbose=TRUE, internal=NULL)
 }
 \arguments{
   \item{X}{Point pattern dataset (object of class \code{"ppp"}).}
@@ -37,6 +37,7 @@ densityVoronoi(X, \dots)
     procedure.}
   \item{verbose}{Logical value indicating whether to print
     progress reports.}
+  \item{internal}{Internal use only.}
 }
 \details{
   This function is an alternative to \code{\link{density.ppp}}. It
@@ -52,26 +53,30 @@ densityVoronoi(X, \dots)
     \code{f=1};
     see the section on \emph{Voronoi estimate};
     \item
-    the resample-smoothing estimate of Baddeley (2007) selected by
+    the estimate of Baddeley (2007) selected by
     \code{0 < f < 1},
     \code{fixed=TRUE} and \code{counting=TRUE};
     see the section on \emph{Resample-smoothing estimates};
     \item
-    the resample-smoothing estimate of Moradi et al (2019) selected by
+    the estimate of Moradi et al (2019) selected by
     \code{0 < f < 1},
     \code{fixed=FALSE} and \code{counting=FALSE};
+    see the section on \emph{Resample-smoothing estimates};
   }
   The \Voronoi estimator (corresponding to \code{f=1})
   was introduced by Brown (1964) and Ord (1978) and its statistical
   properties were analysed by Barr and Schoenberg (2010).
+  \Voronoi estimates have high variability because the \Voronoi
+  tessellation is highly sensitive to the data point coordinates.
   Ogata et al. (2003) and Ogata (2004) estimated intensity using the
   Dirichlet-\Voronoi tessellation in a modelling context.
+  In an effort to reduce variability,
   Baddeley (2007) proposed intensity estimation by subsampling
-  with \code{0 < f < 1}, and used the  technique described above 
-  with \code{fixed=TRUE} and \code{counting=TRUE}.
-  Moradi et al (2019) developed the subsampling technique with
-  \code{fixed=FALSE} and \code{counting=FALSE} and called it the
-  \emph{smoothed \Voronoi estimator}.
+  and averaging. Moradi et al (2019) developed the subsampling technique 
+  and called it the \emph{smoothed \Voronoi estimator}.
+  These randomised estimators strike a tradeoff between bias and variance,
+  and generally have better statistical performance than the \Voronoi
+  estimator. 
 }
 \section{\Voronoi estimate}{
   If 
@@ -138,10 +143,20 @@ densityVoronoi(X, \dots)
   estimates of the intensity of \code{X}.
 }
 \seealso{
-  \code{\link{adaptive.density}},
+  Alternative options include the fixed kernel estimator
   \code{\link{density.ppp}},
-  \code{\link[spatstat.geom]{dirichlet}},
-  \code{\link[spatstat.geom]{im.object}}.
+  the adaptive (variable bandwidth) kernel estimator
+  \code{\link[spatstat.explore]{densityAdaptiveKernel.ppp}},
+  and the nearest neighbour density estimator
+  \code{\link[spatstat.explore]{nndensity.ppp}}.
+  The interface function \code{\link{adaptive.density}} can be used
+  to switch between these options.
+
+  See \code{\link[spatstat.geom]{dirichlet}} for the \Voronoi-Dirichlet
+  tessellation.
+
+  See \code{\link[spatstat.geom]{im.object}} for the structure of pixel images.
+  
 }
 \references{
   Baddeley, A. (2007)
@@ -192,7 +207,7 @@ densityVoronoi(X, \dots)
   par(opa)
 }
 \author{
-  \spatstatAuthors and \mehdi.
+  \spatstatAuthorsComma and \mehdi.
 }
 \keyword{spatial}
 \keyword{methods}

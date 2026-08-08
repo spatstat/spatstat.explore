@@ -1,7 +1,7 @@
 #'
 #'  densityVoronoi.R
 #'
-#'  $Revision: 1.30 $   $Date: 2026/08/03 08:22:27 $
+#'  $Revision: 1.31 $   $Date: 2026/08/08 07:47:42 $
 #'
 
 
@@ -12,7 +12,7 @@ densityVoronoi <- function(X, ...) {
 densityVoronoi.ppp <- function(X, f=1, ...,
                                counting=FALSE,
                                fixed=FALSE,
-                               nrep=1, verbose=TRUE) {
+                               nrep=1, verbose=TRUE, internal=NULL) {
   stopifnot(is.ppp(X))
   if(is.NAobject(X)) return(NAobject("im"))
   X <- unmark(X)
@@ -22,44 +22,35 @@ densityVoronoi.ppp <- function(X, f=1, ...,
     stop("f should be a probability between 0 and 1")
   check.1.integer(nrep)
   stopifnot(nrep >= 1)
-  anydupes <- anyDuplicated(X, rule="deldir")
-  if(anydupes) {
-    dupes <- duplicated(X, rule="deldir")
-  }
+  anydupes <- internal$anydupes %orifnull% anyDuplicated(X, rule="deldir")
+  dupes <-    internal$dupes %orifnull% (if(anydupes) duplicated(X, rule="deldir") else NULL)
   W <- Window(X)
   areaW <- area(W)
   #' ------- handle trivial cases where replication has no effect ----------
   if(nX == 0) {
+    #' empty dataset
     return(as.im(0, W, ...))
-  }
-  if(fixed) {
-    ## subsample used to construct tessellation has fixed number of points
-    ntess <- floor(f * nX)
-    ## deal with trivial cases
-    if(ntess == 0) {
-      ## naive estimate of intensity
-      if(f > 0 && verbose)
-        splat("Tiny threshold: returning uniform intensity estimate")
-      lam <- nX/areaW
-      return(as.im(lam, W, ...))
+  } else if(f == 0 || (fixed && floor(f * nX) == 0)) {
+    ## subset of points used for tessellation is always empty
+    ## Fall back on constant intensity estimate
+    lam <- nX/areaW
+    return(as.im(lam, W, ...))
+  } else if(f == 1) {
+    ## Voronoi/Dirichlet estimate
+    if(!anydupes) {
+      tes <- dirichlet(X)
+      tesim <- nnmap(X, what="which", ...)
+      num <- 1
+    } else {
+      UX <- X[!dupes]
+      tes <- dirichlet(UX)
+      tesim <- nnmap(UX, what="which", ...)
+      idx <- nncross(X, UX, what="which")
+      num <- as.integer(table(factor(idx, levels=seq_len(npoints(UX)))))
     }
-    if(ntess == nX) {
-      ## Voronoi/Dirichlet estimate
-      if(!anydupes) {
-        tes <- dirichlet(X)
-        tesim <- nnmap(X, what="which", ...)
-        num <- 1
-      } else {
-        UX <- X[!dupes]
-        tes <- dirichlet(UX)
-        tesim <- nnmap(UX, what="which", ...)
-        idx <- nncross(X, UX, what="which")
-        num <- as.integer(table(factor(idx, levels=seq_len(npoints(UX)))))
-      }
-      lam <- num/tile.areas(tes)
-      out <- eval.im(lam[tesim])
-      return(out)
-    }
+    lam <- num/tile.areas(tes)
+    out <- eval.im(lam[tesim])
+    return(out)
   }
   #' ----------------- general case -----------------------------
   if(nrep > 1) {
@@ -68,9 +59,11 @@ densityVoronoi.ppp <- function(X, f=1, ...,
     if(verbose)
       cat(paste("Computing", nrep, "intensity estimates..."))
     state <- list()
+    dupinfo <- list(anydupes=anydupes, dupes=dupes)
     for(i in seq_len(nrep)) {
       estimate <- densityVoronoi.ppp(X, f, ...,
-                                     counting=counting, fixed=fixed, nrep=1)
+                                     counting=counting, fixed=fixed, nrep=1,
+                                     internal=dupinfo)
       total <- eval.im(total + estimate)
       if(verbose) state <- progressreport(i, nrep, state=state)
     }
@@ -82,6 +75,7 @@ densityVoronoi.ppp <- function(X, f=1, ...,
   ## perform thinning 
   if(fixed) {
     #' random sample of fixed size 'ntess' (not equal to 0 or nX)
+    ntess <- floor(f * nX)
     itess <- sample(seq_len(nX), ntess, replace=FALSE)
     nXT <- ntess
     tessfrac <- as.numeric(ntess)/nX
