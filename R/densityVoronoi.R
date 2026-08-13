@@ -1,7 +1,7 @@
 #'
 #'  densityVoronoi.R
 #'
-#'  $Revision: 1.31 $   $Date: 2026/08/08 07:47:42 $
+#'  $Revision: 1.32 $   $Date: 2026/08/13 06:07:17 $
 #'
 
 
@@ -50,6 +50,7 @@ densityVoronoi.ppp <- function(X, f=1, ...,
     }
     lam <- num/tile.areas(tes)
     out <- eval.im(lam[tesim])
+    if(anyNA(out)) warning("NA pixel values generated", call.=FALSE)
     return(out)
   }
   #' ----------------- general case -----------------------------
@@ -154,5 +155,6 @@ densityVoronoi.ppp <- function(X, f=1, ...,
     tesim <- nnmap(Xtess, what="which", ...)
     result <- eval.im(lami[tesim])
   }
+  if(anyNA(result)) warning("NA pixel values generated", call.=FALSE)
   return(result)
 }
