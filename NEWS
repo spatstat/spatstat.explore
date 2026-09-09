@@ -1,15 +1,28 @@
 
-        CHANGES IN spatstat.explore VERSION 3.8-2.005
+        CHANGES IN spatstat.explore VERSION 3.8-2.006
 
 OVERVIEW
 
+    o Transect of a spatial function.
+    
     o Minor improvements and bug fixes.
+
+NEW FUNCTIONS
+
+    o transect
+    New generic
+
+    o transect.funxy
+    Linear transect for a spatial function (object of class 'funxy').
 
 SIGNIFICANT USER-VISIBLE CHANGES
 
     o densityVoronoi.ppp
     Behaviour improved in cases where f is extremely close to 0 or 1.
-    
+
+    o transect.im
+    This function is now a method for the generic 'transect'.
+
 BUG FIXES
 
     o densityVoronoi.ppp

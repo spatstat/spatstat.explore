@@ -1,5 +1,7 @@
 \name{transect.im}
+\alias{transect}
 \alias{transect.im}
+\alias{transect.funxy}
 \title{
   Pixel Values Along a Transect
 }
@@ -8,15 +10,21 @@
   a linear transect.
 }
 \usage{
-transect.im(X, ..., from="bottomleft", to="topright",
+transect(X, \dots)
+
+\method{transect}{im}(X, \dots, from="bottomleft", to="topright",
+            nsample=512, click=FALSE, add=FALSE, curve=NULL)
+
+\method{transect}{funxy}(X, \dots, from="bottomleft", to="topright",
             nsample=512, click=FALSE, add=FALSE, curve=NULL)
 }
 \arguments{
   \item{X}{
-    A pixel image (object of class \code{"im"}).
+    A pixel image (object of class \code{"im"})
+    or a spatial function (object of class \code{"funxy"}).
   }
   \item{\dots}{
-    Ignored.
+    Additional arguments are ignored.
   }
   \item{from,to}{
     Optional. Start point and end point of the transect.
@@ -45,9 +53,13 @@ transect.im(X, ..., from="bottomleft", to="topright",
   }
 }
 \details{
-  The pixel values of the image \code{X} along a line segment 
+  The pixel values (or function values) of \code{X} along a line segment 
   will be extracted. The result is a function table (\code{"fv"} object)
   which can be plotted directly.
+
+  The function \code{transect} is generic, with methods for pixel images
+  (class \code{"im"}) and functions of spatial location (class
+  \code{"funxy"}) and other classes.
 
   If \code{click=TRUE}, then the user is prompted to click two points on
   the plot of \code{X}. These endpoints define the transect.
@@ -82,11 +94,14 @@ transect.im(X, ..., from="bottomleft", to="topright",
   and \rolf
 }
 \seealso{
-  \code{\link[spatstat.geom]{im}}
+  \code{\link[spatstat.geom]{im}},
+  \code{\link[spatstat.geom]{funxy}}
 }
 \examples{
   Z <- bei.extra$elev
-  plot(transect.im(Z))
+  plot(transect(Z))
+  U <- distfun(cells)
+  plot(transect(U, from="left", to="right"))
 }
 \keyword{spatial}
 \keyword{manip}
