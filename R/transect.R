@@ -3,7 +3,7 @@
 #'
 #' Line transects of pixel images
 #'
-#'  $Revision: 1.10 $  $Date: 2026/09/09 04:51:52 $
+#'  $Revision: 1.11 $  $Date: 2026/09/12 03:18:19 $
 #'
 
 transect <- function(X, ...) {
@@ -23,21 +23,23 @@ transect.im <- function(X, ..., from="bottomleft", to="topright",
     ## package into fv object
     df <- data.frame(t=t, v=v)
     colnames(df) <- c(tname, Xname)
-    result <- fv(df, argu = tname,
+    result <- fv(df,
+                 argu = tname,
                  ylab = substitute(Xname(tname),
                                    list(Xname=as.name(Xname),
                                         tname=as.name(tname))),
-                 valu=Xname,
+                 valu = Xname,
                  labl = c(tname, paste0("%s", paren(tname))),
                  desc = c(tdescrip, "pixel value of %s"),
-                 unitname = tunits, fname = Xname)
+                 unitname = tunits,
+                 fname = Xname)
     attr(result, "SamplePoints") <- ppp(x, y, window=Frame(X))
     return(result)
   })
 }
 
 transect.funxy <- function(X, ..., from="bottomleft", to="topright",
-                        nsample=512, click=FALSE, add=FALSE, curve=NULL) {
+                           nsample=512, click=FALSE, add=FALSE, curve=NULL) {
   Xname <- short.deparse(substitute(X))
   Xname <- sensiblevarname(Xname, "X")
   if(!inherits(X, "funxy"))
@@ -50,14 +52,16 @@ transect.funxy <- function(X, ..., from="bottomleft", to="topright",
     ## package into fv object
     df <- data.frame(t=t, v=v)
     colnames(df) <- c(tname, Xname)
-    result <- fv(df, argu = tname,
+    result <- fv(df,
+                 argu = tname,
                  ylab = substitute(Xname(tname),
                                    list(Xname=as.name(Xname),
                                         tname=as.name(tname))),
-                 valu=Xname,
+                 valu = Xname,
                  labl = c(tname, paste0("%s", paren(tname))),
-                 desc = c(tdescrip, "pixel value of %s"),
-                 unitname = tunits, fname = Xname)
+                 desc = c(tdescrip, "function value of %s"),
+                 unitname = tunits,
+                 fname = Xname)
     attr(result, "SamplePoints") <- ppp(x, y, window=Frame(X))
     return(result)
   })
@@ -68,17 +72,17 @@ getTransectCoords <- function(X, ..., from="bottomleft", to="topright",
                               nsample=512, click=FALSE, add=FALSE, curve=NULL) {
   check.1.integer(nsample)
   if(length(curve)) {
-    ## parametric curve
+    ## parametric curve specified by user
     ## validate specification of curve
     check.named.list(curve, c("f", "tlim"), namopt=c("tname", "tdescrip"), 
                      xtitle="curve")
     stopifnot(is.function(curve$f))
     check.range(curve$tlim)
     ## extract info
-    tlim <- curve$tlim
-    tname <- curve$tname %orifnull% "t"
+    tlim     <- curve$tlim
+    tname    <- curve$tname %orifnull% "t"
     tdescrip <- curve$tdescrip %orifnull% "curve parameter"
-    tunits <- NULL
+    tunits   <- NULL
     ## create sample points along curve
     t <- seq(tlim[1L], tlim[2L], length.out=nsample)
     xy <- (curve$f)(t)
@@ -113,12 +117,14 @@ getTransectCoords <- function(X, ..., from="bottomleft", to="topright",
     x <- from$x + u * (to$x - from$x)
     y <- from$y + u * (to$y - from$y)
     leng <- sqrt( (to$x - from$x)^2 +  (to$y - from$y)^2)
-    t <- u * leng
-    tname <- "t"
+    t        <- u * leng
+    tname    <- "s"
     tdescrip <- "distance along transect"
-    tunits <- unitname(X)
+    tunits   <- unitname(X)
   }
-  result <- list(x=x, y=y, t=t, tname=tname, tdescrip=tdescrip, tunits=tunits)
+  result <- list(t=t,
+                 x=x, y=y,
+                 tname=tname, tdescrip=tdescrip, tunits=tunits)
   return(result)
 }
 
