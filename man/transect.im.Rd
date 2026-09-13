@@ -6,8 +6,8 @@
   Pixel Values Along a Transect
 }
 \description{
-  Extract the pixel values of a pixel image at each point along
-  a linear transect.
+  Extract the pixel values of a pixel image (or function values of
+  a spatial function) at each point along a linear transect.
 }
 \usage{
 transect(X, \dots)
@@ -88,6 +88,10 @@ transect(X, \dots)
 }
 \value{
   An object of class \code{"fv"} which can be plotted.
+  
+  The return value has an attribute \code{"SamplePoints"} which is
+  a point pattern (class \code{"ppp"}) representing the
+  sequence of sample points at which the values of \code{X} were obtained.
 }
 \author{
   \adrian
@@ -98,10 +102,24 @@ transect(X, \dots)
   \code{\link[spatstat.geom]{funxy}}
 }
 \examples{
+  opa <- par(mfrow=c(1,2))
+
+  ## pixel image
   Z <- bei.extra$elev
+  plot(Z)
   plot(transect(Z))
+
+  ## function
   U <- distfun(cells)
-  plot(transect(U, from="left", to="right"))
+  plot(U)
+  TU <- transect(U, from="left", to="right")
+  ## show the transect position on the plot of U
+  SP <- attr(TU, "SamplePoints")
+  with(SP, lines(x,y,col=8, lwd=3))
+  ## plot the transect values
+  plot(TU, main="transect(U, ...)")
+
+  par(opa)
 }
 \keyword{spatial}
 \keyword{manip}
