@@ -8,24 +8,97 @@
 
 relrisk <- function(X, ...) UseMethod("relrisk")
                                       
-relrisk.ppp <- local({
+relrisk.ppp <- function(X, sigma=NULL, ..., 
+                        at=c("pixels", "points"),
+                        weights = NULL,
+                        varcov=NULL,
+                        relative=FALSE, normalise=FALSE,
+                        adjust=1, edge=TRUE, diggle=FALSE,
+                        se=FALSE, wtype=c("value", "multiplicity"),
+                        casecontrol=TRUE, control=1, case,
+                        shrink=0, fudge=0) {
+  stopifnot(is.ppp(X))
+  if(is.NAobject(X)) return(NAobject("list"))
+  ## resove arguments
+  control.given <- !missing(control)
+  if(!control.given) control <- NULL
+  case.given <- !missing(case) && !is.null(case)
+  if(!case.given) case <- NULL
+  at <- match.arg(at)
+  wtype <- match.arg(wtype)
+  ## evaluate numerical weights (multiple columns not allowed)
+  weights <- pointweights(X, weights=weights, parent=parent.frame())
+  ## handle each column of marks
+  stopifnot(is.marked(X))
+  nc <- NCOL(marks(X))
+  result <- if(nc == 1) {
+              ## for efficiency
+              rrpppEngine(X, 
+                          ..., 
+                          sigma       = sigma, 
+                          at          = at,
+                          weights     = weights,
+                          varcov      = varcov,
+                          relative    = relative,
+                          normalise   = normalise,
+#                          adaptive    = adaptive,
+                          adjust      = adjust,
+                          edge        = edge,
+                          diggle      = diggle,
+                          se          = se,
+                          wtype       = wtype,
+                          casecontrol = casecontrol,
+                          control     = control,
+                          case        = case,
+                          shrink      = shrink,
+                          fudge       = fudge)
+            } else {
+              context <- paste("In column", 1:nc, "of marks:")
+              MA <- list(...,
+                         sigma       = sigma, 
+                         at          = at,
+                         weights     = weights,
+                         varcov      = varcov,
+                         relative    = relative,
+                         normalise   = normalise,
+#                         adaptive    = adaptive,
+                         adjust      = adjust,
+                         edge        = edge,
+                         diggle      = diggle,
+                         se          = se,
+                         wtype       = wtype,
+                         casecontrol = casecontrol,
+                         control     = control,
+                         case        = case,
+                         shrink      = shrink,
+                         fudge       = fudge)
+              mapply(rrpppEngine,
+                     X=unstack(X),
+                     context = context,
+                     MoreArgs=MA,
+                     SIMPLIFY=FALSE)
+            }
+  return(result)
+}
 
-  relrisk.ppp <- function(X, sigma=NULL, ..., 
+rrpppEngine <- local({
+
+  rrpppEngine <- function(X, sigma=NULL, ..., 
                           at=c("pixels", "points"),
-                          weights = NULL, varcov=NULL, 
+                          weights = NULL,
+                          varcov=NULL,
                           relative=FALSE, normalise=FALSE,
+#                          adaptive = FALSE,
                           adjust=1, edge=TRUE, diggle=FALSE,
                           se=FALSE, wtype=c("value", "multiplicity"),
-                          casecontrol=TRUE, control=1, case,
-                          shrink=0, fudge=0) {
+                          casecontrol=TRUE, control=1, case=NULL,
+                          shrink=0, fudge=0, context="") {
     stopifnot(is.ppp(X))
-    stopifnot(is.multitype(X))
-    control.given <- !missing(control)
-    case.given <- !missing(case)
-    at <- match.arg(at)
-    ## evaluate numerical weights (multiple columns not allowed)
-    weights <- pointweights(X, weights=weights, parent=parent.frame())
+    if(is.NAobject(X) || !is.multitype(X)) return(NAobject("im"))
     weighted <- !is.null(weights)
+    case.given <- !is.null(case)
+    control.given <- !is.null(control)
+    if(!control.given) control <- 1 # set default
     ## 
     npts <- npoints(X)
     marx <- marks(X)
@@ -33,13 +106,15 @@ relrisk.ppp <- local({
     types <- levels(marx)
     ntypes <- length(types)
     if(ntypes == 1)
-      stop("Data contains only one type of points")
+      stop(paste(context, "Data contains only one type of points"),
+           call.=FALSE)
     ## 
     casecontrol <- casecontrol && (ntypes == 2)
     if((control.given || case.given) && !(casecontrol || relative)) {
       aa <- c("control", "case")[c(control.given, case.given)]
       nn <- length(aa)
-      warning(paste(ngettext(nn, "Argument", "Arguments"),
+      warning(paste(context,
+                    ngettext(nn, "Argument", "Arguments"),
                     paste(sQuote(aa), collapse=" and "),
                     ngettext(nn, "was", "were"),
                     "ignored, because relative=FALSE and",
@@ -115,13 +190,14 @@ relrisk.ppp <- local({
     ## 
     if(se) {
       ## standard error calculation
-      wtype <- match.arg(wtype)
       weightspower <-
         if(is.null(weights)) NULL else  switch(wtype,
                                                value        = weights^2,
                                                multiplicity = weights)
       if(!is.null(weights) && wtype == "multiplicity" && min(weights) < 0)
-        stop("Negative weights are not permitted when wtype='multiplicity'",
+        stop(paste(context,
+                   "Negative weights are not permitted",
+                   "when wtype='multiplicity'"),
              call.=FALSE)
       ## determine smoothing parameters for variance calculation
       VarPars <- SmoothPars
@@ -271,9 +347,15 @@ relrisk.ppp <- local({
         } else if(is.character(control)) {
           icontrol <- match(control, types)
           if(is.na(icontrol))
-            stop(paste("No points have mark =", sQuote(control)))
+            stop(paste(context,
+                       "No points have mark =",
+                       sQuote(control)),
+                 call.=FALSE)
         } else
-          stop(paste("Unrecognised format for argument", sQuote("control")))
+          stop(paste(context,
+                     "Unrecognised format for argument",
+                     sQuote("control")),
+               call.=FALSE)
         if(!case.given)
           icase <- 3 - icontrol
       }
@@ -285,8 +367,14 @@ relrisk.ppp <- local({
         } else if(is.character(case)) {
           icase <- match(case, types)
           if(is.na(icase))
-            stop(paste("No points have mark =", sQuote(case)))
-        } else stop(paste("Unrecognised format for argument", sQuote("case")))
+            stop(paste(context,
+                       "No points have mark =",
+                       sQuote(case)),
+                 call.=FALSE)
+        } else stop(paste(context,
+                          "Unrecognised format for argument",
+                          sQuote("case")),
+                    call.=FALSE)
         if(!control.given) 
           icontrol <- 3 - icase
       }
@@ -309,7 +397,8 @@ relrisk.ppp <- local({
                dodgy <- (Dall < tinythresh)
                nbg <- badvalues(pcase) | really(dodgy)
                if(any(nbg)) {
-                 warning(paste("Numerical underflow detected:",
+                 warning(paste(context,
+                               "Numerical underflow detected:",
                                "sigma is probably too small"),
                          call.=FALSE)
                  uhoh <- unique(c(uhoh, "underflow"))
@@ -359,7 +448,8 @@ relrisk.ppp <- local({
                ## trap NaN values
                dodgy <- (Dall < tinythresh)
                if(any(nbg <- badvalues(pcase) | really(dodgy))) {
-                 warning(paste("Numerical underflow detected:",
+                 warning(paste(context,
+                               "Numerical underflow detected:",
                                "sigma is probably too small"),
                          call.=FALSE)
                  uhoh <- unique(c(uhoh, "underflow"))
@@ -405,9 +495,15 @@ relrisk.ppp <- local({
         } else if(is.character(control)) {
           icontrol <- match(control, types)
           if(is.na(icontrol))
-            stop(paste("No points have mark =", sQuote(control)))
+            stop(paste(context,
+                       "No points have mark =",
+                       sQuote(control)),
+                 call.=FALSE)
         } else
-          stop(paste("Unrecognised format for argument", sQuote("control")))
+          stop(paste(context,
+                     "Unrecognised format for argument",
+                     sQuote("control")),
+               call.=FALSE)
       }
       #' normalisation factor
       normfactors <- if(!normalise) rep(1, ntypes) else
@@ -428,7 +524,8 @@ relrisk.ppp <- local({
                dodgy <- (Dall < tinythresh)
                nbg <- nbg | really(dodgy)
                if(any(nbg)) {
-                 warning(paste("Numerical underflow detected:",
+                 warning(paste(context,
+                               "Numerical underflow detected:",
                                "sigma is probably too small"),
                          call.=FALSE)
                  uhoh <- unique(c(uhoh, "underflow"))
@@ -497,7 +594,8 @@ relrisk.ppp <- local({
                bad <- badvalues(probs) 
                badrow <- matrowany(bad) | really(dodgy)
                if(any(badrow)) {
-                 warning(paste("Numerical underflow detected:",
+                 warning(paste(context,
+                               "Numerical underflow detected:",
                                "sigma is probably too small"),
                          call.=FALSE)
                  uhoh <- unique(c(uhoh, "underflow"))
@@ -560,7 +658,7 @@ relrisk.ppp <- local({
 
   divideifpositive <- function(z, d) { eval.im(ifelse(d > 0, z/d, NA)) }
 
-  relrisk.ppp
+  rrpppEngine
 })
 
 

@@ -22,7 +22,8 @@
 \arguments{
   \item{X}{
     A multitype point pattern (object of class \code{"ppp"}
-    which has factor valued marks).
+    which has factor valued marks) or a point pattern with several
+    columns of factor-valued marks.
   }
   \item{sigma}{
     Optional. The numeric value of the smoothing bandwidth
@@ -113,7 +114,7 @@
   This function \code{relrisk.ppp} is the method for point pattern
   datasets. It computes \emph{nonparametric} estimates of relative risk
   by kernel smoothing (Bithell, 1990, 1991; Diggle, 2003; Baddeley,
-  Rubak and Turner, 2015). 
+  Rubak and Turner, 2015).
 
   If \code{X}  is a bivariate point pattern
   (a multitype point pattern consisting of two types of points)
@@ -211,12 +212,13 @@
   (object of class \code{"im"}). numerical weights for the data points
   will be extracted from this image (by looking up the pixel values
   at the locations of the data points in \code{X}).
+  
+  If \code{X} has multiple columns of marks, then each column 
+  will be processed separately, as described above,
+  and the result is a list containing
+  the results of processing each column.
 }
 \value{
-  If \code{se=FALSE} (the default), the format is described below.
-  If \code{se=TRUE}, the result is a list of two entries,
-  \code{estimate} and \code{SE}, each having the format described below.
-  
   If \code{X} consists of only two types of points,
   and if \code{casecontrol=TRUE},
   the result is a pixel image (if \code{at="pixels"})
@@ -246,7 +248,14 @@
 
   If \code{relative=FALSE}, the resulting values always lie between 0
   and 1. If \code{relative=TRUE}, the results are either non-negative
-  numbers, or the values \code{Inf} or \code{NA}. 
+  numbers, or the values \code{Inf} or \code{NA}.
+
+  If \code{se=TRUE}, the result is a list of two entries,
+  \code{estimate} and \code{SE}, each having the format described above.
+  
+  If \code{X} has \code{m > 1} columns of marks, the result is a list of
+  length \code{m} containing the results for each column of marks
+  as described above.
 }
 \section{Shrinkage estimate}{
   If the argument \code{shrink} is given, the shrinkage

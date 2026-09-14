@@ -21,7 +21,7 @@ cat(paste("--------- Executing",
 #'                    and idw, adaptive.density, intensity
 #'                    and SpatialMedian, SpatialQuantile
 #'
-#'  $Revision: 1.70 $  $Date: 2025/07/27 07:21:08 $
+#'  $Revision: 1.71 $  $Date: 2026/09/14 04:10:49 $
 #'
 
 if(!FULLTEST)
@@ -280,6 +280,12 @@ local({
     pants(X=sporophores, sigma=20, at="pixels", se=FALSE)
     pants(X=sporophores, sigma=20, relative=TRUE, at="pixels", se=FALSE)
     bw.relrisk(sporophores, method="weightedleastsquares")
+    ## multiple columns of marks
+    pants(X=btb, sigma=10)
+    pants(X=btb, sigma=10, relative=TRUE)
+    pants(X=btb, sigma=10, se=TRUE)
+    pants(X=btb, sigma=10, at="points")
+    pants(X=btb, sigma=10, at="points", se=TRUE)
   }
   
   ## execute Smooth.ppp and Smoothfun.ppp in all cases

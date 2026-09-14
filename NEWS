@@ -1,9 +1,11 @@
 
-        CHANGES IN spatstat.explore VERSION 3.8-2.008
+        CHANGES IN spatstat.explore VERSION 3.8-2.009
 
 OVERVIEW
 
     o Transect of a spatial function.
+
+    o relrisk.ppp handles multiple columns of marks.
     
     o Minor improvements and bug fixes.
 
@@ -20,6 +22,9 @@ SIGNIFICANT USER-VISIBLE CHANGES
     o densityVoronoi.ppp
     Behaviour improved in cases where f is extremely close to 0 or 1.
 
+    o relrisk.ppp
+    Now handles a point pattern with multiple columns of marks.
+    
     o transect.im
     This function is now a method for the generic 'transect'.
 
