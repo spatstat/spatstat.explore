@@ -1,15 +1,24 @@
 
-        CHANGES IN spatstat.explore VERSION 3.8-2.009
+        CHANGES IN spatstat.explore VERSION 3.8-2.010
 
 OVERVIEW
 
+    o Adaptive kernel estimation of relative risk.
+    
     o Transect of a spatial function.
 
     o relrisk.ppp handles multiple columns of marks.
-    
+
     o Minor improvements and bug fixes.
 
 NEW FUNCTIONS
+
+    o relriskAdaptiveKernel
+    New generic.
+
+    o relriskAdaptiveKernel.ppp
+    Variable-bandwidth kernel estimation of spatial relative risk
+    or spatially-varying probability.
 
     o transect
     New generic
@@ -26,7 +35,7 @@ SIGNIFICANT USER-VISIBLE CHANGES
     Now handles a point pattern with multiple columns of marks.
     
     o transect.im
-    This function is now a method for the generic 'transect'.
+    This function is now a method for the new generic 'transect'.
 
 BUG FIXES
 

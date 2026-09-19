@@ -8,7 +8,9 @@
 
 You are viewing the GitHub repository which holds
 the latest **development version** of `spatstat.explore`.
-For the latest public release on CRAN, click the green badge above.
+For the latest public release on CRAN, 
+see the [CRAN page](https://CRAN.R-project.org/package=spatstat.explore).
+
 
  - [Overview of `spatstat.explore`](#overview)
  - [Detailed contents of package](#detailed)

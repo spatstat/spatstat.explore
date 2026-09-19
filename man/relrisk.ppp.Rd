@@ -1,7 +1,7 @@
 \name{relrisk.ppp}
 \alias{relrisk.ppp}
 \title{
-  Nonparametric Estimate of Spatially-Varying Relative Risk
+  Nonparametric Estimate of Spatially-Varying Probability or Relative Risk
 }
 \description{
   Given a multitype point pattern, this function estimates the
@@ -326,6 +326,14 @@
   models which computes \emph{parametric}
   estimates of relative risk, using the fitted model.
 
+  Nonparametric estimates of relative risk using
+  variable-bandwidth kernel smoothing are also available using
+  \code{\link[spatstat.explore]{relriskAdaptiveKernel}}.
+
+  Nonparametric estimates of relative risk using
+  the heat kernel (geometrically aware smoothing) are also available using
+  \code{\link[spatstat.explore]{relriskHeat}}.
+  
   See also 
   \code{\link[spatstat.explore]{bw.relrisk}} for bandwidth selection,
   \code{\link[spatstat.explore]{tolcon}} for tolerance contours,

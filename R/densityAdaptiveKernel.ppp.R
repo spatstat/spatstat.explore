@@ -1,7 +1,7 @@
 #'
 #'   densityAdaptiveKernel.ppp.R
 #'
-#'   $Revision: 1.16 $  $Date: 2024/06/04 03:09:11 $
+#'   $Revision: 1.19 $  $Date: 2026/09/19 07:50:50 $
 #'
 #'
 #'  Adaptive kernel smoothing via 3D FFT
@@ -16,6 +16,10 @@ densityAdaptiveKernel.ppp <- function(X, bw, ...,
   at <- match.arg(at)
   nX <- npoints(X)
 
+  if("se" %in% names(list(...)))
+   stop("Standard errors are not yet supported in densityAdaptiveKernel.ppp",
+        call.=FALSE)
+  
   if(nX == 0)
     switch(at,
            points = return(numeric(nX)),
@@ -37,25 +41,8 @@ densityAdaptiveKernel.ppp <- function(X, bw, ...,
   } else weights <- rep(1,nX)
 
   ## determine bandwidth for each data point
-  if(missing(bw) || is.null(bw)) {
-    bw <- do.call.matched(bw.abram,
-                          resolve.defaults(list(X=quote(X), at="points"),
-                                           list(...)),
-                          extrargs=names(args(as.mask)))
-  } else if(is.numeric(bw)) {
-    check.nvector(bw, nX, oneok=TRUE, vname="bw")
-    if(length(bw) == 1) bw <- rep(bw, nX)
-  } else if(is.im(bw)) {
-    bw <- safelookup(bw, X, warn=FALSE)
-    if(anyNA(bw))
-      stop("Some data points lie outside the domain of image 'bw'",
-           call.=FALSE)
-  } else if(inherits(bw, "funxy")) {
-    bw <- bw(X)
-    if(anyNA(bw))
-      stop("Some data points lie outside the domain of function 'bw'",
-           call.=FALSE)
-  } else stop("Argument 'bw' should be a numeric vector or a pixel image")
+  if(missing(bw)) bw <- NULL
+  bw <- resolve.adaptive.bandwidths(X, bw, ...)
 
   #' divide bandwidths into groups
   if(ngroups == nX) {
@@ -109,4 +96,51 @@ densityAdaptiveKernel.splitppp <- function(X, bw=NULL, ...,
   return(as.solist(y, demote=TRUE))
 }
 
+resolve.adaptive.bandwidths <- function(X, bw=NULL, ...,
+                                        adjust=1, sigma=NULL, warn=FALSE) {
+  ## determine bandwidth for each data point of X
+  if(!is.null(sigma)) {
+    if(is.null(bw)) {
+      ## catch inadvertent use of wrong argument name
+      bw <- sigma
+    } else {
+      ## conflict
+      if(warn)
+        warning("Both arguments bw and sigma were specified; ignoring sigma",
+                call.=FALSE)
+    }
+  }
+  if(is.null(bw)) {
+    ## no bandwidth information given
+    bw <- do.call.matched(bw.abram,
+                          resolve.defaults(list(X=quote(X), at="points"),
+                                           list(...)),
+                          extrargs=names(args(as.mask)))
+  } else if(is.numeric(bw)) {
+    ## bandwidth value for each data point
+    nX <- npoints(X)
+    check.nvector(bw, nX, oneok=TRUE, vname="bw")
+    if(length(bw) == 1) bw <- rep(bw, nX)
+  } else if(is.im(bw)) {
+    ## bandwidth for a grid of spatial locations -- look up at data points
+    bw <- safelookup(bw, X, warn=FALSE)
+    if(anyNA(bw))
+      stop("Some data points lie outside the domain of image 'bw'",
+           call.=FALSE)
+  } else if(inherits(bw, "funxy")) {
+    ## bandwidth for any spatial location --- evaluate at data points
+    bw <- bw(X)
+    if(anyNA(bw))
+      stop("Some data points lie outside the domain of function 'bw'",
+           call.=FALSE)
+  } else stop(paste("Argument 'bw' should be a numeric vector,",
+                    "a pixel image, or a function(x,y)"),
+              call.=FALSE)
+  if(!missing(adjust)) {
+    check.1.real(adjust)
+    stopifnot(adjust > 0)
+    bw <- adjust * bw
+  }
+  return(bw)
+}
 

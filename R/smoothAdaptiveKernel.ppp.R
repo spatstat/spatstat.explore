@@ -1,7 +1,7 @@
 #'
 #'   smoothAdaptiveKernel.ppp.R
 #'
-#'   $Revision: 1.2 $  $Date: 2026/07/15 04:45:51 $
+#'   $Revision: 1.4 $  $Date: 2026/09/19 09:18:14 $
 #'
 #'
 #'  Adaptive kernel smoothing via 3D FFT
@@ -12,6 +12,7 @@ SmoothAdaptiveKernel <- function(X, bw, ...) {
 }
 
 SmoothAdaptiveKernel.ppp <- function(X, bw, ...,
+                                     adjust=1,
                                      weights=NULL,
                                      at=c("pixels", "points")) {
   stopifnot(is.ppp(X))
@@ -25,6 +26,10 @@ SmoothAdaptiveKernel.ppp <- function(X, bw, ...,
   univariate <- is.null(dim(marx))
   nc <- if(univariate) 1 else ncol(marx)
   nX <- npoints(X)
+
+  if("se" %in% names(list(...)))
+    stop("Standard errors are not yet supported in SmoothAdaptiveKernel.ppp",
+         call.=FALSE)
 
   ## trivial case
   if(nX == 0) {
@@ -51,9 +56,13 @@ SmoothAdaptiveKernel.ppp <- function(X, bw, ...,
     weighted <- !is.null(weights)
   } else weights <- NULL
 
-  ## calculate denominator and determine bandwidths
-  denom <- densityAdaptiveKernel(unmark(X), bw=bw, ..., at=at,
-                                 weights=weights)
+  ## determine bandwidth for each data point
+  UX <- unmark(X)
+  if(missing(bw)) bw <- NULL
+  bw <- resolve.adaptive.bandwidths(UX, bw=bw, ..., adjust=adjust, warn=TRUE)
+
+  ## calculate denominator of Nadaraya-Watson estimate
+  denom <- densityAdaptiveKernel(UX, bw=bw, ..., at=at, weights=weights)
   bw <- attr(denom, "bw")
 
   ## prepare nearest neighbour information
@@ -65,13 +74,13 @@ SmoothAdaptiveKernel.ppp <- function(X, bw, ...,
   results <- vector(mode="list", length=nc)
   if(univariate) {
     weightsmarks <- if(weighted) (weights * marx) else marx
-    numer <- densityAdaptiveKernel(unmark(X), bw=bw, ..., at=at,
+    numer <- densityAdaptiveKernel(UX, bw=bw, ..., at=at,
                                    weights=weightsmarks)
     results[[1L]] <- saferatio(numer, denom, marx, nn)
   } else {
     for(j in 1:nc) {
       weightsmarksj <- if(weighted) (weights * marx[,j]) else marx[,j]
-      numerj <- densityAdaptiveKernel(unmark(X), bw=bw, ..., at=at,
+      numerj <- densityAdaptiveKernel(UX, bw=bw, ..., at=at,
                                    weights=weightsmarksj)
       results[[j]] <- saferatio(numerj, denom, marx, nn)
     }

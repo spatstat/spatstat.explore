@@ -27,7 +27,9 @@
     \code{\link{bw.abram.ppp}} to compute the smoothing bandwidths
     if \code{bw} is missing,
     or passed to \code{\link[spatstat.geom]{as.mask}}
-    to control the spatial resolution of the result.
+    to control the spatial resolution of the result,
+    or passed to \code{\link[spatstat.explore]{density.ppp}} to modify the
+    calculation of intensity.
   }
   \item{weights}{
     Optional vector of numeric weights for the points of \code{X}.
@@ -115,7 +117,7 @@
   for each data point in \code{X}.
 }
 \author{
-  \adrian and Tilman Davies.
+  \adrian and \tilman.
 }
 \references{
   Davies, T.M. and Baddeley, A. (2018)

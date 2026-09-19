@@ -152,6 +152,7 @@
 \alias{RelevantDeviation}
 \alias{rename.fv}
 \alias{resolve.2D.kernel}
+\alias{resolve.adaptive.bandwidths}
 \alias{resolve.angular.unit}        
 \alias{resolve.foxall.window}
 \alias{resolve.hist.args}
@@ -178,6 +179,8 @@
 \alias{rocIm}
 \alias{rocSmoothCalc}
 \alias{roseContinuous}
+\alias{rrakpppEngine}
+\alias{rrpppEngine}
 \alias{scanmeasure}
 \alias{scanmeasure.ppp}
 \alias{scanmeasure.im}
@@ -428,6 +431,7 @@ RelevantDeviation(x, alternative, clamp, scaling)
 rename.fv(x, fname, ylab, yexp)
 resolve.2D.kernel(\dots,
             sigma, varcov, x, mindist, adjust, bwfun, allow.zero)
+resolve.adaptive.bandwidths(X, bw, \dots, adjust, sigma, warn)
 resolve.angular.unit(angles, unit, fullcircle, guess, circinfo)
 resolve.foxall.window(X, Y, W, warn.trim)
 resolve.hist.args(x, \dots, freq, probability)
@@ -481,6 +485,12 @@ rocSmoothCalc(ZX, ZU,\dots, weightsX, weightsU,
 roseContinuous(ang, rad, unit, \dots, fullcircle,
                start, clockwise, root, main, labels, at, shind,
                add, do.plot, do.circle, do.rings, do.ticks)
+rrakpppEngine(X, bw, \dots, at, weights, 
+              relative, normalise, casecontrol, control, case, context)
+rrpppEngine(X, sigma, \dots, at, weights, varcov,
+            relative, normalise, adjust, edge, diggle,
+            se, wtype, casecontrol, control, case,
+            shrink, fudge, context)
 scanmeasure(X, \dots)
 \method{scanmeasure}{ppp}(X, r, \dots, method) 
 \method{scanmeasure}{im}(X, r, \dots)

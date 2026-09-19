@@ -11,6 +11,7 @@
 SmoothAdaptiveKernel(X, bw, \dots)
 
 \method{SmoothAdaptiveKernel}{ppp}(X, bw, \dots,
+       adjust=1,
        weights=NULL,       
        at=c("pixels", "points"))
 }
@@ -33,6 +34,10 @@ SmoothAdaptiveKernel(X, bw, \dots)
     to control the spatial resolution of the result,
     or passed to \code{\link[spatstat.explore]{densityAdaptiveKernel.ppp}} to control
     calculations such as edge corrections.
+  }
+  \item{adjust}{
+    Optional. A single number. A multiplier for adjusting all the
+    smoothing bandwidths.
   }
   \item{weights}{
     Optional vector of numeric weights for the points of \code{X}.

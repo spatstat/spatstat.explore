@@ -3,7 +3,7 @@
 #
 #   Estimation of relative risk
 #
-#  $Revision: 1.73 $  $Date: 2025/04/06 10:39:22 $
+#  $Revision: 1.74 $  $Date: 2026/09/19 07:58:57 $
 #
 
 relrisk <- function(X, ...) UseMethod("relrisk")
@@ -41,7 +41,6 @@ relrisk.ppp <- function(X, sigma=NULL, ...,
                           varcov      = varcov,
                           relative    = relative,
                           normalise   = normalise,
-#                          adaptive    = adaptive,
                           adjust      = adjust,
                           edge        = edge,
                           diggle      = diggle,
@@ -61,7 +60,6 @@ relrisk.ppp <- function(X, sigma=NULL, ...,
                          varcov      = varcov,
                          relative    = relative,
                          normalise   = normalise,
-#                         adaptive    = adaptive,
                          adjust      = adjust,
                          edge        = edge,
                          diggle      = diggle,
@@ -88,13 +86,13 @@ rrpppEngine <- local({
                           weights = NULL,
                           varcov=NULL,
                           relative=FALSE, normalise=FALSE,
-#                          adaptive = FALSE,
                           adjust=1, edge=TRUE, diggle=FALSE,
                           se=FALSE, wtype=c("value", "multiplicity"),
                           casecontrol=TRUE, control=1, case=NULL,
                           shrink=0, fudge=0, context="") {
     stopifnot(is.ppp(X))
     if(is.NAobject(X) || !is.multitype(X)) return(NAobject("im"))
+    at <- match.arg(at)
     weighted <- !is.null(weights)
     case.given <- !is.null(case)
     control.given <- !is.null(control)
