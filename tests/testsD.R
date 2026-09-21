@@ -21,7 +21,7 @@ cat(paste("--------- Executing",
 #'                    and idw, adaptive.density, intensity
 #'                    and SpatialMedian, SpatialQuantile
 #'
-#'  $Revision: 1.71 $  $Date: 2026/09/14 04:10:49 $
+#'  $Revision: 1.72 $  $Date: 2026/09/21 09:54:48 $
 #'
 
 if(!FULLTEST)
@@ -286,6 +286,34 @@ local({
     pants(X=btb, sigma=10, se=TRUE)
     pants(X=btb, sigma=10, at="points")
     pants(X=btb, sigma=10, at="points", se=TRUE)
+  }
+  if(FULLTEST) {
+    ## adaptive kernel estimation of relative risk
+    ## two types
+    b <- 2 * nndist(ants)
+    A <- relriskAdaptiveKernel(ants, b, relative=FALSE, normalise=FALSE)
+    A <- relriskAdaptiveKernel(ants, b, relative=TRUE,  normalise=FALSE)
+    A <- relriskAdaptiveKernel(ants, b, relative=FALSE, normalise=TRUE)
+    A <- relriskAdaptiveKernel(ants, b, relative=TRUE,  normalise=TRUE)
+
+    A <- relriskAdaptiveKernel(ants, b, relative=TRUE,  normalise=FALSE,
+                               control=2)
+    A <- relriskAdaptiveKernel(ants, b, relative=TRUE,  normalise=TRUE,
+                               control=2)
+    A <- relriskAdaptiveKernel(ants, b, relative=TRUE,  normalise=FALSE,
+                               case=1)
+    A <- relriskAdaptiveKernel(ants, b, relative=TRUE,  normalise=TRUE,
+                               case=1)
+    ## more than two types
+    b <- 5 * nndist(sporophores)
+    A <- relriskAdaptiveKernel(sporophores, b, relative=FALSE, normalise=FALSE)
+    A <- relriskAdaptiveKernel(sporophores, b, relative=TRUE,  normalise=FALSE)
+    A <- relriskAdaptiveKernel(sporophores, b, relative=FALSE, normalise=TRUE)
+    A <- relriskAdaptiveKernel(sporophores, b, relative=TRUE,  normalise=TRUE)
+    A <- relriskAdaptiveKernel(sporophores, b, relative=TRUE,  normalise=FALSE,
+                               control=3)
+    A <- relriskAdaptiveKernel(sporophores, b, relative=TRUE,  normalise=TRUE,
+                               control=3)
   }
   
   ## execute Smooth.ppp and Smoothfun.ppp in all cases
