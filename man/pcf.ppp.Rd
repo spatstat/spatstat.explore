@@ -13,7 +13,8 @@
                     correction=c("translate", "Ripley"),
                     divisor=c("r", "d", "a", "t"),
                     zerocor=c("convolution", "reflection", "bdrykern",
-                             "JonesFoster", "weighted", "none", "good", "best"),
+                             "JonesFoster", "stableJF",
+                             "weighted", "none", "good", "best"),
                     nsmall = 300,
                     gref = NULL,
                     tau = 0,
@@ -88,13 +89,14 @@
     String (partially matched) specifying a correction for the boundary effect
     bias at \eqn{r=0}. Possible values are
     \code{"none"}, \code{"weighted"}, \code{"convolution"},
-    \code{"reflection"}, \code{"bdrykern"} and \code{"JonesFoster"}.
+    \code{"reflection"}, \code{"bdrykern"}, \code{"JonesFoster"} and
+    \code{"stableJF"}. The options \code{"best"} and \code{"good"}
+    are also recognised.
     See Details, or help file for \code{\link[spatstat.univar]{densityBC}}.
   }
   \item{nsmall}{
-    Optional. Integer. The maximum number of data points
-    for which the default value of \code{zerocor} will be
-    \code{"JonesFoster"}. 
+    Optional. Integer. A threshold which determines
+    the default value of \code{zerocor}. See Details.
   }
   \item{gref}{
     Optional. A pair correlation function that will be used as the
@@ -294,7 +296,11 @@
     \item
     \code{zerocor="JonesFoster"}:
     the Jones-Foster modification of the linear boundary kernel.
-    This is the default for patterns with at most \code{nsmall} points.
+    \item
+    \code{zerocor="stableJF"}:
+    a numerically stabilised version of the Jones-Foster estimate.
+    This is the default correction
+    for patterns with at most \code{nsmall} points.
     \item
     \code{zerocor="weighted"}: the cut-and-normalization method.
     Not recommended.
@@ -304,12 +310,12 @@
   }
   For details of these corrections,
   see the help for \code{\link[spatstat.univar]{densityBC}}.
-  For compatibility, the code also recognises
+  For compatibility with other functions, the code also recognises
   \itemize{
     \item
     \code{zerocor="best"} stipulates the correction with the best
     statistical performance regardless of computation cost. It is equivalent
-    to \code{zerocor="JonesFoster"}.
+    to \code{zerocor="stableJF"}.
     \item
     \code{zerocor="good"} stipulates a correction which strikes
     the best balance between statistical performance and computational
@@ -319,7 +325,7 @@
   depends on the size of the point pattern \code{X}
   according to the threshold \code{nsmall}.
   If \code{npoints(X) <= nsmall} the default is
-  \code{zerocor="JonesFoster"}
+  \code{zerocor="stableJF"},
   while if \code{npoints(X) > nsmall} the default is
   \code{zerocor="convolution"}. 
 

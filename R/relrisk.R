@@ -3,7 +3,7 @@
 #
 #   Estimation of relative risk
 #
-#  $Revision: 1.74 $  $Date: 2026/09/19 07:58:57 $
+#  $Revision: 1.75 $  $Date: 2026/09/22 03:20:53 $
 #
 
 relrisk <- function(X, ...) UseMethod("relrisk")
@@ -19,7 +19,7 @@ relrisk.ppp <- function(X, sigma=NULL, ...,
                         shrink=0, fudge=0) {
   stopifnot(is.ppp(X))
   if(is.NAobject(X)) return(NAobject("list"))
-  ## resove arguments
+  ## resolve arguments
   control.given <- !missing(control)
   if(!control.given) control <- NULL
   case.given <- !missing(case) && !is.null(case)

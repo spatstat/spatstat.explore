@@ -23,7 +23,8 @@ pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
                    correction=c("translate", "Ripley"),
                    divisor=c("r", "d", "a", "t"),
                    zerocor=c("convolution", "reflection", "bdrykern",
-                             "JonesFoster", "weighted", "none", "good", "best"),
+                             "JonesFoster", "stableJF",
+                             "weighted", "none", "good", "best"),
                    nsmall = 300,
                    gref=NULL,
                    tau = 0,
@@ -58,10 +59,10 @@ pcf.ppp <- function(X, ..., r=NULL, rmax=NULL,
   if(missing(zerocor)) {
     ## default depends on number of data points
     if(!missing(nsmall)) check.1.integer(nsmall)
-    zerocor <- if(npts <= nsmall) "JonesFoster" else "convolution"
+    zerocor <- if(npts <= nsmall) "stableJF" else "convolution"
   } else {
     zerocor <- match.arg(zerocor)
-    if(zerocor == "best") zerocor <- "JonesFoster"
+    if(zerocor == "best") zerocor <- "stableJF"
     if(zerocor == "good") zerocor <- "convolution"
   }
 
@@ -401,7 +402,8 @@ resolve.pcf.bandwidth <- function(X, ...,
                                   correction=c("translate", "Ripley"),
                                   divisor=c("r", "d", "a", "t"),
                                   zerocor=c("convolution", "reflection",
-                                            "bdrykern", "JonesFoster",
+                                            "bdrykern",
+                                            "JonesFoster", "stableJF",
                                             "weighted", "none",
                                             "good", "best"),
                                   nsmall = 300,
@@ -682,13 +684,15 @@ resolve.pcf.bandwidth <- function(X, ...,
 sewpcf <- function(d, w, denargs, lambda2area,
                       divisor=c("r","d","a", "t"),
                       zerocor=c("none", "weighted", "convolution",
-                                "reflection", "bdrykern", "JonesFoster"),
+                                "reflection", "bdrykern",
+                                "JonesFoster", "stableJF"),
                       fast=TRUE, convert=TRUE, adaptive=FALSE, tau=0,
                       gref=NULL, Transform=NULL) {
   DEBUG <- isTRUE(getOption("debug.smoothpcf"))
   if(DEBUG) {
     started <- proc.time()
     splat("sewpcf")
+    denargs$internal$debug <- TRUE
   }
 
   if(is.function(convert)) {
