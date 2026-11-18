@@ -16,7 +16,7 @@ using kernel methods.
             correction = c("translate", "Ripley"),
             divisor=c("r", "d", "a", "t"),
             zerocor=c("convolution", "reflection", "bdrykern",
-                      "JonesFoster", "weighted", "none",
+                      "JonesFoster", "stableJF", "weighted", "none",
                       "good", "best"),
             nsmall = 300,
             gref=NULL,
@@ -104,13 +104,13 @@ using kernel methods.
     String (partially matched) specifying a correction for the boundary effect
     bias at \eqn{r=0}. Possible values are
     \code{"none"}, \code{"weighted"}, \code{"convolution"},
-    \code{"reflection"}, \code{"bdrykern"} and \code{"JonesFoster"}.
+    \code{"reflection"}, \code{"bdrykern"}, \code{"JonesFoster"}
+    and \code{"stableJF"}.
     See \code{\link{pcf.ppp}}.
   }
   \item{nsmall}{
-    Optional. Integer. The maximum number of data points
-    for which the default value of \code{zerocor} will be
-    \code{"JonesFoster"}. 
+    Optional. Integer. A threshold which determines
+    the default value of \code{zerocor}. See \code{\link{pcf.ppp}}.
   }
   \item{gref}{
     Optional. A pair correlation function that will be used as the

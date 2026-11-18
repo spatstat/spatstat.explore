@@ -77,7 +77,8 @@ pcfmulti <- function(X, I, J, ...,
                      correction=c("translate", "Ripley"),
                      divisor=c("r", "d", "a", "t"),
                      zerocor=c("convolution", "reflection", "bdrykern",
-                               "JonesFoster", "weighted", "none",
+                               "JonesFoster", "stableJF",
+                               "weighted", "none",
                                "good", "best"),
                      nsmall = 300,
                      gref=NULL,
@@ -114,12 +115,12 @@ pcfmulti <- function(X, I, J, ...,
 
   if(zerocor.given) {
     zerocor <- match.arg(zerocor)
-    if(zerocor == "best") zerocor <- "JonesFoster"
+    if(zerocor == "best") zerocor <- "stableJF"
     if(zerocor == "good") zerocor <- "convolution"
   } else {
     ## default depends on number of data points
     if(!missing(nsmall)) check.1.integer(nsmall)
-    zerocor <- if(npts <= nsmall) "JonesFoster" else "convolution"
+    zerocor <- if(npts <= nsmall) "stableJF" else "convolution"
   }
     
   check.1.real(adjust)

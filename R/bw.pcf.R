@@ -1,7 +1,7 @@
 #'
 #' bw.pcf.R
 #'
-#' $Revision: 1.12 $  $Date: 2026/05/01 01:17:20 $
+#' $Revision: 1.14 $  $Date: 2026/11/18 05:10:40 $
 #'
 #' bandwidth selection for pcf
 #' with least-squares cross-validation method
@@ -68,7 +68,8 @@ BWPCFengine <- function(X, ..., lambda=NULL,
                            divisor=c("r", "d", "a", "t"),
                            kernel = "epanechnikov",
                            zerocor=c("none", "weighted", "convolution",
-                                     "reflection", "bdrykern", "JonesFoster"),
+                                     "reflection", "bdrykern",
+                                     "JonesFoster", "stableJF"),
                            gref=NULL,
                            cv.method=c("compLik", "leastSQ", "martin", "oracle"),
                            gtrue=NULL, 
@@ -263,23 +264,22 @@ BWPCFengine <- function(X, ..., lambda=NULL,
   return(result)
 }
 
-.Integrand <- function(x, g) { 2 * pi * x * g(x) }
-
 CVforPCF <- function(BW, stuff) {
   #' Compute cross-validation objective function
   force(BW)
   #' (1) Form estimates of pcf using bandwidth 'BW'
-  if(stuff$pcfargs$zerocor != "JonesFoster") {
+  zerocor <- stuff$pcfargs$zerocor
+  if(zerocor %in% c("JonesFoster", "stableJF")) {
+    #' Jones-Foster estimator
+    Aconv <- PCFatRandD(stuff, bw=BW, zerocor="convolution")
+    Abdry <- PCFatRandD(stuff, bw=BW, zerocor="bdrykern")
+    stuff$grs <- spatstat.univar::calcJonesFoster(Aconv$grs, Abdry$grs, zerocor)
+    stuff$gds <- spatstat.univar::calcJonesFoster(Aconv$gds, Abdry$gds, zerocor)
+  } else {
     #' usual case
     A <- PCFatRandD(stuff, bw=BW)
     stuff$grs <- A$grs  # estimates g(r) at grid of 'r' values
     stuff$gds <- A$gds  # estimates g(d) at pairwise distances 'd'
-  } else {
-    #' Jones-Foster estimator
-    Aconv <- PCFatRandD(stuff, bw=BW, zerocor="convolution")
-    Abdry <- PCFatRandD(stuff, bw=BW, zerocor="bdrykern")
-    stuff$grs <- Aconv$grs * exp(Abdry$grs/Aconv$grs - 1)
-    stuff$gds <- Aconv$gds * exp(Abdry$gds/Aconv$gds - 1)
   }
   with(stuff, {
     #' (2) remove negative and zero values and NaN etc
@@ -334,6 +334,8 @@ CVforPCF <- function(BW, stuff) {
     return(value)
   })
 }
+
+.PCFintegrand <- function(x, g) { 2 * pi * x * g(x) }
 
 PCFatRandD <- function(stuff, bw=NULL, zerocor=NULL) {
   #' compute estimates of pcf
@@ -414,7 +416,7 @@ PCFatRandD <- function(stuff, bw=NULL, zerocor=NULL) {
                  As <- pi * ds^2
                } else {
                  #' transformation determined by integral 2 pi x g(x) dx
-                 As <- indefinteg(.Integrand, ds, g=gref, lower=0)
+                 As <- indefinteg(.PCFintegrand, ds, g=gref, lower=0)
                }
                #' extract bandwidth used on area scale
                Abw <- attr(gfun, "bw")

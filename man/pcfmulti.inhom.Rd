@@ -17,7 +17,7 @@ pcfmulti.inhom(X, I, J, lambdaI = NULL, lambdaJ = NULL, \dots,
                correction = c("translate", "Ripley"),
                divisor = c("r", "d", "a", "t"),
                zerocor = c("convolution", "reflection",
-                         "bdrykern", "JonesFoster", "weighted",
+                         "bdrykern", "JonesFoster", "stableJF", "weighted",
                          "none", "good", "best"),
                nsmall = 300,
                gref = NULL, tau = 0,
@@ -150,13 +150,13 @@ pcfmulti.inhom(X, I, J, lambdaI = NULL, lambdaJ = NULL, \dots,
     String (partially matched) specifying a correction for the boundary effect
     bias at \eqn{r=0}. Possible values are
     \code{"none"}, \code{"weighted"}, \code{"convolution"},
-    \code{"reflection"}, \code{"bdrykern"} and \code{"JonesFoster"}.
-    See \code{\link{pcf.ppp}}.
+    \code{"reflection"}, \code{"bdrykern"}, \code{"JonesFoster"}
+    and \code{"stableJF"}. The options \code{"best"} and \code{"good"}
+    are also recognised. See \code{\link{pcf.ppp}}.
   }
   \item{nsmall}{
-    Optional. Integer. The maximum number of data points
-    for which the default value of \code{zerocor} will be
-    \code{"JonesFoster"}. 
+    Optional. Integer. A threshold which determines
+    the default value of \code{zerocor}. See \code{\link{pcf.ppp}}.
   }
   \item{gref}{
     Optional. A pair correlation function that will be used as the

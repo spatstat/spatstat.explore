@@ -16,7 +16,8 @@ pcfinhom(X, lambda = NULL, \dots,
             correction = c("translate", "Ripley"),
             divisor=c("r", "d", "a", "t"),
             zerocor=c("convolution", "reflection", "bdrykern",
-                      "JonesFoster", "weighted", "none", "good", "best"),
+                      "JonesFoster", "stableJF",
+                      "weighted", "none", "good", "best"),
             nsmall = 300,
             renormalise = TRUE, normpower = 2,
             update = TRUE, leaveoneout = TRUE,
@@ -102,13 +103,13 @@ pcfinhom(X, lambda = NULL, \dots,
     String (partially matched) specifying a correction for the boundary effect
     bias at \eqn{r=0}. Possible values are
     \code{"none"}, \code{"weighted"}, \code{"convolution"},
-    \code{"reflection"}, \code{"bdrykern"} and \code{"JonesFoster"}.
+    \code{"reflection"}, \code{"bdrykern"}, \code{"JonesFoster"}
+    or \code{"stableJF"}.
     See Details, or help file for \code{\link[spatstat.univar]{densityBC}}.
   }
   \item{nsmall}{
-    Optional. Integer. The maximum number of data points
-    for which the default value of \code{zerocor} will be
-    \code{"JonesFoster"}. 
+    Optional. Integer. A threshold which determines
+    the default value of \code{zerocor}. See Details.
   }
   \item{renormalise}{
     Logical. Whether to renormalise the estimate. See Details.
@@ -259,6 +260,18 @@ pcfinhom(X, lambda = NULL, \dots,
   }{
     sum[i] (1/lambda(x[i])) = area(W).
   }
+
+  Spatial edge correction is controlled by the argument \code{correction}.
+  For options, see the help for \code{\link{pcf.ppp}}.
+  The default is to compute both the translation correction
+  and the Ripley isotropic correction.
+
+  Boundary correction at \eqn{r = 0} is controlled by
+  the argument \code{zerocor}.
+  For options, see the help for \code{\link{pcf.ppp}}
+  or \code{\link[spatstat.univar]{densityBC}}. The default is
+  \code{zerocor="stableJF"} provided \code{npoints(X) <= nsmall},
+  and \code{zerocor="convolution"} otherwise.
 }
 \value{
   A function value table

@@ -21,7 +21,7 @@ cat(paste("--------- Executing",
 #'                    and idw, adaptive.density, intensity
 #'                    and SpatialMedian, SpatialQuantile
 #'
-#'  $Revision: 1.72 $  $Date: 2026/09/21 09:54:48 $
+#'  $Revision: 1.73 $  $Date: 2026/11/18 04:04:28 $
 #'
 
 if(!FULLTEST)
@@ -324,7 +324,7 @@ local({
     if(FUN) {
       f <- Smoothfun(Y, ...)
       f(120, 80)
-      f(Y[1:2])
+      if(npoints(Y) >= 2) f(Y[1:2])
       f(Y[FALSE])
       U <- as.im(f)
     }
@@ -377,7 +377,7 @@ local({
     if(FUN) {
       f <- Smoothfun(Y, ...)
       f(4, 1)
-      f(Y[1:2])
+      if(npoints(Y) >= 2) f(Y[1:2])
       f(Y[FALSE])
       U <- as.im(f)
     }

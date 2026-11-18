@@ -1,18 +1,21 @@
 
-        CHANGES IN spatstat.explore VERSION 3.8-3.002
+        CHANGES IN spatstat.explore VERSION 3.8-3.004
 
 OVERVIEW
 
-    o New option and changed default in pcf.ppp
+    o New option and changed default for pair correlation functions.
     
 SIGNIFICANT USER-VISIBLE CHANGES
 
-    o pcf.ppp
+    o pcf.ppp, pcfinhom, pcfmulti, pcfmulti.inhom
     New option zerocor="stableJF".
 
-    o pcf.ppp
+    o pcf.ppp, pcfinhom, pcfmulti, pcfmulti.inhom
     In cases where the default value of 'zerocor' was "JonesFoster",
     the new default is zerocor="stableJF".
+
+    o pcfdot, pcfcross, pcfdot.inhom, pcfcross.inhom
+    New default for boundary correction 'zerocor' 
 
         CHANGES IN spatstat.explore VERSION 3.8-3
 
