@@ -73,7 +73,7 @@ pcfcross.inhom(X, i, j, lambdaI = NULL, lambdaJ = NULL, \dots,
   respectively, at locations \eqn{x} and \eqn{y}
   separated by a distance \eqn{r} is equal to
   \deqn{
-    p(r) = \lambda_i(x) lambda_j(y) g(r) \,{\rm d}x \, {\rm d}y
+    p(r) = \lambda_i(x) \lambda_j(y) g(r) \,{\rm d}x \, {\rm d}y
   }{
     p(r) = lambda[i](x) * lambda[j](y) * g(r) dx dy
   }
