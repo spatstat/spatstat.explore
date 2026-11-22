@@ -210,7 +210,7 @@ pcfinhom(X, lambda = NULL, \dots,
   \eqn{p(r)} of finding two points at locations \eqn{x} and \eqn{y}
   separated by a distance \eqn{r} is equal to
   \deqn{
-    p(r) = \lambda(x) lambda(y) g(r) \,{\rm d}x \, {\rm d}y
+    p(r) = \lambda(x) \lambda(y) g(r) \,{\rm d}x \, {\rm d}y
   }{
     p(r) = lambda(x) * lambda(y) * g(r) dx dy
   }

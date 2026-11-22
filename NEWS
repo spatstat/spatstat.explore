@@ -1,9 +1,11 @@
 
-        CHANGES IN spatstat.explore VERSION 3.8-3.004
+        CHANGES IN spatstat.explore VERSION 3.8-3.005
 
 OVERVIEW
 
     o New option and changed default for pair correlation functions.
+
+    o Minor improvements.
     
 SIGNIFICANT USER-VISIBLE CHANGES
 

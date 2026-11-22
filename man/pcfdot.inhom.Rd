@@ -71,7 +71,7 @@ pcfdot.inhom(X, i, lambdaI = NULL, lambdadot = NULL, \dots,
   where \eqn{x} and \eqn{y} are separated by a distance \eqn{r},
   is equal to
   \deqn{
-    p(r) = \lambda_i(x) lambda(y) g(r) \,{\rm d}x \, {\rm d}y
+    p(r) = \lambda_i(x) \lambda(y) g(r) \,{\rm d}x \, {\rm d}y
   }{
     p(r) = lambda[i](x) * lambda(y) * g(r) dx dy
   }
