@@ -1,23 +1,39 @@
 
-        CHANGES IN spatstat.explore VERSION 3.8-3.005
+        CHANGES IN spatstat.explore VERSION 3.8-4
 
 OVERVIEW
 
-    o New option and changed default for pair correlation functions.
+    o We thank Suman Rakshit and Gopalan Nair for contributions.
+    
+    o Bootstrap aggregation method for estimating intensity.
+    
+    o Modified Jones-Foster correction for pair correlation functions.
+
+    o Changed default for pair correlation functions.
 
     o Minor improvements.
     
 SIGNIFICANT USER-VISIBLE CHANGES
 
+    o densityVoronoi
+    Now supports 'bagging' (bootstrap aggregation) estimator.
+    New arguments 'bagging', 'radius', 'adaptive', 'adjust', 'alpha'.
+    Contributed by Suman Rakshit.
+    
     o pcf.ppp, pcfinhom, pcfmulti, pcfmulti.inhom
-    New option zerocor="stableJF".
+    New option zerocor="stableJF" is a modification of zerocor="JonesFoster"
+    designed to be more stable to numerical error in small samples.
 
     o pcf.ppp, pcfinhom, pcfmulti, pcfmulti.inhom
     In cases where the default value of 'zerocor' was "JonesFoster",
     the new default is zerocor="stableJF".
 
-    o pcfdot, pcfcross, pcfdot.inhom, pcfcross.inhom
-    New default for boundary correction 'zerocor' 
+    o pcfdot, pcfcross
+    Changes to pcfmulti imply new default for 'zerocor'.
+    
+    o pcfdot.inhom, pcfcross.inhom
+    Changes to pcfmulti.inhom imply new default for 'zerocor'.
+
 
         CHANGES IN spatstat.explore VERSION 3.8-3
 

@@ -12,6 +12,8 @@ densityVoronoi(X, \dots)
 \method{densityVoronoi}{ppp}(X, f = 1, \dots,
                           counting=FALSE,
                           fixed=FALSE,
+                          bagging=FALSE, radius=NULL, adaptive=FALSE,
+                          alpha=0.75, adjust=1,
                           nrep = 1, verbose=TRUE, internal=NULL)
 }
 \arguments{
@@ -19,6 +21,7 @@ densityVoronoi(X, \dots)
   \item{f}{
     Fraction (between 0 and 1 inclusive) of the data points that will be
     used to build a tessellation for the intensity estimate.
+    Ignored if \code{bagging=TRUE}.
   }
   \item{\dots}{Arguments passed to \code{\link[spatstat.geom]{as.im}} determining the
     pixel resolution of the result.
@@ -26,12 +29,37 @@ densityVoronoi(X, \dots)
   \item{counting}{
     Logical value specifying the choice of estimation method.
     See Details.
+    Ignored if \code{bagging=TRUE}.
   }
   \item{fixed}{
     Logical. If \code{FALSE} (the default), the data points are independently
     randomly thinned, so the number of data points that are retained
     is random. If \code{TRUE}, the number of data points retained
     is fixed. See Details.
+    Ignored if \code{bagging=TRUE}.
+  }
+  \item{bagging}{
+    Logical value specifying whether to use the bagging estimator
+    of Rakshit et al (2026).
+  }
+  \item{radius}{
+    Displacement radius for the random jittering used in the bagging estimator.
+    A single numerical value, or a numeric vector with one entry for
+    each point of \code{X}.
+  }
+  \item{adaptive}{
+    Logical value specifying whether to use radii proportional to
+    nearest neighbour distance.
+  }
+  \item{alpha}{
+    Probability value (numeric value between 0 and 1) specifying that
+    \code{radius} should be fixed at the \code{alpha} quantile of the
+    nearest neighbour distances of \code{X}.
+  }
+  \item{adjust}{
+    Optional numerical value by which \code{radius} will be multiplied.
+    This makes it easier to specify choices like
+    \sQuote{twice the automatically chosen radius}.
   }
   \item{nrep}{Number of independent repetitions of the randomised
     procedure.}
@@ -50,18 +78,22 @@ densityVoronoi(X, \dots)
     \item
     the original \Voronoi estimate
     (Brown, 1964; Ord, 1978; Barr and Schoenberg, 2010) selected by
-    \code{f=1};
+    \code{f=1} and \code{bagging=FALSE};
     see the section on \emph{Voronoi estimate};
     \item
     the estimate of Baddeley (2007) selected by
     \code{0 < f < 1},
-    \code{fixed=TRUE} and \code{counting=TRUE};
+    \code{fixed=TRUE}, \code{counting=TRUE} and \code{bagging=FALSE};
     see the section on \emph{Resample-smoothing estimates};
     \item
     the estimate of Moradi et al (2019) selected by
     \code{0 < f < 1},
-    \code{fixed=FALSE} and \code{counting=FALSE};
+    \code{fixed=FALSE}, \code{counting=FALSE} and \code{bagging=FALSE};
     see the section on \emph{Resample-smoothing estimates};
+    \item
+    the bagging estimate of Rakshit et al (2026) selected by
+    \code{bagging=TRUE}.
+    See the section on \emph{Bagging estimate}.
   }
   The \Voronoi estimator (corresponding to \code{f=1})
   was introduced by Brown (1964) and Ord (1978) and its statistical
@@ -74,12 +106,15 @@ densityVoronoi(X, \dots)
   Baddeley (2007) proposed intensity estimation by subsampling
   and averaging. Moradi et al (2019) developed the subsampling technique 
   and called it the \emph{smoothed \Voronoi estimator}.
+  Rakshit et al (2026) proposed bootstrap aggregation (bagging)
+  of estimates based on randomly displaced patterns.
   These randomised estimators strike a tradeoff between bias and variance,
   and generally have better statistical performance than the \Voronoi
   estimator. 
 }
 \section{\Voronoi estimate}{
   If 
+  \code{bagging=FALSE} and 
   \code{f=1} (the default), the \Voronoi estimate (Brown, 1964;
   Ord, 1978; Barr and Schoenberg, 2010)
   is computed: the point pattern \code{X} is used to construct
@@ -90,6 +125,7 @@ densityVoronoi(X, \dots)
   of intensity estimates which are constant on each tile of the tessellation.
 
   If 
+  \code{bagging=FALSE} and 
   If \code{f=0}, the intensity estimate at every location is
   equal to the average intensity (number of points divided by window area).
   The result is a pixel image
@@ -97,6 +133,7 @@ densityVoronoi(X, \dots)
 }
 \section{Resample-smoothing estimates}{
   If 
+  \code{bagging=FALSE} and 
   \code{f} is strictly between 0 and 1,
   the estimation method is applied to a random subset of \code{X}.
   This randomised procedure is repeated \code{nrep} times,
@@ -137,6 +174,38 @@ densityVoronoi(X, \dots)
     or \code{n/(n-m)} as appropriate 
     to obtain an estimate of the intensity of \code{X} in the tile.
   }
+}
+\section{Bagging estimate}{
+  If \code{bagging=TRUE}, the estimates are formed by
+  bagging (bootstrap aggregation) as follows:
+  \itemize{
+    \item the original point pattern \code{X}
+    is randomly jittered using \code{\link[spatstat.geom]{rjitter.ppp}};
+    \item the \Voronoi estimate of intensity of the randomly jittered
+    pattern is calculated;
+    \item this procedure is repeated \code{nsim} times, and the results
+    are averaged to obtain the bagging estimator.
+  }
+  The scale of random displacement is specified by the arguments
+  \code{radius}, \code{adaptive}, \code{alpha} and \code{adjust}.
+  \itemize{
+    \item 
+    If \code{radius} is given, then it should be either a single numerical
+    value giving the radius for each random displacement, or a numeric
+    vector giving displacement radii for each point of \code{X}  (see
+    \code{\link[spatstat.geom]{rjitter.ppp}}).
+    \item
+    If \code{radius=NULL} and \code{adaptive=FALSE} (the default),
+    then \code{radius} defaults to the \code{alpha} quantile of the
+    nearest-neighbour distances \code{nndist(X)}. By default this is the
+    third quartile of the nearest-neighbour distances.
+    \item
+    If \code{radius=NULL} and \code{adaptive=TRUE}, then
+    \code{radius} defaults to the vector of nearest-neighbour distances
+    \code{nndist(X)}.
+  }
+  The value of \code{radius} is then multiplied by \code{adjust}
+  before random jittering is performed.    
 }
 \value{
   A pixel image (object of class \code{"im"}) whose values are
@@ -194,20 +263,27 @@ densityVoronoi(X, \dots)
   How many trees in a forest?
   \emph{Mathematical Scientist} \bold{3}, 23--33.
 
-  Rakshit, S., Baddeley, A. and Nair, G. (2027)
+  Rakshit, S., Baddeley, A. and Nair, G. (2026)
   Bagging improves the performance of intensity estimators of spatial
   point patterns. \emph{Submitted for publication}.
 }
 \examples{
-  opa <- par(mfrow=c(1,3))
-  plot(nztrees)
-  plot(densityVoronoi(nztrees, 1, f=1), main="Voronoi estimate")
-  nr <- if(interactive()) 100 else 5
-  plot(densityVoronoi(nztrees, f=0.5, nrep=nr), main="smoothed Voronoi estimate")
+  opa <- par(mfrow=c(2,2))
+  if(interactive()) {
+    X <- nztrees
+    nr <- 100
+  } else {
+    X <- nztrees[c(TRUE,FALSE)]
+    nr <- 3
+  }
+  plot(X)
+  plot(densityVoronoi(X, 1, f=1), main="Voronoi estimate")
+  plot(densityVoronoi(X, f=0.5, nrep=nr), main="smoothed Voronoi estimate")
+  plot(densityVoronoi(X, bagging=TRUE, nrep=nr), main="bagging estimate")
   par(opa)
 }
 \author{
-  \spatstatAuthorsComma and \mehdi.
+  \spatstatAuthorsComma, \mehdi and \suman.
 }
 \keyword{spatial}
 \keyword{methods}

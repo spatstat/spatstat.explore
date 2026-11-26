@@ -1,7 +1,7 @@
 #'
 #'  densityVoronoi.R
 #'
-#'  $Revision: 1.32 $   $Date: 2026/08/13 06:07:17 $
+#'  $Revision: 1.33 $   $Date: 2026/11/26 04:27:36 $
 #'
 
 
@@ -12,6 +12,8 @@ densityVoronoi <- function(X, ...) {
 densityVoronoi.ppp <- function(X, f=1, ...,
                                counting=FALSE,
                                fixed=FALSE,
+                               bagging=FALSE, radius=NULL, adaptive=FALSE,
+                               alpha=0.75, adjust=1,
                                nrep=1, verbose=TRUE, internal=NULL) {
   stopifnot(is.ppp(X))
   if(is.NAobject(X)) return(NAobject("im"))
@@ -22,6 +24,39 @@ densityVoronoi.ppp <- function(X, f=1, ...,
     stop("f should be a probability between 0 and 1")
   check.1.integer(nrep)
   stopifnot(nrep >= 1)
+  if(bagging) {
+    ## ----------- bagging estimation ---------------------------
+    if(adaptive) {
+      rad <- nndist(X, proper=TRUE)
+    } else if(is.null(radius)) {
+      if(badprobability(alpha)) 
+        stop("alpha is not a probability value", call.=FALSE)
+      rad <- quantile(nndist(X, proper=TRUE), alpha)
+    } else {
+      check.1.real(radius)
+      stopifnot(radius > 0)
+      rad <- radius
+    }
+    if(!missing(adjust)) {
+      check.1.real(adjust)
+      stopifnot(adjust > 0)
+      rad <- adjust * rad
+    }
+    ## randomly perturb the points
+    Xjit <- rjitter(X, radius=rad, retry=TRUE, nsim=nrep)
+    ok <- sapply(Xjit, is.ppp) & !is.na(Xjit)
+    if(!any(ok)) {
+      warning("Internal error: all estimates were invalid", call.=FALSE)
+      return(NAobject("im"))
+    }
+    Xjit <- Xjit[ok]
+    ## calculate Voronoi estimates of intensity
+    estimates <- solapply(Xjit, densityVoronoi.ppp, f=1, ...)
+    ## average
+    out <- im.apply(estimates, mean)
+    return(out)
+  }
+  ## -------- other estimation ---------------------------------
   anydupes <- internal$anydupes %orifnull% anyDuplicated(X, rule="deldir")
   dupes <-    internal$dupes %orifnull% (if(anydupes) duplicated(X, rule="deldir") else NULL)
   W <- Window(X)
