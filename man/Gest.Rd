@@ -1,6 +1,5 @@
 \name{Gest}
 \alias{Gest}
-\alias{nearest.neighbour}
 \title{
   Nearest Neighbour Distance Function G
 }

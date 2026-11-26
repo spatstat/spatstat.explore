@@ -105,6 +105,7 @@
 \alias{monotonicRhoFun}
 \alias{monotonicRhoFunCalc}
 \alias{names<-.fv}
+\alias{nearest.neighbour}
 \alias{needROC}
 \alias{nncleanEngine}
 \alias{pairs.listof}
@@ -380,6 +381,7 @@ meanlistfv(z, \dots)
 monotonicRhoFun(X, Z, increasing, \dots, weights, subset, baseline)
 monotonicRhoFunCalc(x, z, massx, weightz, increasing)
 \method{names}{fv}(x) <- value
+nearest.neighbour(X, r, breaks, \dots, rmax, correction, domain)
 needROC(\dots)
 nncleanEngine(kthNND, k, d, \dots, tol, maxit,
               plothist, lineargs, verbose, Xname)
